@@ -61,7 +61,7 @@ void LBA_engine::playFLA(char *flaName)
 							int i;
 							int j;
 
-							char* source=(char*)flaBuffer;
+							/*char* source=(char*)flaBuffer;
 							char* source2;
 							char* dest=(char*)videoBuffer1;
 							
@@ -80,11 +80,11 @@ void LBA_engine::playFLA(char *flaName)
 									*(dest++)=*(source2++);
 								}
 
-							}
+							}*/
 
 							convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
-							osystem->setPalette((byte*)flaPaletteRGBA);
-							osystem->drawBufferToScreen((unsigned char*)flaBuffer);
+							osystem->setPalette320x200((byte*)flaPaletteRGBA);
+							osystem->draw320x200BufferToScreen((unsigned char*)flaBuffer);
 							
 							do
 							{

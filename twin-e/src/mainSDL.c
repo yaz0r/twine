@@ -19,10 +19,13 @@
 #include "SDL_thread.h"
 #include "lba.h"
 #include "SDL_ttf.h"
+#include "SDL_rotozoom.h"
 
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
 SDL_Surface *sdl_buffer320x200;
+SDL_Surface *sdl_bufferStretch;
+SDL_Surface *sdl_bufferRGBA;
 SDL_Surface *sdl_screen;	// that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
@@ -166,9 +169,9 @@ void OSystem::setPalette320x200(byte * palette)
 
     SDL_SetColors(sdl_buffer320x200, sdl_colorsTemp, 0, 256);
 
-    SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
+//    SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
 
-    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+  //  SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
 void OSystem::fadeBlackToWhite()
@@ -195,14 +198,13 @@ void OSystem::drawBufferToScreen(unsigned char *videoBuffer)
 
 void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
 {
-	SDL_Surface *localSurface;
+	SDL_BlitSurface(sdl_buffer320x200,NULL,sdl_bufferRGBA,NULL);
 
-	localSurface=SDL_CreateRGBSurface(SDL_SWSURFACE,320,200,8,0,0,0,0);
+	sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_ON);
 
-	memcpy(localSurface->pixels,videoBuffer,320*200);
+	SDL_FillRect(sdl_screen,NULL,0);
 
-	
-    SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
+    SDL_BlitSurface(sdl_bufferStretch, NULL, sdl_screen, NULL);
 
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
@@ -223,6 +225,23 @@ void OSystem::refresh(unsigned char *videoBuffer, int left, int top, int right, 
 
 void OSystem::initVideoBuffer(char *buffer, int width, int height)
 {
+    Uint32 rmask, gmask, bmask, amask;
+
+    /* SDL interprets each pixel as a 32-bit number, so our masks must depend
+       on the endianness (byte order) of the machine */
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+	sdl_bufferRGBA=SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,rmask, gmask, bmask, amask);
 	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
 
