@@ -132,6 +132,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 		actors[actorNumTemp].field_46=*((short int*)actorScriptPtr);
 		actorScriptPtr+=2;
 		break;
+	case 26:
+		actorScriptPtr++;
+		printf("Ignoring actor opcode 26\n");
+		break;
     case 27:
     	temp=*(actorScriptPtr++);
      lactor->field_40=temp;
@@ -435,6 +439,9 @@ void LBA_engine::manipActor(actor* lactor)
   case 25:
 	  actorScriptPtr=localScriptPtr;
 	  printf("Ignoring manipActor opcode 25..\n");
+	  break;
+  case 28:
+	  manipActorResult=lactor->field_58;
 	  break;
   default:
 			printf("Unhandled manipActor opcode %d\n",opcode);
