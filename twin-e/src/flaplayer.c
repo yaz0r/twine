@@ -82,8 +82,6 @@ void LBA_engine::playFLA(char *flaName)
 
 							}*/
 
-							convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
-							osystem->setPalette320x200((byte*)flaPaletteRGBA);
 							osystem->draw320x200BufferToScreen((unsigned char*)flaBuffer);
 							
 							/*do
@@ -228,6 +226,9 @@ void LBA_engine::runFLAscript()
 				
 				lastNumOfColor=numOfColor;
 				lastStartColor=startColor;
+
+				convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
+				osystem->setPalette320x200((byte*)flaPaletteRGBA);
 
 				break;
 			}
