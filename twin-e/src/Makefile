@@ -1,9 +1,9 @@
 OBJECTS = 3Dmodels.o actorScript.o actors.o angle.o anim.o body.o cdrom.o \
-cfg.o comportementMenu.o costume.o decomp.o file.o fireEffect.o flaplayer.o \
+cfg.o comportementMenu.o costume.o decomp.o debug.o file.o fireEffect.o flaplayer.o \
 font.o fullRedraw.o hqr.o images.o init.o input.o main.o mainLoop.o \
 mainMenu.o mainSDL.o memory.o moveActor.o music.o object.o polyRender.o \
-resource.o room.o save.o sdl.o sys.o text.o threadCode.o time.o vars.o \
-video.o vox.o walk.o
+renderer.o resource.o room.o save.o sdl.o sys.o text.o threadCode.o time.o vars.o \
+video.o vox.o walk.o 
 
 CC = gcc
 
