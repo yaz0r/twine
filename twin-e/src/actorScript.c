@@ -798,6 +798,42 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       printf("Ignoring opcode 88 in runActorScript\n");
 			       break;
 			   }
+			case 94: //LM_MESSAGE_SENDELL
+				{
+					int backupFlag;
+
+					freezeTime();
+					mainLoop2(1);
+					fadeOut((char*) paletteRGBA);
+					loadImageToPtr("ress.hqr",videoBuffer2,25);
+					copyToBuffer(videoBuffer2,videoBuffer1);
+					loadImageToPtr("ress.hqr",(byte *) & palette,26);
+					convertPalToRGBA(palette, paletteRGBA);
+					osystem->drawBufferToScreen(videoBuffer1);
+					fadeIn2((char*)paletteRGBA);
+					newGame2();
+					setNewTextColor(15);
+					newGameVar4=0;
+					backupFlag=flagDisplayText;
+					flagDisplayText=1;
+					printTextFullScreen(6);
+					newGameVar4=1;
+					newGame4();
+					fadeOut((char*)paletteRGBA);
+					resetVideoBuffer1();
+					osystem->setPalette(menuPalRGBA);
+					flagDisplayText=backupFlag;
+
+					do
+					{
+						readKeyboard();
+					}
+					while (skipIntro || key1);
+
+					unfreezeTime();
+					break;
+
+				}
 			case 95:
 			   {
 			       lactor->anim = -1;
@@ -818,6 +854,14 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       printf("Play cd track %d\n", temp);
 			       break;
 			   }
+			case 101: //LM_PROJ_ISO
+				{
+					setSomething(311,240,512);
+					setSomething2(0,0,0);
+					setSomething3(0,0,0);
+					setSomething4(reinitVar1,reinitVar2,0);
+					break;
+				}
 
 			case 102:	//LM_PROJ_3D
 			    resetVideoBuffer1();
@@ -857,8 +901,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				       if (esi > 639)
 					   edi = 639;
 
-				       osystem->refresh(videoBuffer1, 0, drawVar1, edi,
-							lactor->field_28);
+				       osystem->refresh(videoBuffer1, 0, drawVar1, edi, drawVar1+40);
 				       drawVar1 += 40;
 				   }
 
