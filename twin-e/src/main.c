@@ -125,6 +125,8 @@ void init(void)
 	initMemorySystem();
 #endif
 
+	soundInit();
+
    // GetDiskEnv
     InitProgram();
    // ReadVolumeSettings

@@ -100,9 +100,10 @@ int mainLoop(void)
 
 				    if (currentRoom == 80)
 					{
-					   /*
-					    * if(mainLoopVar8==1) playCDtrack(8); else PlayMusic(roomMusic); 
-					    */
+						if(vars[90]==1)
+							playCDtrack(8);
+						else
+							PlayMusic(roomMusic); 
 					}
 				    else
 					{

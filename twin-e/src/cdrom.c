@@ -28,8 +28,6 @@ int InitCDR(char *string)
    // int min, sec, frame;
     int numOfCDROM;
     int cdNum;
-    cdrom=NULL;
-    return(0);
 
     numOfCDROM = SDL_CDNumDrives();
 

@@ -1248,7 +1248,8 @@ int HQ_3D_MixSample(int param0, int param1, int param2, int param3, int param4, 
 {
     if (samplesLoaded != 0)
 	{
-	    printf("sampleLoaded != 0 in HQ_3D_MixSample!\n");
+	 //   printf("sampleLoaded != 0 in HQ_3D_MixSample!\n");
+		playSample(param0,1,1,10,10);
 	   // exit(1);
 	}
     return (0);

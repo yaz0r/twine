@@ -45,6 +45,8 @@
 
 #include "streamReader.h"
 
+#include "samples.h"
+
 #ifndef MEM_DEBUG
 #define Malloc(size) malloc(size)
 #define Free(ptr) free(ptr)

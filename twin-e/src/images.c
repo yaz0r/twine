@@ -10,15 +10,10 @@ void AdelineLogo(void)
     CopyScreen(workVideoBuffer, frontVideoBuffer);
     Load_HQR("ress.hqr", palette, 28);
     convertPalToRGBA(palette, paletteRGBA);
-
-/*	int debugH = debug_open("palette.raw", SNASM_O_BINARY|SNASM_O_CREAT|SNASM_O_RDWR);
-	debug_write(debugH, (char*)palette, 256*3);
-	debug_close(debugH); */
-
     blackToWhite();
     osystem->Flip(frontVideoBuffer);
     fadeIn(paletteRGBA);
-   // SDL_Delay(2000);
+    SDL_Delay(6000);
 }
 
 void CopyScreen(byte * source, byte * destination)
@@ -30,9 +25,6 @@ void CopyScreen(byte * source, byte * destination)
 void fadeIn(byte * palette)
 {
     int i = 100;
-
-	osystem->setPalette(palette);
-	return;
 
     for (i = 0; i < 100; i += 3)
 	{
@@ -111,7 +103,7 @@ void FadeToBlack(char *palette)
 
     if (palReseted == 0)
 	{
-	//    for (i = 100; i >= 0; i -= 3)
+	    for (i = 100; i >= 0; i -= 3)
 		{
 		    adjustPalette(0, 0, 0, (byte *) palette, i);
 		    readKeyboard();
@@ -125,11 +117,11 @@ void FadeToPal(char *palette)
 {
     int i = 100;
 
-/*    for (i = 0; i <= 100; i += 3)
+    for (i = 0; i <= 100; i += 3)
 	{
 	    adjustPalette(0, 0, 0, (byte *) palette, i);
 	    readKeyboard();
-	} */
+	}
 
 	osystem->setPalette( (byte*)palette );
 
@@ -143,7 +135,7 @@ void blackToWhite(void)
     int i;
 
 	i = 256;
-//    for (i = 0; i < 256; i += 3)
+    for (i = 0; i < 256; i += 3)
 	{
 	    memset(palette, i, 1024);
 

@@ -2,6 +2,8 @@
 
 streamReader fla_streamReader;
 
+int flaSampleTable[100];
+
 void PlayAnimFla(char *flaName)
 {
 #ifdef FASTDEBUG
@@ -183,6 +185,8 @@ int InitFla(char* file)
 		
 		streamReader_get(&fla_streamReader, &var0, 2);
 		streamReader_get(&fla_streamReader, &var1, 2);
+
+		flaSampleTable[i] = var0;
 	}
 
     return(1);
@@ -200,6 +204,16 @@ void Mcga_Cls()
 void Mcga_Flip()
 {
 }
+
+struct flaSampleStruct
+{
+	short int sampleNum;
+	short int freq;
+	short int repeat;
+	char dummy;
+	unsigned char x;
+	unsigned char y;
+};
 
 void DrawNextFrameFla()
 {
@@ -258,9 +272,12 @@ void DrawNextFrameFla()
 			}
 		case 2: // play sample
 			{
+				flaSampleStruct header;
+				memcpy(&header,ptr,sizeof(flaSampleStruct));
+				playSampleFla(header.sampleNum,header.freq,header.repeat,header.x,header.y);
 				break;
 			}
-		case 4: // play sample
+		case 4: // stop sample
 			{
 				break;
 			}

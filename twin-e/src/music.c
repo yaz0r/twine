@@ -1,4 +1,5 @@
 #include "lba.h"
+#include <sdl_mixer.h>
 
 #ifdef PCLIKE
 #include "SDL.h"
@@ -6,7 +7,6 @@
 
 void PlayMusic(int musicNum)
 {
-    return;
     if (musicNum == -1)
 	{			/* stop music */
 	    fullStopMusic();
@@ -17,9 +17,9 @@ void PlayMusic(int musicNum)
 	}
 
     if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
-	playCDtrack(musicNum);
+		playCDtrack(musicNum);
     else
-	playMidi(musicNum);
+		playMidi(musicNum);
 
     return;
 
@@ -27,20 +27,38 @@ void PlayMusic(int musicNum)
 
 void playCDtrack(int trackNumber)
 {
-    return;
 #ifdef PCLIKE
-	if(cdrom!=NULL)  
-		if(CD_INDRIVE(SDL_CDStatus(cdrom))) SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
-#endif //PCLIKE
-    
-}
+	freezeTime();
+	Mix_FadeOutMusic(500);
+	currentlyPlayingMidi = -1;
 
-void playMidi(int musicNum)
-{
+	if(cdrom!=NULL)
+	{
+		if(SDL_CDStatus(cdrom) == CD_PLAYING)
+		{
+			SDL_CDStop(cdrom);
+		}
+	}
+	currentlyPlayingCDTrack = -1;
+
+	if(cdrom!=NULL)  
+		if(CD_INDRIVE(SDL_CDStatus(cdrom)))
+			SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
+
+	unfreezeTime();
+#endif //PCLIKE 
 }
 
 void fullStopMusic(void)
 {
+	if(cdrom!=NULL)
+	{
+		int status = SDL_CDStatus(cdrom);
+//		if(status == CD_PLAYING)
+		{
+			SDL_CDStop(cdrom);
+		}
+	}
 }
 
 void stopMusic(void)

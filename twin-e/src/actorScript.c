@@ -1788,7 +1788,7 @@ void foundObject(int objectNumber)
     boxBottomRightX = projectedPositionX + 65;
     boxBottomRightY = projectedPositionY + 65;
 
-    //playSample(41, 0x1000, 1, 0x80, 0x80);
+    playSample(41, 0x1000, 1, 0x80, 0x80); 
 
 /*    if(getFoundVox(2))
     {

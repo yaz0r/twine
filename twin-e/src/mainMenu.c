@@ -19,7 +19,7 @@ void MainGameMenu(void)
     do
 	{
 	    InitDial(0);
-	 //   playCDtrack(9);
+	    playCDtrack(9);
 	    HQ_StopSample();
 	    GetMultiText(49, mainMenuVar1);
 	    temp = processMenu(mainMenuData);
