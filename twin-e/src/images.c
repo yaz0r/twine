@@ -13,73 +13,6 @@ void LBA_engine::displayAdelineLogo(void)
    // SDL_Delay(2000);
 }
 
-int LBA_engine::loadImageToPtr(char *resourceName, byte * ptr, int imageNumber)	// en fait, c'est
-										// pas vraiment une 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// 
-										// image, ca peut
-										// etre n'importe
-										// quelle data...
-{
-    FILE *resourceFile;
-    int headerSize;
-    int offToImage;
-    int dataSize;
-    int compressedSize;
-    short int mode;
-
-    resourceFile = openResource(resourceName);
-
-    if (!resourceFile)
-	return (0);
-
-    readResourceData(resourceFile, (char *) &headerSize, 4);
-
-    if (imageNumber >= headerSize / 4)
-	{
-	    closeResource(resourceFile);
-	    return (0);
-	}
-
-    fseek(resourceFile, imageNumber * 4, SEEK_SET);
-    readResourceData(resourceFile, (char *) &offToImage, 4);
-
-    fseek(resourceFile, offToImage, SEEK_SET);
-    readResourceData(resourceFile, (char *) &dataSize, 4);
-    readResourceData(resourceFile, (char *) &compressedSize, 4);
-    readResourceData(resourceFile, (char *) &mode, 2);
-
-    if (mode <= 0)		// uncompressed Image
-	{
-	    readResourceData(resourceFile, (char *) ptr, dataSize);
-	}
-    else
-	{
-	    if (mode == 1)	// compressed Image
-		{
-		    readResourceData(resourceFile, (char *) (ptr + dataSize - compressedSize + 500),
-				     compressedSize);
-		    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
-		}
-	    else
-		{
-		    return (0);
-		}
-	}
-
-    return (dataSize);
-
-}
-
 void LBA_engine::copyToBuffer(byte * source, byte * destination)
 {
 
@@ -139,64 +72,6 @@ int LBA_engine::remapComposante(int modifier, int color, int param, int intensit
     if (!param)
 	return (color);
     return (((color - modifier) * intensity) / param) + modifier;
-}
-
-byte *LBA_engine::loadImageToMemory(char *fileName, short int imageNumber)
-{
-    FILE *resourceFile;
-    int headerSize;
-    int offToImage;
-    int dataSize;
-    int compressedSize;
-    short int mode;
-    byte *ptr;
-
-    resourceFile = openResource(fileName);
-
-    if (!resourceFile)
-	return (0);
-
-    readResourceData(resourceFile, (char *) &headerSize, 4);
-
-    if (imageNumber >= headerSize / 4)
-	{
-	    closeResource(resourceFile);
-	    return (0);
-	}
-
-    fseek(resourceFile, imageNumber * 4, SEEK_SET);
-    readResourceData(resourceFile, (char *) &offToImage, 4);
-
-    fseek(resourceFile, offToImage, SEEK_SET);
-    readResourceData(resourceFile, (char *) &dataSize, 4);
-    readResourceData(resourceFile, (char *) &compressedSize, 4);
-    readResourceData(resourceFile, (char *) &mode, 2);
-
-    ptr = (byte *) malloc(dataSize + 500);
-    if (mode <= 0)		// uncompressed Image
-	{
-	    readResourceData(resourceFile, (char *) ptr, dataSize);
-	}
-    else
-	{
-	    if (mode == 1)	// compressed Image
-		{
-		    readResourceData(resourceFile, (char *) (ptr + dataSize - compressedSize + 500),
-				     compressedSize);
-		    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
-		}
-	    else
-		{
-		    free(ptr);
-		    closeResource(resourceFile);
-		    return (0);
-		}
-	}
-
-    closeResource(resourceFile);
-
-    return (ptr);
-
 }
 
 void LBA_engine::loadImageAndPalette(int imageNumber)

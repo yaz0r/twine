@@ -537,19 +537,7 @@ void LBA_renderer::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
     else			// dependent
 	{
 	    _destX = _projectedPointTable[(esi->data3) / 6].x;	// todo:
-	    _destZ = _projectedPointTable[(esi->data3) / 6].z;	// inverse because pointab and dest 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // entry are not in the same
-	   // order....
+	    _destZ = _projectedPointTable[(esi->data3) / 6].z;	// inverse because pointab and dest entry are not in the same order....
 	    _destY = _projectedPointTable[(esi->data3) / 6].y;
 
 	    source = (int *) ((unsigned char *) _matrixTable + esi->param);

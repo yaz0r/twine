@@ -81,7 +81,7 @@ void LBA_engine::fullRedraw(int param)
 	    if ((changeRoomVar9 == -1)
 		|| (lactor->Z <= *(short int *) ((currentGrid2) * 24 + sceneVarPtr + 8)))
 		{
-		    if (lactor->field_60 & 0x2000 && param == 0) // background
+		    if (lactor->field_60 & 0x2000 && param == 0)	// background
 			{
 			   // calculate the actor position on screen
 			    fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ,
@@ -248,18 +248,18 @@ void LBA_engine::fullRedraw(int param)
    // sortRenderList(&fullRedrawVar6,a12,12);
 
    /*
-     if(twinsen->costumeIndex != -1 && !(twinsen->field_60 & 0x200)) { -> visible
-     arg_46=twinsen->X+twinsen->field_26; arg_36=twinsen->Z+twinsen->field_2E;
-     arg_52=twinsen->X+twinsen->field_28; arg_4A=twinsen->Z+twinsen->field_30; arg_1A=0;
-     result=-1;
-     
-     //loop3 while(arg_1A<a12) { if(fullRedrawVar6[arg_1A].field_2 == 0) { result=arg_1A;
-     result2=fullRedrawVar6[arg_1A].field_0; break; } arg_1A++; }
-     
-     if(result!=-1) { printf("Special draw in fullRedraw!\n"); exit(1); arg_1A=0; // loop 4
-     while(arg_1A<a12) { } }
-     
-     }
+      if(twinsen->costumeIndex != -1 && !(twinsen->field_60 & 0x200)) { -> visible
+      arg_46=twinsen->X+twinsen->field_26; arg_36=twinsen->Z+twinsen->field_2E;
+      arg_52=twinsen->X+twinsen->field_28; arg_4A=twinsen->Z+twinsen->field_30; arg_1A=0;
+      result=-1;
+
+      //loop3 while(arg_1A<a12) { if(fullRedrawVar6[arg_1A].field_2 == 0) { result=arg_1A;
+      result2=fullRedrawVar6[arg_1A].field_0; break; } arg_1A++; }
+
+      if(result!=-1) { printf("Special draw in fullRedraw!\n"); exit(1); arg_1A=0; // loop 4
+      while(arg_1A<a12) { } }
+
+      }
     */
 
     a0E = 0;
@@ -481,9 +481,8 @@ void LBA_engine::fullRedraw(int param)
 				&& fullRedrawVar4 < 440)
 				printStringSimple(fullRedrawVar3, fullRedrawVar4, stringTemp);
 
-				addToRedrawBoxMain(fullRedrawVar3, fullRedrawVar4,
-							fullRedrawVar3 + 50,
-							fullRedrawVar4 + 50);
+			    addToRedrawBoxMain(fullRedrawVar3, fullRedrawVar4, fullRedrawVar3 + 50,
+					       fullRedrawVar4 + 50);
 
 			}
 		    else if (flags == 0x1800)

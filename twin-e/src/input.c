@@ -76,119 +76,120 @@ void LBA_engine::readKeyboard(void)
 	{
 	    if (keyboard[j])
 		{
-		    if (j == SDLK_ESCAPE)
-			localKey = 0x1;
-		    if (j == SDLK_RETURN)
-			localKey = 0x1C;
-		    if (j == SDLK_LCTRL)
-			localKey = 0x1D;
-		    if (j == SDLK_LSHIFT)
-			localKey = 0x2A;
-		    if (j == SDLK_RSHIFT)
-			localKey = 0x36;
-		    if (j == SDLK_SPACE)
-			localKey = 0x39;
-		    if (j == SDLK_UP)
-			localKey = 0x48;
-		    if (j == SDLK_LEFT)
-			localKey = 0x4B;
-		    if (j == SDLK_RIGHT)
-			localKey = 0x4D;
-		    if (j == SDLK_DOWN)
-			localKey = 0x50;
-		    if (j == SDLK_SPACE)
-			localKey = 0x39;
-
-		    if (j == SDLK_p)
-			localKey = 'p';
-		    if (j == SDLK_h)
-			localKey = 'h';
-		}
-
-	    if (event.key.keysym.sym == SDLK_ESCAPE)
-		localKey = 0x1;
-	    if (event.key.keysym.sym == SDLK_RETURN)
-		localKey = 0x1C;
-	    if (event.key.keysym.sym == SDLK_LSHIFT)
-		localKey = 0x2A;
-	    if (event.key.keysym.sym == SDLK_RSHIFT)
-		localKey = 0x36;
-	    if (event.key.keysym.sym == SDLK_SPACE)
-		localKey = 0x39;
-	    if (event.key.keysym.sym == SDLK_UP)
-		localKey = 0x48;
-	    if (event.key.keysym.sym == SDLK_DOWN)
-		localKey = 0x50;
-	    if (event.key.keysym.sym == SDLK_LEFT)
-		localKey = 0x4B;
-	    if (event.key.keysym.sym == SDLK_RIGHT)
-		localKey = 0x4D;
-	    if (event.key.keysym.sym == SDLK_LALT)
-		localKey = 0x1D;
-	    if (event.key.keysym.sym == SDLK_SPACE)
-		localKey = 0x39;
-		if (event.key.keysym.sym == SDLK_PAGEUP)
-		localKey = 0x49;
-
-	    if (event.key.keysym.sym == SDLK_p) // pause
-		localKey = 'p';
-		if (event.key.keysym.sym == SDLK_h) // holomap
-		localKey = 'h';
-
-		if (event.key.keysym.sym == SDLK_u) // next room
-			localKey ='u';
-		if (event.key.keysym.sym == SDLK_j) // previous room
-			localKey ='j';
-		if (event.key.keysym.sym == SDLK_h) // revive twinsen
-			localKey ='h';
-		if (event.key.keysym.sym == SDLK_t) // increase story state
-			localKey ='t';
-		if (event.key.keysym.sym == SDLK_g) // decrease story state
-			localKey ='g';
-
-
-	    for (i = 0; i < 28; i++)
-		{
-		    if (scanCodeTab1[i] == localKey)
+		    switch (j)
 			{
-			    find = i;
-			    found = 1;
+			case SDLK_ESCAPE:
+			    localKey = 0x1;
+			    break;
+
+			case SDLK_RETURN:
+			    localKey = 0x1C;
+			    break;
+
+			case SDLK_LSHIFT:
+			    localKey = 0x2A;
+			    break;
+
+			case SDLK_RSHIFT:
+			    localKey = 0x36;
+			    break;
+
+			case SDLK_SPACE:
+			    localKey = 0x39;
+			    break;
+
+			case SDLK_UP:
+			    localKey = 0x48;
+			    break;
+
+			case SDLK_DOWN:
+			    localKey = 0x50;
+			    break;
+
+			case SDLK_LEFT:
+			    localKey = 0x4B;
+			    break;
+
+			case SDLK_RIGHT:
+			    localKey = 0x4D;
+			    break;
+
+			case SDLK_LCTRL:
+			    localKey = 0x1D;
+			    break;
+
+			case SDLK_PAGEUP:
+			    localKey = 0x49;
+			    break;
+
+			case SDLK_p:	// pause
+			    localKey = 'p';
+			    break;
+
+			case SDLK_h:	// holomap
+			    localKey = 'h';
+			    break;
+
+			case SDLK_u:	// next room
+			    localKey = 'u';
+			    break;
+
+			case SDLK_j:	// previous room
+			    localKey = 'j';
+			    break;
+
+			case SDLK_t:	// increase story state
+			    localKey = 't';
+			    break;
+
+			case SDLK_g:	// decrease story state
+			    localKey = 'g';
+			    break;
 			}
-		}
 
-	    if (found != 0)
-		{
-		    temp = scanCodeTab2[find];
-		    temp2 = temp & 0x00FF;
-
-		    if (temp2 == 0)
+		    for (i = 0; i < 28; i++)
 			{
-			    if (!(localKey & 0x80))
+			    if (scanCodeTab1[i] == localKey)
 				{
-				    printTextVar12 |= (temp & 0xFF00) >> 8;
+				    find = i;
+				    found = 1;
+				}
+			}
+
+		    if (found != 0)
+			{
+			    temp = scanCodeTab2[find];
+			    temp2 = temp & 0x00FF;
+
+			    if (temp2 == 0)
+				{
+				    if (!(localKey & 0x80))
+					{
+					    printTextVar12 |= (temp & 0xFF00) >> 8;
+					}
+				    else
+					{
+					    printTextVar12 &= -((temp & 0xFF00) >> 8);
+					}
 				}
 			    else
 				{
-				    printTextVar12 &= -((temp & 0xFF00) >> 8);
+				   // mode non géré ici
+				    key1 |= (temp & 0xFF00) >> 8;
 				}
 			}
 		    else
 			{
-			   // mode non géré ici
-			    key1 |= (temp & 0xFF00) >> 8;
+			   // no géré ici aussi
+			    skipIntro = localKey;
 			}
-		}
-	    else
-		{
-		   // no géré ici aussi
-		    skipIntro = localKey;
-		}
 
-	    currentKey = event.key.keysym.scancode;
-
-	   // printf("unicode= %X\n",event.key.keysym.unicode);
-	   // printf("scancode= %X\n",skipIntro);
+		    currentKey = event.key.keysym.scancode;
+		}
 	}
+
+   // printf("unicode= %X\n",event.key.keysym.unicode);
+   // printf("scancode= %X\n",skipIntro);
 }
 
 short int LBA_engine::getKeyboardChar(void)

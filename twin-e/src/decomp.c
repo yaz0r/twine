@@ -1,6 +1,6 @@
-#include "lba.h"
+#include "decomp.h"
 
-void LBA_engine::decompress(int decompressedSize, unsigned char *destination, unsigned char *source)
+void decompress(int decompressedSize, unsigned char *destination, unsigned char *source)
 {
     byte loop;
     byte indic;
@@ -22,8 +22,6 @@ void LBA_engine::decompress(int decompressedSize, unsigned char *destination, un
 			    size = temp & 0x0F;
 			    size += 2;
 			    decompressedSize -= size;
-			   // if(decompressedSize<=0)
-			   // return;
 			    jumpBack = destination - (temp >> 4) - 1;
 			    for (i = 0; i < size; i++)
 				{

@@ -1,6 +1,5 @@
 #include "lba.h"
 
-
 int manipActorVar1 = 0;
 
 int debugger::processDebug(void)
@@ -116,7 +115,7 @@ void debugger::addButton(int winIndex, int X, int Y, int width, int height, char
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Width = width;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Height = height;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].type = type;
-	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 70;
+    windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 70;
 
     windows[winIndex].buttons[windows[winIndex].numOfButtons].text =
 	(char *) malloc(strlen(text) + 1);
@@ -134,10 +133,10 @@ void debugger::addButton(int winIndex, int X, int Y, int width, int height, char
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Width = width;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Height = height;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].type = type;
-	if(boolVar)
-		windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 100;
-	else
-		windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 70;
+    if (boolVar)
+	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 100;
+    else
+	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 70;
 
     windows[winIndex].buttons[windows[winIndex].numOfButtons].text =
 	(char *) malloc(strlen(text) + 1);
@@ -146,7 +145,6 @@ void debugger::addButton(int winIndex, int X, int Y, int width, int height, char
 
     windows[winIndex].numOfButtons++;
 }
-
 
 buttonType debugger::findButton(int X, int Y)
 {
@@ -210,9 +208,12 @@ void debugger::drawAll()
 
 	    for (j = 0; j < windows[i].numOfButtons; j++)
 		{
-			if(windows[i].buttons[j].type!=BUTTON_INFO)
-				fillArea2(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y,windows[i].buttons[j].Width, windows[i].buttons[j].Height,windows[i].buttons[j].color);
-		    osystem->drawText(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y,windows[i].buttons[j].text);
+		    if (windows[i].buttons[j].type != BUTTON_INFO)
+			fillArea2(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y,
+				  windows[i].buttons[j].Width, windows[i].buttons[j].Height,
+				  windows[i].buttons[j].color);
+		    osystem->drawText(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y,
+				      windows[i].buttons[j].text);
 		}
 	}
 }
@@ -225,7 +226,7 @@ void debugger::debugActor(int num)
     int startLineTrack = 0;
     int startLineCom = 0;
     int Y;
-	char string[256];
+    char string[256];
 
    // printf("Debug actor %d\n",num);
 
@@ -237,30 +238,28 @@ void debugger::debugActor(int num)
 
     do
 	{
-		char fallable;
-		char noshado;
-		char backgrd;
-		char carrier;
-		char zonable;
-		char objcol;
-		char brick;
-		char no_col;
-		char clip;
-		char no_aff;
-		char minizy;
-		char pushable;
-		char codejeu;
-		char no_choc;
-		char noclip;
+	    char fallable;
+	    char noshado;
+	    char backgrd;
+	    char carrier;
+	    char zonable;
+	    char objcol;
+	    char brick;
+	    char no_col;
+	    char clip;
+	    char no_aff;
+	    char minizy;
+	    char pushable;
+	    char codejeu;
+	    char no_choc;
+	    char noclip;
 
-		objcol=		engine->actors[num].field_60&0x0001;
-		zonable=	engine->actors[num].field_60&0x0004;
-		no_aff=		engine->actors[num].field_60&0x0200;
-		fallable=	engine->actors[num].field_60&0x0800;
-		noshado=	engine->actors[num].field_60&0x1000;
-		backgrd=	engine->actors[num].field_60&0x2000;
-
-		
+	    objcol = engine->actors[num].field_60 & 0x0001;
+	    zonable = engine->actors[num].field_60 & 0x0004;
+	    no_aff = engine->actors[num].field_60 & 0x0200;
+	    fallable = engine->actors[num].field_60 & 0x0800;
+	    noshado = engine->actors[num].field_60 & 0x1000;
+	    backgrd = engine->actors[num].field_60 & 0x2000;
 
 	    numOfWindows = 0;
 	    addWin(0, 420, 145, 220, 300);	// track win
@@ -274,78 +273,77 @@ void debugger::debugActor(int num)
 	    addWin(2, 0, 447, 640, 32);	// bottom status win
 	    addButton(2, 0, 15, 640, 15, "OK", BUTTON_OK);
 
-		addWin(3, 0, 0, 527, 80); // status win
-		addButton(3, 0, 0, 90, 15, "Name", BUTTON_GEN);
+	    addWin(3, 0, 0, 527, 80);	// status win
+	    addButton(3, 0, 0, 90, 15, "Name", BUTTON_GEN);
 
-		addButton(3, 0, 16, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"X: %d",engine->actors[num].X);
-		addButton(3, 16, 16, 70, 15, string, BUTTON_GEN);
-		addButton(3, 87, 16, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 0, 16, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "X: %d", engine->actors[num].X);
+	    addButton(3, 16, 16, 70, 15, string, BUTTON_GEN);
+	    addButton(3, 87, 16, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 0, 32, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"Y: %d",engine->actors[num].Z); // TODO: inverse Y/Z
-		addButton(3, 16, 32, 70, 15, string, BUTTON_GEN);
-		addButton(3, 87, 32, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 0, 32, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "Y: %d", engine->actors[num].Z);	// TODO: inverse Y/Z
+	    addButton(3, 16, 32, 70, 15, string, BUTTON_GEN);
+	    addButton(3, 87, 32, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 0, 48, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"Z: %d",engine->actors[num].Y);
-		addButton(3, 16, 48, 70, 15, string, BUTTON_GEN); // TODO: inverse Y/Z
-		addButton(3, 87, 48, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 0, 48, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "Z: %d", engine->actors[num].Y);
+	    addButton(3, 16, 48, 70, 15, string, BUTTON_GEN);	// TODO: inverse Y/Z
+	    addButton(3, 87, 48, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 103, 16, 40, 15, "Angl", BUTTON_INFO);
-		addButton(3, 144, 16, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"%d",engine->actors[num].angle);
-		addButton(3, 160, 16, 35, 15, string, BUTTON_GEN);
-		addButton(3, 196, 16, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 103, 16, 40, 15, "Angl", BUTTON_INFO);
+	    addButton(3, 144, 16, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "%d", engine->actors[num].angle);
+	    addButton(3, 160, 16, 35, 15, string, BUTTON_GEN);
+	    addButton(3, 196, 16, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 103, 32, 40, 15, "Vite", BUTTON_INFO);
-		addButton(3, 144, 32, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"?");
-		addButton(3, 160, 32, 35, 15, string, BUTTON_GEN);
-		addButton(3, 196, 32, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 103, 32, 40, 15, "Vite", BUTTON_INFO);
+	    addButton(3, 144, 32, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "?");
+	    addButton(3, 160, 32, 35, 15, string, BUTTON_GEN);
+	    addButton(3, 196, 32, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 103, 48, 40, 15, "Pav", BUTTON_INFO);
-		addButton(3, 144, 48, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"?");
-		addButton(3, 160, 48, 35, 15, string, BUTTON_GEN);
-		addButton(3, 196, 48, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 103, 48, 40, 15, "Pav", BUTTON_INFO);
+	    addButton(3, 144, 48, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "?");
+	    addButton(3, 160, 48, 35, 15, string, BUTTON_GEN);
+	    addButton(3, 196, 48, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 95, 64, 48, 15, "Armure", BUTTON_INFO);
-		addButton(3, 144, 64, 15, 15, "-", BUTTON_GEN);
-		sprintf(string,"?");
-		addButton(3, 160, 64, 35, 15, string, BUTTON_GEN);
-		addButton(3, 196, 64, 15, 15, "+", BUTTON_GEN);
+	    addButton(3, 95, 64, 48, 15, "Armure", BUTTON_INFO);
+	    addButton(3, 144, 64, 15, 15, "-", BUTTON_GEN);
+	    sprintf(string, "?");
+	    addButton(3, 160, 64, 35, 15, string, BUTTON_GEN);
+	    addButton(3, 196, 64, 15, 15, "+", BUTTON_GEN);
 
-		addButton(3, 212,  0, 50, 15, "MONEY", BUTTON_GEN);
-		addButton(3, 212, 16, 50, 15, "LIFE", BUTTON_GEN);
-		addButton(3, 212, 32, 50, 15, "MAGIC", BUTTON_GEN);
-		addButton(3, 212, 48, 50, 15, "KEY", BUTTON_GEN);
-		addButton(3, 212, 64, 50, 15, "CLOVE", BUTTON_GEN);
+	    addButton(3, 212, 0, 50, 15, "MONEY", BUTTON_GEN);
+	    addButton(3, 212, 16, 50, 15, "LIFE", BUTTON_GEN);
+	    addButton(3, 212, 32, 50, 15, "MAGIC", BUTTON_GEN);
+	    addButton(3, 212, 48, 50, 15, "KEY", BUTTON_GEN);
+	    addButton(3, 212, 64, 50, 15, "CLOVE", BUTTON_GEN);
 
-		addButton(3, 263 , 0, 65, 15, "FALLABLE", BUTTON_GEN,fallable);
-		addButton(3, 263, 16, 65, 15, "NOSHADO", BUTTON_GEN,noshado);
-		addButton(3, 263, 32, 65, 15, "BACKGRD", BUTTON_GEN,backgrd);
-		addButton(3, 263, 48, 65, 15, "CARRIER", BUTTON_GEN);
+	    addButton(3, 263, 0, 65, 15, "FALLABLE", BUTTON_GEN, fallable);
+	    addButton(3, 263, 16, 65, 15, "NOSHADO", BUTTON_GEN, noshado);
+	    addButton(3, 263, 32, 65, 15, "BACKGRD", BUTTON_GEN, backgrd);
+	    addButton(3, 263, 48, 65, 15, "CARRIER", BUTTON_GEN);
 
-		addButton(3, 329,  0, 65, 15, "ZONABLE", BUTTON_GEN,zonable);
-		addButton(3, 329, 16, 65, 15, "OBJCOL", BUTTON_GEN,objcol);
-		addButton(3, 329, 32, 65, 15, "BRICK", BUTTON_GEN);
-		addButton(3, 329, 48, 65, 15, "NO_COL", BUTTON_GEN);
-		addButton(3, 329, 64, 65, 15, "CLIP", BUTTON_GEN);
+	    addButton(3, 329, 0, 65, 15, "ZONABLE", BUTTON_GEN, zonable);
+	    addButton(3, 329, 16, 65, 15, "OBJCOL", BUTTON_GEN, objcol);
+	    addButton(3, 329, 32, 65, 15, "BRICK", BUTTON_GEN);
+	    addButton(3, 329, 48, 65, 15, "NO_COL", BUTTON_GEN);
+	    addButton(3, 329, 64, 65, 15, "CLIP", BUTTON_GEN);
 
-		addButton(3, 395,  0, 65, 15, "NO_AFF", BUTTON_GEN,no_aff);
-		addButton(3, 395, 16, 65, 15, "MINIZY", BUTTON_GEN);
-		addButton(3, 395, 32, 65, 15, "PUSHABLE", BUTTON_GEN);
-		addButton(3, 395, 48, 65, 15, "CODE JEU", BUTTON_GEN);
-		addButton(3, 395, 64, 65, 15, "NO_CHOC", BUTTON_GEN);
+	    addButton(3, 395, 0, 65, 15, "NO_AFF", BUTTON_GEN, no_aff);
+	    addButton(3, 395, 16, 65, 15, "MINIZY", BUTTON_GEN);
+	    addButton(3, 395, 32, 65, 15, "PUSHABLE", BUTTON_GEN);
+	    addButton(3, 395, 48, 65, 15, "CODE JEU", BUTTON_GEN);
+	    addButton(3, 395, 64, 65, 15, "NO_CHOC", BUTTON_GEN);
 
-		addButton(3, 461, 16, 65, 15, "NOCLIP", BUTTON_GEN);
-		addButton(3, 461, 32, 65, 15, "ZBUFFER", BUTTON_GEN);
-		addButton(3, 461, 48, 65, 15, "MESSAGES", BUTTON_GEN);
-		addButton(3, 461, 64, 65, 15, "Free", BUTTON_GEN);
+	    addButton(3, 461, 16, 65, 15, "NOCLIP", BUTTON_GEN);
+	    addButton(3, 461, 32, 65, 15, "ZBUFFER", BUTTON_GEN);
+	    addButton(3, 461, 48, 65, 15, "MESSAGES", BUTTON_GEN);
+	    addButton(3, 461, 64, 65, 15, "Free", BUTTON_GEN);
 
-
-		addWin(4, 0, 82, 200, 61); // file win
+	    addWin(4, 0, 82, 200, 61);	// file win
 
 	    drawAll();
 
@@ -563,17 +561,17 @@ scriptData *debugger::getActorTrackScript(int num)
 		   {
 		       short int temp1;
 		       short int temp2;
-			   char temp3;
+		       unsigned char temp3;
 
-				temp3 =*(scriptPtr++);
+		       temp3 = *(unsigned char *) (scriptPtr++);
 
 		       temp1 = *(int *) (scriptPtr);
-			   scriptPtr += 2;
+		       scriptPtr += 2;
 
 		       temp2 = *(int *) (scriptPtr);
-			   scriptPtr+=2;
+		       scriptPtr += 2;
 
-		       sprintf(buffer, "WAIT_NB_SECOND %d %d %d", temp1, temp2,temp3);
+		       sprintf(buffer, "WAIT_NB_SECOND %d", temp3);
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -684,58 +682,58 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 		       sprintf(buffer, "SAMPLE_STOP %d", temp);
 		       addLine(buffer, script);
-			   break;
+		       break;
 		   }
 		case 30:
-			{
-				sprintf(buffer,"PLAY_FLA %s",scriptPtr);
-				scriptPtr+=strlen((char*)scriptPtr)+1;
-				addLine(buffer,script);
-				break;
-			}
+		   {
+		       sprintf(buffer, "PLAY_FLA %s", scriptPtr);
+		       scriptPtr += strlen((char *) scriptPtr) + 1;
+		       addLine(buffer, script);
+		       break;
+		   }
 		case 31:
-			{
-				short int temp;
+		   {
+		       short int temp;
 
-				temp= *(short int*)scriptPtr;
-				scriptPtr+=2;
-				sprintf(buffer,"REPEAT_SAMPLE %d",temp);
-				addLine(buffer,script);
-				break;
-			}
+		       temp = *(short int *) scriptPtr;
+		       scriptPtr += 2;
+		       sprintf(buffer, "REPEAT_SAMPLE %d", temp);
+		       addLine(buffer, script);
+		       break;
+		   }
 		case 32:
-			{
-				short int temp;
+		   {
+		       short int temp;
 
-				temp=*(short int*)scriptPtr;
-				scriptPtr+=2;
-				sprintf(buffer,"SIMPLE_SAMPLE %d",temp);
-				addLine(buffer,script);
-				break;
-			}
+		       temp = *(short int *) scriptPtr;
+		       scriptPtr += 2;
+		       sprintf(buffer, "SIMPLE_SAMPLE %d", temp);
+		       addLine(buffer, script);
+		       break;
+		   }
 		case 33:
 		   {
-			   short int temp;
+		       short int temp;
 
-			   temp = *(short int*) scriptPtr;
-			   scriptPtr+=2;
+		       temp = *(short int *) scriptPtr;
+		       scriptPtr += 2;
 		       sprintf(buffer, "FACE_TWINKEL %d", temp);
 		       addLine(buffer, script);
 		       break;
 		   }
 		case 34:
-			{
-				short int temp1;
-				short int temp2;
+		   {
+		       short int temp1;
+		       short int temp2;
 
-				temp1=*(short int*)scriptPtr;
-				scriptPtr+=2;
-				temp2=*(short int*)scriptPtr;
-				scriptPtr+=2;
-				sprintf(buffer, "ANGLE_RND %d %d",temp1,temp2);
-				addLine(buffer,script);
-				break;
-			}
+		       temp1 = *(short int *) scriptPtr;
+		       scriptPtr += 2;
+		       temp2 = *(short int *) scriptPtr;
+		       scriptPtr += 2;
+		       sprintf(buffer, "ANGLE_RND %d %d", temp1, temp2);
+		       addLine(buffer, script);
+		       break;
+		   }
 		default:
 		   {
 		       sprintf(buffer, "Unknown opcode %d", opcode);
@@ -780,11 +778,11 @@ scriptData *debugger::getActorComScript(int num)
 		       break;
 		   }
 		case 1:
-			{
-				strcat(buffer, "NOP");
-				addLine(buffer,script);
-				break;
-			}
+		   {
+		       strcat(buffer, "NOP");
+		       addLine(buffer, script);
+		       break;
+		   }
 		case 2:
 		   {
 		       short int temp;
@@ -830,7 +828,7 @@ scriptData *debugger::getActorComScript(int num)
 		   }
 		case 10:
 		   {
-		       sprintf(buffer2, "LABEL %d",*(scriptPtr++));
+		       sprintf(buffer2, "LABEL %d", *(scriptPtr++));
 		       strcat(buffer, buffer2);
 		       addLine(buffer, script);
 		       break;
@@ -1046,8 +1044,8 @@ scriptData *debugger::getActorComScript(int num)
 		       if (temp == 2)
 			   {
 			       temp2 = *scriptPtr++;
-			       sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d follow %d", temp3,
-				       temp, temp2);
+			       sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d follow %d", temp3, temp,
+				       temp2);
 			   }
 		       else
 			   {
@@ -1498,7 +1496,7 @@ scriptData *debugger::getActorComScript(int num)
 		   }
 		case 78:
 		   {
-		       sprintf(buffer2, "SAY_MESSAGE_OBJ %d", *(scriptPtr++)); // recheck !
+		       sprintf(buffer2, "SAY_MESSAGE_OBJ %d", *(scriptPtr++));	// recheck !
 		       strcat(buffer, buffer2);
 		       addLine(buffer, script);
 		       break;

@@ -15,7 +15,8 @@
  *                                                                         *
  ***************************************************************************/
 
-class OSystem {
+class OSystem
+{
   public:
     OSystem(int argc, char *argv[]);
 

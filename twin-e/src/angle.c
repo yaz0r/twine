@@ -45,8 +45,7 @@ int LBA_engine::processActorAngle(timeStruct * angleData)
 		}
 	    else if (remainingAngle > 0x200)
 		{
-		    remainingAngle -= 0x800;
-		    remainingAngle += 0x400;
+		    remainingAngle -= 0x400;
 		}
 
 	    remainingAngle *= timePassed;

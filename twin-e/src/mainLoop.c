@@ -29,7 +29,7 @@ int LBA_engine::mainLoop(void)
     do
 	{
 
-mainLoopStart:
+	  mainLoopStart:
 
 	    readKeyboard();
 	    if (mainLoopVar4 > 500)
@@ -61,7 +61,7 @@ mainLoopStart:
 			{
 			   // debut des inputs
 
-			    if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && (twinsen->field_60 & 0x200))// ->visible	// recheck
+			    if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && (twinsen->field_60 & 0x200))	// ->visible  // recheck
 				{
 				    mainLoop2(1);
 				    freezeTime();
@@ -136,34 +136,33 @@ mainLoopStart:
 				    newCameraZ = actors[reinitVar8].Z >> 8;
 				    changeRoomVar6 = actors[reinitVar8].Y >> 9;
 				    mainLoopVar2 = 1;
-				    //needChangeRoom = 119;
-					//needChangeRoom=currentRoom+1;
+				   //needChangeRoom = 119;
+				   //needChangeRoom=currentRoom+1;
 				}
 
-				if(mainLoopVar7 == 'u')
+			    if (mainLoopVar7 == 'u')
 				{
-					needChangeRoom=currentRoom+1;
+				    needChangeRoom = currentRoom + 1;
 				}
-				if(mainLoopVar7 == 'j')
+			    if (mainLoopVar7 == 'j')
 				{
-					needChangeRoom=currentRoom-1;
-				}
-
-				if(mainLoopVar7 == 'h')
-				{
-					actors[0].life=50;
-					playAnim(0,0,255,0);
+				    needChangeRoom = currentRoom - 1;
 				}
 
-				if(mainLoopVar7 == 't')
+			    if (mainLoopVar7 == 'h')
 				{
-					printf("StoryState: %d\n",++chapter);
-				}
-				if(mainLoopVar7 == 'g')
-				{
-					printf("StoryState: %d\n",--chapter);
+				    actors[0].life = 50;
+				    playAnim(ANIM_static, 0, 255, 0);
 				}
 
+			    if (mainLoopVar7 == 't')
+				{
+				    printf("StoryState: %d\n", ++chapter);
+				}
+			    if (mainLoopVar7 == 'g')
+				{
+				    printf("StoryState: %d\n", --chapter);
+				}
 
 /***********************************************/
 			   /*
@@ -171,8 +170,8 @@ mainLoopStart:
 			    */
 /***********************************************/
 
-			   
-			/*      if (printTextVar12 & 2)      // x-- -> bas
+			   /*
+			      if (printTextVar12 & 2)      // x-- -> bas
 			      {
 			      changeRoomVar6++;
 			      mainLoopVar2 = 1;
@@ -194,8 +193,8 @@ mainLoopStart:
 			      {
 			      newCameraX++;
 			      mainLoopVar2 = 1;
-			      }*/
-			    
+			      }
+			    */
 
 /**********************************************/
 			   // angle debug
@@ -277,7 +276,7 @@ mainLoopStart:
 				{
 				    if (i == 0)
 					{
-					    playAnim(10, 4, 0, 0);	// play twinsen death anim
+					    playAnim(ANIM_landDeath, 4, 0, 0);	// play twinsen death anim
 					    actors[i].field_40 = 0;
 					}
 				    else
@@ -313,29 +312,28 @@ mainLoopStart:
 				    runActorScript(i);
 				}
 
-				//if(brutalExit==-1)
-				//	return(-1);
+			   //if(brutalExit==-1)
+			   //      return(-1);
 
-				if(actors[i].field_60 & 0x40)
+			    if (actors[i].field_60 & 0x40)
 				{
-					// implementer
+				   // implementer
 				}
 
-				if(actors[i].life<=0) // if actor dead...
+			    if (actors[i].life <= 0)	// if actor dead...
 				{
-					if(!i)
+				    if (!i)
 					{
 					}
-					else
+				    else
 					{
 					}
 				}
-
 
 			   // implementer la suite...
 
-				if(needChangeRoom != -1)
-					goto mainLoopStart;
+			    if (needChangeRoom != -1)
+				goto mainLoopStart;
 
 			}
 		}
@@ -576,10 +574,10 @@ void LBA_engine::freezeTime(void)
 
 void LBA_engine::unfreezeTime(void)
 {
-	--time1;
+    --time1;
 
-	//if(time1==0)
-	//time = time3;
+   //if(time1==0)
+   //time = time3;
 }
 
 int LBA_engine::mainLoop4(void)	// process le menu "continuer ou abandonner"
@@ -722,16 +720,6 @@ void LBA_engine::setTextWindowSize(int left, int top, int right, int bottom)
     textWindowBottom = bottom;
 }
 
-int LBA_engine::getAnimMaxIndex(char *ptr)
-{
-    return (*(short int *) ptr);
-}
-
-int LBA_engine::getAnimStartIndex(char *ptr)
-{
-    return (*(short int *) (ptr + 4));
-}
-
 void LBA_engine::drawBlackBox(int left, int top, int right, int bottom, unsigned char e)
 {
 
@@ -767,128 +755,6 @@ void LBA_engine::drawBlackBox(int left, int top, int right, int bottom, unsigned
 		}
 	    ptr += offset;
 	}
-
-}
-
-unsigned char *LBA_engine::getHqrdataPtr(hqr_entry * hqrPtr, short int arg_4)
-{
-
-    FILE *fin;
-    int headerSize;
-    int offToData;
-    int dataSize;
-    int compressedSize;
-    short int mode;
-
-    short int var_4;
-    int ltime;
-    int temp2;
-    unsigned char *ptr;
-
-    int i;
-
-    int dataSize2;
-    subHqr *hqrdata;
-    subHqr *hqrdataPtr;
-
-    if (arg_4 < 0)
-	return (0);
-
-    hqrdata = (subHqr *) ((unsigned char *) hqrPtr + sizeof(hqr_entry));
-
-    hqrdataPtr = findSubHqr(arg_4, hqrPtr->unk, hqrdata);
-
-    if (hqrdataPtr)
-	{
-	    hqrdataPtr->lastAccessedTime = time;
-	    drawInventoryVar = 0;
-	    return (hqrdataPtr->offFromPtr + hqrPtr->ptr);
-	}
-   // printf ("Need to load: %s-%d\n", hqrPtr->fileName, arg_4);
-
-    prepareResource(hqrPtr->fileName, arg_4);
-
-    fin = openResource(hqrPtr->fileName);
-
-    if (!fin)
-	return (0);
-
-    readResourceData(fin, (char *) &headerSize, 4);
-
-    if (arg_4 >= headerSize / 4)
-	{
-	    closeResource(fin);
-	    return (0);
-	}
-
-    fseek(fin, arg_4 * 4, SEEK_SET);
-    readResourceData(fin, (char *) &offToData, 4);
-
-    fseek(fin, offToData, SEEK_SET);
-    readResourceData(fin, (char *) &dataSize, 4);
-    readResourceData(fin, (char *) &compressedSize, 4);
-    readResourceData(fin, (char *) &mode, 2);
-
-    dataSize2 = dataSize;
-
-   // ici, test sur la taille de dataSize
-
-    ltime = time;
-
-    while (dataSize2 >= hqrPtr->remainingSize || hqrPtr->unk >= hqrPtr->b)	// pour retirer les elements les plus vieux jusqu'a ce qu'on ai de la place
-	{
-	    var_4 = 0;
-	    temp2 = 0;
-
-	    for (i = 0; i < hqrPtr->unk; i++)
-		{
-		    if (temp2 <= ltime - hqrdata[i].lastAccessedTime)
-			{
-			    temp2 = ltime - hqrdata[var_4].lastAccessedTime;
-			    var_4 = i;
-			}
-		}
-
-	    drawInventory2(hqrPtr, var_4);
-
-	}
-
-    ptr = hqrPtr->ptr + hqrPtr->size1 - hqrPtr->remainingSize;
-
-    if (mode <= 0)		// uncompressed
-	{
-	    readResourceData(fin, (char *) ptr, dataSize);
-	}
-    else
-	{
-	    if (mode == 1)	// compressed
-		{
-		    readResourceData(fin, (char *) (ptr + dataSize - compressedSize + 500),
-				     compressedSize);
-		    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
-		}
-
-	    else
-		{
-		    closeResource(fin);
-		    return (0);
-		}
-	}
-
-    closeResource(fin);
-
-    hqrdataPtr = &hqrdata[hqrPtr->unk];
-
-    hqrdataPtr->index = arg_4;
-    drawInventoryVar = 1;
-    hqrdataPtr->lastAccessedTime = time;
-    hqrdataPtr->offFromPtr = hqrPtr->size1 - hqrPtr->remainingSize;
-    hqrdataPtr->size = dataSize2;
-
-    hqrPtr->unk++;
-    hqrPtr->remainingSize -= dataSize2;
-
-    return (ptr);
 
 }
 
@@ -1016,7 +882,7 @@ void LBA_engine::updateActors(int actorNum)
 				   {
 				       if (mainLoopVar5 & 1)	// jump
 					   {
-					       playAnim(14, 1, 0, actorNum);
+					       playAnim(ANIM_jump, 1, 0, actorNum);
 					   }
 				       break;
 				   }
@@ -1026,28 +892,28 @@ void LBA_engine::updateActors(int actorNum)
 				case 3:	// discret
 				    if (mainLoopVar5 & 1)
 					{
-					    playAnim(16, 0, 255, 0);
+					    playAnim(ANIM_hide, 0, 255, 0);
 					}
 				    break;
 				}
 
 			    if (mainLoopVar5 & 8)
 				{
-				    printf("trow ball ?\n");
+				    printf("trow ball or use sword\n");
 				}
 
 			}
 
 		    if (mainLoopVar5 == 0 || action != 0)
 			{
-			    if (key & 3)
-				changeRoomVar8 = 0;
+			    if (key & 3)	// if continue walking
+				changeRoomVar8 = 0;	// don't break animation
 
 			    if (key != twinsenKey || mainLoopVar5 != twinsenKey2)
 				{
 				    if (changeRoomVar8 != 0)
 					{
-					    playAnim(0, 0, 255, actorNum);
+					    playAnim(ANIM_static, 0, 255, actorNum);
 					}
 				}
 
@@ -1057,14 +923,14 @@ void LBA_engine::updateActors(int actorNum)
 				{
 				    if (currentActorInZoneProcess == 0)
 					{
-					    playAnim(1, 0, 255, actorNum);
+					    playAnim(ANIM_walk, 0, 255, actorNum);
 					}
 				    changeRoomVar8 = 1;
 				}
 
 			    if (key & 2)	// walk backward
 				{
-				    playAnim(2, 0, 255, actorNum);
+				    playAnim(ANIM_walkBackward, 0, 255, actorNum);
 				    changeRoomVar8 = 1;
 				}
 
@@ -1073,7 +939,7 @@ void LBA_engine::updateActors(int actorNum)
 				    changeRoomVar8 = 1;
 				    if (lactor->anim == 0)
 					{
-					    playAnim(3, 0, 255, actorNum);
+					    playAnim(ANIM_turnLeft, 0, 255, actorNum);
 					}
 				    else
 					{
@@ -1090,7 +956,7 @@ void LBA_engine::updateActors(int actorNum)
 				    changeRoomVar8 = 1;
 				    if (lactor->anim == 0)
 					{
-					    playAnim(4, 0, 255, actorNum);
+					    playAnim(ANIM_turnRight, 0, 255, actorNum);
 					}
 				    else
 					{
@@ -1221,88 +1087,86 @@ void LBA_engine::processActor(int actorNum)
 					}
 				}
 
-				    processActorSub1(dx, 0, lactor->field_78);
+			    processActorSub1(dx, 0, lactor->field_78);
 
-				    processActorZ = lactor->Z - destZ;
+			    processActorZ = lactor->Z - destZ;
 
-				    processActorSub1(0, destX, lactor->angle);
+			    processActorSub1(0, destX, lactor->angle);
 
-				    processActorX = lactor->X + destX;
-				    processActorY = lactor->Y + destZ;
+			    processActorX = lactor->X + destX;
+			    processActorY = lactor->Y + destZ;
 
-				    setActorAngle(0, lactor->field_34, 50, &lactor->time);
+			    setActorAngle(0, lactor->field_34, 50, &lactor->time);
 
-				    if (lactor->field_62 & 0x40)
+			    if (lactor->field_62 & 0x40)
+				{
+				    if (lactor->field_72)
 					{
-					    if (lactor->field_72)
+					    var_10 = lactor->field_72;
+					    if (var_10 <=
+						getDistanceToward(processActorX, processActorY,
+								  lactor->lastX, lactor->lastY))
 						{
-						    var_10 = lactor->field_72;
-						    if (var_10 <= getDistanceToward(processActorX,processActorY,lactor->lastX,lactor->lastY))
-							{
-								if (lactor->angle == 0)
-								{
-								    processActorY =
-									lactor->lastY +
-									lactor->field_72;
-								}
-							    else if (lactor->angle == 0x100)
-								{
-								    processActorX =
-									lactor->lastX +
-									lactor->field_72;
-								}
-							    else if (lactor->angle == 0x200)
-								{
-								    processActorY =
-									lactor->lastY -
-									lactor->field_72;
-								}
-							    else if (lactor->angle == 0x300)
-								{
-								    processActorX =
-									lactor->lastX -
-									lactor->field_72;
-								}
-
-							    lactor->field_62 &= 0xFFBF;
-							    lactor->field_34 = 0;
-							}
-						}
-					    else
-						{
-						    int tempVar = 0;
-
 						    if (lactor->angle == 0)
 							{
-							    if (processActorY <= lactor->lastY)
-								tempVar = 1;
+							    processActorY =
+								lactor->lastY + lactor->field_72;
 							}
 						    else if (lactor->angle == 0x100)
 							{
-							    if (processActorX <= lactor->lastX)
-								tempVar = 1;
+							    processActorX =
+								lactor->lastX + lactor->field_72;
 							}
 						    else if (lactor->angle == 0x200)
 							{
-							    if (processActorY >= lactor->lastY)
-								tempVar = 1;
+							    processActorY =
+								lactor->lastY - lactor->field_72;
 							}
 						    else if (lactor->angle == 0x300)
 							{
-							    if (processActorX >= lactor->lastX)
-								tempVar = 1;
+							    processActorX =
+								lactor->lastX - lactor->field_72;
 							}
 
-						    if (tempVar)
-							{
-							    processActorX = lactor->lastX;
-							    processActorZ = lactor->lastZ;
-							    processActorY = lactor->lastY;
-
-							    lactor->field_62 &= 0xFFBF;
-							    lactor->field_34 = 0;
-							}
+						    lactor->field_62 &= 0xFFBF;
+						    lactor->field_34 = 0;
 						}
+					}
+				    else
+					{
+					    int tempVar = 0;
+
+					    if (lactor->angle == 0)
+						{
+						    if (processActorY <= lactor->lastY)
+							tempVar = 1;
+						}
+					    else if (lactor->angle == 0x100)
+						{
+						    if (processActorX <= lactor->lastX)
+							tempVar = 1;
+						}
+					    else if (lactor->angle == 0x200)
+						{
+						    if (processActorY >= lactor->lastY)
+							tempVar = 1;
+						}
+					    else if (lactor->angle == 0x300)
+						{
+						    if (processActorX >= lactor->lastX)
+							tempVar = 1;
+						}
+
+					    if (tempVar)
+						{
+						    processActorX = lactor->lastX;
+						    processActorZ = lactor->lastZ;
+						    processActorY = lactor->lastY;
+
+						    lactor->field_62 &= 0xFFBF;
+						    lactor->field_34 = 0;
+						}
+					}
 				}
 			}
 
@@ -1314,8 +1178,8 @@ void LBA_engine::processActor(int actorNum)
 
 			    if (lactor->field_60 & 0x8000)
 				{
-				    processActorX = processActorX /128 *128 +128;
-				    processActorY = processActorY /128 *128 +128;
+				    processActorX = processActorX / 128 * 128 + 128;
+				    processActorY = processActorY / 128 * 128 + 128;
 				}
 
 			    lactor->lastX = 0;
@@ -1331,7 +1195,7 @@ void LBA_engine::processActor(int actorNum)
 	    if (lactor->currentAnim != -1)
 		{
 		    animPtr = (char *) getHqrdataPtr(HQRanims, lactor->currentAnim);
-		    //animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
+		   //animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
 
 		   // get the current frame anim data (for step length ?)
 		    animData = applyAnim(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get the current frame anim data (for step length ?)
@@ -1389,7 +1253,8 @@ void LBA_engine::processActor(int actorNum)
 
 					    if (lactor->currentAnim == -1)
 						{
-						    lactor->currentAnim = getAnimIndexForBody(0, var_C);
+						    lactor->currentAnim =
+							getAnimIndexForBody(0, var_C);
 						    lactor->anim = 0;
 						}
 
@@ -1438,7 +1303,7 @@ void LBA_engine::processActor(int actorNum)
 	    processActorY = processActorVar4;
 	}
 
-    if (lactor->field_60 & 0x2) // if wall collision is enabled
+    if (lactor->field_60 & 0x2)	// if wall collision is enabled
 	{
 	    int position;
 
@@ -1447,22 +1312,22 @@ void LBA_engine::processActor(int actorNum)
 
 	    if (position)
 		{
-		    if (position == 1) // if this occure, that means the actor is already in the wall... Not good!
+		    if (position == 1)	// if this occure, that means the actor is already in the wall... Not good!
 			{
-				printf("Warping !!!\n");
-			    lactor->Z = processActorZ = processActorZ / 256 * 256 + 256; // warp upper...
+			    printf("Warping !!!\n");
+			    lactor->Z = processActorZ = processActorZ / 256 * 256 + 256;	// warp upper...
 			}
 		    else
 			{
-      			    processActorSub5(position);
+			    processActorSub5(position);
 			}
 		}
 
-	    if (lactor->field_60 & 1) // if we check collision with other objects
-		processActorSub6(actorNum); //check collision and see if actor fall on an object
+	    if (lactor->field_60 & 1)	// if we check collision with other objects
+		processActorSub6(actorNum);	//check collision and see if actor fall on an object
 
 	    if ((lactor->standOn != -1) && (lactor->field_62 & 0x100))	// if actor felt on another an object
-		processActorSub7(); // stop falling
+		processActorSub7();	// stop falling
 
 	    fieldCauseDamage = 0;
 
@@ -1472,22 +1337,22 @@ void LBA_engine::processActor(int actorNum)
 
 	    if (!actorNum && !(lactor->field_60 & 0x20))	// check for wall collision
 		{
-		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_2E, 1); // twinsen wall collision code
+		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_2E, 1);	// twinsen wall collision code
 		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_2E, 2);
 		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
 		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_30, 8);
 		}
 	    else
 		{
-		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_2E, 1); // other objects wall collision code
+		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_2E, 1);	// other objects wall collision code
 		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_2E, 2);
 		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
 		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_30, 8);
 		}
 
 	    if (fieldCauseDamage && !(lactor->field_62 & 0x100) && !currentlyProcessedActorNum && (comportementHero == 1) && (lactor->anim == 1))	// wall hit while running
-		{		 
-			processActorSub1(lactor->field_26, lactor->field_2E, lactor->angle + 0x580);
+		{
+		    processActorSub1(lactor->field_26, lactor->field_2E, lactor->angle + 0x580);
 
 		    destX += processActorX;
 		    destZ += processActorY;
@@ -1497,7 +1362,7 @@ void LBA_engine::processActor(int actorNum)
 			    if (getCurPos(destX, processActorZ + 0x100, destY))
 				{
 				    processActorSub10(lactor->X, lactor->Z + 1000, lactor->Y, 0);
-				    playAnim(6, 2, 0, currentlyProcessedActorNum);
+				    playAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
 
 				    if (currentlyProcessedActorNum == 0)
 					{
@@ -1517,7 +1382,7 @@ void LBA_engine::processActor(int actorNum)
 		{
 		    if (position == 1)	// if next step is in wall...
 			{
-			    if (lactor->field_62 & 0x100) // if was falling
+			    if (lactor->field_62 & 0x100)	// if was falling
 				{
 				    processActorSub7();
 				    processActorZ = (getPosVar2 << 8) + 0x100;
@@ -1526,8 +1391,9 @@ void LBA_engine::processActor(int actorNum)
 				{
 				    if (!actorNum && comportementHero == 1 && lactor->anim == var_4)
 					{
-					    processActorSub10(lactor->X, lactor->Z + 0x1000, lactor->Y, 0);
-					    playAnim(6, 2, 0, currentlyProcessedActorNum);
+					    processActorSub10(lactor->X, lactor->Z + 0x1000,
+							      lactor->Y, 0);
+					    playAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
 
 					    if (!actorNum)
 						{
@@ -1539,23 +1405,26 @@ void LBA_engine::processActor(int actorNum)
 
 				    if (!getCurPos(processActorX, processActorZ, processActorVar4))
 					{
-					    if (getCurPos(processActorVar2, processActorZ, processActorY))
+					    if (getCurPos
+						(processActorVar2, processActorZ, processActorY))
 						{
 						    return;
 						}
 
-					    processActorX = processActorVar2; //no X change
+					    processActorX = processActorVar2;	//no X change
 					}
 				    else
 					{
-					    processActorY = processActorVar4; //no Y change
+					    processActorY = processActorVar4;	//no Y change
 					}
 
-	/*				processActorX=processActorVar2;
-					processActorY=processActorVar4;*/
+				   /*
+				      processActorX=processActorVar2;
+				      processActorY=processActorVar4;
+				    */
 				}
 			}
-		    else // not standing on flat floor
+		    else	// not standing on flat floor
 			{
 			    if (lactor->field_62 & 0x100)
 				processActorSub7();
@@ -1591,7 +1460,7 @@ void LBA_engine::processActor(int actorNum)
 						    changeRoomVar2 = processActorZ;
 						}
 
-					    playAnim(7, 0, 255, actorNum);
+					    playAnim(ANIM_fall, 0, 255, actorNum);
 
 					}
 				}
@@ -1633,7 +1502,7 @@ void LBA_engine::processActor(int actorNum)
 
 }
 
-void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3) // twinsen wall colision
+void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3)	// twinsen wall colision
 {
     int pos;
 
@@ -1643,14 +1512,15 @@ void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3) // twi
     processActorZ = var1;
     processActorY = var2;
 
-    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00 && processActorY <= 0x7E00)
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
+	&& processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
 	    pos = getCurPos(processActorX, processActorZ, processActorY);
 
 	    if (pos != 0 && pos == 1)
 		{
-			fieldCauseDamage |= var3;
+		    fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
 		    if (pos == 1)
 			{
@@ -1683,12 +1553,13 @@ void LBA_engine::processActorSub9(int var0, int var1, int var2, int var3)
     processActorZ = var1;
     processActorY = var2;
 
-    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00 && processActorY <= 0x7E00)
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
+	&& processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
 	    pos = getCurPos(processActorX, processActorZ, processActorY);
 
-	    if (pos != 0 && pos == 1) // next position is a wall
+	    if (pos != 0 && pos == 1)	// next position is a wall
 		{
 		    fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
@@ -1719,91 +1590,99 @@ void LBA_engine::processActorSub10(int var0, int var1, int var2, int var3)
 
 void LBA_engine::processActorSub5(int param)
 {
-	int localGetPosVar1;
-	int localGetPosVar2;
-	int localGetPosVar3;
+    int localGetPosVar1;
+    int localGetPosVar2;
+    int localGetPosVar3;
 
-	if(!param)
-		return;
+    if (!param)
+	return;
 
-	localGetPosVar1=(getPosVar1<<9)-0x100;
-	localGetPosVar2=(getPosVar2<<8);
-	localGetPosVar3=(getPosVar3<<9)-0x100;
+    localGetPosVar1 = (getPosVar1 << 9) - 0x100;
+    localGetPosVar2 = (getPosVar2 << 8);
+    localGetPosVar3 = (getPosVar3 << 9) - 0x100;
 
-	//****************** special collisions ******************//
-	if(param>=6 && param<=13)
+   //****************** special collisions ******************//
+    if (param >= 6 && param <= 13)
 	{
-		switch(param)
+	    switch (param)
 		{
 		case 10:
-			{
-				if((processActorX-getPosVar1)<(processActorY-getPosVar3))
-				{
-					param=2;
-				}
-				else
-				{
-					param=3;
-				}
-				break;
-			}
+		   {
+		       if ((processActorX - getPosVar1) < (processActorY - getPosVar3))
+			   {
+			       param = 2;
+			   }
+		       else
+			   {
+			       param = 3;
+			   }
+		       break;
+		   }
 		case 11:
-			{
-				if((processActorY-getPosVar3)>(processActorX-getPosVar1))
-				{
-					param=4;
-				}
-				else
-				{
-					param=5;
-				}
-				break;
-			}
+		   {
+		       if ((processActorY - getPosVar3) > (processActorX - getPosVar1))
+			   {
+			       param = 4;
+			   }
+		       else
+			   {
+			       param = 5;
+			   }
+		       break;
+		   }
 		case 12:
-			{
-				if((0x200-processActorX-getPosVar1)>(processActorY-getPosVar3))
-				{
-					param=2;
-				}
-				else
-				{
-					param=3;
-				}
-				break;
-			}
+		   {
+		       if ((0x200 - processActorX - getPosVar1) > (processActorY - getPosVar3))
+			   {
+			       param = 2;
+			   }
+		       else
+			   {
+			       param = 3;
+			   }
+		       break;
+		   }
 		default:
-			{
-				printf("collision %d\n",param);
-			//	exit(1);
-			}
+		   {
+		       printf("collision %d\n", param);
+		      //      exit(1);
+		   }
 		}
 	}
 
-	if(param>=2 && param<=5)
+    if (param >= 2 && param <= 5)
 	{
-	switch(param)
-	{
-		//****************** slope collisions *****************//
+	    switch (param)
+		{
+		   //****************** slope collisions *****************//
 		case 2:
-			{
-				processActorZ=localGetPosVar2+addRoomData2Entry(0,0x100,0x200,processActorX-localGetPosVar1);
-				break;
-			}
+		   {
+		       processActorZ =
+			   localGetPosVar2 + addRoomData2Entry(0, 0x100, 0x200,
+							       processActorX - localGetPosVar1);
+		       break;
+		   }
 		case 3:
-			{
-				processActorZ=localGetPosVar2+addRoomData2Entry(0,0x100,0x200,processActorY-localGetPosVar3);
-				break;
-			}
+		   {
+		       processActorZ =
+			   localGetPosVar2 + addRoomData2Entry(0, 0x100, 0x200,
+							       processActorY - localGetPosVar3);
+		       break;
+		   }
 		case 4:
-			{
-				processActorZ=localGetPosVar2+addRoomData2Entry(0x100,0,0x200,processActorY-localGetPosVar3);
-				break;
-			}
+		   {
+		       processActorZ =
+			   localGetPosVar2 + addRoomData2Entry(0x100, 0, 0x200,
+							       processActorY - localGetPosVar3);
+		       break;
+		   }
 		case 5:
-			{
-				processActorZ=localGetPosVar2+addRoomData2Entry(0x100,0,0x200,processActorX-localGetPosVar1);
-				return;
-			}
+		   {
+		       processActorZ =
+			   localGetPosVar2 + addRoomData2Entry(0x100, 0, 0x200,
+							       processActorX - localGetPosVar1);
+		       return;
+		   }
 		}
 	}
 
@@ -1811,19 +1690,26 @@ void LBA_engine::processActorSub5(int param)
 
 // fait la moyenne pour la hauteur.
 // min max ? var
-int LBA_engine::addRoomData2Entry(int var0,int var1,int var2,int var3)
+int LBA_engine::addRoomData2Entry(int var0, int var1, int var2, int var3)
 {
-	if(var3<=0)
-		return(var0);
+    if (var3 <= 0)
+	return (var0);
 
-	if(var3>=var2)
-		return(var1);
+    if (var3 >= var2)
+	return (var1);
 
-	return((((var1-var0)*var3)/var2)+var0);
+    return ((((var1 - var0) * var3) / var2) + var0);
 }
 
-void LBA_engine::processActorSub6(int param)
+void LBA_engine::processActorSub6(int actorNum)
 {
+    int X1;
+    int X2;
+    int Z1;
+    int Z2;
+    int Y1;
+    int Y2;
+
 }
 
 void LBA_engine::processActorSub7(void)	// stop falling
@@ -1839,29 +1725,29 @@ void LBA_engine::processActorSub7(void)	// stop falling
 		    processActorSub10(processActorVar1->X, processActorVar1->Z + 1000,
 				      processActorVar1->Y, 0);
 		    processActorVar1->life = 0;
-		    playAnim(9, 2, 0, currentlyProcessedActorNum);
+		    playAnim(ANIM_landHit, 2, 0, currentlyProcessedActorNum);
 		}
 	    else if (fall >= 0x800)
 		{
 		    processActorSub10(processActorVar1->X, processActorVar1->Z + 1000,
 				      processActorVar1->Y, 0);
 		    processActorVar1->life--;
-		    playAnim(9, 2, 0, currentlyProcessedActorNum);
+		    playAnim(ANIM_landHit, 2, 0, currentlyProcessedActorNum);
 		}
 	    else if (fall > 10)
 		{
-		    playAnim(8, 2, 0, currentlyProcessedActorNum);
+		    playAnim(ANIM_land, 2, 0, currentlyProcessedActorNum);
 		}
 	    else
 		{
-		    playAnim(0, 0, 0, currentlyProcessedActorNum);
+		    playAnim(ANIM_static, 0, 0, currentlyProcessedActorNum);
 		}
 
 	    changeRoomVar2 = 0;
 	}
     else
 	{
-	    playAnim(8, 2, processActorVar1->field_2, currentlyProcessedActorNum);
+	    playAnim(ANIM_land, 2, processActorVar1->field_2, currentlyProcessedActorNum);
 	}
 
     processActorVar1->field_62 &= 0xFEFF;
@@ -2148,11 +2034,15 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 					       mainLoopVar10 = 1;
 					       if (newCameraX != *(short int *) (localPtr + 0x10)
 						   || newCameraZ != *(short int *) (localPtr + 0x12)
-						   || newCameraY != *(short int *) (localPtr + 0x14))
+						   || newCameraY !=
+						   *(short int *) (localPtr + 0x14))
 						   {
-						       newCameraX = *(short int *) (localPtr + 0x10);
-						       newCameraZ = *(short int *) (localPtr + 0x12);
-						       newCameraY = *(short int *) (localPtr + 0x14);
+						       newCameraX =
+							   *(short int *) (localPtr + 0x10);
+						       newCameraZ =
+							   *(short int *) (localPtr + 0x12);
+						       newCameraY =
+							   *(short int *) (localPtr + 0x14);
 						       mainLoopVar2 = 1;
 						   }
 					   }
@@ -2163,66 +2053,73 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 				       lactor->zone = *(short int *) (localPtr + 14);
 				       break;
 				   }
-				case 3: // cube clip
-					{
-						if(reinitVar8==actorNumber)
-						{
-						//	var_C=1;
+				case 3:	// cube clip
+				   {
+				       if (reinitVar8 == actorNumber)
+					   {
+					      //      var_C=1;
 
-						}
-					}
-				case 4: // find object
-					{
-						if(!actorNumber)
-						{
-							if(action!=0)
-							{
-								playAnim(11,1,0,0);
-							}
-						}
-						break;
-					}
-				case 5: // display text
-					{
-						if(!actorNumber && action)
-						{
-							freezeTime();
-							mainLoop2(1);
-							setNewTextColor(*(short int*)(localPtr+0x10));
-							//talkingActor=actorNumber;
-							printTextFullScreen(*(short int*)(localPtr+0xE));
-							unfreezeTime();
-							fullRedraw(1);
-							//waitForKey();
-						}
-						break;
-					}
-				case 6: // climb ladder
-					{
-						if(!actorNumber && comportementHero!=4 && lactor->anim!=1 && lactor->anim!=13 && lactor->anim!=12)
-						{
-							processActorSub1(lactor->field_26,lactor->field_2E,lactor->angle+0x580);
-							destX+=processActorX;
-							destZ+=processActorY;
+					   }
+				   }
+				case 4:	// find object
+				   {
+				       if (!actorNumber)
+					   {
+					       if (action != 0)
+						   {
+						       playAnim(ANIM_activate, 1, 0, 0);
+						   }
+					   }
+				       break;
+				   }
+				case 5:	// display text
+				   {
+				       if (!actorNumber && action)
+					   {
+					       freezeTime();
+					       mainLoop2(1);
+					       setNewTextColor(*(short int *) (localPtr + 0x10));
+					      //talkingActor=actorNumber;
+					       printTextFullScreen(*(short int *) (localPtr + 0xE));
+					       unfreezeTime();
+					       fullRedraw(1);
+					      //waitForKey();
+					   }
+				       break;
+				   }
+				case 6:	// climb ladder
+				   {
+				       if (!actorNumber && comportementHero != 4
+					   && lactor->anim != 1 && lactor->anim != 13
+					   && lactor->anim != 12)
+					   {
+					       processActorSub1(lactor->field_26, lactor->field_2E,
+								lactor->angle + 0x580);
+					       destX += processActorX;
+					       destZ += processActorY;
 
-							if(destX>=0 && destZ>=0 && destX<=0x7E00 && destZ<=0x7E00)
-							{
-								if(getCurPos(destX,lactor->Z+1,destZ))
-								{
-									currentActorInZoneProcess=1;
-									if(lactor->Z>=abs(*(short int*)(localPtr+2)+*(short int*)(localPtr+8))/2)
-									{
-										playAnim(13,2,0,actorNumber); //go down ladder
-									}
-									else
-									{
-										playAnim(12,0,255,actorNumber); //go up ladder
-									}
-								}
-							}
-						}
-						break;
-					}
+					       if (destX >= 0 && destZ >= 0 && destX <= 0x7E00
+						   && destZ <= 0x7E00)
+						   {
+						       if (getCurPos(destX, lactor->Z + 1, destZ))
+							   {
+							       currentActorInZoneProcess = 1;
+							       if (lactor->Z >=
+								   abs(*(short int *) (localPtr + 2)
+								       + *(short int *) (localPtr +
+											 8)) / 2)
+								   {
+								       playAnim(ANIM_climbDownLadder, 2, 0, actorNumber);	//go down ladder
+								   }
+							       else
+								   {
+								       playAnim(ANIM_climbUpLadder, 0, 255, actorNumber);	//go up ladder
+								   }
+							   }
+						   }
+					   }
+				       break;
+				   }
 				default:
 				   {
 				       printf("Unsupported checkZones opcode %d for actor %d!\n",

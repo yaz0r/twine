@@ -56,15 +56,15 @@ void LBA_engine::moveActor(int actorNumber)
 
 		    newAngle = calcAngleToward(lactor->X, lactor->Y, destX, destY);
 
-		  //  if (lactor->field_60 & 0x400)
+		    if (lactor->field_60 & 0x400)
 			{
 			    lactor->angle = newAngle;
 			}
-		  /*  else
+		    else
 			{
 			    updateActorAngle(lactor->angle, newAngle, lactor->field_34,
 					     &lactor->time);
-			}*/
+			}
 
 		    if (moveActorVar1 > 500)
 			{
@@ -149,19 +149,17 @@ void LBA_engine::moveActor(int actorNumber)
 		    destZ = flagData[manipActorResult].z;
 		    destY = flagData[manipActorResult].y;
 
-		    newAngle = calcAngleToward(lactor->X, lactor->Y, destX, destY);
+		    newAngle = 0x200 + calcAngleToward(lactor->X, lactor->Y, destX, destY);
 
-		    newAngle += 0x200;	// backward angle
-
-		    //if (lactor->field_60 & 0x400)
+		    if (lactor->field_60 & 0x400)
 			{
 			    lactor->angle = newAngle;
 			}
-		    /*else
+		    else
 			{
 			    updateActorAngle(lactor->angle, newAngle, lactor->field_34,
 					     &lactor->time);
-			}*/
+			}
 
 		    if (moveActorVar1 > 500)
 			{
@@ -202,7 +200,7 @@ void LBA_engine::moveActor(int actorNumber)
 		    break;
 		case 15:
 		    lactor->positionInMoveScript++;
-		    if (lactor->field_60 & 0x400) // if can move
+		    if (lactor->field_60 & 0x400)	// if can move
 			{
 			    manipActorResult = *scriptPtr;
 
@@ -210,8 +208,8 @@ void LBA_engine::moveActor(int actorNumber)
 			    destZ = flagData[manipActorResult].z;
 			    destY = flagData[manipActorResult].y;
 
-			    lactor->angle = calcAngleToward(lactor->X, lactor->Y, destX, destY); // X-Y move
-			    lactor->field_78 = calcAngleToward(lactor->Z, 0, destZ, moveActorVar1); // Z (vertical) move
+			    lactor->angle = calcAngleToward(lactor->X, lactor->Y, destX, destY);	// X-Y move
+			    lactor->field_78 = calcAngleToward(lactor->Z, 0, destZ, moveActorVar1);	// Z (vertical) move
 
 			    if (moveActorVar1 > 100)
 				{
@@ -259,31 +257,12 @@ void LBA_engine::moveActor(int actorNumber)
 				}
 			}
 		    break;
-		case 19:
-		    loadActorCostume(-1, actorNumber);
-		    break;
-		case 20:
-			{
-				short int beta;
-
-				beta=*(short int*)scriptPtr;
-				scriptPtr+=2;
-
-				lactor->angle=beta;
-
-				if(lactor->field_60&0x400)
-				{
-					changeActorAngle(lactor);
-				}
-
-				break;
-			}
 		case 18:	// wait
 		    lactor->positionInMoveScript += 5;
 
 		    if (*(int *) (scriptPtr + 1) == 0)
 			{
-			    *(int *) (scriptPtr + 1) = time + *scriptPtr * 0x50;
+			    *(int *) (scriptPtr + 1) = time + *(unsigned char *) scriptPtr *0x50;
 			}
 
 		    if (time < *(int *) (scriptPtr + 1))
@@ -296,6 +275,25 @@ void LBA_engine::moveActor(int actorNumber)
 			    *(int *) (scriptPtr + 1) = 0;
 			}
 		    break;
+		case 19:
+		    loadActorCostume(-1, actorNumber);
+		    break;
+		case 20:
+		   {
+		       short int beta;
+
+		       beta = *(short int *) scriptPtr;
+		       scriptPtr += 2;
+
+		       lactor->angle = beta;
+
+		       if (lactor->field_60 & 0x400)
+			   {
+			       changeActorAngle(lactor);
+			   }
+
+		       break;
+		   }
 
 		case 21:
 		case 22:
@@ -306,7 +304,7 @@ void LBA_engine::moveActor(int actorNumber)
 		    lactor->positionInMoveScript += 2;
 		    temp = lactor->field_60;
 		    temp &= 0x408;
-		    if (temp==0x408)
+		    if (temp == 0x408)
 			{
 			    switch (currentOpcode - 21)
 				{
@@ -314,14 +312,14 @@ void LBA_engine::moveActor(int actorNumber)
 				    lactor->angle = 0x300;
 				    break;
 				case 1:
-					lactor->angle = 0x100;
-					break;
+				    lactor->angle = 0x100;
+				    break;
 				case 2:
-					lactor->angle = 0x200;
-					break;
+				    lactor->angle = 0x200;
+				    break;
 				case 3:
-					lactor->angle = 0;
-					break;
+				    lactor->angle = 0;
+				    break;
 				default:
 				    printf("Unsupported subopcode of actor move opcode 21-24!\n");
 				    exit(1);
@@ -364,7 +362,8 @@ void LBA_engine::moveActor(int actorNumber)
 		   }
 
 		case 28:
-		    fullRedrawS3(*(short int *) scriptPtr, 0x1000, 0, lactor->X, lactor->Z,lactor->Y);
+		    fullRedrawS3(*(short int *) scriptPtr, 0x1000, 0, lactor->X, lactor->Z,
+				 lactor->Y);
 		    lactor->positionInMoveScript += 2;
 		    break;
 		case 29:
@@ -372,43 +371,46 @@ void LBA_engine::moveActor(int actorNumber)
 		    lactor->positionInMoveScript += 2;
 		    break;
 		case 31:
-			{
-				moveVar1=*(short int*)scriptPtr;
-		    lactor->positionInMoveScript += 2;
-		    break;
-			}
+		   {
+		       moveVar1 = *(short int *) scriptPtr;
+		       lactor->positionInMoveScript += 2;
+		       break;
+		   }
 		case 32:
-			{
-			    printf("skipping actor move opcode 31 (playSound at moveVar1)\n");
-			    lactor->positionInMoveScript += 2;
-			    break;
-			}
-		case 33: // look at twinsen
-			{
-				lactor->positionInMoveScript += 2;
-				if(!(lactor->field_60&0x400))
-				{
-					manipActorResult=*(short int*)scriptPtr;
-					if(manipActorResult==-1 && lactor->time.numOfStep==0)
-					{
-						manipActorResult=calcAngleToward(lactor->X,lactor->Y,twinsen->X,twinsen->Y);
-						updateActorAngle(lactor->angle,manipActorResult,lactor->field_34,&lactor->time);
-						*(short int*)scriptPtr=manipActorResult;
-					}
+		   {
+		       printf("skipping actor move opcode 31 (playSound at moveVar1)\n");
+		       lactor->positionInMoveScript += 2;
+		       break;
+		   }
+		case 33:	// look at twinsen
+		   {
+		       lactor->positionInMoveScript += 2;
+		       if (!(lactor->field_60 & 0x400))
+			   {
+			       manipActorResult = *(short int *) scriptPtr;
+			       if (manipActorResult == -1 && lactor->time.numOfStep == 0)
+				   {
+				       manipActorResult =
+					   calcAngleToward(lactor->X, lactor->Y, twinsen->X,
+							   twinsen->Y);
+				       updateActorAngle(lactor->angle, manipActorResult,
+							lactor->field_34, &lactor->time);
+				       *(short int *) scriptPtr = manipActorResult;
+				   }
 
-					if(lactor->angle!=manipActorResult)
-					{
-						continueMove=0;
-						lactor->positionInMoveScript-=3;
-					}
-					else
-					{
-						changeActorAngle(lactor);
-						*(short int*)scriptPtr=-1;
-					}
-				}
-				break;
-			}
+			       if (lactor->angle != manipActorResult)
+				   {
+				       continueMove = 0;
+				       lactor->positionInMoveScript -= 3;
+				   }
+			       else
+				   {
+				       changeActorAngle(lactor);
+				       *(short int *) scriptPtr = -1;
+				   }
+			   }
+		       break;
+		   }
 		default:
 		    printf("Unsupported move opcode %d\n", currentOpcode);
 		    exit(1);
@@ -422,12 +424,27 @@ void LBA_engine::moveActor(int actorNumber)
 void LBA_engine::updateActorAngle(int angleFrom, int angleTo, int angleSpeed,
 				  timeStruct * angleStruct)
 {
-    int numOfStep;
+    short int numOfStep;
+    short int lFrom;
+    short int lTo;
 
-    angleStruct->from = angleFrom & 0x3FF;
-    angleStruct->to = angleTo & 0x3FF;
+    lFrom = angleFrom & 0x3FF;
+    lTo = angleTo & 0x3FF;
 
-    numOfStep = ((abs((angleFrom - angleTo) << 6) >> 6) * angleSpeed) >> 8;
+    angleStruct->from = lFrom;
+    angleStruct->to = lTo;
+
+    numOfStep = (lFrom - lTo) << 6;
+
+    if (numOfStep < 0)
+	{
+	    numOfStep = -numOfStep;
+	}
+
+    numOfStep >>= 6;
+
+    numOfStep *= angleSpeed;
+    numOfStep >>= 8;
 
     angleStruct->numOfStep = numOfStep;
     angleStruct->timeOfChange = time;

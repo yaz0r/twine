@@ -20,14 +20,14 @@
 void LBA_engine::changeRoom(void)
 {
     int i;
-	int oldRoom;
+    int oldRoom;
 
     if (needChangeRoom == 4 && needChangeRoomVar1[0] != 0)
 	needChangeRoom = 118;
 
     printf("Loading room %d\n", needChangeRoom);
 
-	oldRoom=currentRoom;
+    oldRoom = currentRoom;
 
     currentRoom = needChangeRoom;
     mainMenu2();
@@ -241,7 +241,7 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	    modelNumber = *(temp2++);
 	    localScenePtr = (unsigned char *) temp2;
 
-	    if (!(actors[currentActor].field_60 & 0x400)) // if not sprite actor
+	    if (!(actors[currentActor].field_60 & 0x400))	// if not sprite actor
 		{
 		    loadDataFileToPtr("file3d.hqr", modelNumber, &actors[currentActor].bodyPtr);
 		}
@@ -587,7 +587,7 @@ void LBA_engine::changeTwinsenComp(int newComportement)
     twinsen->anim = -1;
     twinsen->field_78 = 0;
 
-    playAnim(0, 0, 255, 0);
+    playAnim(ANIM_static, 0, 255, 0);
 }
 
 void LBA_engine::memoryBufferProcess(unsigned char *ptr, int size)

@@ -196,7 +196,8 @@ void LBA_engine::processComportementMenu(void)
 
     savedComportement = comportementHero;
 
-    setAnimAtKeyFrame(winTab[comportementHero], getHqrdataPtr(HQRanims, TCOS[comportementHero]),menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[comportementHero], getHqrdataPtr(HQRanims, TCOS[comportementHero]),
+		      menuCostumeIndex);
 
     readKeyboard();
 

@@ -88,6 +88,16 @@ int LBA_engine::setAnimAtKeyFrame(int index, unsigned char *anim, unsigned char 
     return (1);
 }
 
+int LBA_engine::getAnimMaxIndex(char *ptr)
+{
+    return (*(short int *) ptr);
+}
+
+int LBA_engine::getAnimStartIndex(char *ptr)
+{
+    return (*(short int *) (ptr + 4));
+}
+
 int LBA_engine::applyAnim(int animState, char *animData, char *body)
 {
     short int animOpcode;
@@ -546,7 +556,7 @@ int LBA_engine::playAnim(char newAnim, short int arg_4, unsigned char arg_8, sho
 
     if (lactor->currentAnim == -1)	// if no previous animation
 	{
-	    setAnimAtKeyFrame(0, getHqrdataPtr(HQRanims, animIndex),bodyPtrTab[lactor->costumeIndex]);	// set animation directly to first keyFrame
+	    setAnimAtKeyFrame(0, getHqrdataPtr(HQRanims, animIndex), bodyPtrTab[lactor->costumeIndex]);	// set animation directly to first keyFrame
 	}
     else
 	{

@@ -52,9 +52,10 @@ int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like 
 			    bodyPtr3 = bodyPtr2 + 1;
 			    flag = *(short int *) bodyPtr3;
 
-			    if (!(flag & 0x8000))	// if it's not an sprite object
+			    if (!(flag & 0x8000))
 				{
-				    loadDataFileToPtr("body.hqr", flag & 0xFFFF,&bodyPtrTab[reinitAll2Var3]);
+				    loadDataFileToPtr("body.hqr", flag & 0xFFFF,
+						      &bodyPtrTab[reinitAll2Var3]);
 				    if (!bodyPtrTab[reinitAll2Var3])
 					{
 					    printf("Body.HQR in HQ_Mem\n");
@@ -88,12 +89,12 @@ int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like 
 
 			    bodyPtr5 = (short int *) bodyPtr3;
 
-			    loadCostumeVar = *(bodyPtr5++);
-			    loadCostumeVar2 = *(bodyPtr5++);
-			    loadCostumeVar3 = *(bodyPtr5++);
-			    loadCostumeVar4 = *(bodyPtr5++);
-			    loadCostumeVar5 = *(bodyPtr5++);
-			    loadCostumeVar6 = *(bodyPtr5++);
+			    loadCostumeVar = *(bodyPtr5++);	//X1
+			    loadCostumeVar2 = *(bodyPtr5++);	//Z1
+			    loadCostumeVar3 = *(bodyPtr5++);	//Y1
+			    loadCostumeVar4 = *(bodyPtr5++);	//X2
+			    loadCostumeVar5 = *(bodyPtr5++);	//Z2
+			    loadCostumeVar6 = *(bodyPtr5++);	//Y2
 
 			    return (index);
 

@@ -1,37 +1,43 @@
+#include "decomp.h"
+
 class LBA_engine;
 
 int threadTimer(void);
 void startThreadTimer(LBA_engine *);
 
-class LBA_renderer {
-    struct pointTab {
-	short int x;
-	short int y;
-	short int z;
-    };
+class LBA_renderer
+{
+    struct pointTab
+	{
+	    short int x;
+	    short int y;
+	    short int z;
+	};
 
-    struct pointEntry {
-	short int data1;
-	short int data2;
-	short int data3;
-	short int param;
-	short int flag;
-	short int rotateZ;
-	short int rotateY;
-	short int rotateX;
-	int field_10;
-	int field_14;
-	int field_18;
-	int Y;
-	int field_20;
-	short int field_24;
-    };
+    struct pointEntry
+	{
+	    short int data1;
+	    short int data2;
+	    short int data3;
+	    short int param;
+	    short int flag;
+	    short int rotateZ;
+	    short int rotateY;
+	    short int rotateX;
+	    int field_10;
+	    int field_14;
+	    int field_18;
+	    int Y;
+	    int field_20;
+	    short int field_24;
+	};
 
-    struct renderTabEntry {
-	short int depth;
-	short int renderType;
-	unsigned char *dataPtr;
-    };
+    struct renderTabEntry
+	{
+	    short int depth;
+	    short int renderType;
+	    unsigned char *dataPtr;
+	};
 
   public:
     short int *tab1;
@@ -161,134 +167,149 @@ class LBA_renderer {
 
 };
 
-struct zbufferDataStruct {
-    short int y;
-    short int z;
-    short int x;
-    short int drawY;
-    short int spriteNum;
-};
+struct zbufferDataStruct
+    {
+	short int y;
+	short int z;
+	short int x;
+	short int drawY;
+	short int spriteNum;
+    };
 
-struct flagDataStruct {
-    short int x;
-    short int z;
-    short int y;
-};
+struct flagDataStruct
+    {
+	short int x;
+	short int z;
+	short int y;
+    };
 
-struct pointTab {
-    short int x;
-    short int y;
-    short int z;
-};
+struct pointTab
+    {
+	short int x;
+	short int y;
+	short int z;
+    };
 
-struct lineCoordinates {
-    int data;
-    short int x1;
-    short int y1;
-    short int x2;
-    short int y2;
-};
+struct lineCoordinates
+    {
+	int data;
+	short int x1;
+	short int y1;
+	short int x2;
+	short int y2;
+    };
 
-struct lineData {
-    int data;
-    short int p1;
-    short int p2;
-};
+struct lineData
+    {
+	int data;
+	short int p1;
+	short int p2;
+    };
 
-struct renderTabEntry {
-    short int depth;
-    short int renderType;
-    unsigned char *dataPtr;
-};
+struct renderTabEntry
+    {
+	short int depth;
+	short int renderType;
+	unsigned char *dataPtr;
+    };
 
-struct sceneStruct {
-    short int field_0;
-    short int field_2;
-    short int field_4;
-    short int field_6;
-};
+struct sceneStruct
+    {
+	short int field_0;
+	short int field_2;
+	short int field_4;
+	short int field_6;
+    };
 
-struct roomData2Struct {
-    short int field_0;
-    short int field_2;
-    short int field_4;
-    short int field_6;
-    short int field_8;
-    short int field_A;
-    int field_C;
-};
+struct roomData2Struct
+    {
+	short int field_0;
+	short int field_2;
+	short int field_4;
+	short int field_6;
+	short int field_8;
+	short int field_A;
+	int field_C;
+    };
 
-struct reinitAll2DataVar1Struct {
-    short int field_0;
-    short int field_2;
-    short int field_4;
-    short int field_6;
-    short int field_8;
-    short int field_10;
-    short int field_12;
-    byte field_14;
-    byte field_15;
-    short int field_16;
-    int field_18;
-    short int field_1C;
-    short int field_1E;
-    short int field_20;
+struct reinitAll2DataVar1Struct
+    {
+	short int field_0;
+	short int field_2;
+	short int field_4;
+	short int field_6;
+	short int field_8;
+	short int field_10;
+	short int field_12;
+	byte field_14;
+	byte field_15;
+	short int field_16;
+	int field_18;
+	short int field_1C;
+	short int field_1E;
+	short int field_20;
 
-};
+    };
 
-struct refreshBoxListStruct {
-    unsigned short int field_0;
-    unsigned short int field_2;
-    unsigned short int field_4;
-    unsigned short int field_6;
-};
+struct refreshBoxListStruct
+    {
+	unsigned short int field_0;
+	unsigned short int field_2;
+	unsigned short int field_4;
+	unsigned short int field_6;
+    };
 
-struct fullRedrawVar6Struct {
-    unsigned short int field_0;
-    unsigned short int field_2;
-    unsigned short int X;
-    unsigned short int Z;
-    unsigned short int Y;
-    unsigned short int field_A;
-    unsigned short int field_C;
-    unsigned short int field_E;
-    unsigned short int field_10;
-};
+struct fullRedrawVar6Struct
+    {
+	unsigned short int field_0;
+	unsigned short int field_2;
+	unsigned short int X;
+	unsigned short int Z;
+	unsigned short int Y;
+	unsigned short int field_A;
+	unsigned short int field_C;
+	unsigned short int field_E;
+	unsigned short int field_10;
+    };
 
-struct hqr_entry {
-    char fileName[128];
-    int size1;
-    int remainingSize;
-    short int b;
-    short int unk;
-    unsigned char *ptr;
-};
+struct hqr_entry
+    {
+	char fileName[128];
+	int size1;
+	int remainingSize;
+	short int b;
+	short int unk;
+	unsigned char *ptr;
+    };
 
-struct subHqr {
-    short int index;
-    unsigned int offFromPtr;
-    unsigned int size;
-    int lastAccessedTime;
-};
+struct subHqr
+    {
+	short int index;
+	unsigned int offFromPtr;
+	unsigned int size;
+	int lastAccessedTime;
+    };
 
-struct pointEntry {
-    short int data1;
-    short int data2;
-    short int data3;
-    short int param;
-    short int flag;
-    short int rotate1;
-    short int rotate2;
-    short int rotate3;
-    int field_10;
-    int field_14;
-    int field_18;
-    int Y;
-    int field_20;
-    short int field_24;
-};
+struct pointEntry
+    {
+	short int data1;
+	short int data2;
+	short int data3;
+	short int param;
+	short int flag;
+	short int rotate1;
+	short int rotate2;
+	short int rotate3;
+	int field_10;
+	int field_14;
+	int field_18;
+	int Y;
+	int field_20;
+	short int field_24;
+    };
 
-class LBA_engine {
+class LBA_engine
+{
   public:
     OSystem * osystem;
     LBA_renderer renderer;
@@ -852,12 +873,12 @@ class LBA_engine {
 
     int setSomethingVar4;
 
-	int currentActorInZoneProcess;
+    int currentActorInZoneProcess;
 
-	short int twinsenKey;
-	short int twinsenKey2;
+    short int twinsenKey;
+    short int twinsenKey2;
 
-	short int moveVar1;
+    short int moveVar1;
 
    // order important !
 
@@ -895,8 +916,8 @@ class LBA_engine {
 
    // ----------------------------------------------------------------------------------------
 
-	int addRoomData2Entry(int var0,int var1,int var2,int var3);
-	void checkZones(actor* lactor, int actorNumber);
+    int addRoomData2Entry(int var0, int var1, int var2, int var3);
+    void checkZones(actor * lactor, int actorNumber);
     void setSomething4(int a, int b, int c);
 
     void changeActorAngle(actor * ptr);
@@ -991,11 +1012,11 @@ class LBA_engine {
 
     int renderM2(unsigned char *ptr);
 
-    int startRenderer(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10,
-		      int arg_14, unsigned char *arg_18);
+    int startRenderer(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14,
+		      unsigned char *arg_18);
 
-    void draw3D4(short int arg_0, short int arg_4, short int arg_8,
-		 short int arg_C, short int arg_10, short int arg_14, unsigned char *arg_18);
+    void draw3D4(short int arg_0, short int arg_4, short int arg_8, short int arg_C,
+		 short int arg_10, short int arg_14, unsigned char *arg_18);
 
     void loadActorCostumeSub(unsigned char *arg_0, unsigned char *arg_4);
 
@@ -1231,8 +1252,8 @@ class LBA_engine {
 
     void readKeyboard(void);
 
-    void drawBoxTrans(int right, int top, int left, int bottom, char *dest,
-		      int right2, int top2, char *source);
+    void drawBoxTrans(int right, int top, int left, int bottom, char *dest, int right2, int top2,
+		      char *source);
 
     void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode);
 
@@ -1255,7 +1276,6 @@ class LBA_engine {
     int remapComposante(int modifier, int color, int param, int intensity);
     void setPalette(byte * palette);
 
-    void decompress(int decompressedSize, unsigned char *destination, unsigned char *source);
     void dumpFile(char *name, char *ptr, int size);
 
     void initVideoStuff(void);

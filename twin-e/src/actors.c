@@ -84,7 +84,7 @@ void LBA_engine::resetActor(int actorNumber)
     localActor->field_2E = 0;
     localActor->field_30 = 0;
     localActor->angle = 0;
-    localActor->field_34 = 0;
+    localActor->field_34 = 40;
     localActor->field_40 = 0;
     localActor->field_4E = 0;
     localActor->field_50 = 0;
