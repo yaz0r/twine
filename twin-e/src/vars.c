@@ -439,6 +439,9 @@ void LBA_engine::initVars(void)
 
     action = 0;
 
+	useFlaPCX=1;
+	flaVar2=1;
+
    /*
     * setSomething2Var1; setSomething2Var2; setSomething2Var3; setSomething3Var12;
     * setSomething3Var14; setSeomthing3Var16; reinitVar1; reinitVar2; reinitVar12;

@@ -27,10 +27,13 @@ class OSystem
     void crossFade(char *buffer, char *palette);
     void fadeBlackToWhite();
     void initBuffer(char *buffer, int width, int height);
+	void initVideoBuffer(char *buffer, int width, int height);
     void putpixel(int x, int y, int pixel);
     void setColor(byte i, byte R, byte G, byte B);
     void setPalette(byte * palette);
+	void setPalette320x200(byte * palette);
     void drawBufferToScreen(unsigned char *videoBuffer);
+	void draw320x200BufferToScreen(unsigned char *videoBuffer);
     void refresh(unsigned char *videoBuffer, int left, int top, int right, int bottom);
     void drawText(int X, int Y, char *text);
 

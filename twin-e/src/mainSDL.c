@@ -22,6 +22,7 @@
 
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
+SDL_Surface *sdl_buffer320x200;
 SDL_Surface *sdl_screen;	// that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
@@ -158,6 +159,18 @@ void OSystem::setPalette(byte * palette)
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
+void OSystem::setPalette320x200(byte * palette)
+{
+   // int i;
+    SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
+
+    SDL_SetColors(sdl_buffer320x200, sdl_colorsTemp, 0, 256);
+
+    SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
+
+    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+}
+
 void OSystem::fadeBlackToWhite()
 {
     int i;
@@ -180,6 +193,20 @@ void OSystem::drawBufferToScreen(unsigned char *videoBuffer)
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
+void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
+{
+	SDL_Surface *localSurface;
+
+	localSurface=SDL_CreateRGBSurface(SDL_SWSURFACE,320,200,8,0,0,0,0);
+
+	memcpy(localSurface->pixels,videoBuffer,320*200);
+
+	
+    SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
+
+    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+}
+
 void OSystem::refresh(unsigned char *videoBuffer, int left, int top, int right, int bottom)
 {
     SDL_Rect rectangle;
@@ -192,6 +219,11 @@ void OSystem::refresh(unsigned char *videoBuffer, int left, int top, int right, 
     SDL_BlitSurface(sdl_buffer, &rectangle, sdl_screen, &rectangle);
 
     SDL_UpdateRect(sdl_screen, left, top, right - left, bottom - top);
+}
+
+void OSystem::initVideoBuffer(char *buffer, int width, int height)
+{
+	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
 
 void OSystem::initBuffer(char *buffer, int width, int height)

@@ -308,12 +308,48 @@ struct pointEntry
 	short int field_24;
     };
 
+struct FLAheaderStruct
+{
+	char version[6];
+	int numOfFrames;
+	char speed;
+	char var1;
+	short int var2;
+	short int var3;
+};
+
+struct frameDataStruct
+{
+	char videoSize;
+	char dummy;
+	int frameVar0;
+};
+
 class LBA_engine
 {
   public:
     OSystem * osystem;
     LBA_renderer renderer;
     debugger _debugger;
+
+	int useFlaPCX;
+	int flaTime;
+	short int flaVar2;
+	int numOfFrameInFLA;
+	char flaPalette[256*3];
+	char flaPaletteRGBA[256*4];
+	FLAheaderStruct flaHeaderData;
+	byte* videoBuffer2Copy;
+	FILE* dataFileHandle;
+	int flahVar2;
+	int flahVar3;
+	int flaSpeed;
+	int samplesInFla;
+	frameDataStruct frameData;
+	int runFLAscriptVar0;
+	int lastNumOfColor;
+	int lastStartColor;
+	char flaBuffer[320*200];
 
     int time;
     short int key;
@@ -914,6 +950,18 @@ class LBA_engine
     int setSomething3Var10;
 
    // ----------------------------------------------------------------------------------------
+
+	void flaUnpackFrame1(char* ptr, int width, int height);
+	void flaUnpackFrame2(char* ptr, int width);
+	void makeExtention(char* file, char* extention);
+	int loadFlaSample(char* file);
+	void enterZoom();
+	void flaResetVideoBuffer1();
+	void copyToFlaVideoBuffer();
+	void runFLAscript();
+	void updateFlaPalette();
+	void FLAsamples();
+	void exitZoom();
 
     int addRoomData2Entry(int var0, int var1, int var2, int var3);
     void checkZones(actor * lactor, int actorNumber);

@@ -96,6 +96,7 @@ void LBA_engine::initVideoStuff(void)
     videoBuffer1 = videoBuffer1bis = (byte *) malloc(sizeof(byte) * 307200);
 
     osystem->initBuffer((char *) videoBuffer1, 640, 480);
+	osystem->initVideoBuffer(flaBuffer,320,200);
 
     j = 0;
     k = 0;
