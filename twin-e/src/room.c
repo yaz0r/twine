@@ -46,7 +46,7 @@ void LBA_engine::changeRoom(void)
 	twinsen->field_40=1;
 	twinsen->field_5A=-1;
 	twinsen->positionInActorScript=0;
-	twinsen->field_46=-1;
+	twinsen->positionInMoveScript=-1;
 	twinsen->field_5C=-1;
 	
 	loadRoomScene(needChangeRoom);
@@ -89,16 +89,16 @@ void LBA_engine::changeRoom(void)
 		GV11=sceneVar18;
 	}
 
-	twinsen->field_1A=GV9;
-	twinsen->field_1C=changeRoomVar2=GV10;
-	twinsen->field_1E=GV11;
+	twinsen->X=GV9;
+	twinsen->Z=changeRoomVar2=GV10;
+	twinsen->Y=GV11;
 
 	setSomething4(mainTab[6],mainTab[7],0);
 
 	if(currentRoom!=needChangeRoom)
 	{
 		reinitVar10=comportement;
-		reinitVar9=twinsen->field_32;
+		reinitVar9=twinsen->angle;
 		saveGame();
 	}
 
@@ -114,9 +114,9 @@ void LBA_engine::changeRoom(void)
 	reinitVar11=0;
 	changeRoomVar3=0;
 
-	changeRoomVar4=actors[reinitVar8].field_1A>>9;
-	changeRoomVar5=actors[reinitVar8].field_1C>>8;
-	changeRoomVar6=actors[reinitVar8].field_1E>>9; 
+	changeRoomVar4=actors[reinitVar8].X>>9;
+	changeRoomVar5=actors[reinitVar8].Z>>8;
+	changeRoomVar6=actors[reinitVar8].Y>>9; 
  
 	changeRoomVar7=-1;
 	changeRoomVar8=1;
@@ -249,9 +249,9 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 		temp2=(unsigned short int*)localScenePtr;
 
 		actors[currentActor].field_8=*(temp2++);
-		actors[currentActor].field_20=actors[currentActor].field_1A=*(temp2++);
-		actors[currentActor].field_22=actors[currentActor].field_1C=*(temp2++);
-		actors[currentActor].field_24=actors[currentActor].field_1E=*(temp2++);
+		actors[currentActor].field_20=actors[currentActor].X=*(temp2++);
+		actors[currentActor].field_22=actors[currentActor].Z=*(temp2++);
+		actors[currentActor].field_24=actors[currentActor].Y=*(temp2++);
 		
 		localScenePtr=(unsigned char*)temp2;
 
@@ -260,7 +260,7 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 		temp2=(unsigned short int*)localScenePtr;
 
 		actors[currentActor].field_10=*(temp2++) & 0xFE;
-		actors[currentActor].field_32=*(temp2++);
+		actors[currentActor].angle=*(temp2++);
 		actors[currentActor].field_34=*(temp2++);
 		actors[currentActor].field_40=*(temp2++);
 		actors[currentActor].field_4E=*(temp2++);
@@ -271,7 +271,7 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 		localScenePtr=(unsigned char*)temp2;
 
 		actors[currentActor].field_12=*(localScenePtr++);
-		actors[currentActor].field_16=*(localScenePtr++);
+		actors[currentActor].talkColor=*(localScenePtr++);
 		actors[currentActor].field_14=*(localScenePtr++);
 		actors[currentActor].life=*(localScenePtr++);
 
@@ -536,12 +536,12 @@ void LBA_engine::reinitTwinsen(void)
  twinsen->field_62=0;
  twinsen->field_60=2119;
  twinsen->field_14=1;
- twinsen->field_46=-1;
+ twinsen->positionInMoveScript=-1;
  twinsen->field_5C=-1;
  twinsen->positionInActorScript = 0;
 	twinsen->field_5A=-1;
- twinsen->field_32=reinitVar9;
- setActorTime(twinsen->field_32,twinsen->field_32,0,&twinsen->time);
+ twinsen->angle=reinitVar9;
+ setActorTime(twinsen->angle,twinsen->angle,0,&twinsen->time);
  changeTwinsenComp(reinitVar10);
  reinitVar7=0;
 }

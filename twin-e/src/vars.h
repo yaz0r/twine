@@ -128,7 +128,7 @@ struct pointEntry
   int field_10;
   int field_14;
   int field_18;
-  int field_1C;
+  int Y;
   int field_20;
   short int field_24;
 };
@@ -581,9 +581,9 @@ class LBA_engine
  
  unsigned char * actorScriptPtr;
  
- int changeRoomVar4Bis;
- int changeRoomVar5Bis;
- int changeRoomVar6Bis;
+ int cameraX;
+ int cameraZ;
+ int cameraY;
  
  short int fullRedrawVar3;
  short int fullRedrawVar4;
@@ -715,6 +715,10 @@ class LBA_engine
  unsigned char* flagModelPtr;
 
 //----------------------------------------------------------------------------------------
+
+int getCoordinatesDistance(int X1,int Y1, int X2,int Y2);
+
+void moveActor(int actorNumber);
 
  void loadImageCrossFade(int imageNumber);
 
@@ -923,7 +927,7 @@ class LBA_engine
 
 	void newGame4(void);
 	void newGame2(void);
-	void newGame3(short int param);
+	void setNewTextColor(short int param);
 
 	
 	void printText10Sub(void);

@@ -236,7 +236,7 @@ void LBA_engine::blackToWhite(void)
 {
 	byte palette[1024];
 	int i;
-	int j;
+//	int j;
 	byte temp=0;
 	
 	for(i=0;i<256;i+=3)
@@ -250,7 +250,7 @@ void LBA_engine::blackToWhite(void)
 
 void LBA_engine::resetPalette(void)
 {
-  int i;
+//  int i;
 
   /*for(i=0;i<768;i++)
     palette[i]=0;*/

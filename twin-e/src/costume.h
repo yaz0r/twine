@@ -27,11 +27,11 @@ struct actor {
 	byte field_10;
 	short int field_12;
 	short int field_14;
-	short int field_16;
+	short int talkColor;
  short int costumeIndex;
-	short int field_1A; /*	\																																							*/
-	short int field_1C; /* |----coordiantes                        */
-	short int field_1E; /* /                                       */
+	short int X; /*	\																																							*/
+	short int Y; /* |----coordiantes                        */
+	short int Z; /* /                                       */
 	short int field_20;
 	short int field_22;
 	short int field_24;
@@ -41,11 +41,11 @@ struct actor {
  short int field_2C; /* |                                      */
  short int field_2E; /* |                                      */
  short int field_30; /* /                                      */
-	short int field_32; // rotation ?
+	short int angle; // rotation ?
 	short int field_34;
  timeStruct time;
 	short int field_40;
-	short int field_46;
+	short int positionInMoveScript;
 	short int positionInActorScript;
 	short int field_4E;
 	short int field_50;

@@ -209,13 +209,13 @@ int LBA_engine::printText4(FILE* fileHandle)
 
 void LBA_engine::readBufferSpeak(FILE* fileHandle)
 {
-	int *a;
-	int *b;
-	int *c;
+	int a;
+	int b;
+	int c;
 
-	readResourceData(fileHandle,(char*)b,4);
-	readResourceData(fileHandle,(char*)c,4);
-	readResourceData(fileHandle,(char*)a,2);
+	readResourceData(fileHandle,(char*)&b,4);
+	readResourceData(fileHandle,(char*)&c,4);
+	readResourceData(fileHandle,(char*)&a,2);
 
 	//todo: implementer la suite
 }
@@ -544,7 +544,7 @@ int LBA_engine::printText10SubSub2(void)
 int LBA_engine::prepareRender(void)
 {
   short int vertexX, vertexY;
-  short int *ptr1,*ptr3,*ptr4;
+  short int *ptr1,*ptr3;
   int i;
   short int psh1,psh2;
   char direction=1;
@@ -552,9 +552,7 @@ int LBA_engine::prepareRender(void)
   short int oldVertexX, oldVertexY;
   short int currentVertexX, currentVertexY;
   short int size;
-  int temp2,temp4,temp5,temp6,temp7;
-  short int ax, bx, cx;
-  char bh,bl,ah,al;
+  int temp2,temp4,temp5,temp6;
   int step;
   float vfloat,vfloat2;
   float vcfloat, vcfloat2;

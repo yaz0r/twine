@@ -38,9 +38,9 @@ void LBA_engine::loadRoomActors(short int arg_0)
   
   if(lactor->field_60 & 8)
   {
-   lactor->field_6C=lactor->field_1A;
-   lactor->field_6E=lactor->field_1C;
-   lactor->field_70=lactor->field_1E;
+   lactor->field_6C=lactor->X;
+   lactor->field_6E=lactor->Z;
+   lactor->field_70=lactor->Y;
   }
   
  }
@@ -58,10 +58,10 @@ void LBA_engine::loadRoomActors(short int arg_0)
    initNewCostume(lactor->costume,0,255,arg_0);
   }
   
-  setActorTime(lactor->field_32,lactor->field_32,0,&lactor->time);
+  setActorTime(lactor->angle,lactor->angle,0,&lactor->time);
  }
  
- lactor->field_46=-1;
+ lactor->positionInMoveScript=-1;
  lactor->field_5C=-1;
  lactor->positionInActorScript=0;
 }
@@ -74,16 +74,16 @@ void LBA_engine::resetActor(int actorNumber)
  
   localActor->field_0=0;
   localActor->costume=0;
-  localActor->field_1A=0;
-  localActor->field_1C=256;
-  localActor->field_1E=0;
+  localActor->X=0;
+  localActor->Z=-1;
+  localActor->Y=0;
   localActor->field_26=0;
   localActor->field_28=0;
   localActor->field_2A=0;
   localActor->field_2C=0;
   localActor->field_2E=0;
   localActor->field_30=0;
-  localActor->field_32=0;
+  localActor->angle=0;
   localActor->field_34=0;
   localActor->field_40=0;
   localActor->field_4E=0;
@@ -108,7 +108,7 @@ void LBA_engine::resetActor(int actorNumber)
   localActor->field_78=0;
   localActor->field_76=0;
   setActorTime(0,0,0,&localActor->time);
-  localActor->field_46=-1;
+  localActor->positionInMoveScript=-1;
   localActor->positionInActorScript=0;
 }
 

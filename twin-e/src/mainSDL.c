@@ -101,7 +101,7 @@ void OSystem::setColor(byte i, byte R, byte G, byte B)  // cette fonction est vr
 
 void OSystem::setPalette(byte* palette)
 {
-	int i;
+//	int i;
 	SDL_Color *sdl_colorsTemp=(SDL_Color*)palette;
 
 	SDL_SetColors(sdl_buffer,sdl_colorsTemp,0,256);

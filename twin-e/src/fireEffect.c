@@ -85,7 +85,7 @@ void LBA_engine::makeFireEffectInit(void)
 		}
 
 		temp1++;
-		*temp2=temp4;
+		*temp2=(unsigned char)temp4;
 		temp2++;
 	}
 

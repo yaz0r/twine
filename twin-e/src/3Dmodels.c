@@ -85,7 +85,7 @@ int LBA_engine::renderM1(unsigned char * costumePtr)
 	unsigned char* ptr6;
 	int eax;
 	int ebx;
-	int ebp;
+//	int ebp;
 	int edx;
 	int ecx;
 	int edi;
@@ -314,11 +314,11 @@ int LBA_engine::finishRender(unsigned char *esi)
 	unsigned char *edi;
 	short int temp;
 	int eax, ecx;
-	unsigned char temp2;
+//	unsigned char temp2;
 	short int counter;
 	short int type;
 	short int color;
-	float tempFloat;
+//	float tempFloat;
 	//  short int ebx;
 	// short int edx;
 	lineData* lineDataPtr;
@@ -753,13 +753,13 @@ void LBA_engine::renderS1S2(unsigned char * esi, int ecx, pointTab *dest,int* ea
  short int param2;
  short int param3;
 
- int ebx;
- int edx;
+// int ebx;
+// int edx;
 // int var;
 // int var2;
- int edi;
- int esip;
- int ebp;
+// int edi;
+// int esip;
+// int ebp;
 
  short int* tempPtr;
 
@@ -786,11 +786,11 @@ void LBA_engine::renderS1S2(unsigned char * esi, int ecx, pointTab *dest,int* ea
 void LBA_engine::renderS1S1(int* eax, int* ebp)
 {
   int i;
-  int edx;
-  int esi;
-  int ecx;
-  int edi;
-  int *ptr;
+//  int edx;
+//  int esi;
+//  int ecx;
+//  int edi;
+//  int *ptr;
 
   int angle;
   int angleVar1; //esi

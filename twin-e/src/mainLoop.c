@@ -130,9 +130,9 @@ int LBA_engine::mainLoop(void)
         }
         if((byte)mainLoopVar5&2 && mainLoopVar10 == 0)     // recenter screen
         {
-          changeRoomVar4=actors[reinitVar8].field_1A>>9;
-          changeRoomVar5=actors[reinitVar8].field_1C>>8;
-          changeRoomVar6=actors[reinitVar8].field_1E>>9;
+          changeRoomVar4=actors[reinitVar8].X>>9;
+          changeRoomVar5=actors[reinitVar8].Z>>8;
+          changeRoomVar6=actors[reinitVar8].Y>>9;
           mainLoopVar2=1;
           needChangeRoom=currentRoom+1;
         }
@@ -238,13 +238,13 @@ int LBA_engine::mainLoop(void)
         }
 //      updateActors(i);
 
-        actors[i].field_20=actors[i].field_1A;
-        actors[i].field_22=actors[i].field_1C;
-        actors[i].field_24=actors[i].field_1E;
+        actors[i].field_20=actors[i].X;
+        actors[i].field_22=actors[i].Z;
+        actors[i].field_24=actors[i].Y;
 
-        if(actors[i].field_46 != -1)
+        if(actors[i].positionInMoveScript != -1)
         {
-		//	printf("actor %d is moving...\n",i);
+			moveActor(i);
         }
 
 //      processActor(i);
@@ -623,7 +623,7 @@ void LBA_engine::reinitAll3(void)
  twinsen->field_0=0;
  twinsen->life=50;
 
- twinsen->field_16=4;
+ twinsen->talkColor=4;
 
 }
 
@@ -649,7 +649,7 @@ void LBA_engine::drawInGameMenu(void)
  TCOS[2]=TCos2Init;
  TCOS[3]=TCos3Init;
 
- setActorTime(twinsen->field_32,twinsen->field_32-256,50,&timeVar);
+ setActorTime(twinsen->angle,twinsen->angle-256,50,&timeVar);
 
 
  copyToBuffer(videoBuffer1,videoBuffer2);
@@ -661,7 +661,7 @@ void LBA_engine::drawInGameMenu(void)
 
  loadTextBank(0);
 
- drawMenuWin(twinsen->field_32);
+ drawMenuWin(twinsen->angle);
 
  savedLevel=comportement;
 
@@ -689,9 +689,9 @@ void LBA_engine::drawInGameMenu(void)
 
   if(savedLevel!=comportement)
   {
-   drawInGameMenuEntry(comportement,twinsen->field_32,1);
+   drawInGameMenuEntry(comportement,twinsen->angle,1);
    savedLevel=comportement;
-   setActorTime(twinsen->field_32,twinsen->field_32-256,50,&timeVar);
+   setActorTime(twinsen->angle,twinsen->angle-256,50,&timeVar);
    drawMenuWin1(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),currentCostume);
 
    while(printTextVar12)
@@ -1156,7 +1156,7 @@ unsigned char* LBA_engine::getHqrdataPtr(hqr_entry* hqrPtr, short int arg_4)
 
  hqrdataPtr=&hqrdata[hqrPtr->unk];
 
- hqrdataPtr->index=arg_4;
+ hqrdataPtr->index=(unsigned char)arg_4;
  drawInventoryVar=1;
  hqrdataPtr->lastAccessedTime=time;
  hqrdataPtr->offFromPtr=hqrPtr->size1-hqrPtr->remainingSize;

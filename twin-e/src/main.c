@@ -163,7 +163,7 @@ void LBA_engine::newGame(void)
 	newGameVar5=1;
 	loadTextBank(2);
 	newGame2();
-	newGame3(15);
+	setNewTextColor(15);
 
 
 	printTextFullScreen(150);
@@ -243,7 +243,7 @@ void LBA_engine::newGame4(void) /* ok */
 	dialogueBoxParam2=591;
 }
 
-void LBA_engine::newGame3(short int param)
+void LBA_engine::setNewTextColor(short int param)
 {
 	initVar4=-1;
 	initVar5=14;

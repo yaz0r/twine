@@ -123,14 +123,27 @@ void LBA_engine::runActorScript(short int actorNumber)
      actorScriptPtr+=2;
      break;
     case 23:
-    	lactor->field_46=*(unsigned short int*)actorScriptPtr;
+    	lactor->positionInMoveScript=*(unsigned short int*)actorScriptPtr;
      actorScriptPtr+=2;
      break;
 	case 24:
 		int actorNumTemp;
 		actorNumTemp=*(actorScriptPtr++);
-		actors[actorNumTemp].field_46=*((short int*)actorScriptPtr);
+		actors[actorNumTemp].positionInMoveScript=*((short int*)actorScriptPtr);
 		actorScriptPtr+=2;
+		break;
+	case 25:
+		freezeTime();
+		mainLoop2(1);
+		//if(showTalkIcon)
+		//	drawTalkIcon(actorNumber);
+		setNewTextColor(lactor->talkColor); // setTextColor
+		//talkingActor=actorNumber;
+		printTextFullScreen(*(short int*)actorScriptPtr);
+		actorScriptPtr+=2;
+		unfreezeTime();
+		fullRedraw(1);
+		//waitForKey();
 		break;
 	case 26:
 		actorScriptPtr++;
@@ -176,38 +189,38 @@ void LBA_engine::runActorScript(short int actorNumber)
 		break;
 	case 42:
 		lactor->field_5E=lactor->field_A;
-		lactor->field_46=-1;
+		lactor->positionInMoveScript=-1;
 		break;
 	case 43:
-		lactor->field_46=lactor->field_5E;
+		lactor->positionInMoveScript=lactor->field_5E;
 		break;
 	case 45:
 		newGameVar2++;
 		break;
 	case 47:
-		lactor->field_32=0x300;
-		lactor->field_1A=lactor->field_6C-*((short int*)actorScriptPtr);
+		lactor->angle=0x300;
+		lactor->X=lactor->field_6C-*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
 	case 48:
-		lactor->field_32=0x100;
-		lactor->field_1A=lactor->field_6C+*((short int*)actorScriptPtr);
+		lactor->angle=0x100;
+		lactor->X=lactor->field_6C+*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
 	case 49:
-		lactor->field_32=0x200;
-		lactor->field_1E=lactor->field_70+*((short int*)actorScriptPtr);
+		lactor->angle=0x200;
+		lactor->Z=lactor->field_70+*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
 	case 50:
-		lactor->field_32=0;
-		lactor->field_1E=lactor->field_70+*((short int*)actorScriptPtr);
+		lactor->angle=0;
+		lactor->Z=lactor->field_70+*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
@@ -255,9 +268,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 		mainTab[19]=flagData[manipActorResult].y;
 		mainTab[20]=flagData[manipActorResult].z;
 
-		lactor->field_1A=mainTab[18];
-		lactor->field_1C=mainTab[19];
-		lactor->field_1E=mainTab[20];
+		lactor->X=mainTab[18];
+		lactor->Z=mainTab[19];
+		lactor->Y=mainTab[20];
 		break;
 
     case 61:
@@ -278,6 +291,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 		reinitVar4=newActor;
 		actors[newActor].costumeIndex=-1;
 		actors[newActor].field_5A=-1;
+		break;
+	case 77:
+		printf("Unsupported actor opcode 77\n");
+		actorScriptPtr+=2;
 		break;
 	case 80:
 		actorScriptPtr+=2;
@@ -335,9 +352,18 @@ void LBA_engine::manipActor(actor* lactor)
  		lactor2=&actors[*actorScriptPtr];
    manipActorVar1=1;
    actorScriptPtr=localScriptPtr;
-   if(!lactor2->field_62&0x20)
+   if(!(lactor2->field_62&0x20))
    {
-    printf("Unhandled manip actor opcode 2...\n");
+	   if(lactor2->Z-lactor->Z>=1500)
+	   {
+		   manipActorResult=32000;
+	   }
+	   else
+	   {
+		   manipActorResult=getCoordinatesDistance(lactor->X,lactor->Y,lactor2->X,lactor2->Y);
+		   if(manipActorResult>32000)
+			   manipActorResult=32000;
+	   }
    }
    else
    {
@@ -375,7 +401,7 @@ void LBA_engine::manipActor(actor* lactor)
   	lactor2=&actors[*actorScriptPtr];
    manipActorVar1=1;
    actorScriptPtr=localScriptPtr;
-   if(!lactor2->field_62&0x20)
+   if(!(lactor2->field_62&0x20))
    {
     printf("Unhandled manip actor opcode 12...\n");
    }
@@ -427,7 +453,7 @@ void LBA_engine::manipActor(actor* lactor)
     lactor2=&actors[*actorScriptPtr];
     manipActorVar1=1;
     actorScriptPtr=localScriptPtr;
-    if(!lactor2->field_62&0x20)
+    if(!(lactor2->field_62&0x20))
     {
      printf("Unhandled manip actor opcode 22...\n");
     }
@@ -521,6 +547,10 @@ int LBA_engine::doCalc(void)
     	if(localManipActorResult<opcode2)
      	result=1;
      break;
+    case 3:
+      if(localManipActorResult>=opcode2)
+        result=1;
+	  break;
 	case 4:
       if(localManipActorResult<=opcode2)
         result=1;
@@ -549,4 +579,9 @@ int LBA_engine::doCalc(void)
  
  return(result);
  
+}
+
+int LBA_engine::getCoordinatesDistance(int X1,int Y1, int X2,int Y2)
+{
+	return(32000);
 }

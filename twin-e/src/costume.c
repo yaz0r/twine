@@ -133,7 +133,7 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
    
   temp2=lactor->costumeIndex;
   lactor->costumeIndex=temp;
-  lactor->field_0=lactor->field_14;
+  lactor->field_0=(char)lactor->field_14;
   currentIndex=lactor->costumeIndex;
   
   if(loadCostumeVar==-32000)
@@ -195,7 +195,7 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
   return;
  }
  
- lactor->field_0=0xFF;
+ lactor->field_0=-1;
  lactor->costumeIndex=-1;
  lactor->field_2A=0;
  lactor->field_2C=0;

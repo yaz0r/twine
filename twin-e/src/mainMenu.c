@@ -390,7 +390,7 @@ int LBA_engine::enterPlayerName(short int param)
 	}while(skipIntro==0 && key1==0);
 
 	do{
-		key=getKeyboardChar();	
+		key=(char)getKeyboardChar();	
 	}while(!key);
 
 	
@@ -457,9 +457,9 @@ void LBA_engine::drawButton(short int * data,int a)
 
 	do
 	{
-		temp2=*localData;
+		temp2=(unsigned char)*localData;
 		localData+=1;
-		temp3=*localData;
+		temp3=(unsigned char)*localData;
 		localData+=1;
 		if(a!=0)
 		{
@@ -804,7 +804,7 @@ void LBA_engine::drawLine(int a, int b, int c, int d, int e)
   c++;
   do
   {
-   *out=color;
+   *out=(unsigned char)color;
    b-=d;
    if(b>0)
    {
@@ -826,7 +826,7 @@ void LBA_engine::drawLine(int a, int b, int c, int d, int e)
   c++;
   do
   {
-   *out=color;
+   *out=(unsigned char)color;
    out++;
    b-=d;
    if(b<0)

@@ -21,7 +21,7 @@ void LBA_engine::fullRedraw(int param)
 {
 	short int temp1;
 	short int temp2;
-	short int temp4;
+//	short int temp4;
 	int counter;
 	int counter2;
 	//  int i;
@@ -70,12 +70,12 @@ void LBA_engine::fullRedraw(int param)
 		lactor=&actors[arg_1A];
 		*(byte*)&lactor->field_62 &= 0xFFEF; //recheck -> reinit the draw flags for the current objects
 
-		if((changeRoomVar9 ==-1)||(lactor->field_1C<=*(short int*)((currentGrid2)*24+sceneVarPtr+8)))
+		if((changeRoomVar9 ==-1)||(lactor->Z<=*(short int*)((currentGrid2)*24+sceneVarPtr+8)))
 		{
 			if(lactor->field_60 & 0x2000 && param == 0) 
 			{
 				//calculate the actor position on screen
-				fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
+				fullRedrawS2S1(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY);
 
 				//is the actor in the viewable screen ?
 				if(fullRedrawVar3 > -50 && fullRedrawVar3 < 680 && fullRedrawVar4> -30 && fullRedrawVar4< 580)
@@ -88,15 +88,15 @@ void LBA_engine::fullRedraw(int param)
 				if(lactor->costumeIndex != -1 && !(lactor->field_60 & 0x200))
 				{
 					//calculate the actor position on screen
-					fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
+					fullRedrawS2S1(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY);
 
 					if(((lactor->field_60 & 8) && fullRedrawVar2 >-112 && fullRedrawVar2 < 752 && fullRedrawVar4 > -50 && fullRedrawVar4 < 651)
 					|| ((!(lactor->field_60 & 8)) && fullRedrawVar3> -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4< 580))
 					{
-						temp3=lactor->field_1E+lactor->field_1A-changeRoomVar4Bis-changeRoomVar6Bis;
+						temp3=lactor->Z+lactor->X-cameraX-cameraY;
 						if(lactor->field_58!=-1)
 						{
-							temp3=actors[lactor->field_58].field_1A-changeRoomVar4Bis+actors[lactor->field_58].field_1E-changeRoomVar6Bis+2;
+							temp3=actors[lactor->field_58].X-cameraX+actors[lactor->field_58].Y-cameraY+2;
 						}
 
 						if(lactor->field_60&0x400)
@@ -104,7 +104,7 @@ void LBA_engine::fullRedraw(int param)
 							fullRedrawVar6[a12].field_2=arg_46; //0x1000
 							if(lactor->field_60&8)
 							{
-								temp3=lactor->field_6C-changeRoomVar4Bis+lactor->field_70-changeRoomVar6Bis;
+								temp3=lactor->field_6C-cameraX+lactor->field_70-cameraY;
 							}
 						}
 						else
@@ -119,13 +119,13 @@ void LBA_engine::fullRedraw(int param)
 						{
 							if(lactor->field_58!=-1)
 							{
-								shadowVar1=lactor->field_1A;
-								shadowVar2=lactor->field_1C-1;
-								shadowVar3=lactor->field_1E;
+								shadowVar1=lactor->X;
+								shadowVar2=lactor->Z-1;
+								shadowVar3=lactor->Y;
 							}
 							else
 							{
-//								addShadowActorToCube(lactor->field_1A,lactor->field_1C,lactor->field_1E);
+//								addShadowActorToCube(lactor->X,lactor->Z,lactor->Y);
 							}
 
 							temp3--;
@@ -177,21 +177,21 @@ void LBA_engine::fullRedraw(int param)
 				if(
 					(reinitAll2SubVar1[counter2].field_14 & 1) || 
 					(reinitAll2SubVar1[counter2].field_14 & 0x40 ) ||
-					(reinitAll2SubVar1[counter2].field_1C+reinitAll2SubVar1[counter2].field_18-0x96>time) ||
+					(reinitAll2SubVar1[counter2].field_1E+reinitAll2SubVar1[counter2].field_18-0x96>time) ||
 					(!(time+reinitAll2SubVar1[counter2].field_18 & 8)))
 				{
-					fullRedrawS2S1(reinitAll2SubVar1[counter2].field_2-changeRoomVar4Bis,reinitAll2SubVar1[counter2].field_4-changeRoomVar5Bis,reinitAll2SubVar1[counter2].field_6-changeRoomVar6Bis);
+					fullRedrawS2S1(reinitAll2SubVar1[counter2].field_2-cameraX,reinitAll2SubVar1[counter2].field_4-cameraZ,reinitAll2SubVar1[counter2].field_6-cameraY);
 
 					if(fullRedrawVar3>-50 && fullRedrawVar3<680 && fullRedrawVar4>-30 && fullRedrawVar4<580)
 					{
-						fullRedrawVar6[a12].field_0=reinitAll2SubVar1[counter2].field_2-changeRoomVar4Bis+reinitAll2SubVar1[counter2].field_6-changeRoomVar6Bis;
+						fullRedrawVar6[a12].field_0=reinitAll2SubVar1[counter2].field_2-cameraX+reinitAll2SubVar1[counter2].field_6-cameraY;
 						fullRedrawVar6[a12].field_2=counter;
 						a12++;
 
 						if(shadowMode==2 && reinitAll2SubVar1[counter2].field_0&0x8000) //cast shadow
 						{
 							//addShadowActorToCube(reinitAll2SubVar1[counter2].field_2,reinitAll2SubVar1[counter2].field_4,reinitAll2SubVar1[counter2].field_6);
-//							fullRedrawVar6[a12].field_0=reinitAll2SubVar1[counter2].field_2-changerRoomVar4Bis+reinitAll2SubVar1[counter2].field_6-changeRoomVar6Bis-1;
+//							fullRedrawVar6[a12].field_0=reinitAll2SubVar1[counter2].field_2-changerRoomVar4Bis+reinitAll2SubVar1[counter2].field_6-cameraY-1;
 							fullRedrawVar6[a12].field_2=0xC00;
 							fullRedrawVar6[a12].field_4=shadowVar1;
 							fullRedrawVar6[a12].field_6=shadowVar2;
@@ -212,10 +212,10 @@ void LBA_engine::fullRedraw(int param)
 
 	if(twinsen->costumeIndex != -1 && !(twinsen->field_60 & 0x200))
 	{
-		arg_46=twinsen->field_1A+twinsen->field_26;
-		arg_36=twinsen->field_1E+twinsen->field_2E;
-		arg_52=twinsen->field_1A+twinsen->field_28;
-		arg_4A=twinsen->field_1E+twinsen->field_30;
+		arg_46=twinsen->X+twinsen->field_26;
+		arg_36=twinsen->Z+twinsen->field_2E;
+		arg_52=twinsen->X+twinsen->field_28;
+		arg_4A=twinsen->Z+twinsen->field_30;
 		arg_1A=0;
 		result=-1;
 		
@@ -266,7 +266,7 @@ void LBA_engine::fullRedraw(int param)
 		if(flags==0xC00)
 		{	
 		//	printf("Draw actor %d\n",fullRedrawVar6[arg_1E].field_2&0x3FF);
-			startRenderer(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis,0,lactor->field_32,0,bodyPtrTab[lactor->costumeIndex]);
+			startRenderer(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY,0,lactor->angle,0,bodyPtrTab[lactor->costumeIndex]);
 
 		}
 		else
@@ -294,7 +294,7 @@ void LBA_engine::fullRedraw(int param)
 
   for(arg_1A=0;arg_1A<numFlags;arg_1A++) //affichage des flags
   {
-	  startRenderer(flagData[arg_1A].x-changeRoomVar4Bis,flagData[arg_1A].y-changeRoomVar5Bis,flagData[arg_1A].z-changeRoomVar6Bis,0,0,0,flagModelPtr);
+	  startRenderer(flagData[arg_1A].x-cameraX,flagData[arg_1A].y-cameraZ,flagData[arg_1A].z-cameraY,0,0,0,flagModelPtr);
   }
 
   counter2=0;
@@ -475,11 +475,11 @@ void LBA_engine::fullRedrawSub2(void)
  unsigned char *localBufCube=bufCube;
  unsigned char val;
 
-  changeRoomVar4Bis=changeRoomVar4<<9;
- changeRoomVar5Bis=changeRoomVar5<<8;
- changeRoomVar6Bis=changeRoomVar6<<9;
+  cameraX=changeRoomVar4<<9;
+ cameraZ=changeRoomVar5<<8;
+ cameraY=changeRoomVar6<<9;
 
- fullRedrawS2S1(-changeRoomVar4Bis,-changeRoomVar5Bis,-changeRoomVar6Bis);
+ fullRedrawS2S1(-cameraX,-cameraZ,-cameraY);
 
  fullRedrawVar1=fullRedrawVar3;
  fullRedrawVar2=fullRedrawVar4;
