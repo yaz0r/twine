@@ -17,9 +17,17 @@ void LBA_engine::playFLA(char *flaName)
 	}
 	else
 	{
+		int i;
+		for(i=0;i<strlen(flaName);i++)
+		{
+			if(flaName[i]=='.')
+				flaName[i]=0;
+		}
+
+
 		stopMusic();
 		strcpy(buffer,"fla/");
-		strcat(buffer,"introd");
+		strcat(buffer,flaName);
 		makeExtention(buffer,".FLA");
 		if(loadFlaSample(buffer))
 		{
@@ -46,9 +54,35 @@ void LBA_engine::playFLA(char *flaName)
 						updateFlaPalette();
 
 						{
+							int i;
+							int j;
+
+							char* source=(char*)flaBuffer;
+							char* source2;
+							char* dest=(char*)videoBuffer1;
+							
+							for(i=0;i<200;i++)
+							{
+								for(j=0;j<320;j++)
+								{
+									*(dest++)=*(source);
+									*(dest++)=*(source++);
+								}
+
+								source2=dest-640;
+
+								for(j=0;j<640;j++)
+								{
+									*(dest++)=*(source2++);
+								}
+
+							}
+
 							convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
-							osystem->setPalette320x200((byte*)flaPaletteRGBA);
-							osystem->draw320x200BufferToScreen((unsigned char*)flaBuffer);
+							osystem->setPalette((byte*)flaPaletteRGBA);
+							osystem->drawBufferToScreen((unsigned char*)flaBuffer);
+							osystem->delay(40);
+							readKeyboard();
 						}
 
 						//TODO: time sync code
@@ -144,8 +178,8 @@ void LBA_engine::copyToFlaVideoBuffer()
 void LBA_engine::runFLAscript()
 {
 	char* ptr;
-	int currentOpcodeGlob;
-	char currentOpcode;
+	unsigned int currentOpcodeGlob;
+	unsigned char currentOpcode;
 
 	int var_C;
 	readResourceData(dataFileHandle,(char*)&(frameData.videoSize),1);
@@ -165,9 +199,14 @@ void LBA_engine::runFLAscript()
 
 	do
 	{
-		currentOpcodeGlob=*(int*)ptr;
-		ptr+=4;
-		currentOpcode=(char)currentOpcodeGlob;
+		currentOpcode=*(unsigned char*)ptr;
+		ptr+=2;
+		currentOpcodeGlob=*(unsigned short int*)ptr;
+		ptr+=2;
+
+		printf("Size=%d\n",currentOpcodeGlob);
+
+		printf("Opcode: %d\n",currentOpcode-1);
 
 		switch(currentOpcode-1)
 		{
@@ -192,6 +231,10 @@ void LBA_engine::runFLAscript()
 			{
 				break;
 			}
+		case 4: // play sample
+			{
+				break;
+			}
 		case 5: // draw delat frame
 			{
 				flaUnpackFrame2(ptr,320);
@@ -205,13 +248,13 @@ void LBA_engine::runFLAscript()
 		default:
 			{
 				printf("Unhandled fla opcode %d!\n",currentOpcode-1);
-				exit(1);
+				//exit(1);
 				break;
 			}
 		}
 
 		var_C++;
-		ptr+=(currentOpcodeGlob>>16)&0xFFFF;
+		ptr+=currentOpcodeGlob;
 
 	}while(var_C<runFLAscriptVar0);
 
@@ -262,12 +305,12 @@ void LBA_engine::flaUnpackFrame1(char* ptr, int width, int height)
 
 void LBA_engine::flaUnpackFrame2(char* ptr, int width)
 {
-	short int skip;
+	unsigned short int skip;
 	char* destPtr;
 	char* startOfLine;
 	int height;
 
-	skip=*(short int*)ptr;
+	skip=*(unsigned short int*)ptr;
 	ptr+=2;
 	skip*=width;
 	startOfLine=destPtr=(char*)flaBuffer+skip;
@@ -286,7 +329,7 @@ void LBA_engine::flaUnpackFrame2(char* ptr, int width)
 
 		for(i=0;i<flag1;i++)
 		{
-			destPtr+=*(ptr++);
+			destPtr+=(unsigned char)*(ptr++);
 			flag2=*(ptr++);
 
 			if(flag2>0)

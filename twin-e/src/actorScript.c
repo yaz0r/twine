@@ -705,8 +705,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   }
 			case 64:	//LM_PLAY_FLA
 			   {
-			       printf("Play FLA: %s\n", actorScriptPtr);
-			       actorScriptPtr += strlen((char *) actorScriptPtr) + 1;
+				   int length=strlen((char*)actorScriptPtr);
+			       playFLA((char*)actorScriptPtr);
+			       actorScriptPtr += length + 1;
 			       break;
 			   }
 			case 67:
