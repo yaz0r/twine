@@ -49,7 +49,7 @@ void CheckZoneSce(actor * lactor, int actorNumber)
           {
             if (lactor->life > 0) // if not dead
             {
-              needChangeRoom = pZone->data.ZONE_ChangeRoom.newRoomNumber;
+              needChangeRoom = (char)pZone->data.ZONE_ChangeRoom.newRoomNumber;
               newTwinsenXByZone = lactor->X - pZone->bottomLeft.X + pZone->data.ZONE_ChangeRoom.positionX;
               newTwinsenZByZone = lactor->Y - pZone->bottomLeft.Y + pZone->data.ZONE_ChangeRoom.positionY;
               newTwinsenYByZone = lactor->Z - pZone->bottomLeft.Z + pZone->data.ZONE_ChangeRoom.positionZ;
@@ -218,7 +218,7 @@ void ZoneGiveExtraBonus(ZONE_Box* pZone)
   }
 }
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 void ZONE_DrawZones(void)
 {
   int currentZone;

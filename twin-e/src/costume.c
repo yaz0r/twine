@@ -236,7 +236,7 @@ Z        X
 
 */
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point3dStruct* pPoint3dProjected)
 {
   projectPositionOnScreen(pPoint3d->x,pPoint3d->y,pPoint3d->z);

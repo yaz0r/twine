@@ -367,7 +367,7 @@ int mainLoopInteration(void)
 
       }
     }
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 #ifdef PCLIKE
       if (debugger_processDebug())
     requestBackgroundRedraw = 1;
@@ -1098,11 +1098,11 @@ void DoAnim(int actorNum)
     processActorVar4 = lactor->field_24;
 
     if (lactor->staticFlagsBF.bIsSpriteActor) // is sprite actor
-  {
-      if (lactor->field_66)
     {
-      lactor->dynamicFlagsBF.bUnk0002;
-    }
+      if (lactor->field_66)
+      {
+        lactor->dynamicFlagsBF.bUnk0002 = 1;
+      }
 
       processActorX = lactor->X;
       processActorZ = lactor->Y;

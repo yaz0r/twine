@@ -22,7 +22,7 @@ void studioTick(void);
 #include "SDL_thread.h"
 #include "lba.h"
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 #include "SDL_ttf.h"
 #endif
 
@@ -85,7 +85,7 @@ SDL_Surface *sdl_screen;  // that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 TTF_Font *font;
 #endif
 
@@ -198,7 +198,7 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
 
     atexit(SDL_Quit);
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 
     if (TTF_Init() < 0)
   {
@@ -444,7 +444,7 @@ void osystem_crossFade(char *buffer, char *palette)
     SDL_FreeSurface(tempSurface);
 }
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 void osystem_drawText(int X, int Y, char *string)
 {
     SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };

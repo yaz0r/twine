@@ -38,7 +38,7 @@ int lbaMain(int argc, char *argv[]) // hello world !
   osystem_init(argc,argv);
   printf("Success !\n");
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
   debugger_init();
 #endif
 
@@ -152,7 +152,7 @@ void init(void)
   HQR_Anims =     HQR_Init_Ressource("anim.hqr", 450000, 600); // should be able to hold all the anims of the game
 #endif //PRELOAD_ALL
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 #ifdef PRELOAD_ALL
   flagModelPtr = HQR_GetCopy( HQR_Bodies, 121 );
   HQRM_Load("body.hqr", 121, &flagModelPtr); // load the flag model used to display tracks
@@ -162,7 +162,7 @@ void init(void)
   loadGfxSub(flagModelPtr);
 #endif
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
   flagActor = &actors[99];
 
   flagActor->staticFlagsBF.bCanDrown = 0;

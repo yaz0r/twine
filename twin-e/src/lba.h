@@ -71,13 +71,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
     #define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
 #else // _DEBUG
     #define todo(string)
 #endif // _DEBUG
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
     #define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
 #else // _DEBUG
     #define assert_ptr(ptr)

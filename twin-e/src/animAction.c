@@ -307,7 +307,7 @@ void GereAnimAction(actor * lactor, int actorNum)
       case 10:
         {
           ebx = edi;
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           printf("Skipping GereAnimAction opcode 10 (sound)\n");
 #endif
           break;
@@ -315,7 +315,7 @@ void GereAnimAction(actor * lactor, int actorNum)
       case 11:
         {
           ebx = edi;
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           printf("Skipping GereAnimAction opcode 11 (sound)\n");
 #endif
           break;
@@ -437,7 +437,7 @@ void GereAnimAction(actor * lactor, int actorNum)
         }
       default:
         {
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           printf("Unsupported opcode %d in GereAnimAction\n", var_54);
 #endif
           exit(1);

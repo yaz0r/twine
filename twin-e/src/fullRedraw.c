@@ -18,11 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 actor* pCurrentActorRender;
 #endif
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 void draw2dBox(int x1, int y1, int x2, int y2, int color)
 {
   drawLine(x1, y1, x1, y2,color);
@@ -180,7 +180,7 @@ void fullRedraw(int param)
     }
   }
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
   if(bShowFlags)
   {
     int i;
@@ -343,7 +343,7 @@ void fullRedraw(int param)
           if(lactor->previousAnimIndex != -1) // TODO: this shouldn't be required but crash when drawing the soldier getting out of the yellow moto. To investigate...
             SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           if(bShowBoundingBoxes)
             MDL_DrawBoundingBoxHiddenPart(lactor);
 
@@ -351,7 +351,7 @@ void fullRedraw(int param)
 #endif
           if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ,lactor->Z - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
           {
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
             if(bShowBoundingBoxes)  
               MDL_DrawBoundingBoxShownPart(lactor);
 #endif
@@ -385,7 +385,7 @@ void fullRedraw(int param)
             }
           }
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           actorBox[positionInDebugBox].actorNum = actorNumber;
           actorBox[positionInDebugBox].left = renderLeft;
           actorBox[positionInDebugBox].right = renderRight;
@@ -468,14 +468,14 @@ void fullRedraw(int param)
 
         if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
         {
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           if(bShowBoundingBoxes)
           {
             MDL_DrawBoundingBoxHiddenPart(lactor);
           }
 #endif
           AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
           if(bShowBoundingBoxes)
           {
             MDL_DrawBoundingBoxShownPart(lactor);
@@ -513,7 +513,7 @@ void fullRedraw(int param)
 #endif
         }
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
         { // code to add the sprite actor box to the debugger handler
           actorBox[positionInDebugBox].actorNum = actorNumber;
           actorBox[positionInDebugBox].left = renderLeft;
@@ -574,7 +574,7 @@ void fullRedraw(int param)
           AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
         }
       }
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
       else if (flags == 0x2000) // flag
       {
         AffObjetIso(drawList[arg_1E].X - cameraX, drawList[arg_1E].Y - cameraZ, drawList[arg_1E].Z - cameraY, 0, 0, 0, flagModelPtr);
@@ -618,7 +618,7 @@ void fullRedraw(int param)
       arg_1E++;
     }while (arg_1A < a12);
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
     debugger_numOfActorOnScreen = positionInDebugBox;
 #endif
 
@@ -627,7 +627,7 @@ void fullRedraw(int param)
      // loop5
   }
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
   if(bShowSpriteClip)
   {
     int i;
@@ -652,7 +652,7 @@ void fullRedraw(int param)
   }
 #endif
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
  //if(bShowSpriteClip)
   {
     int i;
@@ -665,7 +665,7 @@ void fullRedraw(int param)
   }
 #endif
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
   ZONE_DrawZones();
 #endif
 
@@ -884,7 +884,7 @@ void redrawCube(void)
   if (changeRoomVar10 == 0)
     return;
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
   if( debugger_cubeClipEnabled )
   {
       for (z= 0; z < debugger_cubeClipZ; z++)

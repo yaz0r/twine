@@ -18,7 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
 extern actor* pCurrentActorRender;
 #endif
 
@@ -779,7 +779,7 @@ int finishRender(unsigned char *esi)
 
           currentDepth = currentVertex->z;
 
-          osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,shadeValue);
+          osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,(unsigned char)shadeValue);
 
           if (currentDepth > bestDepth)
             bestDepth = currentDepth;
@@ -866,7 +866,7 @@ int finishRender(unsigned char *esi)
 
           currentDepth = currentVertex->z;
 
-          osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,destinationHeader->colorIndex);
+          osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,(unsigned char)destinationHeader->colorIndex);
 
           if (currentDepth > bestDepth)
             bestDepth = currentDepth;
@@ -1469,7 +1469,7 @@ void FillVertic_A(int ecx, int edi)
     }
     default:
     {
-#ifdef _DEBUG
+#ifdef GAME_DEBUG
       printf("Unsuported render type %d\n",FillVertic_AType);
 #endif
       break;
