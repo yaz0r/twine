@@ -1,5 +1,22 @@
+/*
+Copyright (C) 2002-2004 The TwinE team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
 #include "lba.h"
-#include "tab.h"
 
 int baseMatrixRotationX;
 int baseMatrixRotationY;
@@ -68,7 +85,7 @@ int _numOfParts;
 unsigned char *_pointsPtr;
 unsigned char *_partsPtr;
 
-int _matrixTable[271];	// should be matrixes
+int _matrixTable[271];  // should be matrixes
 unsigned char *_currentMatrixTableEntry;
 
 int *_shadePtr;
@@ -157,7 +174,7 @@ short int key;
 uint16 useSound;
 byte useSB;
 uint32 HQR_Midi;
-uint32 unkPtr;		// recheck
+uint32 unkPtr;    // recheck
 uint32 cfg_file;
 
 byte *workVideoBuffer;
@@ -178,8 +195,8 @@ byte *videoPtr11;
 byte *videoPtr12;
 byte *videoPtr13;
 
-byte palette[256 * 3];	// tempvalue
-byte palette2[256 * 3];	// tempvalue
+byte palette[256 * 3];  // tempvalue
+byte palette2[256 * 3]; // tempvalue
 byte paletteRGBA[256 * 4];
 
 unsigned char outBuffer[512000];
@@ -217,9 +234,9 @@ byte *bufferBrick2;
 
 byte *fntFont;
 
-int interCharSpace;		// espace inter lettre
+int interCharSpace;   // espace inter lettre
 
-int spaceLenght;		// largeur d'un espace
+int spaceLenght;    // largeur d'un espace
 
 int textColor;
 int progressiveTextStartColor;
@@ -231,7 +248,7 @@ int setup_lst;
 
 int samplesLoaded;
 
-int textVar1;		// current text bank
+int textVar1;   // current text bank
 
 byte textVar2[256];
 
@@ -290,62 +307,62 @@ char mainMenuVar1[60];
 // MENU DATA
 
 short int mainMenuData[]={
-	0,					// unk
-	4,					// num of buttons
-	200,				// unk
-	0,					// unk
-	0,					// unk
+  0,          // unk
+  4,          // num of buttons
+  200,        // unk
+  0,          // unk
+  0,          // unk
 //---------------------------- exit points
-	20,					// new game
-	0,
-	21,					// continue game
-	0,
-	23,					// options
-	0,
-	22,					// quit
+  20,         // new game
+  0,
+  21,         // continue game
+  0,
+  23,         // options
+  0,
+  22,         // quit
 };
 
 short int subMenu2Data[]={
-	0,
-	2,
-	240,
-	0,
-	0,
-	28,
-	0,
-	27,
+  0,
+  2,
+  240,
+  0,
+  0,
+  28,
+  0,
+  27,
 };
 
 short int soundMenuData[]={
-	0,
-	4,
-	0,
-	0,
-	0,
-	24,
-	0,
-	30,
-	0,
-	46,
-	0,
-	47,
+  0,
+  4,
+  0,
+  0,
+  0,
+  24,
+  0,
+  30,
+  0,
+  46,
+  0,
+  47,
 };
 
 short int subMenuData[]={
-	0,
-	5,
-	0,
-	0,
-	0,
-	26,
-	0,
-	4,
-	6,
-	31,
-	7,
-	32,
-	8,
-	33,
+  0,
+  5,
+  0,
+  0,
+  0,
+  26,
+  0,
+  4,
+  6,
+  31,
+  7,
+  32,
+  8,
+  33,
 };
 
 /////////////////////////////////////////////
@@ -356,7 +373,7 @@ short int newGameVar4;
 
 int newGameVar5;
 
-int screenLockupTable[2000];	// valeur temporaire...
+int screenLockupTable[2000];  // valeur temporaire...
 
 int initVideoVar1;
 
@@ -385,7 +402,7 @@ short int comportementHero;
 
 short int startupComportementHeroInCube;
 
-short int numTextEntry;	// nombre d'entree de text dans la bank actuelle
+short int numTextEntry; // nombre d'entree de text dans la bank actuelle
 
 int currentTextLength;
 char *currentTextPtr;
@@ -405,7 +422,7 @@ short int drawInGameTransBox;
 
 char buf1[256];
 
-char buf2[256];		// check size
+char buf2[256];   // check size
 
 char *printText8Ptr1;
 char *printText8Ptr2;
@@ -496,7 +513,7 @@ int printText8PrepareBufferVar3;
 short int *tab2;
 short int *tab3; */
 
-actor actors[100];		// yeah, can use up to 100 actor !
+actor actors[100];    // yeah, can use up to 100 actor !
 actor *twinsen;
 
 short int holomapTraj;
@@ -817,7 +834,7 @@ void initVars(void)
     useSound = 0;
     useSB = 1;
     HQR_Midi = 0;
-    unkPtr = 0;			// recheck
+    unkPtr = 0;     // recheck
 
     workVideoBuffer = 0;
     frontVideoBuffer = NULL;
@@ -890,7 +907,7 @@ void initVars(void)
 #ifdef ENGLISH_LANG
     language = 0;
 #else
-    language = 1;		// langue ecrite
+    language = 1;   // langue ecrite
 #endif
 
     languageCD1 = 0;
@@ -1012,9 +1029,9 @@ void initVars(void)
     pt8s4var5 = pt8s4var1 + 94;
     pt8s4var6 = pt8s4var1 + 95;
 
-    tab1 = &tab[0];
-    tab2 = &tab[256];
-    tab3 = &tab[384];
+    tab1 = &angleTable[0];
+    tab2 = &angleTable[256];
+    tab3 = &angleTable[384];
 
     twinsen = &actors[0];
 
@@ -1149,37 +1166,37 @@ void initVars(void)
     scanCodeTab1[27] = 0x2A;
     scanCodeTab1[28] = 0x0;
 
-    scanCodeTab2[0] = 0x0100;	// up
-    scanCodeTab2[1] = 0x0200;	// down
-    scanCodeTab2[2] = 0x0400;	// left
-    scanCodeTab2[3] = 0x0800;	// right
-    scanCodeTab2[4] = 0x0500;	// home
-    scanCodeTab2[5] = 0x0900;	// pageup
-    scanCodeTab2[6] = 0x0A00;	// pagedown
-    scanCodeTab2[7] = 0x0600;	// end
+    scanCodeTab2[0] = 0x0100; // up
+    scanCodeTab2[1] = 0x0200; // down
+    scanCodeTab2[2] = 0x0400; // left
+    scanCodeTab2[3] = 0x0800; // right
+    scanCodeTab2[4] = 0x0500; // home
+    scanCodeTab2[5] = 0x0900; // pageup
+    scanCodeTab2[6] = 0x0A00; // pagedown
+    scanCodeTab2[7] = 0x0600; // end
 
-    scanCodeTab2[8] = 0x0101;	// space bar
-    scanCodeTab2[9] = 0x0201;	// enter
-    scanCodeTab2[10] = 0x0401;	// ctrl
-    scanCodeTab2[11] = 0x0801;	// alt
-    scanCodeTab2[12] = 0x1001;	// del
-    scanCodeTab2[13] = 0x2001;	// left shift
-    scanCodeTab2[14] = 0x2001;	// right shift
+    scanCodeTab2[8] = 0x0101; // space bar
+    scanCodeTab2[9] = 0x0201; // enter
+    scanCodeTab2[10] = 0x0401;  // ctrl
+    scanCodeTab2[11] = 0x0801;  // alt
+    scanCodeTab2[12] = 0x1001;  // del
+    scanCodeTab2[13] = 0x2001;  // left shift
+    scanCodeTab2[14] = 0x2001;  // right shift
 
-    scanCodeTab2[15] = 0x0102;	// F1
-    scanCodeTab2[16] = 0x0202;	// F2
-    scanCodeTab2[17] = 0x0402;	// F3
-    scanCodeTab2[18] = 0x0802;	// F4
-    scanCodeTab2[19] = 0x1002;	// F5
-    scanCodeTab2[20] = 0x2002;	// F6
-    scanCodeTab2[21] = 0x4002;	// F7
-    scanCodeTab2[22] = 0x8002;	// F8
+    scanCodeTab2[15] = 0x0102;  // F1
+    scanCodeTab2[16] = 0x0202;  // F2
+    scanCodeTab2[17] = 0x0402;  // F3
+    scanCodeTab2[18] = 0x0802;  // F4
+    scanCodeTab2[19] = 0x1002;  // F5
+    scanCodeTab2[20] = 0x2002;  // F6
+    scanCodeTab2[21] = 0x4002;  // F7
+    scanCodeTab2[22] = 0x8002;  // F8
 
-    scanCodeTab2[23] = 0x0103;	// F9
-    scanCodeTab2[24] = 0x0203;	// F10
-    scanCodeTab2[25] = 0x0403;	// ?
-    scanCodeTab2[26] = 0x0803;	// ?
-    scanCodeTab2[27] = 0x00FF;	// left shift
+    scanCodeTab2[23] = 0x0103;  // F9
+    scanCodeTab2[24] = 0x0203;  // F10
+    scanCodeTab2[25] = 0x0403;  // ?
+    scanCodeTab2[26] = 0x0803;  // ?
+    scanCodeTab2[27] = 0x00FF;  // left shift
     scanCodeTab2[28] = 0x00FF;
     scanCodeTab2[29] = 0x0;
     scanCodeTab2[30] = 0x0;
@@ -1192,10 +1209,10 @@ void initVars(void)
 
     action = 0;
 
-	useFlaPCX=1;
-	flaVar2=1;
+  useFlaPCX=1;
+  flaVar2=1;
 
-	showTalkVar=1;
+  showTalkVar=1;
 
     magicBallNumBounce = 1;
     magicBallParam = 1;

@@ -1,3 +1,21 @@
+/*
+Copyright (C) 2002-2004 The TwinE team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at youoption) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
 #ifndef _LBA_
 #define _LBA_
 
@@ -18,10 +36,10 @@
 #ifdef PCLIKE
 #include<malloc.h>
 #ifdef USE_GL
-#include <windows.h>		// Header File For Windows
-#include <gl\gl.h>			// Header File For The OpenGL32 Library
-#include <gl\glu.h>			// Header File For The GLu32 Library
-#include <gl\glaux.h>		// Header File For The Glaux Library
+#include <windows.h>    // Header File For Windows
+#include <gl\gl.h>      // Header File For The OpenGL32 Library
+#include <gl\glu.h>     // Header File For The GLu32 Library
+#include <gl\glaux.h>   // Header File For The Glaux Library
 #endif
 #endif // PCLIKE
 
@@ -49,7 +67,7 @@
 
 #ifndef MEM_DEBUG
 #define Malloc(size) malloc(size)
-#define Free(ptr) free(ptr)
+#define MemFree(ptr) free(ptr)
 #endif
 
 
@@ -71,21 +89,21 @@
 
 struct mouseStatusStruct
 {
-	int left;
-	int right;
-	int X;
-	int Y;
+  int left;
+  int right;
+  int X;
+  int Y;
 };
 
 typedef struct mouseStatusStruct mouseStatusStruct;
 
 struct actorBoxStruct
 {
-	int actorNum;
-	int left;
-	int right;
-	int top;
-	int bottom;
+  int actorNum;
+  int left;
+  int right;
+  int top;
+  int bottom;
 };
 
 typedef struct actorBoxStruct actorBoxStruct;
@@ -149,6 +167,8 @@ typedef struct actorBoxStruct actorBoxStruct;
 // lba2 48 = use switch
 // lba2 49 = crawl
 
+int lbaMain(int argc, char *argv[]);
+
 //#include "opcodes.h"
 #include "osystem.h"
 #include "angle.h"
@@ -156,6 +176,6 @@ typedef struct actorBoxStruct actorBoxStruct;
 #include "debug.h"
 #include "zones.h"
 #include "vars.h"
+#include "angleTable.h"
 
 #endif
-

@@ -1,3 +1,21 @@
+/*
+Copyright (C) 2002-2004 The TwinE team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
 #ifndef _VARS_
 #define _VARS_
 
@@ -31,48 +49,48 @@ void startThreadTimer(void);
 /*class LBA_renderer
 {*/
     struct pointTab
-	{
+  {
 #ifdef USE_FLOAT
-	    float x;
-	    float y;
-	    float z;
+      float x;
+      float y;
+      float z;
 #else
-	    short int x;
-	    short int y;
-	    short int z;
+      short int x;
+      short int y;
+      short int z;
 #endif
-	};
+  };
 
-	typedef struct pointTab pointTab;
+  typedef struct pointTab pointTab;
 
     struct pointEntry
-	{
-	    short int data1;
-	    short int data2;
-	    short int data3;
-	    short int param;
-	    short int flag;
-	    short int rotateZ;
-	    short int rotateY;
-	    short int rotateX;
-	    int field_10;
-	    int field_14;
-	    int field_18;
-	    int Y;
-	    int field_20;
-	    short int field_24;
-	} PACKED;
+  {
+      short int data1;
+      short int data2;
+      short int data3;
+      short int param;
+      short int flag;
+      short int rotateZ;
+      short int rotateY;
+      short int rotateX;
+      int field_10;
+      int field_14;
+      int field_18;
+      int Y;
+      int field_20;
+      short int field_24;
+  } PACKED;
 
-	typedef struct pointEntry pointEntry;
+  typedef struct pointEntry pointEntry;
 
     struct renderTabEntry
-	{
-	    short int depth;
-	    short int renderType;
-	    unsigned char *dataPtr;
-	};
+  {
+      short int depth;
+      short int renderType;
+      unsigned char *dataPtr;
+  };
 
-	typedef struct renderTabEntry renderTabEntry;
+  typedef struct renderTabEntry renderTabEntry;
 
 //  public:
     extern short int *tab1;
@@ -125,7 +143,7 @@ void startThreadTimer(void);
     extern unsigned char *_pointsPtr;
     extern unsigned char *_partsPtr;
 
-    extern int _matrixTable[271];	// should be matrixes
+    extern int _matrixTable[271]; // should be matrixes
     extern unsigned char *_currentMatrixTableEntry;
 
     extern int *_shadePtr;
@@ -226,21 +244,21 @@ void startThreadTimer(void);
 
 struct zbufferDataStruct
     {
-	short int y;
-	short int z;
-	short int x;
-	short int drawX;
-	short int drawY;
-	short int spriteNum;
+  short int y;
+  short int z;
+  short int x;
+  short int drawX;
+  short int drawY;
+  short int spriteNum;
     };
 
 typedef struct zbufferDataStruct zbufferDataStruct;
 
 struct flagDataStruct
     {
-	short int x;
-	short int z;
-	short int y;
+  short int x;
+  short int z;
+  short int y;
     };
 
 typedef struct flagDataStruct flagDataStruct;
@@ -248,9 +266,9 @@ typedef struct flagDataStruct flagDataStruct;
 /*
 struct pointTab
     {
-	short int x;
-	short int y;
-	short int z;
+  short int x;
+  short int y;
+  short int z;
     };*/
 
 struct point2dStruct
@@ -265,79 +283,79 @@ struct point3dStruct
 {
     short int x;
     short int y;
-	short int z;
+  short int z;
 };
 
 typedef struct point3dStruct point3dStruct;
 
 struct lineCoordinates
     {
-	int data;
-	short int x1;
-	short int y1;
-	short int x2;
-	short int y2;
+  int data;
+  short int x1;
+  short int y1;
+  short int x2;
+  short int y2;
     };
 
 typedef struct lineCoordinates lineCoordinates;
 
 struct lineData
     {
-	int data;
-	short int p1;
-	short int p2;
+  int data;
+  short int p1;
+  short int p2;
     };
 
 typedef struct lineData lineData;
 
 /*struct renderTabEntry
     {
-	short int depth;
-	short int renderType;
-	unsigned char *dataPtr;
+  short int depth;
+  short int renderType;
+  unsigned char *dataPtr;
     };*/
 
 struct sceneStruct
     {
-	short int field_0;
-	short int field_2;
-	short int field_4;
-	short int field_6;
+  short int field_0;
+  short int field_2;
+  short int field_4;
+  short int field_6;
     };
 
 typedef struct sceneStruct sceneStruct;
 
 struct overlayObjectListStruct
     {
-	short int field_0;
-	short int field_2;
-	short int field_4;
-	short int field_6;
-	short int field_8;
-	short int field_A;
-	int field_C;
+  short int field_0;
+  short int field_2;
+  short int field_4;
+  short int field_6;
+  short int field_8;
+  short int field_A;
+  int field_C;
     };
 
 typedef struct overlayObjectListStruct overlayObjectListStruct;
 
 struct extraListStruct
     {
-	short int field_0;
-	short int X;
-	short int Y;
-	short int Z;
-	short int field_8;
-	short int field_A;
-	short int field_C;
-	short int field_E;
-	short int field_10;
-	short int field_12;
-	short int field_14;
-	short int field_16;
-	int time;
-	short int field_1C;
-	short int field_1E;
-	short int field_20;
+  short int field_0;
+  short int X;
+  short int Y;
+  short int Z;
+  short int field_8;
+  short int field_A;
+  short int field_C;
+  short int field_E;
+  short int field_10;
+  short int field_12;
+  short int field_14;
+  short int field_16;
+  int time;
+  short int field_1C;
+  short int field_1E;
+  short int field_20;
 
     };
 
@@ -345,25 +363,25 @@ typedef struct extraListStruct extraListStruct;
 
 struct currentDirtyBoxListStruct
     {
-	unsigned short int left;
-	unsigned short int top;
-	unsigned short int right;
-	unsigned short int bottom;
+  unsigned short int left;
+  unsigned short int top;
+  unsigned short int right;
+  unsigned short int bottom;
     };
 
 typedef struct currentDirtyBoxListStruct currentDirtyBoxListStruct;
 
 struct drawListStruct
     {
-	short int field_0;
-	unsigned short int field_2;
-	unsigned short int X;
-	unsigned short int Z;
-	unsigned short int Y;
-	unsigned short int field_A;
-	unsigned short int field_C;
-	unsigned short int field_E;
-	unsigned short int field_10;
+  short int field_0;
+  unsigned short int field_2;
+  unsigned short int X;
+  unsigned short int Z;
+  unsigned short int Y;
+  unsigned short int field_A;
+  unsigned short int field_C;
+  unsigned short int field_E;
+  unsigned short int field_10;
     };
 
 typedef struct drawListStruct drawListStruct;
@@ -371,39 +389,39 @@ typedef struct drawListStruct drawListStruct;
 /*
 struct pointEntry
     {
-	short int data1;
-	short int data2;
-	short int data3;
-	short int param;
-	short int flag;
-	short int rotate1;
-	short int rotate2;
-	short int rotate3;
-	int field_10;
-	int field_14;
-	int field_18;
-	int Y;
-	int field_20;
-	short int field_24;
+  short int data1;
+  short int data2;
+  short int data3;
+  short int param;
+  short int flag;
+  short int rotate1;
+  short int rotate2;
+  short int rotate3;
+  int field_10;
+  int field_14;
+  int field_18;
+  int Y;
+  int field_20;
+  short int field_24;
     };*/
 
 struct FLAheaderStruct
 {
-	char version[6];
-	int numOfFrames;
-	char speed;
-	char var1;
-	short int var2;
-	short int var3;
+  char version[6];
+  int numOfFrames;
+  char speed;
+  char var1;
+  short int var2;
+  short int var3;
 };
 
 typedef struct FLAheaderStruct FLAheaderStruct;
 
 struct frameDataStruct
 {
-	char videoSize;
-	char dummy;
-	int frameVar0;
+  char videoSize;
+  char dummy;
+  int frameVar0;
 };
 
 typedef struct frameDataStruct frameDataStruct;
@@ -422,34 +440,34 @@ extern int staticMemoryUsage;
 //    LBA_renderer renderer;
 //    extern debugger _debugger;
 
-	extern int useFlaPCX;
-	extern int flaTime;
-	extern short int flaVar2;
-	extern int numOfFrameInFLA;
-	extern char flaPalette[256*3];
-	extern char flaPaletteRGBA[256*4];
-	extern FLAheaderStruct flaHeaderData;
-	extern byte* workVideoBufferCopy;
-	extern FILE* dataFileHandle;
-	extern int flahVar2;
-	extern int flahVar3;
-	extern int flaSpeed;
-	extern int samplesInFla;
-	extern frameDataStruct frameData;
-	extern int runFLAscriptVar0;
-	extern int lastNumOfColor;
-	extern int lastStartColor;
-	extern char flaBuffer[320*200];
+  extern int useFlaPCX;
+  extern int flaTime;
+  extern short int flaVar2;
+  extern int numOfFrameInFLA;
+  extern char flaPalette[256*3];
+  extern char flaPaletteRGBA[256*4];
+  extern FLAheaderStruct flaHeaderData;
+  extern byte* workVideoBufferCopy;
+  extern FILE* dataFileHandle;
+  extern int flahVar2;
+  extern int flahVar3;
+  extern int flaSpeed;
+  extern int samplesInFla;
+  extern frameDataStruct frameData;
+  extern int runFLAscriptVar0;
+  extern int lastNumOfColor;
+  extern int lastStartColor;
+  extern char flaBuffer[320*200];
 
 #ifdef PCLIKE
-	extern SDL_CD* cdrom;
+  extern SDL_CD* cdrom;
 #endif //PCLIKE
 
     extern short int key;
     extern uint16 useSound;
     extern byte useSB;
     extern uint32 HQR_Midi;
-    extern uint32 unkPtr;		// recheck
+    extern uint32 unkPtr;   // recheck
     extern uint32 cfg_file;
 
     extern byte *workVideoBuffer;
@@ -470,8 +488,8 @@ extern int staticMemoryUsage;
     extern byte *videoPtr12;
     extern byte *videoPtr13;
 
-    extern byte palette[256 * 3];	// tempvalue
-    extern byte palette2[256 * 3];	// tempvalue
+    extern byte palette[256 * 3]; // tempvalue
+    extern byte palette2[256 * 3];  // tempvalue
     extern byte paletteRGBA[256 * 4];
 
     extern unsigned char outBuffer[512000];
@@ -491,17 +509,17 @@ extern int staticMemoryUsage;
     extern byte *lbaFont;
 
 #ifdef PRELOAD_ALL
-	extern hqr_entry *HQR_Fic;
-	extern hqr_entry *HQR_Bodies;
-	extern hqr_entry *HQR_Scenes;
-	extern hqr_entry *HQR_Text;
-	extern hqr_entry *HQR_Grids;
-	extern hqr_entry *HQR_Bll;
+  extern hqr_entry *HQR_Fic;
+  extern hqr_entry *HQR_Bodies;
+  extern hqr_entry *HQR_Scenes;
+  extern hqr_entry *HQR_Text;
+  extern hqr_entry *HQR_Grids;
+  extern hqr_entry *HQR_Bll;
 #endif
-	extern hqr_entry *HQR_Inventory;
-	extern hqr_entry *HQR_Sprites;
-	extern hqr_entry *HQR_Anims;
-	extern hqr_entry *HQR_Samples;
+  extern hqr_entry *HQR_Inventory;
+  extern hqr_entry *HQR_Sprites;
+  extern hqr_entry *HQR_Anims;
+  extern hqr_entry *HQR_Samples;
 
     extern byte *bufCube;
     extern byte *bufferBrick;
@@ -509,9 +527,9 @@ extern int staticMemoryUsage;
 
     extern byte *fntFont;
 
-    extern int interCharSpace;		// espace inter lettre
+    extern int interCharSpace;    // espace inter lettre
 
-    extern int spaceLenght;		// largeur d'un espace
+    extern int spaceLenght;   // largeur d'un espace
 
     extern int textColor;
     extern int progressiveTextStartColor;
@@ -523,7 +541,7 @@ extern int staticMemoryUsage;
 
     extern int samplesLoaded;
 
-    extern int textVar1;		// current text bank
+    extern int textVar1;    // current text bank
 
     extern byte textVar2[256];
 
@@ -552,7 +570,7 @@ extern int staticMemoryUsage;
 
     extern int dialogueBoxLeft;
     extern int dialogueBoxTop;
-	extern int dialogueBoxRight;
+  extern int dialogueBoxRight;
     extern int dialogueBoxBottom;
 
     extern short int key1;
@@ -589,7 +607,7 @@ extern int staticMemoryUsage;
 
     extern int newGameVar5;
 
-    extern int screenLockupTable[2000];	// valeur temporaire...
+    extern int screenLockupTable[2000]; // valeur temporaire...
 
     extern int initVideoVar1;
 
@@ -612,13 +630,13 @@ extern int staticMemoryUsage;
     extern short int fuel;
     extern short int cropBottomScreen;
     extern short int currentlyFollowedActor;
-	extern short int startupAngleInCube;
+  extern short int startupAngleInCube;
 
     extern short int comportementHero;
 
     extern short int startupComportementHeroInCube;
 
-    extern short int numTextEntry;	// nombre d'entree de text dans la bank actuelle
+    extern short int numTextEntry;  // nombre d'entree de text dans la bank actuelle
 
     extern int currentTextLength;
     extern char *currentTextPtr;
@@ -638,7 +656,7 @@ extern int staticMemoryUsage;
 
     extern char buf1[256];
 
-    extern char buf2[256];		// check size
+    extern char buf2[256];    // check size
 
     extern char *printText8Ptr1;
     extern char *printText8Ptr2;
@@ -729,7 +747,7 @@ extern int staticMemoryUsage;
     short int *tab2;
     short int *tab3; */
 
-    extern actor actors[100];		// yeah, can use up to 100 actor !
+    extern actor actors[100];   // yeah, can use up to 100 actor !
     extern actor *twinsen;
 
     extern short int holomapTraj;
@@ -754,7 +772,7 @@ extern int staticMemoryUsage;
     extern int newCameraZ;
     extern int newCameraY;
 
-	extern short int magicBallIdx;
+  extern short int magicBallIdx;
     extern short int twinsenMoved;
     extern short int useAnotherGrm;
 
@@ -851,13 +869,13 @@ extern int staticMemoryUsage;
     extern int cameraY;
 
 #ifdef USE_FLOAT
-	extern float projectedPositionX;
-	extern float projectedPositionY;
-	extern float projectedPositionZ;
+  extern float projectedPositionX;
+  extern float projectedPositionY;
+  extern float projectedPositionZ;
 #else
-	extern short int projectedPositionX;
-	extern short int projectedPositionY;
-	extern short int projectedPositionZ;
+  extern short int projectedPositionX;
+  extern short int projectedPositionY;
+  extern short int projectedPositionZ;
 #endif
 
     extern int zbufferVar1;
@@ -1011,13 +1029,13 @@ extern int staticMemoryUsage;
 
     extern short int moveVar1;
 
-	extern int showTalkVar;
+  extern int showTalkVar;
 
-	extern int numOfOptionsInChoice;
-	extern short int inGameMenuData[10];
+  extern int numOfOptionsInChoice;
+  extern short int inGameMenuData[10];
 
-	extern short int choiceTab[18];
-	extern int inGameMenuAnswer;
+  extern short int choiceTab[18];
+  extern int inGameMenuAnswer;
 
     extern int magicBallNumBounce;
     extern int magicBallParam;
@@ -1043,6 +1061,9 @@ extern int staticMemoryUsage;
     extern int bufRotate0[9];
     extern int bufRotate1[9];
    // ---------------------------------------------------------------------------------------
+
+    int mainLoopInteration(void);
+
     void MyDial(int index); //*
     void LoadGame(void); //*
     void OpenDialNoWindow(int itemNumber); //*
@@ -1059,7 +1080,7 @@ extern int staticMemoryUsage;
     void GetShadow(int X, int Z, int Y);
 
     void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point3dStruct* pPoint3dProjected);
-	void MDL_DrawBoundingBoxHiddenPart(actor* pActor);
+  void MDL_DrawBoundingBoxHiddenPart(actor* pActor);
     void MDL_DrawBoundingBoxShownPart(actor* pActor);
 
     int ExtraCheckObjCol(extraListStruct* extra, int param);
@@ -1067,27 +1088,27 @@ extern int staticMemoryUsage;
     int ExtraSearch(int actorNum, int X, int Z, int Y, int param1, int param2, int param3, int param4);
     int ExtraBonus(int X, int Y, int Z, int param, int angle, int type, int param2);
 
-	void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int param1);
-	void AffSpecial(int extraNum, int X, int Y);
-	void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4);
-	void MixteColonne(unsigned char *gridEntry, unsigned char *dest);
-	void MixteMapToCube(byte* gridPtr);
-	void IncrustGrm(int gridNumber);
-	int WorldColBrickFull(int var0, int var1, int var2, int var3);
+  void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int param1);
+  void AffSpecial(int extraNum, int X, int Y);
+  void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4);
+  void MixteColonne(unsigned char *gridEntry, unsigned char *dest);
+  void MixteMapToCube(byte* gridPtr);
+  void IncrustGrm(int gridNumber);
+  int WorldColBrickFull(int var0, int var1, int var2, int var3);
 
-	void processInGameMenu(int index);
+  void processInGameMenu(int index);
 
-	void DrawFrame(char* ptr, int width, int height);
-	void UpdateFrame(char* ptr, int width);
-	void AddExt(char* file, char* extention);
-	int InitFla(char* file);
-	void ExtInitMcga();
-	void Mcga_Cls();
-	void Mcga_Flip();
-	void DrawNextFrameFla();
-	void GestionPalette();
-	void ClearFla();
-	void ExtInitSvga();
+  void DrawFrame(char* ptr, int width, int height);
+  void UpdateFrame(char* ptr, int width);
+  void AddExt(char* file, char* extention);
+  int InitFla(char* file);
+  void ExtInitMcga();
+  void Mcga_Cls();
+  void Mcga_Flip();
+  void DrawNextFrameFla();
+  void GestionPalette();
+  void ClearFla();
+  void ExtInitSvga();
 
     int BoundRegleTrois(int var0, int var1, int var2, int var3);
     void CheckZoneSce(actor * lactor, int actorNumber);
@@ -1190,10 +1211,10 @@ extern int staticMemoryUsage;
     int RotateNuage(unsigned char *ptr);
 
     int AffObjetIso(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14,
-		      unsigned char *arg_18);
+          unsigned char *arg_18);
 
     void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_C,
-		 short int arg_10, short int arg_14, unsigned char *arg_18);
+     short int arg_10, short int arg_14, unsigned char *arg_18);
 
     void CopyInterAnim(unsigned char *arg_0, unsigned char *arg_4);
 
@@ -1203,7 +1224,7 @@ extern int staticMemoryUsage;
 
     void DrawInfoMenu(short int arg_0, short int arg_4);
 
-	int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr);
+  int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr);
 
     //int HQR_RemoveEntryFromHQR(hqr_entry * hqrPtr, int var);
 
@@ -1446,11 +1467,11 @@ extern int staticMemoryUsage;
 
     void InitBufferCube(void);
 
-	// memory management functions
+  // memory management functions
 #ifdef MEM_DEBUG
-	void initMemorySystem();
+  void initMemorySystem();
     byte* Malloc(int size);
-	void Free(void* ptr);
+  void MemFree(void* ptr);
 #endif
 
     void fadeIn(byte * palette);

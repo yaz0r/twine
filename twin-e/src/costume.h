@@ -1,19 +1,20 @@
-/***************************************************************************
-                          costume.h  -  description
-                             -------------------
-    begin                : Sat Mar 16 2002
-    copyright            : (C) 2002 by Yaz0r
-    email                : yaz0r@yaz0r.net
- ***************************************************************************/
+/*
+Copyright (C) 2002-2004 The TwinE team
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
 
 struct MDL_BoundingBoxPoint
 {
@@ -42,49 +43,55 @@ typedef struct animTimerDataStruct animTimerDataStruct;
 
 struct actor
     {
-	char body;
-	char anim;
-	byte field_2;
-	byte field_3;
+#ifdef LBASTUDIO
+      char name[256];
+      int modelNumber;
+      int timeDelay;
+      int faceTwinkenVar;
+#endif
+	int body;
+	int anim;
+	int field_2;
+	int field_3;
 	unsigned char *animExtraData;
-	short int field_8;
-	short int currentLabelPtr;
+	int field_8;
+	int currentLabelPtr;
    	byte *entityDataPtr;
-	short int field_10;
-	short int field_12;
-	short int field_14;
-	short int talkColor;
-	short int costumeIndex;
-	short int X;		/* \ */
-	short int Y;		/* |----coordiantes */
-	short int Z;		/* / */
-	short int field_20;
-	short int field_22;
-	short int field_24;
+	int field_10;
+	int field_12;
+	int field_14;
+	int talkColor;
+	int costumeIndex;
+	int X;		/* \ */
+	int Y;		/* |----coordiantes */
+	int Z;		/* / */
+	int field_20;
+	int field_22;
+	int field_24;
 
 	MDL_BoundingBox boudingBox;
 
-	short int angle;	// rotation ?
-	short int speed;
+	int angle;	// rotation ?
+	int speed;
 	timeStruct time;
-	short int comportement;
-	short int positionInMoveScript;
-	short int positionInActorScript;
+	int comportement;
+	int positionInMoveScript;
+	int positionInActorScript;
 
-	short int cropLeft; 
-	short int cropTop;
-	short int cropRight;
+	int cropLeft; 
+	int cropTop;
+	int cropRight;
 
 	union{
-		short int cropBottom; 
-		short int followedActor;
+		int cropBottom; 
+		int followedActor;
 	};
 
-	short int collision;
-	short int standOn;
-	short int zone;
-	short int label;
-	short int pausedTrackPtr;
+	int collision;
+	int standOn;
+	int zone;
+	int label;
+	int pausedTrackPtr;
 
     struct
     {
@@ -126,17 +133,17 @@ struct actor
         U16 bUnk8000                            : 1; // 0x8000
     } dynamicFlagsBF;
 
-	short int hitBy;
-	short int field_66;
-	short int life;
-	short int lastRotationSpeed;
-	short int lastX;
-	short int lastZ;
-	short int lastY;
-	short int previousAnimIndex;
-	short int doorStatus;
-	short int animPosition;	// animPosition
-	short int field_78;
+	int hitBy;
+	int field_66;
+	int life;
+	int lastRotationSpeed;
+	int lastX;
+	int lastZ;
+	int lastY;
+	int previousAnimIndex;
+	int doorStatus;
+	int animPosition;	// animPosition
+	int field_78;
 
 	unsigned char *moveScript;
 	unsigned char *actorScript;

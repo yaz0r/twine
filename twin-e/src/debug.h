@@ -1,3 +1,21 @@
+/*
+Copyright (C) 2002-2004 The TwinE team
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
 enum debuggerColor
 {
     SCRIPT_COLOR_DEFAULT,
@@ -103,25 +121,25 @@ struct winStruct
 typedef struct winStruct winStruct;
 
     // cubClip vars
-    extern bool debugger_cubeClipEnabled;
+    extern boolean debugger_cubeClipEnabled;
     extern int debugger_cubeClipX;
     extern int debugger_cubeClipY;
     extern int debugger_cubeClipZ;
     //
 
-	extern bool bShowBoundingBoxes;
+	extern boolean bShowBoundingBoxes;
 
-	extern bool bShowCubeChangeZones;
-	extern bool bShowCameraZones;
-	extern bool bShowScenaricZones;
-	extern bool bShowGRMZones;
-	extern bool bShowObjZones;
-	extern bool bShowTextZones;
-	extern bool bShowLadderZones;
+	extern boolean bShowCubeChangeZones;
+	extern boolean bShowCameraZones;
+	extern boolean bShowScenaricZones;
+	extern boolean bShowGRMZones;
+	extern boolean bShowObjZones;
+	extern boolean bShowTextZones;
+	extern boolean bShowLadderZones;
 
-	extern bool bShowActorNumbers;
+	extern boolean bShowActorNumbers;
 
-	extern bool bShowFlags;
+	extern boolean bShowFlags;
 
     //LBA_engine * engine;
     //OSystem *osystem;

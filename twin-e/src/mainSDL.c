@@ -1,26 +1,71 @@
-/***************************************************************************
-                          mainSDL.cpp  -  description
-                             -------------------
-    begin                : Mon Jun 3 2002
-    copyright            : (C) 2002 by Yaz0r
-    email                : yaz0r@yaz0r.net
- ***************************************************************************/
+/*
+Copyright (C) 2002-2004 The TwinE team
 
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+void studioTick(void);
 
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "lba.h"
 #include "SDL_ttf.h"
-#include "SDL_rotozoom.h"
-#include "SDL_gfxPrimitives.h"
+//#include "SDL_rotozoom.h"
+//#include "SDL_gfxPrimitives.h"
+
+#define WTIME 10
+
+#ifdef WTIME
+#ifdef _WIN32
+#include <sys/timeb.h>
+#include <windows.h>
+typedef unsigned _int64 uTime_t;
+#else
+#include <sys/time.h>
+typedef unsigned long long uTime_t;
+#endif
+
+uTime_t origin;
+
+uTime_t fetch_time()
+{
+  uTime_t r;
+
+#ifdef _WIN32
+  struct timeb t;
+
+  ftime(&t);
+  r = (t.time * 1000) + t.millitm;
+#else
+  struct timeval t;
+
+  gettimeofday(&t, NULL);
+  r = (t.tv_sec * 1000) + t.tv_usec / 1000;
+#endif
+
+  return r;
+}
+
+uTime_t diff_time(uTime_t origin)
+{
+  uTime_t current = fetch_time();
+
+  return current - origin;
+}
+
+#endif
 
 #ifndef USE_GL
 
@@ -32,14 +77,36 @@ SDL_Surface *sdl_buffer;
 SDL_Surface *sdl_buffer320x200;
 SDL_Surface *sdl_bufferStretch;
 SDL_Surface *sdl_bufferRGBA;
-SDL_Surface *sdl_screen;	// that's the SDL global object for the screen
+SDL_Surface *sdl_screen;  // that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 TTF_Font *font;
 
+void osystem_mainLoop(void)
+{
+  while(1)
+  {
+#ifdef WTIME
+    if (diff_time(origin) < WTIME)
+    {
+#ifdef _WIN32
+      SDL_Delay((Uint32)(WTIME - diff_time(origin)));
+#else
+      usleep((WTIME - diff_time(origin)) * 1000);
+#endif
+  }
+    origin = fetch_time();
+#endif
+
+    lba_time++;
+
+    mainLoopInteration();
+  }
+}
+
 void osystem_delay(int time)
 {
-    SDL_Delay(time);
+ //   SDL_Delay(time);
 }
 
 void osystem_updateImage()
@@ -58,9 +125,14 @@ void osystem_getMouseStatus(mouseStatusStruct * mouseData)
     osystem_mouseRight = 0;
 }
 
-int osystem_init(int argc, char *argv[])	// that's the constructor of the system dependent
-											// object used for the SDL port
+int osystem_init(int argc, char *argv[])  // that's the constructor of the system dependent
+                      // object used for the SDL port
 {
+    int rendersolid = 0;
+    int renderstyle = 0;
+    int rendertype = 0;
+
+    int ptsize = 11;
     unsigned char *keyboard;
     int size;
     int i;
@@ -80,34 +152,28 @@ int osystem_init(int argc, char *argv[])	// that's the constructor of the system
 #endif
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
-	{
-	    fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-	    exit(1);
-	}
+  {
+      fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+      exit(1);
+  }
 
     atexit(SDL_Quit);
 
     if (TTF_Init() < 0)
-	{
-	    fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
-	    exit(1);
-	}
+  {
+      fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
+      exit(1);
+  }
     atexit(TTF_Quit);
-
-    int rendersolid = 0;
-    int renderstyle = 0;
-    int rendertype = 0;
-
-    int ptsize = 11;
 
     font = TTF_OpenFont("verdana.ttf", ptsize);
 
     if (font == NULL)
-	{
-	    fprintf(stderr, "Couldn't load %d pt font from %s: %s\n", ptsize, "verdana.ttf",
-		    SDL_GetError());
-	    exit(2);
-	}
+  {
+      fprintf(stderr, "Couldn't load %d pt font from %s: %s\n", ptsize, "verdana.ttf",
+        SDL_GetError());
+      exit(2);
+  }
 
     TTF_SetFontStyle(font, renderstyle);
 
@@ -126,19 +192,21 @@ int osystem_init(int argc, char *argv[])	// that's the constructor of the system
     sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE/*|SDL_FULLSCREEN*/);
 
     if (sdl_screen == NULL)
-	{
-	    fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
-	    exit(1);
-	}
+  {
+      fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
+      exit(1);
+  }
 
     for (i = 0; i < 16; i++)
-	{
-	    surfaceTable[i] =
-		SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
-	}
+  {
+      surfaceTable[i] =
+    SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
+  }
 
     osystem_mouseLeft = 0;
     osystem_mouseRight = 0;
+
+    return 0;
 }
 
 void osystem_putpixel(int x, int y, int pixel)
@@ -153,8 +221,8 @@ void osystem_putpixel(int x, int y, int pixel)
     *p = pixel;
 }
 
-void osystem_setColor(byte i, byte R, byte G, byte B)	// cette fonction est vraiment vraiment
-							// tres tres lente...
+void osystem_setColor(byte i, byte R, byte G, byte B) // cette fonction est vraiment vraiment
+              // tres tres lente...
 {
     sdl_colors[i].r = R;
     sdl_colors[i].g = G;
@@ -196,10 +264,10 @@ void osystem_fadeBlackToWhite()
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 
     for (i = 0; i < 256; i += 3)
-	{
-	    memset(colorPtr, i, 1024);
-	    SDL_SetPalette(sdl_screen, SDL_PHYSPAL, colorPtr, 0, 256);
-	}
+  {
+      memset(colorPtr, i, 1024);
+      SDL_SetPalette(sdl_screen, SDL_PHYSPAL, colorPtr, 0, 256);
+  }
 }
 
 void osystem_Flip(unsigned char *videoBuffer)
@@ -211,17 +279,17 @@ void osystem_Flip(unsigned char *videoBuffer)
 
 void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer)
 {
-	SDL_BlitSurface(sdl_buffer320x200,NULL,sdl_bufferRGBA,NULL);
+  SDL_BlitSurface(sdl_buffer320x200,NULL,sdl_bufferRGBA,NULL);
 
-	sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_ON);
+//  sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_ON);
 
-//	SDL_FillRect(sdl_screen,NULL,0);
+//  SDL_FillRect(sdl_screen,NULL,0);
 
     SDL_BlitSurface(sdl_bufferStretch, NULL, sdl_screen, NULL);
 
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 
-	SDL_FreeSurface(sdl_bufferStretch);
+  SDL_FreeSurface(sdl_bufferStretch);
 }
 
 void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom)
@@ -256,8 +324,8 @@ void osystem_initVideoBuffer(char *buffer, int width, int height)
     amask = 0xff000000;
 #endif
 
-	sdl_bufferRGBA=SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,rmask, gmask, bmask, amask);
-	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
+  sdl_bufferRGBA=SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32,rmask, gmask, bmask, amask);
+  sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
 
 void osystem_initBuffer(char *buffer, int width, int height)
@@ -267,6 +335,8 @@ void osystem_initBuffer(char *buffer, int width, int height)
 
 void osystem_crossFade(char *buffer, char *palette)
 {
+    int i;
+
     SDL_Surface *backupSurface;
     SDL_Surface *newSurface;
     SDL_Surface *tempSurface;
@@ -286,7 +356,7 @@ void osystem_crossFade(char *buffer, char *palette)
 
     backupSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
     newSurface =
-	SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 640, 480, 32, rmask, gmask, bmask, 0);
+  SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 640, 480, 32, rmask, gmask, bmask, 0);
 
     tempSurface = SDL_CreateRGBSurfaceFrom(buffer, 640, 480, 8, 640, 0, 0, 0, 0);
     SDL_SetColors(tempSurface, (SDL_Color *) palette, 0, 256);
@@ -295,31 +365,31 @@ void osystem_crossFade(char *buffer, char *palette)
     SDL_BlitSurface(tempSurface, NULL, newSurface, NULL);
 
 #ifndef FASTDEBUG
-    int i;
+
 
 /*    for (i = 0; i < 16; i++)
-	{
-	    SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
-	    SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 16);
-	    SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
-	}
+  {
+      SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
+      SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 16);
+      SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
+  }
 
     for (i = 0; i < 16; i++)
-	{
-	    SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
-	    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
-	}*/
+  {
+      SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
+      SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+  }*/
 
     for (i = 0; i < 8; i++)
-	{
-	    SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
-	    SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 32);
-	    SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
-   	    SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
-	    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+  {
+      SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
+      SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 32);
+      SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
+        SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
+      SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
         SDL_Delay(20);
 
-	}
+  }
 
 #endif
 
@@ -353,38 +423,39 @@ void osystem_drawText(int X, int Y, char *string)
 
 void osystem_drawTextColor(int X, int Y, char *string, unsigned char r, unsigned char g, unsigned char b)
 {
-    SDL_Color forecol;
-    SDL_Color white = { 0, 0, 0xFF, 0 };
-    SDL_Rect rectangle;
+  SDL_Surface *text;
+  SDL_Color forecol;
+  SDL_Color white = { 0, 0, 0xFF, 0 };
+  SDL_Rect rectangle;
 
-    forecol.r = r;
-    forecol.g = g;
-    forecol.b = b;
-    forecol.unused = 0;
+  forecol.r = r;
+  forecol.g = g;
+  forecol.b = b;
+  forecol.unused = 0;
 
-    SDL_Surface *text;
+  text = TTF_RenderText_Solid(font, string, forecol);
 
-    text = TTF_RenderText_Solid(font, string, forecol);
+  rectangle.x = X;
+  rectangle.y = Y - 2;
+  rectangle.w = text->w;
+  rectangle.h = text->h;
 
-    rectangle.x = X;
-    rectangle.y = Y - 2;
-    rectangle.w = text->w;
-    rectangle.h = text->h;
-
-    SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
-  //  SDL_FreeSurface(text);
+  SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
+  //SDL_FreeSurface(text);
 }
 
 void osystem_drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsigned char* palette)
 {
-    palette += color*3;
-    Uint32 colorRGBA = *(Uint32*)palette;
-    colorRGBA |= 0xFF;
+  Uint32 colorRGBA;
 
-    lineColor(sdl_buffer, X1, Y1, X2, Y2, colorRGBA);
+  palette += color*3;
+  colorRGBA = *(Uint32*)palette;
+  colorRGBA |= 0xFF;
+
+ // lineColor(sdl_buffer, X1, Y1, X2, Y2, colorRGBA);
 }
 
-void osystem_set320x200Mode( bool mode )
+void osystem_set320x200Mode( boolean mode )
 {
 }
 
