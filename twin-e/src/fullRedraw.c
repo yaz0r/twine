@@ -265,7 +265,7 @@ void LBA_engine::fullRedraw(int param)
 
 	  do
 	  {
-		  actorNumber=fullRedrawVar6[arg_1E].field_2&0x3FF;
+		actorNumber=fullRedrawVar6[arg_1E].field_2&0x3FF;
 		lactor=&actors[actorNumber];
 		flags=((unsigned int)fullRedrawVar6[arg_1E].field_2)&0xFC00;
 
@@ -276,6 +276,8 @@ void LBA_engine::fullRedraw(int param)
 				if(!actorNumber)
 				{
 				}
+
+				printf("Draw poly actor %d\n",actorNumber);
 
 				//applyAnim(lactor->field_76,(char*)getHqrdataPtr(HQRanims,lactor->field_74),(char*)bodyPtrTab[lactor->costumeIndex]);
 
@@ -406,10 +408,25 @@ void LBA_engine::fullRedraw(int param)
    // loop5
   }
 
-  /*for(arg_1A=0;arg_1A<numFlags;arg_1A++) //affichage des flags
-  {
-	  startRenderer(flagData[arg_1A].x-cameraX,flagData[arg_1A].z-cameraZ,flagData[arg_1A].y-cameraY,0,0,0,flagModelPtr);
-  }*/
+	for(arg_1A=0;arg_1A<numFlags;arg_1A++) //affichage des flags
+	{
+		char stringTemp[10];
+		int X;
+		int Y;
+		int x,y,z;
+
+		startRenderer(flagData[arg_1A].x-cameraX,flagData[arg_1A].z-cameraZ,flagData[arg_1A].y-cameraY,0,0,0,flagModelPtr);
+
+		sprintf(stringTemp,"%d",arg_1A);
+		setTextColor(255);
+
+		fullRedrawS2S1(flagData[arg_1A].x-cameraX,flagData[arg_1A].z-cameraZ,flagData[arg_1A].y-cameraY);
+
+		if(fullRedrawVar3>40 && fullRedrawVar3<600 && fullRedrawVar4>40 && fullRedrawVar4<440)
+			printStringSimple(fullRedrawVar3,fullRedrawVar4,stringTemp);
+
+
+	}
 
   counter2=0;
 

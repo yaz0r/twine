@@ -47,7 +47,7 @@ void LBA_engine::changeRoom(void)
 	twinsen->field_5A=-1;
 	twinsen->positionInActorScript=0;
 	twinsen->positionInMoveScript=-1;
-	twinsen->field_5C=-1;
+	twinsen->label=-1;
 	
 	loadRoomScene(needChangeRoom);
 
@@ -532,7 +532,7 @@ void LBA_engine::reinitTwinsen(void)
  twinsen->field_60=2119;
  twinsen->field_14=1;
  twinsen->positionInMoveScript=-1;
- twinsen->field_5C=-1;
+ twinsen->label=-1;
  twinsen->positionInActorScript = 0;
 	twinsen->field_5A=-1;
  twinsen->angle=reinitVar9;

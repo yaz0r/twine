@@ -27,7 +27,7 @@ void LBA_engine::moveActor(int actorNumber)
 			loadActorCostume(*scriptPtr,actorNumber);
 			lactor->positionInMoveScript++;
 			break;
-		case 3:
+		case 3: //ANIM
 			if(playAnim(*(scriptPtr++),0,0,actorNumber))
 			{
 				lactor->positionInMoveScript++;
@@ -38,7 +38,7 @@ void LBA_engine::moveActor(int actorNumber)
 				continueMove=0;
 			}
 			break;
-		case 4:
+		case 4: //GOTO_POINT
 			int newAngle;
 			lactor->positionInMoveScript++;
 			manipActorResult=*scriptPtr;
@@ -76,11 +76,12 @@ void LBA_engine::moveActor(int actorNumber)
 			//	changeActorTime(lactor);
 			}
 			break;
+
 		case 7:
 			printf("skipping actor move opcode 7\n");
 			lactor->positionInMoveScript+=2;
 			break;
-		case 8: //move to flag
+		case 8: //warp to flag
 			lactor->positionInMoveScript++;
 			manipActorResult=*scriptPtr;
 
@@ -99,15 +100,15 @@ void LBA_engine::moveActor(int actorNumber)
 
 			break;
 
-		case 9:
-			lactor->field_5C=*scriptPtr;
+		case 9: //LABEL
+			lactor->label=*scriptPtr;
 			lactor->positionInMoveScript++;
-			lactor->field_A=lactor->positionInMoveScript-2;
+			lactor->currentLabelPtr=lactor->positionInMoveScript-2;
 			break;
 		case 10:
 			lactor->positionInMoveScript=*(short int*)scriptPtr;
 			break;
-		case 11:
+		case 11: //STOP
 			continueMove=0;
 			lactor->positionInMoveScript=-1;
 			break;
@@ -168,7 +169,7 @@ void LBA_engine::moveActor(int actorNumber)
 			fullRedrawS3(*(short int*)scriptPtr,0x1000,1,lactor->X,lactor->Z,lactor->Y);
 			lactor->positionInMoveScript+=2;
 			break;
-		case 15: // move to ?
+		case 15:
 			lactor->positionInMoveScript++;
 			if(lactor->field_60&0x400)
 			{

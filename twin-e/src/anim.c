@@ -247,6 +247,8 @@ void LBA_engine::initNewCSub(actor* lactor,int actorNum)
 	char* eax;
 	short int temp;
 
+	return;
+
 	ebx=(char*)lactor->field_4;
 
 	var_4=0;

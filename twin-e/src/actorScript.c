@@ -46,176 +46,254 @@ void LBA_engine::runActorScript(short int actorNumber)
   	switch(opcode)
    {
     case 0:
-    	OPbreak=-1;
-     lactor->positionInActorScript=-1;
-     break;
+		{
+			OPbreak=-1;
+			lactor->positionInActorScript=-1;
+			break;
+		}
+
 	case 2:
-		manipActor(lactor);
-		if(!doCalc())
 		{
-			*opcodePtr=13;
+			manipActor(lactor);
+			if(!doCalc())
+			{
+				*opcodePtr=13;
+			}
+			actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			break;
 		}
-		actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-		break;
+
     case 3:
-    	actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-     break;
-    case 4:
-    	manipActor(lactor);
-     doCalc();
-     actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-     break;
-    case 5:
-    	break;
-    case 12:
-    	manipActor(lactor);
-     if(!doCalc())
-     {
-      actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-     }
-     else
-     {
-      actorScriptPtr+=2;
-     }
-     break;
-    case 13:
-      manipActor(lactor);
-      if(!doCalc())
-      {
-        actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-      }
-      else
-      {
-        actorScriptPtr+=2;
-        *opcodePtr=2;
-      }
-      break;
-    case 14:
-    	manipActor(lactor);
-    	if(!doCalc())
-     {
-      actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-     }
-     else
-     {
-      actorScriptPtr+=2;
-      *opcodePtr=4;           // le met en always branch
-     }
-    	break;
-    case 15:
-    	actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
-     break;
-	case 17:
-		loadActorCostume(*(actorScriptPtr++),actorNumber);
-		break;
-	case 18:
-		int param1;
-		int param2;
-
-		param1=*(actorScriptPtr++);
-		param2=*(actorScriptPtr++);
-
-		loadActorCostume(param2,param1);
-	break;
-	case 19:
-		playAnim(*(actorScriptPtr++),0,0,actorNumber);
-		break;
-    case 20:
-    	playAnim(*(actorScriptPtr+1),0,0,*actorScriptPtr);
-     actorScriptPtr+=2;
-     break;
-    case 23:
-    	lactor->positionInMoveScript=*(unsigned short int*)actorScriptPtr;
-     actorScriptPtr+=2;
-     break;
-	case 24:
-		int actorNumTemp;
-		actorNumTemp=*(actorScriptPtr++);
-		actors[actorNumTemp].positionInMoveScript=*((short int*)actorScriptPtr);
-		actorScriptPtr+=2;
-		break;
-	case 25:
-		freezeTime();
-		mainLoop2(1);
-		//if(showTalkIcon)
-		//	drawTalkIcon(actorNumber);
-		setNewTextColor(lactor->talkColor); // setTextColor
-		//talkingActor=actorNumber;
-		printTextFullScreen(*(short int*)actorScriptPtr);
-		actorScriptPtr+=2;
-		unfreezeTime();
-		fullRedraw(1);
-		//waitForKey();
-		break;
-	case 26:
-		actorScriptPtr++;
-		printf("Ignoring actor opcode 26\n");
-		break;
-    case 27:
-    	temp=*(actorScriptPtr++);
-		lactor->field_40=temp;
-		if(temp==2)
 		{
-		lactor->field_54=*(actorScriptPtr++);
+			actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			break;
 		}
-     break;
-	case 29:
-		int newActorToFollow;
 
-		newActorToFollow=*(actorScriptPtr++);
+	case 4:
+		{
+			manipActor(lactor);
+			doCalc();
+			actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			break;
+		}
 
-		if(reinitVar8==newActorToFollow)
+	case 5:
 		{
 			break;
 		}
 
-		newCameraX=actors[newActorToFollow].X>>9;
-		newCameraZ=actors[newActorToFollow].Z>>8;
-		newCameraY=actors[newActorToFollow].Y>>8;
+	case 12:
+		{
+			manipActor(lactor);
+			if(!doCalc())
+			{
+				actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			}
+			else
+			{
+				actorScriptPtr+=2;
+			}
+			break;
+		}
 
-		reinitVar8=newActorToFollow;
-		mainLoopVar2=1;
+    case 13:
+		{
+			manipActor(lactor);
+			if(!doCalc())
+			{
+				actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			}
+			else
+			{
+				actorScriptPtr+=2;
+				*opcodePtr=2;
+			}
+			break;
+		}
 
-		break;
+    case 14:
+		{
+			manipActor(lactor);
+			if(!doCalc())
+			{
+				actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			}
+			else
+			{
+				actorScriptPtr+=2;
+				*opcodePtr=4;           // le met en always branch
+			}
+			break;
+		}
+
+    case 15:
+		{
+			actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
+			break;
+		}
+
+	case 17: //loadCostume
+		{
+			loadActorCostume(*(actorScriptPtr++),actorNumber);
+			break;
+		}
+
+	case 18: //loadCostumeAnother
+		{
+			int param1;
+			int param2;
+
+			param1=*(actorScriptPtr++);
+			param2=*(actorScriptPtr++);
+
+			loadActorCostume(param2,param1);
+			break;
+		}
+
+	case 19: //playAnim
+		{
+			playAnim(*(actorScriptPtr++),0,0,actorNumber);
+			break;
+		}
+
+    case 20: //playAnimAnother
+		{
+			playAnim(*(actorScriptPtr+1),0,0,*actorScriptPtr);
+			actorScriptPtr+=2;
+			break;
+		}
+
+    case 23: //SET_TRACK
+		{
+			lactor->positionInMoveScript=*(unsigned short int*)actorScriptPtr;
+			actorScriptPtr+=2;
+			break;
+		}
+
+	case 24: //setTrackAnother
+		{
+			int actorNumTemp;
+			actorNumTemp=*(actorScriptPtr++);
+			actors[actorNumTemp].positionInMoveScript=*((short int*)actorScriptPtr);
+			actorScriptPtr+=2;
+			break;
+		}
+
+	case 25:
+		{
+			freezeTime();
+			mainLoop2(1);
+			//if(showTalkIcon)
+			//	drawTalkIcon(actorNumber);
+			setNewTextColor(lactor->talkColor); // setTextColor
+			//talkingActor=actorNumber;
+			printTextFullScreen(*(short int*)actorScriptPtr);
+			actorScriptPtr+=2;
+			unfreezeTime();
+			fullRedraw(1);
+			//waitForKey();
+			break;
+		}
+
+	case 26:
+		{
+			actorScriptPtr++;
+			printf("Ignoring actor opcode 26\n");
+			break;
+		}
+
+    case 27: // SET_COMPORTEMENT
+		{
+			temp=*(actorScriptPtr++);
+			lactor->field_40=temp;
+			if(temp==2)
+			{
+				lactor->field_54=*(actorScriptPtr++);
+			}
+			break;
+		}
+
+	case 29: //setCameraActor
+		{
+			int newActorToFollow;
+
+			newActorToFollow=*(actorScriptPtr++);
+
+			if(reinitVar8==newActorToFollow)
+			{
+				break;
+			}
+
+			newCameraX=actors[newActorToFollow].X>>9;
+			newCameraZ=actors[newActorToFollow].Z>>8;
+			newCameraY=actors[newActorToFollow].Y>>8;
+
+			reinitVar8=newActorToFollow;
+			mainLoopVar2=1;
+
+			break;
+		}
+
 	case 30:
-		playAnim(0,0,-1,0);
-		changeTwinsenComp(*(actorScriptPtr++));
-		break;
+		{
+			playAnim(0,0,-1,0);
+			changeTwinsenComp(*(actorScriptPtr++));
+			break;
+		}
+
     case 31:
-    	roomData1[*(actorScriptPtr++)]=*(actorScriptPtr++);
-     break;
+		{
+			roomData1[*(actorScriptPtr++)]=*(actorScriptPtr++);
+			break;
+		}
+
     case 33:
-    	lactor->positionInActorScript=*(unsigned short int*)actorScriptPtr;
-     actorScriptPtr+=2;
-     break;
+		{
+			lactor->positionInActorScript=*(unsigned short int*)actorScriptPtr;
+			actorScriptPtr+=2;
+			break;
+		}
+
 	case 34:
-		int tempActorNum;
-		tempActorNum=*(actorScriptPtr++);
-		actors[tempActorNum].positionInActorScript=*((short int*)actorScriptPtr);
-		actorScriptPtr+=2;
-		break;
-    case 35:
-    	OPbreak=-1;
-     break;
-    case 36:
-    	vars[*(actorScriptPtr++)]=*(actorScriptPtr++);
-     break;
+		{
+			int tempActorNum;
+			tempActorNum=*(actorScriptPtr++);
+			actors[tempActorNum].positionInActorScript=*((short int*)actorScriptPtr);
+			actorScriptPtr+=2;
+			break;
+		}
+
+    case 35: //END
+		{
+    		OPbreak=-1;
+			break;
+		}
+
+    case 36: //SET_VAR_GAME
+		{
+    		vars[*(actorScriptPtr++)]=*(actorScriptPtr++);
+			break;
+		}
+
 	case 38:
-		//removeActorFromRoom(actorNumber); //todo: implement
-		lactor->field_62|=0x20;
-		lactor->costumeIndex=-1;
-		lactor->field_5A=-1;
-		lactor->life=0;
-		break;
+		{
+			//removeActorFromRoom(actorNumber); //todo: implement
+			lactor->field_62|=0x20;
+			lactor->costumeIndex=-1;
+			lactor->field_5A=-1;
+			lactor->life=0;
+			break;
+		}
+
 	case 41:
 		OPbreak=-1;
 		lactor->positionInActorScript=-1;
 		break;
-	case 42:
-		lactor->field_5E=lactor->field_A;
+	case 42: //stopTrack
+		lactor->field_5E=lactor->currentLabelPtr;
 		lactor->positionInMoveScript=-1;
 		break;
-	case 43:
+	case 43: //resumeTrack
 		lactor->positionInMoveScript=lactor->field_5E;
 		break;
 	case 45:
@@ -379,8 +457,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 		osystem->refresh(videoBuffer1,0,0,639,240);
 		break;
     default:
-    	printf("Unhandled actorscript opcode %d\n",opcode);
-     exit(1);
+		{
+			printf("Unhandled actorscript opcode %d\n",opcode);
+			exit(1);
+		}
    } 
   } 
   else
@@ -467,10 +547,10 @@ void LBA_engine::manipActor(actor* lactor)
 	  manipActorResult=actors[*(actorScriptPtr++)].costume;
 	  break;
   case 9:
-  	manipActorResult=lactor->field_5C;
+  	manipActorResult=lactor->label;
   	break;
   case 10:
-  	manipActorResult=actors[*(actorScriptPtr++)].field_5C;
+  	manipActorResult=actors[*(actorScriptPtr++)].label;
    break;
   case 11:
   	manipActorResult=roomData1[*(actorScriptPtr++)];
@@ -526,7 +606,7 @@ void LBA_engine::manipActor(actor* lactor)
   case 14:
 	  manipActorResult=updateActorScript;
 	  break;
-  case 15:
+  case 15: //VAR_GAME
   	temp=*(actorScriptPtr++);
    if(!vars[28] || ( vars[28] && temp>=28))
    {

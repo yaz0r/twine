@@ -141,7 +141,7 @@ int LBA_engine::mainLoop(void)
 /*             camera debugger                 */
 /***********************************************/      
             
-   /*    if(printTextVar12&2) // x--     -> bas
+       if(printTextVar12&2) // x--     -> bas
         {
           changeRoomVar6++;
           mainLoopVar2=1;
@@ -163,7 +163,7 @@ int LBA_engine::mainLoop(void)
         {
           newCameraX++;
           mainLoopVar2=1;
-        }*/
+        }
 
 /**********************************************/
 // angle debug
@@ -1034,4 +1034,583 @@ void LBA_engine::updateActors(int actorNum)
 
 void LBA_engine::processActor(int actorNum)
 {
+	actor* lactor;
+	char* animPtr;
+	int animData;
+	short int var_10;
+	short int var_C;
+	short int var_4;
+	short int var_8;
+
+	lactor=&actors[actorNum];
+
+	currentlyProcessedActorNum=actorNum;
+	processActorVar1=lactor;
+
+	if(lactor->costumeIndex==-1)
+		return;
+
+	processActorVar2=lactor->field_20;
+	processActorVar3=lactor->field_22;
+	processActorVar4=lactor->field_24;
+
+	if(lactor->field_60&0x400)
+	{
+		if(lactor->field_66)
+		{
+			lactor->field_62|=2;
+		}
+
+		processActorX=lactor->X;
+		processActorZ=lactor->Z;
+		processActorY=lactor->Y;
+
+		if(!(lactor->field_62&0x100))
+		{
+			if(lactor->field_34)
+			{
+				int dx;
+
+				dx=mainLoopSub17(&lactor->time);
+
+				if(!dx)
+				{
+					if(lactor->time.to>0)
+					{
+						dx=1;
+					}
+					else
+					{
+						dx=-1;
+					}
+
+					processActorSub1(dx,0,lactor->field_78);
+
+					processActorZ=lactor->Z-setSomething3Var13;
+
+					processActorSub1(0,setSomething3Var11,lactor->angle);
+
+					processActorX=lactor->X+setSomething3Var11;
+					processActorY=lactor->Y+setSomething3Var13;
+
+					setActorAngle(0,lactor->field_34,0,&lactor->time);
+
+					if(lactor->field_62&0x40)
+					{
+						if(lactor->field_72)
+						{
+							var_10=lactor->field_72;
+							if(var_10>=getDistanceToward(processActorX,processActorY,lactor->field_6C,lactor->field_70))
+							{
+								if(lactor->angle==0)
+								{
+									processActorY=lactor->field_70+lactor->field_72;
+								}
+								else
+								if(lactor->angle==0x100)
+								{
+									processActorX=lactor->field_6C+lactor->field_72;
+								}
+								else
+								if(lactor->angle==0x200)
+								{
+									processActorY=lactor->field_70-lactor->field_72;
+								}
+								else
+								if(lactor->angle==0x300)
+								{
+									processActorX=lactor->field_6C-lactor->field_72;
+								}
+
+								lactor->field_62&=0xFFBF;
+								lactor->field_34=0;
+							}
+						}
+						else
+						{
+							int tempVar=0;
+
+							if(lactor->angle==0)
+							{
+								if(processActorY<=lactor->field_70)
+									tempVar=1;
+							}
+							else
+							if(lactor->angle==0x100)
+							{
+								if(processActorX<=lactor->field_6C)
+									tempVar=1;
+							}
+							else
+							if(lactor->angle==0x200)
+							{
+								if(processActorY>=lactor->field_70)
+									tempVar=1;
+							}
+							else
+							if(lactor->angle==0x300)
+							{
+								if(processActorX>=lactor->field_6C)
+									tempVar=1;
+							}
+
+							if(tempVar)
+							{
+								processActorX=lactor->field_6C;
+								processActorZ=lactor->field_6E;
+								processActorY=lactor->field_70;
+								lactor->field_62&=0xFFBF;
+								lactor->field_34=0;
+							}
+						}
+					}
+				}
+			}
+
+			if(lactor->field_60&0x10)
+			{
+				processActorX=lactor->field_6C;
+				processActorZ=lactor->field_6E;
+				processActorY=lactor->field_70;
+
+				if(lactor->field_60 & 0x8000)
+				{
+					processActorX=abs(processActorX);
+					processActorY=abs(processActorY);
+				}
+
+				lactor->field_6C=0;
+				lactor->field_6E=0;
+				lactor->field_70=0;
+
+			}
+		}
+
+	}
+	else
+	{
+		if(lactor->field_74!=-1)
+		{
+			animPtr=(char*)getHqrdataPtr(HQRanims,lactor->field_74);
+			animData=processActorSub2(lactor->field_76,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]);
+			if(processActorVar5)
+			{
+				lactor->field_62|=0x80;
+			}
+			else
+			{
+				lactor->field_62&=0xFF7F;
+			}
+
+			lactor->angle=(lactor->angle+processActorVar6-lactor->field_6A)&0x3FF;
+			lactor->field_6A=processActorVar6;
+
+			processActorSub1(processActorVar8,processActorVar7,lactor->angle);
+
+			processActorVar8=setSomething3Var11; //dest
+			processActorVar7=setSomething3Var13;
+
+			processActorX=lactor->X+processActorVar8-lactor->field_6C;
+			processActorZ=lactor->Z+processActorVar9-lactor->field_6E;
+			processActorY=lactor->Y+processActorVar7-lactor->field_70;
+
+			lactor->field_6C=processActorVar8;
+			lactor->field_6E=processActorVar9;
+			lactor->field_70=processActorVar7;
+
+			lactor->field_62&=0xFFF3;
+
+			if(animData)
+			{
+				lactor->field_76++;
+				if(lactor->field_4)
+				{
+					initNewCSub(lactor,actorNum);
+				}
+
+				var_10=lactor->field_76;
+				if(var_10==draw3D2(animPtr))
+				{
+					lactor->field_62&=0xFFFD;
+					if(lactor->field_78==0)
+					{
+						lactor->field_76=draw3D3(animPtr);
+					}
+					else
+					{
+						var_C=actorNum;
+						lactor->costume=lactor->field_2;
+						lactor->field_74=initCostume(lactor->costume,actorNum);
+
+						if(lactor->field_74==-1)
+						{
+							lactor->field_74=initCostume(0,var_C);
+							lactor->costume=0;
+						}
+
+						lactor->field_4=loadTwinsenCostumesVar1;
+
+						lactor->field_78=0;
+						lactor->field_76=0;
+						lactor->field_66=0;
+					}
+
+					if(lactor->field_4)
+					{
+						initNewCSub(lactor,actorNum);
+					}
+
+					lactor->field_62|=4;
+				}
+
+				lactor->field_6A=0;
+			}
+		}
+
+
+		lactor->field_6C=0;
+		lactor->field_6E=0;
+		lactor->field_70=0;
+
+	}
+
+	if(lactor->field_58!=-1)
+	{
+		processActorX-=actors[lactor->field_58].field_20;
+		processActorZ-=actors[lactor->field_58].field_22;
+		processActorY-=actors[lactor->field_58].field_24;
+
+		processActorX+=actors[lactor->field_58].X;
+		processActorZ+=actors[lactor->field_58].Z;
+		processActorY+=actors[lactor->field_58].Y;
+
+		if(processActorSub4(lactor->field_58,actorNum))
+			lactor->field_58=-1;
+
+	}
+
+	if(lactor->field_62&0x100)
+	{
+		processActorX=processActorVar2;
+		processActorZ=processActorVar3+mainLoopVar17;
+		processActorY=processActorVar4;
+	}
+
+	if(lactor->field_60&0x2)
+	{
+		int position;
+
+		getPosVar2=0;
+		position=getCurPos(processActorVar2,processActorVar3,processActorVar4);
+
+		if(position)
+		{
+			if(position==1)
+			{
+				printf("currentpos dans col 1 ?\n");
+				lactor->Z=processActorZ=abs(processActorZ)+0x100;
+			}
+			else
+			{
+				processActorSub5(position);
+			}
+		}
+
+		if(lactor->field_60&1)
+			processActorSub6(actorNum);
+
+		if((lactor->field_58!=-1) && (lactor->field_62&0x100))
+			processActorSub7();
+
+		processActorVar10=0;
+		processActorVar11=processActorX;
+		processActorVar12=processActorZ;
+		processActorVar13=processActorY;
+
+		if(!actorNum && !(lactor->field_60&0x20))
+		{
+			processActorSub8(lactor->field_26,lactor->field_2A,lactor->field_2E,1);
+			processActorSub8(lactor->field_28,lactor->field_2A,lactor->field_2E,2);
+			processActorSub8(lactor->field_28,lactor->field_2A,lactor->field_30,4);
+			processActorSub8(lactor->field_26,lactor->field_2A,lactor->field_30,8);
+		}
+		else
+		{
+			processActorSub9(lactor->field_26,lactor->field_2A,lactor->field_2E,1);
+			processActorSub9(lactor->field_28,lactor->field_2A,lactor->field_2E,2);
+			processActorSub9(lactor->field_28,lactor->field_2A,lactor->field_30,4);
+			processActorSub9(lactor->field_26,lactor->field_2A,lactor->field_30,8);
+		}
+
+		if(processActorVar10 && !(lactor->field_62&0x100) && currentlyProcessedActorNum && (comportement!=1) && (lactor->costume!=1))
+		{
+			processActorSub1(lactor->field_26,lactor->field_2E,lactor->angle+0x580);
+
+			setSomething3Var11+=processActorX;
+			setSomething3Var13+=processActorY;
+
+			if(setSomething3Var11>=0 && setSomething3Var13>=0 && setSomething3Var11<=0x7E00 && setSomething3Var13<=0x7E00)
+			{
+				if(getCurPos(setSomething3Var11,processActorZ+0x100,setSomething3Var13))
+				{
+					processActorSub10(lactor->X,lactor->Z+1000,lactor->Y,0);
+					playAnim(6,2,0,currentlyProcessedActorNum);
+
+					if(currentlyProcessedActorNum==0)
+					{
+						changeRoomVar8=1;
+					}
+
+					lactor->life--;
+				}
+			}
+		}
+
+		position=getCurPos(processActorX,processActorZ,processActorY);
+		var_4=position;
+		lactor->field_3=position;
+
+		if(position)
+		{
+			if(position==1)
+			{
+				if((lactor->field_62>>8)!=position)
+				{
+					processActorSub7();
+					processActorZ=(getPosVar2<<8)+0x100;
+				}
+				else
+				{
+					if(!actorNum && comportement==1 && lactor->costume==var_4)
+					{
+						processActorSub10(lactor->X,lactor->Z+0x1000,lactor->Y,0);
+						playAnim(6,2,0,currentlyProcessedActorNum);
+
+						if(!actorNum)
+						{
+							changeRoomVar8=1;
+						}
+
+						lactor->life--;
+					}
+
+					if(!getCurPos(processActorX,processActorZ,processActorVar4)) // wall collision ?
+					{
+						if(getCurPos(processActorVar2,processActorZ,processActorY))
+						{
+							return;
+						}
+
+						processActorX=processActorVar2;
+					}
+					else
+					{
+						processActorY=processActorVar4;
+					}
+				}
+			}
+			else
+			{
+			}
+
+			lactor->field_62&=0xFFFE;
+		}
+		else
+		{
+			if(lactor->field_60&0x800 && lactor->field_58!=-1)
+			{
+				var_8=getCurPos(processActorX,processActorZ-1,processActorY);
+
+				if(var_8)
+				{
+					if(lactor->field_62&0x100)
+					{
+						processActorSub7();
+					}
+
+					processActorSub5(var_8);
+				}
+				else
+				{
+					if(!(lactor->field_62&0x80))
+					{
+						lactor->field_62|=0x100;
+
+						if((!actorNum) && changeRoomVar2==0)
+						{
+							changeRoomVar2=processActorZ;
+						}
+
+						playAnim(7,0,255,actorNum);
+
+					}
+				}
+			}
+		}
+	
+		if(getPosVar2!=-1) // die because au drown ?
+		{
+			lactor->life=0;
+		}
+	}
+	else
+	{
+		if(lactor->field_60&0x1)
+			processActorSub6(actorNum);
+	}
+
+	if(processActorVar10)
+		lactor->field_3|=0x80;
+
+	if(processActorX<0)
+		processActorX=0;
+
+	if(processActorY<0)
+		processActorY=0;
+
+	if(processActorZ<0)
+		processActorZ=0;
+
+
+	if(processActorX>0x7E00)
+		processActorX=0x7E00;
+
+	if(processActorY>0x7E00)
+		processActorY=0x7E00;
+
+	lactor->X=processActorX;
+	lactor->Z=processActorZ;
+	lactor->Y=processActorY;
+
+}
+
+void LBA_engine::processActorSub8(int var0,int var1,int var2,int var3)
+{
+}
+
+void LBA_engine::processActorSub9(int var0,int var1,int var2,int var3)
+{
+}
+
+void LBA_engine::processActorSub10(int var0,int var1,int var2,int var3)
+{
+}
+
+void LBA_engine::processActorSub5(int param)
+{
+}
+
+void LBA_engine::processActorSub6(int param)
+{
+}
+
+void LBA_engine::processActorSub7(void)
+{
+}
+
+int LBA_engine::getCurPos(int var0, int var1, int var2)
+{
+	char* ptr;
+	char* ptr2;
+	char temp0;
+	char temp3;
+
+	ptr=(char*)bufCube;
+
+	getPosVar1=(var0+0x100)>>9;
+	getPosVar2=var1>>8;
+	getPosVar3=(var2+0x100)>>9;
+
+	if(getPosVar1<0 || getPosVar1>=64)
+		return(0);
+
+	ptr+=getPosVar1*50;
+
+	if(getPosVar2<=-1)
+		return(1);
+
+	if(getPosVar2<0 || getPosVar2>=24)
+		return(0);
+
+	ptr+=getPosVar2*2;
+
+	if(getPosVar3<0 || getPosVar3>=64)
+		return(0);
+
+	ptr+=(getPosVar2>>7)*50;
+
+	temp0=*ptr;
+
+	if(temp0)
+	{
+		ptr2=(char*)currentBll;
+
+		ptr2+=*(int*)(ptr2+temp0*4-4);
+		ptr2+=3;
+
+		temp3=*(ptr2+1);
+
+		ptr2=ptr2+temp3*4;
+
+		return(*ptr2);
+	}
+	else
+	{
+		return(*(ptr+1));
+	}
+}
+
+void LBA_engine::processActorSub1(int var0,int var1,int var2)
+{
+	int ebx;
+	int ecx;
+	int ebp;
+	int edx;
+	int eax;
+	int edi;
+
+	ebx=var0;
+	ecx=var1;
+	ebp=var2;
+
+	if(!ebp)
+	{
+		eax=ebp;
+		edx=ecx;
+	}
+	else
+	{
+		eax=ebp;
+		eax&=0x3FF;
+		ebp=tab1[eax];
+		eax+=0x100;
+		eax&=0x3FF;
+		edx=tab1[eax];
+
+		eax=ebx;
+		eax*=edx;
+		edi=eax;
+		eax=ecx;
+		eax*=ebp;
+		edi+=eax;
+		edi>>=14;
+		edx*=ecx;
+		ebx*=ebp;
+		edx-=ebx;
+		edx>>=14;
+		eax=edi;
+	}
+
+	setSomething3Var11=eax;
+	setSomething3Var13=edx;
+}
+
+int LBA_engine::processActorSub2(int var0,char* ptr0,char* ptr1)
+{
+	return(0);
+}
+
+int LBA_engine::processActorSub4(int var0,int var1)
+{
+	return(0);
 }

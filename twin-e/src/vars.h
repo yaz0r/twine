@@ -731,8 +731,46 @@ class LBA_engine
  int moveActorVar1;
 
  int mainLoopVar17;
+
+ short int currentlyProcessedActorNum;
+
+ actor* processActorVar1;
+ short int processActorVar2;
+ short int processActorVar3;
+ short int processActorVar4;
+
+ short int processActorVar10;
+ short int processActorX;
+ short int processActorY;
+ short int processActorZ;
+
+ short int processActorVar5;
+ short int processActorVar6;
+ short int processActorVar7;
+ short int processActorVar8;
+ short int processActorVar9;
+
+ int getPosVar1;
+ int getPosVar2;
+ int getPosVar3;
+
+ short int processActorVar11;
+ short int processActorVar12;
+ short int processActorVar13;
+
 	
 //----------------------------------------------------------------------------------------
+
+void processActorSub8(int var0,int var1,int var2,int var3);
+void processActorSub9(int var0,int var1,int var2,int var3);
+void processActorSub10(int var0,int var1,int var2,int var3);
+void processActorSub5(int param);
+void processActorSub6(int param);
+void processActorSub7(void);
+int getCurPos(int var0, int var1, int var2);
+void processActorSub1(int var0,int var1,int var2);
+int processActorSub2(int var0,char* ptr0,char* ptr1);
+int processActorSub4(int var0,int var1);
 
 void addObject(actor* lactor);
 int anotherSqrt(int X1,int Z1,int Y1,int X2,int Z2,int Y2);

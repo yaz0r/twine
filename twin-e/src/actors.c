@@ -62,7 +62,7 @@ void LBA_engine::loadRoomActors(short int arg_0)
  }
  
  lactor->positionInMoveScript=-1;
- lactor->field_5C=-1;
+ lactor->label=-1;
  lactor->positionInActorScript=0;
 }
 
