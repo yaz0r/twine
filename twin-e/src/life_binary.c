@@ -239,7 +239,7 @@ void runActorScript(short int actorNumber)
              lactor->comportement = temp;
              if (temp == 2)
            {
-               lactor->cropBottom = *(actorScriptPtr++);
+               lactor->followedActor = *(actorScriptPtr++);
            }
              break;
          }
@@ -970,7 +970,9 @@ void runActorScript(short int actorNumber)
           choiceNumber=READ_LE_S16(actorScriptPtr);
           actorScriptPtr+=2;
 
-//          processInGameMenu(choiceNumber);
+          processInGameMenu(choiceNumber);
+
+          numOfOptionsInChoice=0;
           
           unfreezeTime();
           fullRedraw(1);

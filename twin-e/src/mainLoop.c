@@ -1006,19 +1006,21 @@ void DoDir(int actorNum)
         break;
     case 2: //MOVE_FOLLOW
        {
-           int tempAngle;
+         int tempAngle;
 
-           tempAngle = GetAngle(lactor->X, lactor->Z, actors[lactor->followedActor].X,actors[lactor->followedActor].Z);
+         assert(lactor->followedActor != -1);
 
-               if (lactor->staticFlagsBF.bIsSpriteActor)
+         tempAngle = GetAngle(lactor->X, lactor->Z, actors[lactor->followedActor].X,actors[lactor->followedActor].Z);
+
+         if (lactor->staticFlagsBF.bIsSpriteActor)
          {
              lactor->angle = tempAngle;
          }
-           else
+         else
          {
              ManualRealAngle(lactor->angle, tempAngle, lactor->speed,&lactor->time);
          }
-           break;
+         break;
        }
 
     case 3: //MOVE_TRACK

@@ -1179,6 +1179,8 @@ void InitSprite(int imageNumber, int actorNumber);
 
 void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, unsigned char *ptr);
 
+int getAnimIndexForBody(byte anim, short int actorNumber);
+
 int Distance2D(int X1, int Y1, int X2, int Y2);
 
 void DoTrack(int actorNumber);

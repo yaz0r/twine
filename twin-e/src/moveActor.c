@@ -801,7 +801,7 @@ void DoTrack(int actorNumber)
           {
             currentTrackActor->X = destX;
             currentTrackActor->Z = destZ;
-            currentTrackActor->Z = destY;
+            currentTrackActor->Y = destY;
 
             currentTrackActor->positionInMoveScript++;
           }
