@@ -19,7 +19,7 @@ void LBA_engine::moveActor(int actorNumber)
 	do
 	{
 		positionInScript=lactor->positionInMoveScript;
-		scriptPtr=(char*)(lactor->positionInMoveScript+lactor->scenePtr1);
+		scriptPtr=(char*)(lactor->positionInMoveScript+lactor->moveScript);
 		currentOpcode=*(scriptPtr++);
 		lactor->positionInMoveScript++;
 

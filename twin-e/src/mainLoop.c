@@ -130,8 +130,8 @@ int LBA_engine::mainLoop(void)
         }
         if((byte)mainLoopVar5&2 && mainLoopVar10 == 0)     // recenter screen
         {
-          changeRoomVar4=actors[reinitVar8].X>>9;
-          changeRoomVar5=actors[reinitVar8].Z>>8;
+          newCameraX=actors[reinitVar8].X>>9;
+          newCameraZ=actors[reinitVar8].Z>>8;
           changeRoomVar6=actors[reinitVar8].Y>>9;
           mainLoopVar2=1;
           needChangeRoom=currentRoom+1;
@@ -155,13 +155,13 @@ int LBA_engine::mainLoop(void)
       
         if(printTextVar12&4) // y--      -> gauche
         {
-          changeRoomVar4--;
+          newCameraX--;
           mainLoopVar2=1;
         }
       
         if(printTextVar12&8) // y++      -> droite
         {
-          changeRoomVar4++;
+          newCameraX++;
           mainLoopVar2=1;
         }
 
@@ -606,14 +606,14 @@ void LBA_engine::reinitVars(void)
  reinitAll2Var3=0;
  reinitAll2Var4=0;
 
- reinitAll2Var5=0;
+ numFlags=0;
 
 }
 
 void LBA_engine::reinitAll3(void)
 {
   resetActor(0);
- changeRoomVar7=-1;
+ newCameraY=-1;
  numCloverBox=2;
  numClover=2;
  numCoin=0;
@@ -622,7 +622,6 @@ void LBA_engine::reinitAll3(void)
  GV18=0;
  twinsen->field_0=0;
  twinsen->life=50;
-
  twinsen->talkColor=4;
 
 }

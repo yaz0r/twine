@@ -19,7 +19,7 @@ void LBA_engine::initVars(void)
 	bufAni2=0;
 	HQRInventory=0;
 	menuPal=0;
-	HQRess2=0;
+	shadowSprite=0;
 	HQRess3=0;
 	lbaFont=0;
 
@@ -305,10 +305,10 @@ void LBA_engine::initVars(void)
 	mainLoopVar10=0;
 
 	changeRoomVar3=0;
-	changeRoomVar4=0;
-	changeRoomVar5=0;
+	newCameraX=0;
+	newCameraZ=0;
 	changeRoomVar6=0;
-	changeRoomVar7=-1;
+	newCameraY=-1;
 	changeRoomVar8=0;
 	changeRoomVar9=-1;
 	currentGrid2=-1;
@@ -320,7 +320,7 @@ void LBA_engine::initVars(void)
 
 	reinitAll2Var3=0;
 	reinitAll2Var4=0;
-	reinitAll2Var5=0;
+	numFlags=0;
 
 	file3D0=NULL;
 	file3D1=NULL;

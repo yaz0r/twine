@@ -114,11 +114,11 @@ void LBA_engine::changeRoom(void)
 	reinitVar11=0;
 	changeRoomVar3=0;
 
-	changeRoomVar4=actors[reinitVar8].X>>9;
-	changeRoomVar5=actors[reinitVar8].Z>>8;
+	newCameraX=actors[reinitVar8].X>>9;
+	newCameraZ=actors[reinitVar8].Z>>8;
 	changeRoomVar6=actors[reinitVar8].Y>>9; 
  
-	changeRoomVar7=-1;
+	newCameraY=-1;
 	changeRoomVar8=1;
 	changeRoomVar9=-1;
 	currentGrid2=-1;
@@ -212,7 +212,7 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 
 	temp3=*(temp2++);
                
-	twinsen->scenePtr1=(unsigned char*)temp2;
+	twinsen->moveScript=(unsigned char*)temp2;
 
 	temp=(unsigned char*)temp2;
 	temp2=(unsigned short int*)(temp+temp3);
@@ -221,7 +221,7 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 
 	temp3=*(temp2++);
 
-	twinsen->scenePtr2=(unsigned char*)temp2;
+	twinsen->actorScript=(unsigned char*)temp2;
 
 	temp=(unsigned char*)temp2;
 	temp2=(unsigned short int*)(temp+temp3);
@@ -279,14 +279,14 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 
 		temp3=*(temp2++);
 
-		actors[currentActor].scenePtr1=(unsigned char*)temp2;
+		actors[currentActor].moveScript=(unsigned char*)temp2;
 
 		temp=(unsigned char*)temp2;
 		temp2=(unsigned short int*)(temp+temp3);
 
 		temp3=*(temp2++);
 
-		actors[currentActor].scenePtr2=(unsigned char*)temp2;
+		actors[currentActor].actorScript=(unsigned char*)temp2;
 
 		temp=(unsigned char*)temp2;
 		temp2=(unsigned short int*)(temp+temp3);
@@ -301,15 +301,10 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	localScenePtr=(unsigned char*)temp2 + 2*(reinitAll2Var4*12);
 	temp2=(unsigned short int*)localScenePtr;
 
-	reinitAll2Var5=*(temp2++);
+	numFlags=*(temp2++);
 
 	localScenePtr=(unsigned char*)temp2;
 	flagData=(flagDataStruct*)temp2;
-
-	numFlags=(scenePtr+size-(unsigned char*)temp2)/6;
-
-	
-
 }
 
 void LBA_engine::changeRoomSub1(int arg_0)

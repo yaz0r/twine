@@ -167,7 +167,7 @@ int LBA_engine::renderM1(unsigned char * costumePtr)
 			coY=pointPtr2->y+renderV11;
 			coZ=-(pointPtr2->z+renderV10);
 
-			pointPtr->x=(((coX+coZ)*8+(coX+coZ)*16)>>9)+setSomethingVar1; // those lines may be buggy
+			pointPtr->x=(((coX+coZ)*8+(coX+coZ)*16)>>9)+setSomethingVar1;
 			pointPtr->y=((((coX-coZ)*4+(coX-coZ)*8)+(2*coY-(coY<<5)))>>9)+setSomethingVar2;
 			pointPtr->z=coZ-coX-coY;
 

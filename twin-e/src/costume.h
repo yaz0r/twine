@@ -69,6 +69,6 @@ struct actor {
  short int field_76;
  short int field_78;
 
-	unsigned char *scenePtr1;
-	unsigned char *scenePtr2;
+	unsigned char *moveScript;
+	unsigned char *actorScript;
 };

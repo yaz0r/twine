@@ -90,9 +90,9 @@ struct fullRedrawVar6Struct
 {
 	unsigned short int field_0;
  unsigned short int field_2;
- unsigned short int field_4;
- unsigned short int field_6;
- unsigned short int field_8;
+ unsigned short int X;
+ unsigned short int Z;
+ unsigned short int Y;
  unsigned short int field_A;
  unsigned short int field_C;
  unsigned short int field_E;
@@ -182,7 +182,7 @@ class LBA_engine
 	hqr_entry	*HQRInventory;
 	byte	*menuPal;
 	byte	menuPalRGBA[1024];
-	byte	*HQRess2;
+	byte	*shadowSprite;
 	byte	*HQRess3;
 	byte	*lbaFont;
 	hqr_entry	*HQRPtrSpriteExtra;
@@ -477,11 +477,11 @@ class LBA_engine
 	short int mainLoopVar10;
 
 	int changeRoomVar3;
-	int changeRoomVar4;
-	int changeRoomVar5;
+	int newCameraX;
+	int newCameraZ;
 	int changeRoomVar6;
 
-	short int changeRoomVar7;
+	short int newCameraY;
 	short int changeRoomVar8;
 
 	short int changeRoomVar9;
@@ -506,7 +506,7 @@ class LBA_engine
 
 	int reinitAll2Var3;
 	short int reinitAll2Var4;
-	short int reinitAll2Var5;
+	short int numFlags;
 
 	byte *file3D0;
 	byte *file3D1;
@@ -707,14 +707,15 @@ class LBA_engine
 
  int updateActorScript;
 
- int shadowVar1;
- int shadowVar2;
- int shadowVar3;
+ int shadowX;
+ int shadowZ;
+ int shadowY;
 
- int numFlags;
  unsigned char* flagModelPtr;
 
 //----------------------------------------------------------------------------------------
+
+void getSpriteSize(int arg_0,int* arg_4,int* arg_8,char* ptr);
 
 int getCoordinatesDistance(int X1,int Y1, int X2,int Y2);
 

@@ -87,7 +87,7 @@ void LBA_engine::init(void)
 	menuPal=loadImageToMemory("ress.hqr",0);
 	convertPalToRGBA(menuPal,menuPalRGBA);
 
-	HQRess2=loadImageToMemory("ress.hqr",4);
+	shadowSprite=loadImageToMemory("ress.hqr",4);
 	HQRess3=loadImageToMemory("ress.hqr",3);
 	lbaFont=loadImageToMemory("ress.hqr",1);
 

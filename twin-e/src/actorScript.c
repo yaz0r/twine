@@ -31,7 +31,7 @@ void LBA_engine::runActorScript(short int actorNumber)
  
  OPbreak=0;
  
- actorScriptPtr=lactor->positionInActorScript+lactor->scenePtr2;
+ actorScriptPtr=lactor->positionInActorScript+lactor->actorScript;
  
  while(OPbreak!=-1)
  {
@@ -53,15 +53,15 @@ void LBA_engine::runActorScript(short int actorNumber)
 		{
 			*opcodePtr=13;
 		}
-		actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+		actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
 		break;
     case 3:
-    	actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+    	actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
      break;
     case 4:
     	manipActor(lactor);
      doCalc();
-     actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+     actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
      break;
     case 5:
     	break;
@@ -69,7 +69,7 @@ void LBA_engine::runActorScript(short int actorNumber)
     	manipActor(lactor);
      if(!doCalc())
      {
-      actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+      actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
      }
      else
      {
@@ -80,7 +80,7 @@ void LBA_engine::runActorScript(short int actorNumber)
       manipActor(lactor);
       if(!doCalc())
       {
-        actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+        actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
       }
       else
       {
@@ -92,7 +92,7 @@ void LBA_engine::runActorScript(short int actorNumber)
     	manipActor(lactor);
     	if(!doCalc())
      {
-      actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+      actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
      }
      else
      {
@@ -101,7 +101,7 @@ void LBA_engine::runActorScript(short int actorNumber)
      }
     	break;
     case 15:
-    	actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+    	actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr;
      break;
 	case 17:
 		loadActorCostume(*(actorScriptPtr++),actorNumber);
@@ -157,6 +157,28 @@ void LBA_engine::runActorScript(short int actorNumber)
       lactor->field_54=*(actorScriptPtr++);
      }
      break;
+	case 29:
+		int newActorToFollow;
+
+		newActorToFollow=*(actorScriptPtr++);
+
+		if(reinitVar8==newActorToFollow)
+		{
+			break;
+		}
+
+		newCameraX=actors[newActorToFollow].X>>9;
+		newCameraZ=actors[newActorToFollow].Z>>8;
+		newCameraY=actors[newActorToFollow].Y>>8;
+
+		reinitVar8=newActorToFollow;
+		mainLoopVar2=1;
+
+		break;
+	case 30:
+		initNewCostume(0,0,-1,0);
+		changeTwinsenComp(*(actorScriptPtr++));
+		break;
     case 31:
     	roomData1[*(actorScriptPtr++)]=*(actorScriptPtr++);
      break;
@@ -235,11 +257,28 @@ void LBA_engine::runActorScript(short int actorNumber)
 			lactor->field_60&=0xFFFE;
 		}
 		break;
+	case 54:
+		char temp;
+		temp=*(actorScriptPtr++);
+
+		lactor->field_60&=0xFFDD;
+
+		if(temp==1)
+		{
+			lactor->field_60&=0xFFDD;
+			lactor->field_60|=2;
+		}
+		else
+		if(temp==2)
+		{
+			lactor->field_60|=0x22;
+		}
+		break;
     case 55:
     	manipActor(lactor);
 		if(doCalc())
 		{
-			actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr; 
+			actorScriptPtr=lactor->actorScript+*(short int*)actorScriptPtr; 
 		}
 		else
 		{
@@ -292,6 +331,11 @@ void LBA_engine::runActorScript(short int actorNumber)
 		actors[newActor].costumeIndex=-1;
 		actors[newActor].field_5A=-1;
 		break;
+	case 76:
+		currentGrid2=*(actorScriptPtr++);
+		//load_LBAGRI(currentGrid2);
+		printf("Skipping grid reload\n");
+		break;
 	case 77:
 		printf("Unsupported actor opcode 77\n");
 		actorScriptPtr+=2;
@@ -299,6 +343,21 @@ void LBA_engine::runActorScript(short int actorNumber)
 	case 80:
 		actorScriptPtr+=2;
 		printf("Ignoring opcode 80 in runActorScript\n");
+		break;
+	case 102:
+		resetVideoBuffer1();
+		copyToBuffer(videoBuffer1,videoBuffer2);
+		osystem->drawBufferToScreen(videoBuffer1);
+		changeRoomVar10=0;
+		//changeCameraAngle2(320,240,1024,1024);
+		//setCameraAngle(0,1500,0,25,-128,0,13000);
+		setSomething4(896,950,0);
+		loadTextBank(1);
+		break;
+	case 104:
+		//drawVar1=0;
+		drawBlackBox(0,0,639,240,0);
+		osystem->refresh(videoBuffer1,0,0,639,240);
 		break;
     default:
     	printf("Unhandled actorscript opcode %d\n",opcode);
