@@ -471,10 +471,10 @@ void drawButton(short int *data, int a)
     int maxButton;
 
    // int var4;
-    short int *localData = data;
+    unsigned short int *localData = data;
     int temp;
     unsigned char temp2;
-    unsigned char temp3;
+    unsigned short temp3;
     char currentButton;
 
     buttonNumber = *localData;
@@ -505,7 +505,7 @@ void drawButton(short int *data, int a)
   {
       temp2 = (unsigned char) *localData;
       localData += 1;
-      temp3 = (unsigned char) *localData;
+      temp3 = *localData;
       localData += 1;
       if (a != 0)
     {

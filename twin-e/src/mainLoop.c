@@ -2404,7 +2404,12 @@ void HitObj(int actorAttacking, int actorAttacked, int param, int angle)
             int temp;
             temp = pActorAttacked->animPosition;
             pActorAttacked->animPosition = 1;
-            GereAnimAction(pActorAttacked,actorAttacked);
+
+            if(pActorAttacked->animExtraData)
+            {
+              GereAnimAction(pActorAttacked,actorAttacked);
+            }
+
             pActorAttacked->animPosition = temp;
         }
         else

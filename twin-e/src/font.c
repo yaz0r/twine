@@ -91,7 +91,7 @@ void drawCharacter(int X, int Y, unsigned char caractere)
         for (i = 0; i < number; i++)
         {
           if(tempX >= textWindowLeft && tempX < textWindowRight && tempY >= textWindowTop && tempY < textWindowBottom)
-            *(screen) = usedColor;
+            frontVideoBuffer[640*tempY + tempX] = usedColor;
 
           screen++;
           tempX++;
