@@ -7,6 +7,8 @@ enum debuggerColor
     BUTTON_COLOR_TEXT_ACTIVATED,
 };
 
+typedef enum debuggerColor debuggerColor;
+
 struct scriptLineData
 {
     char* line;
@@ -15,11 +17,15 @@ struct scriptLineData
     debuggerColor color;
 };
 
+typedef struct scriptLineData scriptLineData;
+
 struct scriptData
-    {
+{
 	int numOfLignes;
 	scriptLineData *lines;
-    };
+};
+
+typedef struct scriptData scriptData;
 
 enum buttonType
     {
@@ -65,8 +71,9 @@ enum buttonType
     BUTTON_CUBE_CLIP_TOGGLE,
 //
 
+};
 
-    };
+typedef enum buttonType buttonType;
 
 struct buttonStruct
     {
@@ -78,6 +85,8 @@ struct buttonStruct
 	char *text;
 	char color;
     };
+    
+typedef struct buttonStruct buttonStruct;
 
 struct winStruct
     {
@@ -91,65 +100,64 @@ struct winStruct
 	buttonStruct buttons[256];
     };
 
-class debugger
-{
-public:
+typedef struct winStruct winStruct;
 
     // cubClip vars
-    bool cubeClipEnabled;
-    int cubeClipX;
-    int cubeClipY;
-    int cubeClipZ;
+    extern bool debugger_cubeClipEnabled;
+    extern int debugger_cubeClipX;
+    extern int debugger_cubeClipY;
+    extern int debugger_cubeClipZ;
     //
 
-	bool bShowBoundingBoxes;
+	extern bool bShowBoundingBoxes;
 
-	bool bShowCubeChangeZones;
-	bool bShowCameraZones;
-	bool bShowScenaricZones;
-	bool bShowGRMZones;
-	bool bShowObjZones;
-	bool bShowTextZones;
-	bool bShowLadderZones;
+	extern bool bShowCubeChangeZones;
+	extern bool bShowCameraZones;
+	extern bool bShowScenaricZones;
+	extern bool bShowGRMZones;
+	extern bool bShowObjZones;
+	extern bool bShowTextZones;
+	extern bool bShowLadderZones;
 
-	bool bShowActorNumbers;
+	extern bool bShowActorNumbers;
 
-	bool bShowFlags;
+	extern bool bShowFlags;
 
-    LBA_engine * engine;
-    OSystem *osystem;
+    //LBA_engine * engine;
+    //OSystem *osystem;
 
-    void init(void);
+    void debugger_init(void);
 
-    int processDebug(void);
-    int findActor(int X, int Y);
-    int inBox(int X, int Y, int top, int left, int bottom, int right);
-    void debugActor(int num);
+    int debugger_processDebug(void);
+    int debugger_findActor(int X, int Y);
+    int debugger_inBox(int X, int Y, int top, int left, int bottom, int right);
+    void debugger_debugActor(int num);
 
-    scriptData *getActorTrackScript(int num);
-    scriptData *getActorComScript(int num);
+    scriptData *debugger_getActorTrackScript(int num);
+    scriptData *debugger_getActorComScript(int num);
 
-    void manipActor(unsigned char **scriptPtr, char *buffer);
-    void doCalc(unsigned char **scriptPtr, char *buffer);
+    void debugger_manipActor(unsigned char **scriptPtr, char *buffer);
+    void debugger_doCalc(unsigned char **scriptPtr, char *buffer);
 
-    void addLine(char *buffer, scriptData * script);
-    void addLineColor(char *buffer, scriptData * script, debuggerColor color);
-    void fillArea(int X, int Y, int width, int height);
-    void fillArea2(int X, int Y, int width, int height, char color);
-    void addWin(int index, int X, int Y, int width, int height);
-    void addButton(int winIndew, int X, int Y, int width, int height, char *text, buttonType type);
-    void addButton(int winIndew, int X, int Y, int width, int height, char *text, buttonType type, short int boolVar);
-    buttonType processInput();
-    buttonType findButton(int X, int Y);
-    void drawAll(void);
+    void debugger_addLine(char *buffer, scriptData * script);
+    void debugger_addLineColor(char *buffer, scriptData * script, debuggerColor color);
+    void debugger_fillArea(int X, int Y, int width, int height);
+    void debugger_fillArea2(int X, int Y, int width, int height, char color);
+    void debugger_addWin(int index, int X, int Y, int width, int height);
+//    void addButton(int winIndew, int X, int Y, int width, int height, char *text, buttonType type);
+    void debugger_addButton(int winIndew, int X, int Y, int width, int height, char *text, buttonType type, short int boolVar);
+    buttonType debugger_processInput();
+    buttonType debugger_findButton(int X, int Y);
+    void debugger_drawAll(void);
 
-    void debugMainMenu(void);
-    void debugCubeClip(void);
+    void debugger_debugMainMenu(void);
+    void debugger_debugCubeClip(void);
 
-    actorBoxStruct actorBox[256];	// up to 256 actor on screen
-    int numOfActorOnScreen;
+    extern actorBoxStruct actorBox[256];	// up to 256 actor on screen
+    extern int debugger_numOfActorOnScreen;
 
-    winStruct windows[256];
-    int numOfWindows;
-
+    extern winStruct debugger_windows[256];
+    extern int debugger_numOfWindows;
+/*
 };
+*/

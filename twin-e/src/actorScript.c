@@ -981,7 +981,7 @@ void runActorScript(short int actorNumber)
 					convertPalToRGBA(palette,paletteRGBA);
 					if(!lockPalette)
 					{
-						osystem->setPalette(paletteRGBA);
+						osystem_setPalette(paletteRGBA);
 					}
 					useAlternatePalette=1;
 					unfreezeTime();
@@ -992,7 +992,7 @@ void runActorScript(short int actorNumber)
 					useAlternatePalette=0;
 					if(!lockPalette)
 					{
-						osystem->setPalette(menuPalRGBA);
+						osystem_setPalette(menuPalRGBA);
 					}
 					break;
 				}
@@ -1007,7 +1007,7 @@ void runActorScript(short int actorNumber)
 					CopyScreen(workVideoBuffer,frontVideoBuffer);
 					Load_HQR("ress.hqr",(byte *) & palette,26);
 					convertPalToRGBA(palette, paletteRGBA);
-					osystem->Flip(frontVideoBuffer);
+					osystem_Flip(frontVideoBuffer);
 					FadeToPal((char*)paletteRGBA);
 					newGame2();
 					TestCoulDial(15);
@@ -1019,7 +1019,7 @@ void runActorScript(short int actorNumber)
 					newGame4();
 					FadeToBlack((char*)paletteRGBA);
 					Cls();
-					osystem->setPalette(menuPalRGBA);
+					osystem_setPalette(menuPalRGBA);
 					flagDisplayText=backupFlag;
 
 					do
@@ -1091,7 +1091,7 @@ void runActorScript(short int actorNumber)
 			case 102:	//LM_PROJ_3D
 			    Cls();
 			    CopyScreen(frontVideoBuffer, workVideoBuffer);
-			    osystem->Flip(frontVideoBuffer);
+			    osystem_Flip(frontVideoBuffer);
 			    changeRoomVar10 = 0;
 
 			    setCameraPosition(320,240,128,1024,1024);
@@ -1128,7 +1128,7 @@ void runActorScript(short int actorNumber)
 				       if (esi > 639)
 					   edi = 639;
 
-				       osystem->CopyBlockPhys(frontVideoBuffer, 0, drawVar1, edi, drawVar1+40);
+				       osystem_CopyBlockPhys(frontVideoBuffer, 0, drawVar1, edi, drawVar1+40);
 				       drawVar1 += 40;
 				   }
 
@@ -1137,7 +1137,7 @@ void runActorScript(short int actorNumber)
 			case 104:
 			    drawVar1 = 0;
 			    Box(0, 0, 639, 240, 0);
-			    osystem->CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 240);
+			    osystem_CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 240);
 			    break;
 			case 105:
 				brutalExit=0;
@@ -1248,6 +1248,7 @@ void manipActor(actor * lactor)
 	    manipActorResult = cubeFlags[*(actorScriptPtr++)];
 	    break;
 	case 12:
+	{
 	    short int angle;
 	    int newActor;
 
@@ -1292,6 +1293,7 @@ void manipActor(actor * lactor)
 		    manipActorResult = 32000;
 		}
 	    break;
+	    }
 	case 13:
 	    manipActorResult = lactor->hitBy;
 	    break;
@@ -1505,6 +1507,11 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
     int difX;
     int difY;
 
+    int destVal;
+    int startAngle;
+    int stopAngle;
+    int finalAngle;
+
     difY = edi = Y2 - Y1;
     newY = edi * edi;
 
@@ -1528,11 +1535,6 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
 
     if (!DoTrackVar1)
 	return (0);
-
-    int destVal;
-    int startAngle;
-    int stopAngle;
-    int finalAngle;
 
     destVal = (difY << 14) / DoTrackVar1;
 
@@ -1776,7 +1778,7 @@ void foundObject(int objectNumber)
 
     DrawOverBrick(object2X, object2Z, object2Y);
 
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 
     projectPositionOnScreen(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY);
 

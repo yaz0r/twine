@@ -149,6 +149,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
     unsigned char *ptr3;
     int *ptr4;
     unsigned char *ptr6;
+    int temp;
 
     _numOfPoints = *(short int *) costumePtr;
     costumePtr += 2;
@@ -309,7 +310,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
     }
   while (--_numOfPrimitives);*/
 
-    int temp = *(short int *) _shadePtr;
+    temp = *(short int *) _shadePtr;
 
     _shadePtr = (int *) (((unsigned char *) _shadePtr) + 2);
     if (temp)			// process shading table
@@ -319,9 +320,9 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
 	    unsigned char *_currentShadeDestination = (unsigned char *) shadeTable;
 	    int *renderV21 = _matrixTable;
+	    unsigned char *pri2Ptr2;
 
 	    _numOfPrimitives = _numOfParts;
-	    unsigned char *pri2Ptr2;
 
 	    ptr3 = pri2Ptr2 = _partsPtr2 + 18;
 
@@ -412,13 +413,13 @@ void loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
 
    // int* ptr1;
 
-    _angleX = ebx;
-    _angleZ = ecx;
-    _angleY = edx;
-
     int rs1v1 = ptr->data1;
 
     int rs1v2 = ptr->data2;
+
+    _angleX = ebx;
+    _angleZ = ecx;
+    _angleY = edx;
 
     if (rs1v1 % 6)
 	{
@@ -678,6 +679,35 @@ void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
     while (--rs1s2v1);
 }
 
+struct polyHeader
+{
+    unsigned char FillVertic_AType;
+    unsigned char numOfVertex;
+    short int colorIndex;
+};
+
+typedef struct polyHeader polyHeader;
+
+struct polyVertexHeader
+{
+    short int shadeEntry;
+    short int dataOffset;
+};
+
+typedef struct polyVertexHeader polyVertexHeader;
+
+
+struct computedVertex
+{
+    short int shadeValue;
+    short int x;
+    short int y;
+};
+
+typedef struct computedVertex computedVertex;
+
+
+
 int finishRender(unsigned char *esi)
 {
     unsigned char *edi;
@@ -719,30 +749,10 @@ int finishRender(unsigned char *esi)
     unsigned char *render24;
     int render25;
 
-    struct polyHeader
-	{
-	    unsigned char FillVertic_AType;
-	    unsigned char numOfVertex;
-	    short int colorIndex;
-	};
-
-    struct polyVertexHeader
-	{
-	    short int shadeEntry;
-	    short int dataOffset;
-	};
-
-    struct computedVertex
-	{
-	    short int shadeValue;
-	    short int x;
-	    short int y;
-	};
-
     polyVertexHeader *currentPolyVertex;
     polyHeader *currentPolyHeader;
     polyHeader *destinationHeader;
-    computedVertex *currentComputedVertex;
+	computedVertex *currentComputedVertex;
     pointTab *currentVertex;
     pointTab *destinationVertex;
 
@@ -779,7 +789,7 @@ int finishRender(unsigned char *esi)
 
 			    bestDepth = -32000;
 			    renderV19 = edi;
-				osystem->startPoly();
+				osystem_startPoly();
 
 			    do
 				{
@@ -805,14 +815,14 @@ int finishRender(unsigned char *esi)
 
 				    currentDepth = currentVertex->z;
 
-					osystem->addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,shadeValue);
+					osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,shadeValue);
 
 				    if (currentDepth > bestDepth)
 					bestDepth = currentDepth;
 				}
 			    while (--counter);
 
-				osystem->stopPoly();
+				osystem_stopPoly();
 			}
 		    else if (FillVertic_AType >= 7)	// only 1 shade value is used
 			{
@@ -834,7 +844,7 @@ int finishRender(unsigned char *esi)
 			    bestDepth = -32000;
 			    counter = destinationHeader->numOfVertex;
 
-				osystem->startPoly();
+				osystem_startPoly();
 			    do
 				{
 				    eax = READ_LE_S16(esi);
@@ -851,13 +861,13 @@ int finishRender(unsigned char *esi)
 
 				    currentDepth = currentVertex->z;
 
-					osystem->addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,color + shadeTable[shadeEntry]);
+					osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,color + shadeTable[shadeEntry]);
 
 				    if (currentDepth > bestDepth)
 					bestDepth = currentDepth;
 				}
 			    while (--counter);
-				osystem->stopPoly();
+				osystem_stopPoly();
 			}
 		    else	// no shade is used
 			{
@@ -875,7 +885,7 @@ int finishRender(unsigned char *esi)
 			    eax = 0;
 			    counter = currentPolyHeader->numOfVertex;
 
-				osystem->startPoly();
+				osystem_startPoly();
 			    do
 				{
 				    eax = READ_LE_S16(esi);
@@ -892,13 +902,13 @@ int finishRender(unsigned char *esi)
 
 				    currentDepth = currentVertex->z;
 
-					osystem->addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,destinationHeader->colorIndex);
+					osystem_addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,destinationHeader->colorIndex);
 
 				    if (currentDepth > bestDepth)
 					bestDepth = currentDepth;
 				}
 			    while (--(counter));
-				osystem->stopPoly();
+				osystem_stopPoly();
 			}
 
 		    render24 = edi;
@@ -955,6 +965,7 @@ int finishRender(unsigned char *esi)
 	    _numOfPrimitives += temp;
 	    do
 		{
+			int param;
 		    lineDataPtr = (lineData *) esi;
 		    lineCoordinatesPtr = (lineCoordinates *) edi;
 
@@ -966,7 +977,7 @@ int finishRender(unsigned char *esi)
 
 		    point1 = READ_LE_S16(&lineDataPtr->p1) / 6;
 		    point2 = READ_LE_S16(&lineDataPtr->p2) / 6;
-			int param = READ_LE_S32(&lineDataPtr->data);
+			param = READ_LE_S32(&lineDataPtr->data);
 		    WRITE_LE_S32(&lineCoordinatesPtr->data, param);
 		    WRITE_LE_S16(&lineCoordinatesPtr->x1, _flattenPointTable[point1].x);
 		    WRITE_LE_S16(&lineCoordinatesPtr->y1, _flattenPointTable[point1].y);
@@ -975,7 +986,7 @@ int finishRender(unsigned char *esi)
 		    bestDepth = _flattenPointTable[point1].z;
 		    depth = _flattenPointTable[point2].z;
 
-			osystem->addLine(	_flattenPointTable[point1].x,_flattenPointTable[point1].y,_flattenPointTable[point1].z,
+			osystem_addLine(	_flattenPointTable[point1].x,_flattenPointTable[point1].y,_flattenPointTable[point1].z,
 								_flattenPointTable[point2].x,_flattenPointTable[point2].y,_flattenPointTable[point2].z,
 								(param & 0xFF00) >> 8 );
 
@@ -1004,7 +1015,7 @@ int finishRender(unsigned char *esi)
 			short int center = *(short int*)(esi+6);
 			short int size = *(short int*)(esi+4);
 
-			osystem->addSphere( _flattenPointTable[center/6].x, _flattenPointTable[center/6].y, _flattenPointTable[center/6].z, size, color);
+			osystem_addSphere( _flattenPointTable[center/6].x, _flattenPointTable[center/6].y, _flattenPointTable[center/6].z, size, color);
 
 		    esi += 8;
 		}
@@ -1197,7 +1208,7 @@ void FillVertic_A(int ecx, int edi)
 
     color = edi;
 
-   // osystem->Flip(frontVideoBuffer);
+   // osystem_Flip(frontVideoBuffer);
 
     switch (ecx)
 	{
@@ -1302,8 +1313,9 @@ void FillVertic_A(int ecx, int edi)
                     hsize/=2;
                     if(hsize>1)
                     {
-                       bh ^= 1;
+                       
                         unsigned short int ax;
+                        bh ^= 1;
                         ax = (unsigned short int) out2;
                         ax &= 1;
                         if(ax ^ bh)
@@ -1328,6 +1340,11 @@ void FillVertic_A(int ecx, int edi)
 	       renderLoop = vsize;
 	       do
 		   {
+               unsigned short int startColor = ptr2[0];
+               unsigned short int stopColor = ptr2[480];
+
+                short int colorSize = stopColor - startColor;
+
 		       stop = ptr1[480];	// stop
 		       start = ptr1[0];	// start
 
@@ -1337,11 +1354,6 @@ void FillVertic_A(int ecx, int edi)
 
 		       varf2 = ptr2[480];
 		       varf3 = ptr2[0];
-
-               unsigned short int startColor = ptr2[0];
-               unsigned short int stopColor = ptr2[480];
-
-                short int colorSize = stopColor - startColor;
 
 		       ptr2++;
 
@@ -1411,9 +1423,10 @@ void FillVertic_A(int ecx, int edi)
                
                 if(hsize>=0)
                 {
-                    out2 = start + out;
                     unsigned short int startColor = ptr2[0];
                     unsigned short int stopColor = ptr2[480];
+
+                    out2 = start + out;
                     ptr2++;
 
                     if(hsize==0)
@@ -1425,9 +1438,10 @@ void FillVertic_A(int ecx, int edi)
                         short int colorSize = stopColor - startColor;
                         if(hsize==1)
                         {
+                        	unsigned short int currentColor = startColor;
                             hsize++;
                             hsize/=2;
-                            unsigned short int currentColor = startColor;
+                            
                             currentColor&=0xFF;
                             currentColor+=startColor;
                             *(out2) = currentColor>>8;
@@ -1439,9 +1453,10 @@ void FillVertic_A(int ecx, int edi)
                         }
                         else if(hsize==2)
                         {
+                        unsigned short int currentColor = startColor;
                             hsize++;
                             hsize/=2;
-                            unsigned short int currentColor = startColor;
+                            
 
                             currentColor&=0xFF;
                             colorSize/=2;
@@ -1461,9 +1476,10 @@ void FillVertic_A(int ecx, int edi)
                         }
                         else
                         {
+                        unsigned short int currentColor = startColor;
                             colorSize/=hsize;
                             hsize++;
-                            unsigned short int currentColor = startColor;
+                            
 
                             if(hsize%2)
                             {
@@ -2154,6 +2170,17 @@ void setSomething3(int a, int b, int c)	// setupBaseMatrix
     int var5;
     int var6;
     int var7;
+    
+    int angleXCos;
+    int angleXSin;
+
+    int angleYCos;
+    int angleYSin;
+
+    int angleZCos;
+    int angleZSin;
+    
+    int temp;
 
     tab1 = &rendererTab[0];
     tab2 = &rendererTab[256];
@@ -2163,14 +2190,14 @@ void setSomething3(int a, int b, int c)	// setupBaseMatrix
     baseMatrixRotationY = b & 0x3FF;
     baseMatrixRotationZ = c & 0x3FF;
 
-    int angleXCos = tab1[baseMatrixRotationX];
-    int angleXSin = tab1[(baseMatrixRotationX + 256) & 0x3FF];
+    angleXCos = tab1[baseMatrixRotationX];
+    angleXSin = tab1[(baseMatrixRotationX + 256) & 0x3FF];
 
-    int angleYCos = tab1[baseMatrixRotationY];
-    int angleYSin = tab1[(baseMatrixRotationY + 256) & 0x3FF];
+    angleYCos = tab1[baseMatrixRotationY];
+    angleYSin = tab1[(baseMatrixRotationY + 256) & 0x3FF];
 
-    int angleZCos = tab1[baseMatrixRotationZ];
-    int angleZSin = tab1[(baseMatrixRotationZ + 256) & 0x3FF];
+    angleZCos = tab1[baseMatrixRotationZ];
+    angleZSin = tab1[(baseMatrixRotationZ + 256) & 0x3FF];
 
     _baseMatrix[0] = angleZSin;
     _baseMatrix[1] = -angleZCos;
@@ -2182,7 +2209,7 @@ void setSomething3(int a, int b, int c)	// setupBaseMatrix
     _baseMatrix[0] = (angleZSin * angleYSin)>>14;
     _baseMatrix[2] = (angleZSin * angleYCos)>>14;
 
-    int temp = _baseMatrix[3];
+    temp = _baseMatrix[3];
 
     _baseMatrix[3] = ((angleYSin * temp) + (angleYCos * angleXCos))>>14;
     _baseMatrix[5] = ((angleYCos * temp) - (angleYSin * angleXCos))>>14;

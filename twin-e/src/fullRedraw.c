@@ -46,7 +46,7 @@ void fullRedraw(int param)
 
 #ifdef USE_GL
 	param = 1;
-	osystem->startFrame();
+	osystem_startFrame();
 #endif
 
     if (!param)
@@ -62,7 +62,7 @@ void fullRedraw(int param)
 	    CopyScreen(frontVideoBuffer, workVideoBuffer);
 	}
 
-	osystem->startDisplayList();
+	osystem_startDisplayList();
 
     arg_1A = 0;
     a12 = 0;
@@ -291,13 +291,13 @@ void fullRedraw(int param)
 					SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
 #ifdef PCLIKE
-					if(_debugger.bShowBoundingBoxes)
+					if(bShowBoundingBoxes)
 #endif
 						MDL_DrawBoundingBoxHiddenPart(lactor);
 				    if (!AffObjetIso(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
 					{
 #ifdef PCLIKE
-						if(_debugger.bShowBoundingBoxes)  
+						if(bShowBoundingBoxes)  
 #endif
 							MDL_DrawBoundingBoxShownPart(lactor);
 
@@ -330,15 +330,16 @@ void fullRedraw(int param)
 						}
 					}
 
-				    _debugger.actorBox[positionInDebugBox].actorNum = actorNumber;
-				    _debugger.actorBox[positionInDebugBox].left = renderLeft;
-				    _debugger.actorBox[positionInDebugBox].right = renderRight;
-				    _debugger.actorBox[positionInDebugBox].top = renderTop;
-				    _debugger.actorBox[positionInDebugBox].bottom = renderBottom;
+#ifdef _DEBUG
+				    actorBox[positionInDebugBox].actorNum = actorNumber;
+				    actorBox[positionInDebugBox].left = renderLeft;
+				    actorBox[positionInDebugBox].right = renderRight;
+				    actorBox[positionInDebugBox].top = renderTop;
+				    actorBox[positionInDebugBox].bottom = renderBottom;
 
 				    positionInDebugBox++;
 
-					if(_debugger.bShowActorNumbers)
+					if(bShowActorNumbers)
 				    {
 						char stringTemp[256];
 
@@ -356,6 +357,7 @@ void fullRedraw(int param)
 						AddPhysBox(projectedPositionX, projectedPositionY, projectedPositionX + 50, projectedPositionY + 50);
 				    }
 
+#endif
 				}
 			}
 		    else if (flags == 0xC00)	// shadows
@@ -416,13 +418,13 @@ void fullRedraw(int param)
 			    if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
 				{
 				    AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
-#ifdef PCLIKE
-					if(_debugger.bShowBoundingBoxes)
-#endif
+#ifdef _DEBUG
+					if(bShowBoundingBoxes)
 					{
 						MDL_DrawBoundingBoxHiddenPart(lactor);
 						MDL_DrawBoundingBoxShownPart(lactor);
 					}
+#endif
 
 					lactor->dynamicFlagsBF.bUnk0010 = 1;
 
@@ -459,17 +461,18 @@ void fullRedraw(int param)
 #endif
 				}
 
+#ifdef _DEBUG
 				{ // code to add the sprite actor box to the debugger handler
-					_debugger.actorBox[positionInDebugBox].actorNum = actorNumber;
-					_debugger.actorBox[positionInDebugBox].left = textWindowLeft;
-					_debugger.actorBox[positionInDebugBox].right = textWindowRight;
-					_debugger.actorBox[positionInDebugBox].top = textWindowTop;
-					_debugger.actorBox[positionInDebugBox].bottom = textWindowBottom;
+					actorBox[positionInDebugBox].actorNum = actorNumber;
+					actorBox[positionInDebugBox].left = textWindowLeft;
+					actorBox[positionInDebugBox].right = textWindowRight;
+					actorBox[positionInDebugBox].top = textWindowTop;
+					actorBox[positionInDebugBox].bottom = textWindowBottom;
 
 					positionInDebugBox++;
 				}
 
-				if(_debugger.bShowActorNumbers)
+				if(bShowActorNumbers)
 				{ // print the actor number
 					char stringTemp[256];
 
@@ -483,6 +486,7 @@ void fullRedraw(int param)
 
 					AddPhysBox(projectedPositionX, projectedPositionY, projectedPositionX + 50, projectedPositionY + 50);
 				}
+#endif
 
 			}
 		    else if (flags == 0x1800) // extras
@@ -527,16 +531,19 @@ void fullRedraw(int param)
 		}
 	    while (arg_1A < a12);
 
-	    _debugger.numOfActorOnScreen = positionInDebugBox;
+#ifdef _DEBUG
+	    debugger_numOfActorOnScreen = positionInDebugBox;
+#endif
 
 	   // unknownLoop
 
 	   // loop5
 	}
 
+#ifdef _DEBUG
     ZONE_DrawZones();
 
-	if(_debugger.bShowFlags)
+	if(bShowFlags)
 	{
 		for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags 
 		{
@@ -553,6 +560,7 @@ void fullRedraw(int param)
 				Font(projectedPositionX, projectedPositionY, stringTemp);
 		}
 	}
+#endif
 
     counter2 = 0;
 
@@ -589,17 +597,17 @@ void fullRedraw(int param)
 	    else
 		{
             if(!lockPalette)
-			    osystem->Flip(frontVideoBuffer);
+			    osystem_Flip(frontVideoBuffer);
 		    fullRedrawSub5();	// move all the nextDirtyBox to dirtyBox
 		    unfreezeTime();
 		}
 	}
 
 #ifdef USE_GL
-	osystem->stopFrame();
+	osystem_stopFrame();
 #endif
 
-	osystem->updateImage();
+	osystem_updateImage();
 
     if (!lockPalette)
 	return;
@@ -613,20 +621,20 @@ void fullRedraw(int param)
 
     if (useAlternatePalette)
 	{
-	    osystem->crossFade((char *) frontVideoBuffer, (char *) menuPalRGBA);
+	    osystem_crossFade((char *) frontVideoBuffer, (char *) menuPalRGBA);
 	}
     else
 	{
-	    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+	    osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 	}
 
-    osystem->setPalette((byte *) & paletteRGBA);
+    osystem_setPalette((byte *) & paletteRGBA);
 
     readKeyboard();
 
     lockPalette = 0;
 
-	osystem->updateImage();
+	osystem_updateImage();
 
     return;
 }
@@ -680,16 +688,16 @@ void fullRedrawSub5(void)
 
 void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
 {
-#ifdef USE_GL
-	return;
-#endif
-
     int var1;
     int i = 0;
     int var_C;
     int var_8;
     int var_10;
     int var_4;
+    
+#ifdef USE_GL
+	return;
+#endif
 
     var1 = (arg_8 - arg_0) * (arg_C - arg_4);
 
@@ -747,7 +755,7 @@ struct cubeEntry
     unsigned char brickType1;
     unsigned char brickType2;
 };
-typedef cubeEntry cubeType[64][64][25];
+typedef struct cubeEntry cubeType[64][64][25];
 
 void redrawCube(void)
 {
@@ -775,13 +783,14 @@ void redrawCube(void)
     if (changeRoomVar10 == 0)
 	    return;
 
-    if( _debugger.cubeClipEnabled )
+#ifdef _DEBUG
+    if( debugger_cubeClipEnabled )
     {
-        for (z= 0; z < _debugger.cubeClipZ; z++)
+        for (z= 0; z < debugger_cubeClipZ; z++)
         {
-            for (x = 0; x < _debugger.cubeClipX; x++)
+            for (x = 0; x < debugger_cubeClipX; x++)
 		    {
-                for (y = 0; y < _debugger.cubeClipY; y++)
+                for (y = 0; y < debugger_cubeClipY; y++)
 			    {
                     val = (*cube)[z][x][y].brickType1;
                     if(val)
@@ -793,6 +802,7 @@ void redrawCube(void)
         }
     }
     else
+#endif
     {
         for (z = 0; z < 64; z++)
 	    {
@@ -837,7 +847,7 @@ void zbuffer(int var1, int var2, int x, int z, int y)
 		return;
 
 #ifdef USE_GL
-	osystem->drawBrick(bx-1,x - newCameraX, z - newCameraZ, y - newCameraY);
+	osystem_drawBrick(bx-1,x - newCameraX, z - newCameraZ, y - newCameraY);
 #else
 	// draw the background brick
     AffGraph(bx-1, zbufferVar1, zbufferVar2, bufferBrick);
@@ -1529,15 +1539,16 @@ void SmallSort(drawListStruct *list, int listSize, int stepSize)
 
 void FlipBoxes(void)
 {
+	int i;
 #ifdef USE_GL
 	return;
 #endif
 
-    int i;
+    
 
     for (i = 0; i < numOfRedrawBox; i++) //draw the dirty box on screen
 	{
-	    osystem->CopyBlockPhys(frontVideoBuffer, currentDirtyBoxList[i].left, currentDirtyBoxList[i].top,
+	    osystem_CopyBlockPhys(frontVideoBuffer, currentDirtyBoxList[i].left, currentDirtyBoxList[i].top,
 			     currentDirtyBoxList[i].right, currentDirtyBoxList[i].bottom);
 	}
 

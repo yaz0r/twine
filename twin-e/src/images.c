@@ -11,7 +11,7 @@ void AdelineLogo(void)
     Load_HQR("ress.hqr", palette, 28);
     convertPalToRGBA(palette, paletteRGBA);
     blackToWhite();
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
     fadeIn(paletteRGBA);
     SDL_Delay(6000);
 }
@@ -67,7 +67,7 @@ void adjustPalette(byte R, byte G, byte B, byte * palette, int intensity)
 	    counter += 4;
 	}
 
-    osystem->setPalette(localPalette);
+    osystem_setPalette(localPalette);
 }
 
 int RegleTrois32(int modifier, int color, int param, int intensity)
@@ -83,7 +83,7 @@ void RessPict(int imageNumber)
     CopyScreen(workVideoBuffer, frontVideoBuffer);
     Load_HQR("ress.hqr", palette, imageNumber + 1);
     convertPalToRGBA(palette, paletteRGBA);
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
     FadeToPal((char *) paletteRGBA);
 }
 
@@ -94,7 +94,7 @@ void loadImageCrossFade(int imageNumber)
     Load_HQR("ress.hqr", palette, imageNumber + 1);
     convertPalToRGBA(palette, paletteRGBA);
 
-    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+    osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 }
 
 void FadeToBlack(char *palette)
@@ -123,7 +123,7 @@ void FadeToPal(char *palette)
 	    readKeyboard();
 	}
 
-	osystem->setPalette( (byte*)palette );
+	osystem_setPalette( (byte*)palette );
 
     palReseted = 0;
 
@@ -139,7 +139,7 @@ void blackToWhite(void)
 	{
 	    memset(palette, i, 1024);
 
-	    osystem->setPalette(palette);
+	    osystem_setPalette(palette);
 	    readKeyboard();
 	}
 }
@@ -155,7 +155,7 @@ void SetBackPal(void)
     memset(palette, 0, 768);
     memset(paletteRGBA, 0, 1024);
 
-    osystem->setPalette(paletteRGBA);
+    osystem_setPalette(paletteRGBA);
 
     palReseted = 1;
 }

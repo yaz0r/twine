@@ -232,7 +232,7 @@ int mainLoop(void)
 					{
 					    CoulFont(15);
 					    Font(5, 446, "Pause");
-					    osystem->CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
+					    osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
 					}
 				    readKeyboard();
 				    while (skipIntro)
@@ -255,7 +255,7 @@ int mainLoop(void)
 				    if (!drawInGameTransBox)
 					{
 					    blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
-					    osystem->CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
+					    osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
 					}
 				    unfreezeTime();
 				   // resumeSound();
@@ -363,7 +363,7 @@ int mainLoop(void)
 		}
 
 #ifdef PCLIKE
-	    if (_debugger.processDebug())
+	    if (debugger_processDebug())
 		requestBackgroundRedraw = 1;
 #endif
 
@@ -394,7 +394,7 @@ int mainLoop(void)
 	    frameTime = lba_time - currentTime;
 
 #ifndef PCLIKE
-		time+=2;
+		lba_time+=2;
 #endif
 
 	}
@@ -442,7 +442,7 @@ void reinitAll(int save)
     } 
     
    /*
-    * FadeToBlack((char*)menuPalRGBA); Cls(); osystem->Flip(frontVideoBuffer); 
+    * FadeToBlack((char*)menuPalRGBA); Cls(); osystem_Flip(frontVideoBuffer); 
     */
 }
 
@@ -518,9 +518,9 @@ void TestRestoreModeSVGA(int arg_0)
     mainLoop2sub1();
 
     if (useAlternatePalette)
-	osystem->setPalette(menuPalRGBA);
+	osystem_setPalette(menuPalRGBA);
     else
-	osystem->setPalette(paletteRGBA);
+	osystem_setPalette(paletteRGBA);
 
     drawInGameTransBox = 0;
 
@@ -915,6 +915,7 @@ void DoDir(int actorNum)
 
   		    if (mainLoopVar5 == 0 || action != 0)
 			{
+				short int tempAngle;
 			    if (key & 3)	// if continue walking
 				    twinsenMoved = 0;	// don't break animation
 
@@ -976,7 +977,7 @@ void DoDir(int actorNum)
 					}
 				}
 
-			    short int tempAngle = 0;
+			    tempAngle = 0;
 
 			    if (key & 4)
 				{
@@ -1221,9 +1222,10 @@ void DoAnim(int actorNum)
 	{
 	    if (lactor->previousAnimIndex != -1)
 		{
+			int keyFramePassed;
 		    animPtr = (char *) HQR_Get(HQR_Anims, lactor->previousAnimIndex);
 			
-			int keyFramePassed=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData); 
+			keyFramePassed=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData); 
 
 		    if (processActorVar5)
 			{
@@ -1856,13 +1858,14 @@ int CheckObjCol(int actorNum)
 				}
 				else
 				{
+					int newAngle;
 					var_60=actorNum;
 					if(CheckZvOnZv(actorNum,currentlyTestedActor))
 					{
 						HitObj(var_60,currentlyTestedActor,1,-1);
 					}
 
-lab12AC5:			int newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2->Y);
+lab12AC5:			newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2->Y);
 
                     if(lactor2->staticFlagsBF.bIsPushable && !(lactor->staticFlagsBF.bIsPushable))
 					{

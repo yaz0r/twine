@@ -1,7 +1,7 @@
 #include "lba.h"
-#include <SDL_mixer.h>
 
 #ifdef PCLIKE
+#include <SDL_mixer.h>
 #include "SDL.h"
 #endif //PCLIKE
 
@@ -51,6 +51,7 @@ void playCDtrack(int trackNumber)
 
 void fullStopMusic(void)
 {
+#ifdef PCLIKE
 	if(cdrom!=NULL)
 	{
 		int status = SDL_CDStatus(cdrom);
@@ -59,6 +60,7 @@ void fullStopMusic(void)
 			SDL_CDStop(cdrom);
 		}
 	}
+#endif
 }
 
 void stopMusic(void)

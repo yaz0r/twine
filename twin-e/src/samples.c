@@ -1,12 +1,17 @@
 #include "lba.h"
+
+#ifdef PCLIKE
 #include <SDL_mixer.h>
+#endif
 
 struct sampleStructData
 {
 	int sampleIdx;
 };
 
+#ifdef PCLIKE
 sampleStructData sampleTable[16];
+#endif
 
 void playSample(int sampleNum, int freq, int repeat, int x, int y)
 {
@@ -30,10 +35,12 @@ void playSampleFla(int sampleNum, int freq, int repeat, int x, int y)
 
 void soundInit()
 {
+#ifdef PCLIKE
 	int audio_buffers=512;
 
 	Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,audio_buffers);
 	Mix_AllocateChannels(8);
+#endif
 }
 
 void playMidi(int musicNum)

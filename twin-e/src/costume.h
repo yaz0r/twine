@@ -21,6 +21,8 @@ struct MDL_BoundingBoxPoint
 	short int topRight;
 };
 
+typedef struct MDL_BoundingBoxPoint MDL_BoundingBoxPoint;
+
 struct MDL_BoundingBox
 {
 	MDL_BoundingBoxPoint X;
@@ -28,11 +30,15 @@ struct MDL_BoundingBox
 	MDL_BoundingBoxPoint Z;
 };
 
+typedef struct MDL_BoundingBox MDL_BoundingBox;
+
 struct animTimerDataStruct
 {
 	char* ptr;
 	int time;
 };
+
+typedef struct animTimerDataStruct animTimerDataStruct;
 
 struct actor
     {
@@ -136,4 +142,7 @@ struct actor
 	unsigned char *actorScript;
 
 	animTimerDataStruct animTimerData; // new
-    };
+};
+
+typedef struct actor actor;
+

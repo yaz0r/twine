@@ -59,7 +59,7 @@ int setSomethingVar2;
 short int setSomethingVar3;
 
 unsigned char *frontVideoBuffer;
-OSystem *osystem;
+//OSystem *osystem;
 
 int _baseMatrix[3 * 3];
 
@@ -128,7 +128,7 @@ int textWindowBottomSave;
 
 unsigned char *_partsPtr2;
 
-debugger _debugger;
+//debugger _debugger;
 
 int useFlaPCX;
 int flaTime;

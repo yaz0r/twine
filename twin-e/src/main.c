@@ -65,9 +65,9 @@ void DCinit(void)
 fonction main
 */
 
-extern "C" int main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    LBA_engine *engine;
+//    LBA_engine *engine;
 
 #ifdef MEM_DEBUG
 	PROCESS_MEMORY_COUNTERS memInfo;
@@ -81,7 +81,8 @@ extern "C" int main(int argc, char *argv[])
 #endif
 
 	printf("Creation of the system dependant OSystem object\n");
-    osystem = new OSystem(argc, argv);
+    //osystem = new OSystem(argc, argv);
+	osystem_init(argc,argv);
     printf("Success !\n");
 
 /*    printf("LBA_engine object size is: %d\n", sizeof(LBA_engine));
@@ -99,12 +100,14 @@ extern "C" int main(int argc, char *argv[])
 
 	//    memset(engine, 0, sizeof(LBA_engine));
 
-       _debugger.init();
+#ifdef _DEBUG
+	debugger_init();
+#endif
 
 	  //  engine->osystem = osystem;
 	  //  engine->_debugger.osystem = osystem;
 	  //  engine->_debugger.engine = engine;
-	_debugger.osystem = osystem;
+//	debugger_osystem = osystem;
 	    initVars();	// init the vars (move to the object constructor ?)
 
 #ifdef PCLIKE
@@ -144,7 +147,7 @@ void init(void)
 
    // check screenPtr
 
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 
 #ifndef FASTDEBUG
 
@@ -237,7 +240,7 @@ void init(void)
 
     CopyScreen(workVideoBuffer, frontVideoBuffer);
 
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 
     FadeToPal((char *) menuPalRGBA);
 
@@ -263,9 +266,9 @@ void newGame(void)
     Load_HQR("ress.hqr", palette, 16);
     convertPalToRGBA(palette, paletteRGBA);
 
-    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
-    osystem->setPalette(paletteRGBA);
-   // osystem->Flip(frontVideoBuffer);
+    osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+    osystem_setPalette(paletteRGBA);
+   // osystem_Flip(frontVideoBuffer);
    // FadeToPal((char*)paletteRGBA);
 
     newGameVar4 = 0;
@@ -286,11 +289,11 @@ void newGame(void)
 	    Load_HQR("ress.hqr", palette, 18);
 	    convertPalToRGBA(palette, paletteRGBA);
 
-	    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
-	    osystem->setPalette(paletteRGBA);
+	    osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+	    osystem_setPalette(paletteRGBA);
 
-	   // osystem->Flip(frontVideoBuffer);
-	   // osystem->setPalette(paletteRGBA);
+	   // osystem_Flip(frontVideoBuffer);
+	   // osystem_setPalette(paletteRGBA);
 	    printTextFullScreen(151);
 
 	    readKeyboard();
@@ -303,11 +306,11 @@ void newGame(void)
 
 		    convertPalToRGBA(palette, paletteRGBA);
 
-		    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
-		    osystem->setPalette(paletteRGBA);
+		    osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+		    osystem_setPalette(paletteRGBA);
 
-		   // osystem->Flip(frontVideoBuffer);
-		   // osystem->setPalette(paletteRGBA);
+		   // osystem_Flip(frontVideoBuffer);
+		   // osystem_setPalette(paletteRGBA);
 
 		    printTextFullScreen(152);
 		}
@@ -318,13 +321,13 @@ void newGame(void)
     newGameVar4 = 1;
     FadeToBlack((char *) paletteRGBA);
     Cls();
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
     playMidi(1);
 
     PlayAnimFla("INTROD");
     SetBackPal();
     Cls();
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 
     flagDisplayText = flagDisplayTextSave;	// on remet le flag comme il était au debut
 

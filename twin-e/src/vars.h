@@ -23,7 +23,7 @@
 #define NUM_MAX_FLAGS 200
 #define NUM_MAX_ZONES 100
 
-class LBA_engine;
+//class LBA_engine;
 
 int threadTimer(void);
 void startThreadTimer(void);
@@ -43,6 +43,8 @@ void startThreadTimer(void);
 #endif
 	};
 
+	typedef struct pointTab pointTab;
+
     struct pointEntry
 	{
 	    short int data1;
@@ -61,12 +63,16 @@ void startThreadTimer(void);
 	    short int field_24;
 	} PACKED;
 
+	typedef struct pointEntry pointEntry;
+
     struct renderTabEntry
 	{
 	    short int depth;
 	    short int renderType;
 	    unsigned char *dataPtr;
 	};
+
+	typedef struct renderTabEntry renderTabEntry;
 
 //  public:
     extern short int *tab1;
@@ -110,7 +116,7 @@ void startThreadTimer(void);
     extern short int setSomethingVar3;
 
     extern unsigned char *frontVideoBuffer;
-    extern OSystem *osystem;
+//    extern OSystem *osystem;
 
     extern int _baseMatrix[3 * 3];
 
@@ -214,7 +220,7 @@ void startThreadTimer(void);
     extern int cameraVar2;
     extern int cameraVar3;
 
-    void drawLine(int a, int b, int c, int d, int e);
+//    void drawLine(int a, int b, int c, int d, int e);
 
 //};
 
@@ -228,12 +234,17 @@ struct zbufferDataStruct
 	short int spriteNum;
     };
 
+typedef struct zbufferDataStruct zbufferDataStruct;
+
 struct flagDataStruct
     {
 	short int x;
 	short int z;
 	short int y;
     };
+
+typedef struct flagDataStruct flagDataStruct;
+
 /*
 struct pointTab
     {
@@ -248,12 +259,16 @@ struct point2dStruct
     short int y;
 };
 
+typedef struct point2dStruct point2dStruct;
+
 struct point3dStruct
 {
     short int x;
     short int y;
 	short int z;
 };
+
+typedef struct point3dStruct point3dStruct;
 
 struct lineCoordinates
     {
@@ -264,12 +279,16 @@ struct lineCoordinates
 	short int y2;
     };
 
+typedef struct lineCoordinates lineCoordinates;
+
 struct lineData
     {
 	int data;
 	short int p1;
 	short int p2;
     };
+
+typedef struct lineData lineData;
 
 /*struct renderTabEntry
     {
@@ -286,6 +305,8 @@ struct sceneStruct
 	short int field_6;
     };
 
+typedef struct sceneStruct sceneStruct;
+
 struct overlayObjectListStruct
     {
 	short int field_0;
@@ -296,6 +317,8 @@ struct overlayObjectListStruct
 	short int field_A;
 	int field_C;
     };
+
+typedef struct overlayObjectListStruct overlayObjectListStruct;
 
 struct extraListStruct
     {
@@ -318,6 +341,8 @@ struct extraListStruct
 
     };
 
+typedef struct extraListStruct extraListStruct;
+
 struct currentDirtyBoxListStruct
     {
 	unsigned short int left;
@@ -325,6 +350,8 @@ struct currentDirtyBoxListStruct
 	unsigned short int right;
 	unsigned short int bottom;
     };
+
+typedef struct currentDirtyBoxListStruct currentDirtyBoxListStruct;
 
 struct drawListStruct
     {
@@ -338,6 +365,9 @@ struct drawListStruct
 	unsigned short int field_E;
 	unsigned short int field_10;
     };
+
+typedef struct drawListStruct drawListStruct;
+
 /*
 struct pointEntry
     {
@@ -367,12 +397,16 @@ struct FLAheaderStruct
 	short int var3;
 };
 
+typedef struct FLAheaderStruct FLAheaderStruct;
+
 struct frameDataStruct
 {
 	char videoSize;
 	char dummy;
 	int frameVar0;
 };
+
+typedef struct frameDataStruct frameDataStruct;
 
 #ifdef MEM_DEBUG
 
@@ -386,7 +420,7 @@ extern int staticMemoryUsage;
   public:*/
 //    OSystem * osystem;
 //    LBA_renderer renderer;
-    extern debugger _debugger;
+//    extern debugger _debugger;
 
 	extern int useFlaPCX;
 	extern int flaTime;
@@ -1464,6 +1498,6 @@ extern int staticMemoryUsage;
     int chooseSave(int param);
 
     void processTextLine(void);
-/*
-};*/
+
+//};
 #endif

@@ -5,6 +5,8 @@ struct ZONE_BoxPoint
     short int Z;
 };
 
+typedef struct ZONE_BoxPoint ZONE_BoxPoint;
+
 struct ZONE_Box
 {
 	ZONE_BoxPoint bottomLeft;
@@ -50,3 +52,5 @@ struct ZONE_Box
     };
     short int dummy;
 };
+
+typedef struct ZONE_Box ZONE_Box;

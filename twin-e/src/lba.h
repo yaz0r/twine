@@ -70,24 +70,26 @@
 #define exit(string) printf("Exit required\n")
 #endif
 
-class LBA_engine;
-
 struct mouseStatusStruct
-    {
+{
 	int left;
 	int right;
 	int X;
 	int Y;
-    };
+};
+
+typedef struct mouseStatusStruct mouseStatusStruct;
 
 struct actorBoxStruct
-    {
+{
 	int actorNum;
 	int left;
 	int right;
 	int top;
 	int bottom;
-    };
+};
+
+typedef struct actorBoxStruct actorBoxStruct;
 
 // memory sizes
 #define BUF_SPEAK_SIZE 262176

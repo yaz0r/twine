@@ -14,55 +14,68 @@
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
-
+/*
 class OSystem
 {
-  public:
-    OSystem(int argc, char *argv[]);
+  public:*/
+    int osystem_init(int argc, char *argv[]);
 
-    int mouseRight;
-    int mouseLeft;
+    extern int osystem_mouseRight;
+    extern int osystem_mouseLeft;
 
-    void delay(int time);
-    void crossFade(char *buffer, char *palette);
-    void fadeBlackToWhite();
-	void updateImage();
-    void initBuffer(char *buffer, int width, int height);
-	void initVideoBuffer(char *buffer, int width, int height);
-    void putpixel(int x, int y, int pixel);
-    void setColor(byte i, byte R, byte G, byte B);
-    void setPalette(byte * palette);
-	void setPalette320x200(byte * palette);
-    void Flip(unsigned char *videoBuffer);
-	void draw320x200BufferToScreen(unsigned char *videoBuffer);
-    void CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom);
-    void drawText(int X, int Y, char *text);
-    void drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B);
-    void drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette);
-    void getMouseStatus(mouseStatusStruct * mouseData);
+    void osystem_delay(int time);
+    void osystem_crossFade(char *buffer, char *palette);
+    void osystem_fadeBlackToWhite();
+	void osystem_updateImage();
+    void osystem_initBuffer(char *buffer, int width, int height);
+	void osystem_initVideoBuffer(char *buffer, int width, int height);
+    void osystem_putpixel(int x, int y, int pixel);
+    void osystem_setColor(byte i, byte R, byte G, byte B);
+    void osystem_setPalette(byte * palette);
+	void osystem_setPalette320x200(byte * palette);
+    void osystem_Flip(unsigned char *videoBuffer);
+	void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer);
+    void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom);
+    void osystem_drawText(int X, int Y, char *text);
+    void osystem_drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B);
+    void osystem_drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette);
+    void osystem_getMouseStatus(mouseStatusStruct * mouseData);
 
-	void set320x200Mode(bool mode);
+	void osystem_set320x200Mode(bool mode);
 
 //////////////////
 
-	void sendBackgroundTexture(unsigned char* videoBuffer);
+	void osystem_sendBackgroundTexture(unsigned char* videoBuffer);
 
-	void startDisplayList();
-	void stopDisplayList();
-	void startPoly();
-	void stopPoly();
-	void addPointColor(float x, float y, float z, unsigned char color);
-	void addLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color);
-	void addSphere(float x, float y, float z, float size, unsigned char color);
+	void osystem_startDisplayList();
+	void osystem_stopDisplayList();
+	void osystem_startPoly();
+	void osystem_stopPoly();
 
 #ifdef USE_GL
-	void startBricks();
-	void addBrickToBuffer(char* brickData);
-	void finishBricks();
-	void drawBrick(int brickNumber, int x, int y, int z);
-	void startFrame();
-	void stopFrame();
+#ifdef PCLIKE
+	void osystem_addPointColor(float x, float y, float z, unsigned char color);
+	void osystem_addLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color);
+	void osystem_addSphere(float x, float y, float z, float size, unsigned char color);
+#else
+	void osystem_addPointColor(int x, int y, int z, unsigned char color);
+	void osystem_addLine(int x1, int y1, int z1, int x2, int y2, int z2, unsigned char color);
+	void osystem_addSphere(int x, int y, int z, int size, unsigned char color);
+#endif
+#else
+	void osystem_addPointColor(int x, int y, int z, unsigned char color);
+	void osystem_addLine(int x1, int y1, int z1, int x2, int y2, int z2, unsigned char color);
+	void osystem_addSphere(int x, int y, int z, int size, unsigned char color);
 #endif
 
-  private:
-};
+#ifdef USE_GL
+	void osystem_startBricks();
+	void osystem_addBrickToBuffer(char* brickData);
+	void osystem_finishBricks();
+	void osystem_drawBrick(int brickNumber, int x, int y, int z);
+	void osystem_startFrame();
+	void osystem_stopFrame();
+#endif
+
+ /* private:
+};*/

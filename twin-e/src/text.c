@@ -117,7 +117,7 @@ void printTextFullScreen(int textIndex)
 			    break;
 			}
 		}
-		osystem->updateImage();
+		osystem_updateImage();
 	}
     while (!temp3);
 
@@ -282,7 +282,7 @@ void InitDialWindow(void)
 			       dialogueBoxBottom - 1, 3);
 	}
 
-    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
+    osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
 		     dialogueBoxBottom);
 
     printText8Var3 = 0;
@@ -290,7 +290,7 @@ void InitDialWindow(void)
     blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
 		 (char *) frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) workVideoBuffer);
 
-	osystem->updateImage();
+	osystem_updateImage();
 }
 
 int printText10(void)
@@ -315,7 +315,7 @@ int printText10(void)
 	    if (printText8Var6 != 0)
 		{
 		    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
-		    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+		    osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 		    printText8Var3 = 0;
 		    printText8Var6 = 0;
 		    TEXT_CurrentLetterX = dialogueBoxLeft + 8;
@@ -453,7 +453,7 @@ void drawDoubleLetter(int a, int b, int c, int d)
 
    // manque les check pour la taille de la boite de dialogue...
 
-    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+    osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
 }
 
 void drawLetter2(int x, int y, int c)
@@ -534,7 +534,7 @@ void printText10Sub(void)
 	    FillVertic(FillVertic_AType, progressiveTextStopColor);
 	}
 
-    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxRight - 24, dialogueBoxBottom - 24,
+    osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxRight - 24, dialogueBoxBottom - 24,
 		     dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
 }

@@ -6,6 +6,13 @@ int flaSampleTable[100];
 
 void PlayAnimFla(char *flaName)
 {
+
+	int var66=0; //quitFla
+	int currentFrame;
+	int synchTime;
+	int esi;
+	char buffer[256];
+
 #ifdef FASTDEBUG
 	return;
 #endif
@@ -14,12 +21,6 @@ void PlayAnimFla(char *flaName)
 	return;
 #endif
     printf("PlayAnimFla: %s\n", flaName);
-
-	int var66=0; //quitFla
-	int currentFrame;
-	int synchTime;
-	int esi;
-	char buffer[256];
 
     todo("remove");
 
@@ -94,17 +95,17 @@ void PlayAnimFla(char *flaName)
 
 							}*/
 
-							osystem->draw320x200BufferToScreen((unsigned char*)flaBuffer);
+							osystem_draw320x200BufferToScreen((unsigned char*)flaBuffer);
 							
 							/*do
 							{
-								osystem->delay(5);
+								osystem_delay(5);
 							}while(time<esi+2);
 
 							
 */
 #ifndef USE_GL
-							osystem->updateImage();
+							osystem_updateImage();
 #endif
 							readKeyboard();
 						}
@@ -194,7 +195,7 @@ int InitFla(char* file)
 
 void ExtInitMcga()
 {
-	osystem->set320x200Mode(true);
+	osystem_set320x200Mode(true);
 }
 
 void Mcga_Cls()
@@ -214,6 +215,8 @@ struct flaSampleStruct
 	unsigned char x;
 	unsigned char y;
 };
+
+typedef struct flaSampleStruct flaSampleStruct;
 
 void DrawNextFrameFla()
 {
@@ -261,7 +264,7 @@ void DrawNextFrameFla()
 				lastStartColor=startColor;
 
 				convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
-				osystem->setPalette320x200((byte*)flaPaletteRGBA);
+				osystem_setPalette320x200((byte*)flaPaletteRGBA);
 
 				break;
 			}
@@ -355,6 +358,12 @@ void UpdateFrame(char* ptr, int width)
 	char* destPtr;
 	char* startOfLine;
 	int height;
+	
+	char flag1;
+	char flag2;
+
+	int i;
+	int j;
 
 	skip=READ_LE_U16(ptr);
 	ptr+=2;
@@ -363,11 +372,6 @@ void UpdateFrame(char* ptr, int width)
 	height=READ_LE_S16(ptr);
 	ptr+=2;
 
-	char flag1;
-	char flag2;
-
-	int i;
-	int j;
 
 	do
 	{
@@ -388,8 +392,8 @@ void UpdateFrame(char* ptr, int width)
 			}
 			else
 			{
-				flag2=-flag2;
 				char colorFill;
+				flag2=-flag2;
 
 				colorFill=*(ptr++);
 
@@ -414,5 +418,5 @@ void ClearFla()
 
 void ExtInitSvga()
 {
-	osystem->set320x200Mode(false);
+	osystem_set320x200Mode(false);
 }

@@ -5,10 +5,13 @@ void Inventory(void)
     int di = 1;
     int previouslySelectedObject;
 
-    CopyScreen(frontVideoBuffer, workVideoBuffer);
-
     int localReinitVar1 = reinitVar1;
     int localReinitVar2 = reinitVar2;
+    
+    int oldLanguageCD1;
+    int bx;
+    
+    CopyScreen(frontVideoBuffer, workVideoBuffer);
 
     SetLightVector(896, 950, 0);
 
@@ -19,12 +22,12 @@ void Inventory(void)
 
     DrawListInventory();
 
-    int oldLanguageCD1=languageCD1;
+    oldLanguageCD1=languageCD1;
     languageCD1 = 0;
 
     InitDial(2);
 
-    int bx = 3;
+    bx = 3;
         
     TestCoulDial(4);
     InitDialWindow();
@@ -180,7 +183,7 @@ void Inventory(void)
 void SecondInitDialWindow(void)
 {
     blitRectangle(dialogueBoxLeft,dialogueBoxTop,dialogueBoxRight,dialogueBoxBottom,(char*)workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char*)frontVideoBuffer);
-    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft,dialogueBoxTop,dialogueBoxRight,dialogueBoxBottom);
+    osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft,dialogueBoxTop,dialogueBoxRight,dialogueBoxBottom);
     printText8Var3 = 0;
 }
 
@@ -201,7 +204,7 @@ void DrawListInventory()
     drawBoxInsideTrans(17,10,622,320,4);
     DrawCadre(17,10,622,320);
     Rect(110,18,188,311,75);
-    osystem->CopyBlockPhys(frontVideoBuffer,17,10,622,320);
+    osystem_CopyBlockPhys(frontVideoBuffer,17,10,622,320);
 
     for(object=0;object<28;object++)
     {
@@ -246,7 +249,7 @@ void DrawOneInventory(int objectNumber)
     }
 
     DrawCadre(left, top, right, bottom);
-    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+    osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
     
 }
 

@@ -37,7 +37,7 @@ void ChangeCube(void)
     if (drawInGameTransBox == 0)
 	{
 	   // Cls();
-	   // osystem->Flip(frontVideoBuffer);
+	   // osystem_Flip(frontVideoBuffer);
 	}
 
     //FreeGrille();
@@ -224,8 +224,9 @@ void LoadScene(int sceneNumber)
 
     while (currentActor < numActorInRoom)
 	{
+		unsigned short int staticFlags;
 	    resetActor(currentActor);
-		unsigned short int staticFlags = READ_LE_U16(temp); temp+=2;
+		staticFlags = READ_LE_U16(temp); temp+=2;
 
 		if(staticFlags & 0x1)
 		{
@@ -396,7 +397,7 @@ void HoloTraj(int arg_0)
 
     UnSetClip();
     Cls();
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
     loadHolomapGFX();
 
     localmakeHolomapTrajectoryVar = videoPtr12;
@@ -952,7 +953,7 @@ int loadBrk(int gridSize)
 
 #ifndef PCLIKE
 	//DC special
-
+{
 	int handler;
 	char name[256];
 
@@ -1028,6 +1029,7 @@ int loadBrk(int gridSize)
 	}
 
 	debug_close( handler );
+	}
 
 #else
 
@@ -1046,7 +1048,7 @@ int loadBrk(int gridSize)
     counter6 = 0;
 
 #ifdef USE_GL
-	osystem->startBricks();
+	osystem_startBricks();
 #endif
 
     while (currentBrick <= lastBrick)
@@ -1060,7 +1062,7 @@ int loadBrk(int gridSize)
 			dataSize = Size_HQR("LBA_BRK.HQR",currentBrick);
 
 #ifdef USE_GL
-			osystem->addBrickToBuffer((char*)destPtr);
+			osystem_addBrickToBuffer((char*)destPtr);
 #endif
 
 		    finalSize += dataSize;
@@ -1074,7 +1076,7 @@ int loadBrk(int gridSize)
 	    currentBrick++;
 	}
 #ifdef USE_GL
-	osystem->finishBricks();
+	osystem_finishBricks();
 #endif
 #endif
 

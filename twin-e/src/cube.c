@@ -60,8 +60,9 @@ void MixteMapToCube(byte* gridPtr)
 
 	for(i=0;i<64;i++)
 	{
-		ptr=(char*)gridPtr+var_8;
 		int posInBufCube=var_4;
+		ptr=(char*)gridPtr+var_8;
+
 
 		for(j=0;j<64;j++)
 		{

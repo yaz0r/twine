@@ -1,5 +1,31 @@
 #include "lba.h"
 
+bool debugger_cubeClipEnabled;
+int debugger_cubeClipX;
+int debugger_cubeClipY;
+int debugger_cubeClipZ;
+//
+
+bool bShowBoundingBoxes;
+
+bool bShowCubeChangeZones;
+bool bShowCameraZones;
+bool bShowScenaricZones;
+bool bShowGRMZones;
+bool bShowObjZones;
+bool bShowTextZones;
+bool bShowLadderZones;
+
+bool bShowActorNumbers;
+
+bool bShowFlags;
+
+actorBoxStruct actorBox[256];	// up to 256 actor on screen
+int debugger_numOfActorOnScreen;
+
+winStruct debugger_windows[256];
+int debugger_numOfWindows;
+
 unsigned char colorTab[][3]=
 {
     {0x0, 0x0, 0x0}, // SCRIPT_COLOR_DEFAULT
@@ -12,38 +38,38 @@ unsigned char colorTab[][3]=
 
 //int manipActorVar1 = 0;
 
-void debugger::init(void)
+void debugger_init(void)
 {
-    cubeClipEnabled = false;
-    cubeClipX= 64;
-    cubeClipY= 25;
-    cubeClipZ= 64;
+    debugger_cubeClipEnabled = false;
+    debugger_cubeClipX= 64;
+    debugger_cubeClipY= 25;
+    debugger_cubeClipZ= 64;
 }
 
-int debugger::processDebug(void)
+int debugger_processDebug(void)
 {
     mouseStatusStruct mouseData;
     int actorNum;
 
 //	freezeTime();
 
-    osystem->getMouseStatus(&mouseData);
+    osystem_getMouseStatus(&mouseData);
 
-    numOfWindows = 0;
+    debugger_numOfWindows = 0;
 
     if (mouseData.right)
     {
-        debugMainMenu();
+        debugger_debugMainMenu();
         fullRedraw(1);
     }
     else
     if (mouseData.left)
 	{
-        actorNum = findActor(mouseData.X, mouseData.Y);
+        actorNum = debugger_findActor(mouseData.X, mouseData.Y);
 
         if( actorNum != -1)
         {
-	        debugActor(actorNum);
+	        debugger_debugActor(actorNum);
 	        fullRedraw(1);
         }
 	}
@@ -53,13 +79,13 @@ int debugger::processDebug(void)
     return (0);
 }
 
-int debugger::findActor(int X, int Y)
+int debugger_findActor(int X, int Y)
 {
     int i;
 
-    for (i = numOfActorOnScreen; i >= 0; i--)
+    for (i = debugger_numOfActorOnScreen; i >= 0; i--)
 	{
-	    if (inBox(X, Y, actorBox[i].top, actorBox[i].left, actorBox[i].bottom, actorBox[i].right))
+	    if (debugger_inBox(X, Y, actorBox[i].top, actorBox[i].left, actorBox[i].bottom, actorBox[i].right))
 		{
 			if(!(actorBox[i].top == 0 && actorBox[i].right == 639 && actorBox[i].left == 0 && actorBox[i].bottom == 479))
 				return (actorBox[i].actorNum);
@@ -69,7 +95,7 @@ int debugger::findActor(int X, int Y)
     return (-1);
 }
 
-int debugger::inBox(int X, int Y, int top, int left, int bottom, int right)
+int debugger_inBox(int X, int Y, int top, int left, int bottom, int right)
 {
     if (X > left && X < right)
 	if (Y > top && Y < bottom)
@@ -78,7 +104,7 @@ int debugger::inBox(int X, int Y, int top, int left, int bottom, int right)
     return (0);
 }
 
-void debugger::fillArea(int X, int Y, int width, int height)
+void debugger_fillArea(int X, int Y, int width, int height)
 {
     int i, j;
     unsigned char *ptr;
@@ -96,12 +122,12 @@ void debugger::fillArea(int X, int Y, int width, int height)
 	    ptr += offset;
 	}
 
-   // osystem->Flip(frontVideoBuffer);
-   // osystem->CopyBlockPhys(frontVideoBuffer,0,0,640,480);
+   // osystem_Flip(frontVideoBuffer);
+   // osystem_CopyBlockPhys(frontVideoBuffer,0,0,640,480);
 
 }
 
-void debugger::fillArea2(int X, int Y, int width, int height, char color)
+void debugger_fillArea2(int X, int Y, int width, int height, char color)
 {
     int i, j;
     unsigned char *ptr;
@@ -119,77 +145,77 @@ void debugger::fillArea2(int X, int Y, int width, int height, char color)
 	    ptr += offset;
 	}
 
-   // osystem->Flip(frontVideoBuffer);
-   // osystem->CopyBlockPhys(frontVideoBuffer,0,0,640,480);
+   // osystem_Flip(frontVideoBuffer);
+   // osystem_CopyBlockPhys(frontVideoBuffer,0,0,640,480);
 
 }
 
-void debugger::addWin(int index, int X, int Y, int width, int height)
+void debugger_addWin(int index, int X, int Y, int width, int height)
 {
-    windows[index].X = X;
-    windows[index].Y = Y;
-    windows[index].Width = width;
-    windows[index].Height = height;
-    windows[index].numOfButtons = 0;
+    debugger_windows[index].X = X;
+    debugger_windows[index].Y = Y;
+    debugger_windows[index].Width = width;
+    debugger_windows[index].Height = height;
+    debugger_windows[index].numOfButtons = 0;
 
-    numOfWindows++;
+    debugger_numOfWindows++;
 }
 
-void debugger::addButton(int winIndex, int X, int Y, int width, int height, char *text,
+void debugger_addButtonNoColor(int winIndex, int X, int Y, int width, int height, char *text,
 			 buttonType type)
 {
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].X = X;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].Y = Y;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].Width = width;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].Height = height;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].type = type;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 71;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].X = X;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].Y = Y;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].Width = width;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].Height = height;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].type = type;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].color = 71;
 
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].text = (char *) malloc(strlen(text) + 1);
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].text = (char *) malloc(strlen(text) + 1);
 
-    strcpy(windows[winIndex].buttons[windows[winIndex].numOfButtons].text, text);
+    strcpy(debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].text, text);
 
-    windows[winIndex].numOfButtons++;
+    debugger_windows[winIndex].numOfButtons++;
 }
 
-void debugger::addButton(int winIndex, int X, int Y, int width, int height, char *text,
+void debugger_addButton(int winIndex, int X, int Y, int width, int height, char *text,
 			 buttonType type, short int boolVar)
 {
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].X = X;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].Y = Y;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].Width = width;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].Height = height;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].type = type;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].X = X;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].Y = Y;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].Width = width;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].Height = height;
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].type = type;
     if (boolVar)
-	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 100;
+	debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].color = 100;
     else
-	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 71;
+	debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].color = 71;
 
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].text =
+    debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].text =
 	(char *) malloc(strlen(text) + 1);
 
-    strcpy(windows[winIndex].buttons[windows[winIndex].numOfButtons].text, text);
+    strcpy(debugger_windows[winIndex].buttons[debugger_windows[winIndex].numOfButtons].text, text);
 
-    windows[winIndex].numOfButtons++;
+    debugger_windows[winIndex].numOfButtons++;
 }
 
-buttonType debugger::findButton(int X, int Y)
+buttonType debugger_findButton(int X, int Y)
 {
     int i;
     int j;
 
-    for (i = 0; i < numOfWindows; i++)
+    for (i = 0; i < debugger_numOfWindows; i++)
 	{
-	    for (j = 0; j < windows[i].numOfButtons; j++)
+	    for (j = 0; j < debugger_windows[i].numOfButtons; j++)
 		{
-		    if (X > (windows[i].X + windows[i].buttons[j].X)
+		    if (X > (debugger_windows[i].X + debugger_windows[i].buttons[j].X)
 			&& X <
-			(windows[i].X + windows[i].buttons[j].X + windows[i].buttons[j].Width)
-			&& Y > (windows[i].Y + windows[i].buttons[j].Y)
+			(debugger_windows[i].X + debugger_windows[i].buttons[j].X + debugger_windows[i].buttons[j].Width)
+			&& Y > (debugger_windows[i].Y + debugger_windows[i].buttons[j].Y)
 			&& Y <
-			(windows[i].Y + windows[i].buttons[j].Y + windows[i].buttons[j].Height))
+			(debugger_windows[i].Y + debugger_windows[i].buttons[j].Y + debugger_windows[i].buttons[j].Height))
 			{
-			    return (windows[i].buttons[j].type);
+			    return (debugger_windows[i].buttons[j].type);
 			}
 		}
 	}
@@ -197,7 +223,7 @@ buttonType debugger::findButton(int X, int Y)
     return (NO_BUTTON);
 }
 
-buttonType debugger::processInput()
+buttonType debugger_processInput()
 {
     mouseStatusStruct mouseData;
     buttonType button;
@@ -205,11 +231,11 @@ buttonType debugger::processInput()
     do
 	{
 	    readKeyboard();
-	    osystem->getMouseStatus(&mouseData);
+	    osystem_getMouseStatus(&mouseData);
 
 	    if (mouseData.left)
 		{
-		    button = findButton(mouseData.X, mouseData.Y);
+		    button = debugger_findButton(mouseData.X, mouseData.Y);
 
 		    if (button != NO_BUTTON)
 			return (button);
@@ -218,22 +244,22 @@ buttonType debugger::processInput()
     while (1);
 }
 
-void debugger::drawAll()
+void debugger_drawAll()
 {
     int i;
     int j;
 
-    for (i = 0; i < numOfWindows; i++)
+    for (i = 0; i < debugger_numOfWindows; i++)
 	{
 	    int X;
 	    int Y;
 
-	    X = windows[i].X;
-	    Y = windows[i].Y;
+	    X = debugger_windows[i].X;
+	    Y = debugger_windows[i].Y;
 
-	    fillArea(X, Y, windows[i].Width, windows[i].Height);
+	    debugger_fillArea(X, Y, debugger_windows[i].Width, debugger_windows[i].Height);
 
-	    for (j = 0; j < windows[i].numOfButtons; j++)
+	    for (j = 0; j < debugger_windows[i].numOfButtons; j++)
 		{
             unsigned char r;
             unsigned char g;
@@ -243,14 +269,14 @@ void debugger::drawAll()
             g = colorTab[BUTTON_COLOR_TEXT][1];
             b = colorTab[BUTTON_COLOR_TEXT][2];
 
-		    if (windows[i].buttons[j].type != BUTTON_INFO)
-			    fillArea2(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y, windows[i].buttons[j].Width, windows[i].buttons[j].Height, windows[i].buttons[j].color);
-		    osystem->drawTextColor(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y, windows[i].buttons[j].text,r,g,b);
+		    if (debugger_windows[i].buttons[j].type != BUTTON_INFO)
+			    debugger_fillArea2(X + debugger_windows[i].buttons[j].X, Y + debugger_windows[i].buttons[j].Y, debugger_windows[i].buttons[j].Width, debugger_windows[i].buttons[j].Height, debugger_windows[i].buttons[j].color);
+		    osystem_drawTextColor(X + debugger_windows[i].buttons[j].X, Y + debugger_windows[i].buttons[j].Y, debugger_windows[i].buttons[j].text,r,g,b);
 		}
 	}
 }
 
-void debugger::debugCubeClip(void)
+void debugger_debugCubeClip(void)
 {
     bool bQuit = false;
     buttonType button;
@@ -258,32 +284,32 @@ void debugger::debugCubeClip(void)
 
     do
     {
-        numOfWindows = 0;
-	    addWin(0, 100, 100, 96, 56);
-        addButton(0, 1, 1, 94, 10, "ON/OFF", BUTTON_CUBE_CLIP_TOGGLE, cubeClipEnabled);
+        debugger_numOfWindows = 0;
+	    debugger_addWin(0, 100, 100, 96, 56);
+        debugger_addButton(0, 1, 1, 94, 10, "ON/OFF", BUTTON_CUBE_CLIP_TOGGLE, debugger_cubeClipEnabled);
 
-        addButton(0, 1, 12, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_X);
-        sprintf(string, "X: %d", cubeClipX);
-        addButton(0, 18, 12, 60, 10, string, BUTTON_GEN);
-        addButton(0, 79, 12, 16, 10, "+", BUTTON_CUBE_CLIP_INC_X);
+        debugger_addButtonNoColor(0, 1, 12, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_X);
+        sprintf(string, "X: %d", debugger_cubeClipX);
+        debugger_addButtonNoColor(0, 18, 12, 60, 10, string, BUTTON_GEN);
+        debugger_addButtonNoColor(0, 79, 12, 16, 10, "+", BUTTON_CUBE_CLIP_INC_X);
 
-        addButton(0, 1, 23, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_Y);
-        sprintf(string, "Y: %d", cubeClipY);
-        addButton(0, 18, 23, 60, 10, string, BUTTON_GEN);
-        addButton(0, 79, 23, 16, 10, "+", BUTTON_CUBE_CLIP_INC_Y);
+        debugger_addButtonNoColor(0, 1, 23, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_Y);
+        sprintf(string, "Y: %d", debugger_cubeClipY);
+        debugger_addButtonNoColor(0, 18, 23, 60, 10, string, BUTTON_GEN);
+        debugger_addButtonNoColor(0, 79, 23, 16, 10, "+", BUTTON_CUBE_CLIP_INC_Y);
 
-        addButton(0, 1, 34, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_Z);
-        sprintf(string, "Z: %d", cubeClipZ);
-        addButton(0, 18, 34, 60, 10, string, BUTTON_GEN);
-        addButton(0, 79, 34, 16, 10, "+", BUTTON_CUBE_CLIP_INC_Z);
+        debugger_addButtonNoColor(0, 1, 34, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_Z);
+        sprintf(string, "Z: %d", debugger_cubeClipZ);
+        debugger_addButtonNoColor(0, 18, 34, 60, 10, string, BUTTON_GEN);
+        debugger_addButtonNoColor(0, 79, 34, 16, 10, "+", BUTTON_CUBE_CLIP_INC_Z);
 
-	    addButton(0, 1, 45, 94, 10, "OK", BUTTON_OK);
+	    debugger_addButtonNoColor(0, 1, 45, 94, 10, "OK", BUTTON_OK);
 
-        drawAll();
+        debugger_drawAll();
 
-   	    osystem->Flip(frontVideoBuffer);
+   	    osystem_Flip(frontVideoBuffer);
 
-	    button = processInput();
+	    button = debugger_processInput();
 
         switch(button)
         {
@@ -294,49 +320,49 @@ void debugger::debugCubeClip(void)
             }
         case BUTTON_CUBE_CLIP_DEC_X:
             {
-                if( cubeClipX > 0)
-                    cubeClipX--;
+                if( debugger_cubeClipX > 0)
+                    debugger_cubeClipX--;
                 break;
             }
         case BUTTON_CUBE_CLIP_INC_X:
             {
-                if( cubeClipX < 64)
-                    cubeClipX++;
+                if( debugger_cubeClipX < 64)
+                    debugger_cubeClipX++;
                 break;
             }
         case BUTTON_CUBE_CLIP_DEC_Y:
             {
-                if( cubeClipY > 0)
-                    cubeClipY--;
+                if( debugger_cubeClipY > 0)
+                    debugger_cubeClipY--;
                 break;
             }
         case BUTTON_CUBE_CLIP_INC_Y:
             {
-                if( cubeClipY < 25)
-                    cubeClipY++;
+                if( debugger_cubeClipY < 25)
+                    debugger_cubeClipY++;
                 break;
             }
         case BUTTON_CUBE_CLIP_DEC_Z:
             {
-                if( cubeClipZ > 0)
-                    cubeClipZ--;
+                if( debugger_cubeClipZ > 0)
+                    debugger_cubeClipZ--;
                 break;
             }
         case BUTTON_CUBE_CLIP_INC_Z:
             {
-                if( cubeClipZ < 64)
-                    cubeClipZ++;
+                if( debugger_cubeClipZ < 64)
+                    debugger_cubeClipZ++;
                 break;
             }
         case BUTTON_CUBE_CLIP_TOGGLE:
             {
-                if( cubeClipEnabled )
+                if( debugger_cubeClipEnabled )
                 {
-                    cubeClipEnabled = false;
+                    debugger_cubeClipEnabled = false;
                 }
                 else
                 {
-                    cubeClipEnabled = true;
+                    debugger_cubeClipEnabled = true;
                 }
                 break;
             }
@@ -352,40 +378,40 @@ void debugger::debugCubeClip(void)
     while(!bQuit);
 }
 
-void debugger::debugMainMenu(void)
+void debugger_debugMainMenu(void)
 {
     bool bQuit = false;
     buttonType button;
 
     do
     {
-        numOfWindows = 0;
-	    addWin(0, 10, 10, 220, 300);
+        debugger_numOfWindows = 0;
+	    debugger_addWin(0, 10, 10, 220, 300);
 
-        addButton(0, 20, 10, 140, 10, "   Cube Clip", BUTTON_CUBE_CLIP);
+        debugger_addButtonNoColor(0, 20, 10, 140, 10, "   Cube Clip", BUTTON_CUBE_CLIP);
 
-        addButton(0, 20, 21, 140, 10, "Inventory Full", BUTTON_HAVE_ALL_ITEMS);
+        debugger_addButtonNoColor(0, 20, 21, 140, 10, "Inventory Full", BUTTON_HAVE_ALL_ITEMS);
 
-		addButton(0, 20, 32, 140, 10, "Show Bounding Box", BUTTON_SHOW_BOUNDING_BOXES, bShowBoundingBoxes);
+		debugger_addButton(0, 20, 32, 140, 10, "Show Bounding Box", BUTTON_SHOW_BOUNDING_BOXES, bShowBoundingBoxes);
 
-		addButton(0, 20, 43, 140, 10, "Show Cube Zones", BUTTON_SHOW_CUBE_CHANGE_ZONES, bShowCubeChangeZones);
-		addButton(0, 20, 54, 140, 10, "Show Camera Zones", BUTTON_SHOW_CAMERA_ZONES, bShowCameraZones);
-		addButton(0, 20, 65, 140, 10, "Show Scenaric Zones", BUTTON_SHOW_SCENARIC_ZONES, bShowScenaricZones);
-		addButton(0, 20, 76, 140, 10, "Show GRM Zones", BUTTON_SHOW_GRM_ZONES, bShowGRMZones);
-		addButton(0, 20, 87, 140, 10, "Show Obj Zones", BUTTON_SHOW_OBJ_ZONES, bShowObjZones);
-		addButton(0, 20, 98, 140, 10, "Show Text Zones", BUTTON_SHOW_TEXT_ZONES, bShowTextZones);
-		addButton(0, 20, 109, 140, 10, "Show Ladder Zones", BUTTON_SHOW_LADDER_ZONES, bShowLadderZones);
-		addButton(0, 20, 120, 140, 10, "Show Actors Number", BUTTON_SHOW_ACTORS_NUMBER, bShowActorNumbers);
-		addButton(0, 20, 131, 140, 10, "Show Flags", BUTTON_SHOW_FLAGS, bShowFlags);
+		debugger_addButton(0, 20, 43, 140, 10, "Show Cube Zones", BUTTON_SHOW_CUBE_CHANGE_ZONES, bShowCubeChangeZones);
+		debugger_addButton(0, 20, 54, 140, 10, "Show Camera Zones", BUTTON_SHOW_CAMERA_ZONES, bShowCameraZones);
+		debugger_addButton(0, 20, 65, 140, 10, "Show Scenaric Zones", BUTTON_SHOW_SCENARIC_ZONES, bShowScenaricZones);
+		debugger_addButton(0, 20, 76, 140, 10, "Show GRM Zones", BUTTON_SHOW_GRM_ZONES, bShowGRMZones);
+		debugger_addButton(0, 20, 87, 140, 10, "Show Obj Zones", BUTTON_SHOW_OBJ_ZONES, bShowObjZones);
+		debugger_addButton(0, 20, 98, 140, 10, "Show Text Zones", BUTTON_SHOW_TEXT_ZONES, bShowTextZones);
+		debugger_addButton(0, 20, 109, 140, 10, "Show Ladder Zones", BUTTON_SHOW_LADDER_ZONES, bShowLadderZones);
+		debugger_addButton(0, 20, 120, 140, 10, "Show Actors Number", BUTTON_SHOW_ACTORS_NUMBER, bShowActorNumbers);
+		debugger_addButton(0, 20, 131, 140, 10, "Show Flags", BUTTON_SHOW_FLAGS, bShowFlags);
 
 
-	    addButton(0, 65, 285, 80, 10, "       OK", BUTTON_OK);
+	    debugger_addButtonNoColor(0, 65, 285, 80, 10, "       OK", BUTTON_OK);
 
-        drawAll();
+        debugger_drawAll();
 
-   	    osystem->Flip(frontVideoBuffer);
+   	    osystem_Flip(frontVideoBuffer);
 
-	    button = processInput();
+	    button = debugger_processInput();
 
         switch(button)
         {
@@ -397,7 +423,7 @@ void debugger::debugMainMenu(void)
         case BUTTON_CUBE_CLIP:
             {
                 fullRedraw(1);
-                debugCubeClip();
+                debugger_debugCubeClip();
                 break;
             }
         case BUTTON_HAVE_ALL_ITEMS:
@@ -479,7 +505,7 @@ void debugger::debugMainMenu(void)
     while(!bQuit);
 }
 
-void debugger::debugActor(int num)
+void debugger_debugActor(int num)
 {
     int i;
     buttonType button;
@@ -494,8 +520,8 @@ void debugger::debugActor(int num)
     scriptData *comScript;
     scriptData *trackScript;
 
-    comScript = getActorComScript(num);
-    trackScript = getActorTrackScript(num);
+    comScript = debugger_getActorComScript(num);
+    trackScript = debugger_getActorTrackScript(num);
 
     do
 	{
@@ -544,92 +570,92 @@ void debugger::debugActor(int num)
 		key = actors[num].field_10 & 0x0080;
 		clove = actors[num].field_10 & 0x0100;
 
-	    numOfWindows = 0;
-	    addWin(0, 420, 145, 220, 300);	// track win
-	    addButton(0, 205, 15, 15, 140, "U", BUTTON_TRACK_UP);
-	    addButton(0, 205, 156, 15, 140, "D", BUTTON_TRACK_DOWN);
+	    debugger_numOfWindows = 0;
+	    debugger_addWin(0, 420, 145, 220, 300);	// track win
+	    debugger_addButtonNoColor(0, 205, 15, 15, 140, "U", BUTTON_TRACK_UP);
+	    debugger_addButtonNoColor(0, 205, 156, 15, 140, "D", BUTTON_TRACK_DOWN);
 
-	    addWin(1, 0, 145, 418, 300);	// comp win
-	    addButton(1, 403, 15, 15, 140, "U", BUTTON_COMP_UP);
-	    addButton(1, 403, 156, 15, 140, "D", BUTTON_COMP_DOWN);
+	    debugger_addWin(1, 0, 145, 418, 300);	// comp win
+	    debugger_addButtonNoColor(1, 403, 15, 15, 140, "U", BUTTON_COMP_UP);
+	    debugger_addButtonNoColor(1, 403, 156, 15, 140, "D", BUTTON_COMP_DOWN);
 
-	    addWin(2, 0, 447, 640, 32);	// bottom status win
-	    addButton(2, 0, 15, 640, 15, "OK", BUTTON_OK);
+	    debugger_addWin(2, 0, 447, 640, 32);	// bottom status win
+	    debugger_addButtonNoColor(2, 0, 15, 640, 15, "OK", BUTTON_OK);
 
-	    addWin(3, 0, 0, 527, 80);	// status win
-	    addButton(3, 0, 0, 90, 15, "Name", BUTTON_GEN);
+	    debugger_addWin(3, 0, 0, 527, 80);	// status win
+	    debugger_addButtonNoColor(3, 0, 0, 90, 15, "Name", BUTTON_GEN);
 
-	    addButton(3, 0, 16, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 0, 16, 15, 15, "-", BUTTON_GEN);
 	    sprintf(string, "X: %d", actors[num].X);
-	    addButton(3, 16, 16, 70, 15, string, BUTTON_GEN);
-	    addButton(3, 87, 16, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 16, 16, 70, 15, string, BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 87, 16, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 0, 32, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 0, 32, 15, 15, "-", BUTTON_GEN);
 	    sprintf(string, "Y: %d", actors[num].Z);	// TODO: inverse Y/Z
-	    addButton(3, 16, 32, 70, 15, string, BUTTON_GEN);
-	    addButton(3, 87, 32, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 16, 32, 70, 15, string, BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 87, 32, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 0, 48, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 0, 48, 15, 15, "-", BUTTON_GEN);
 	    sprintf(string, "Z: %d", actors[num].Y);
-	    addButton(3, 16, 48, 70, 15, string, BUTTON_GEN);	// TODO: inverse Y/Z
-	    addButton(3, 87, 48, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 16, 48, 70, 15, string, BUTTON_GEN);	// TODO: inverse Y/Z
+	    debugger_addButtonNoColor(3, 87, 48, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 103, 16, 40, 15, "Angle", BUTTON_INFO);
-	    addButton(3, 144, 16, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 103, 16, 40, 15, "Angle", BUTTON_INFO);
+	    debugger_addButtonNoColor(3, 144, 16, 15, 15, "-", BUTTON_GEN);
 	    sprintf(string, "%d", actors[num].angle);
-	    addButton(3, 160, 16, 35, 15, string, BUTTON_GEN);
-	    addButton(3, 196, 16, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 160, 16, 35, 15, string, BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 196, 16, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 103, 32, 40, 15, "Vitesse", BUTTON_INFO);
-	    addButton(3, 144, 32, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 103, 32, 40, 15, "Vitesse", BUTTON_INFO);
+	    debugger_addButtonNoColor(3, 144, 32, 15, 15, "-", BUTTON_GEN);
 	    sprintf(string, "%d", actors[num].speed);
-	    addButton(3, 160, 32, 35, 15, string, BUTTON_GEN);
-	    addButton(3, 196, 32, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 160, 32, 35, 15, string, BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 196, 32, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 103, 48, 40, 15, "Vie", BUTTON_INFO);
-	    addButton(3, 144, 48, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 103, 48, 40, 15, "Vie", BUTTON_INFO);
+	    debugger_addButtonNoColor(3, 144, 48, 15, 15, "-", BUTTON_GEN);
         sprintf(string, "%d", actors[num].life);
-	    addButton(3, 160, 48, 35, 15, string, BUTTON_GEN);
-	    addButton(3, 196, 48, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 160, 48, 35, 15, string, BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 196, 48, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 95, 64, 48, 15, "Armure", BUTTON_INFO);
-	    addButton(3, 144, 64, 15, 15, "-", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 95, 64, 48, 15, "Armure", BUTTON_INFO);
+	    debugger_addButtonNoColor(3, 144, 64, 15, 15, "-", BUTTON_GEN);
         sprintf(string, "%d", actors[num].field_14);
-	    addButton(3, 160, 64, 35, 15, string, BUTTON_GEN);
-	    addButton(3, 196, 64, 15, 15, "+", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 160, 64, 35, 15, string, BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 196, 64, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 212, 0, 50, 15, "MONEY", BUTTON_GEN, money);
-	    addButton(3, 212, 16, 50, 15, "LIFE", BUTTON_GEN, life);
-	    addButton(3, 212, 32, 50, 15, "MAGIC", BUTTON_GEN, magic);
-	    addButton(3, 212, 48, 50, 15, "KEY", BUTTON_GEN, key);
-	    addButton(3, 212, 64, 50, 15, "CLOVE", BUTTON_GEN, clove);
+	    debugger_addButton(3, 212, 0, 50, 15, "MONEY", BUTTON_GEN, money);
+	    debugger_addButton(3, 212, 16, 50, 15, "LIFE", BUTTON_GEN, life);
+	    debugger_addButton(3, 212, 32, 50, 15, "MAGIC", BUTTON_GEN, magic);
+	    debugger_addButton(3, 212, 48, 50, 15, "KEY", BUTTON_GEN, key);
+	    debugger_addButton(3, 212, 64, 50, 15, "CLOVE", BUTTON_GEN, clove);
 
-	    addButton(3, 263, 0, 65, 15, "FALLABLE", BUTTON_GEN, fallable);
-	    addButton(3, 263, 16, 65, 15, "NOSHADO", BUTTON_GEN, noshado);
-	    addButton(3, 263, 32, 65, 15, "BACKGRD", BUTTON_GEN, backgrd);
-	    addButton(3, 263, 48, 65, 15, "CARRIER", BUTTON_GEN, carrier);
+	    debugger_addButton(3, 263, 0, 65, 15, "FALLABLE", BUTTON_GEN, fallable);
+	    debugger_addButton(3, 263, 16, 65, 15, "NOSHADO", BUTTON_GEN, noshado);
+	    debugger_addButton(3, 263, 32, 65, 15, "BACKGRD", BUTTON_GEN, backgrd);
+	    debugger_addButton(3, 263, 48, 65, 15, "CARRIER", BUTTON_GEN, carrier);
 
-	    addButton(3, 329, 0, 65, 15, "ZONABLE", BUTTON_GEN, zonable);
-	    addButton(3, 329, 16, 65, 15, "OBJCOL", BUTTON_GEN, objcol);
-	    addButton(3, 329, 32, 65, 15, "BRICK", BUTTON_GEN, brick);
-	    addButton(3, 329, 48, 65, 15, "NO_COL", BUTTON_GEN);
-	    addButton(3, 329, 64, 65, 15, "CLIP", BUTTON_GEN, clip);
+	    debugger_addButton(3, 329, 0, 65, 15, "ZONABLE", BUTTON_GEN, zonable);
+	    debugger_addButton(3, 329, 16, 65, 15, "OBJCOL", BUTTON_GEN, objcol);
+	    debugger_addButton(3, 329, 32, 65, 15, "BRICK", BUTTON_GEN, brick);
+	    debugger_addButtonNoColor(3, 329, 48, 65, 15, "NO_COL", BUTTON_GEN);
+	    debugger_addButton(3, 329, 64, 65, 15, "CLIP", BUTTON_GEN, clip);
 
-	    addButton(3, 395, 0, 65, 15, "NO_AFF", BUTTON_GEN, no_aff);
-	    addButton(3, 395, 16, 65, 15, "MINIZV", BUTTON_GEN, miniZv);
-	    addButton(3, 395, 32, 65, 15, "PUSHABLE", BUTTON_GEN, pushable);
-	    addButton(3, 395, 48, 65, 15, "CODE JEU", BUTTON_GEN);
-	    addButton(3, 395, 64, 65, 15, "NO_CHOC", BUTTON_GEN);
+	    debugger_addButton(3, 395, 0, 65, 15, "NO_AFF", BUTTON_GEN, no_aff);
+	    debugger_addButton(3, 395, 16, 65, 15, "MINIZV", BUTTON_GEN, miniZv);
+	    debugger_addButton(3, 395, 32, 65, 15, "PUSHABLE", BUTTON_GEN, pushable);
+	    debugger_addButtonNoColor(3, 395, 48, 65, 15, "CODE JEU", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 395, 64, 65, 15, "NO_CHOC", BUTTON_GEN);
 
-        addButton(3, 461, 0, 65, 15, "CHG CODE", BUTTON_GEN);
-	    addButton(3, 461, 16, 65, 15, "NOCLIP", BUTTON_GEN);
-	    addButton(3, 461, 32, 65, 15, "ZBUFFER", BUTTON_GEN);
-	    addButton(3, 461, 48, 65, 15, "MESSAGES", BUTTON_GEN);
-	    addButton(3, 461, 64, 65, 15, "Free", BUTTON_GEN);
+        debugger_addButtonNoColor(3, 461, 0, 65, 15, "CHG CODE", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 461, 16, 65, 15, "NOCLIP", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 461, 32, 65, 15, "ZBUFFER", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 461, 48, 65, 15, "MESSAGES", BUTTON_GEN);
+	    debugger_addButtonNoColor(3, 461, 64, 65, 15, "Free", BUTTON_GEN);
 
-	    addWin(4, 0, 82, 200, 61);	// file win
+	    debugger_addWin(4, 0, 82, 200, 61);	// file win
 
-	    drawAll();
+	    debugger_drawAll();
 
 	    numOfLines = 25;
 	    Y = 150;
@@ -647,7 +673,7 @@ void debugger::debugActor(int num)
             g = colorTab[trackScript->lines[i].color][1];
             b = colorTab[trackScript->lines[i].color][2];
 
-            osystem->drawTextColor(425, Y, trackScript->lines[i].line,r,g,b);
+            osystem_drawTextColor(425, Y, trackScript->lines[i].line,r,g,b);
 		    Y += 11;
 		}
 
@@ -662,7 +688,7 @@ void debugger::debugActor(int num)
 		{
             char buffer[50];
             sprintf(buffer,"%d:", comScript->lines[i].lineNumber);
-            osystem->drawTextColor(5, Y, buffer,0,0,0);
+            osystem_drawTextColor(5, Y, buffer,0,0,0);
 		    Y += 11;
 		}
 
@@ -677,14 +703,14 @@ void debugger::debugActor(int num)
             g = colorTab[comScript->lines[i].color][1];
             b = colorTab[comScript->lines[i].color][2];
 
-            osystem->drawTextColor(50, Y, comScript->lines[i].line,r,g,b);
+            osystem_drawTextColor(50, Y, comScript->lines[i].line,r,g,b);
 		    Y += 11;
 		}
 
 
-	    osystem->Flip(frontVideoBuffer);
+	    osystem_Flip(frontVideoBuffer);
 
-	    button = processInput();
+	    button = debugger_processInput();
 
 	    if (button == BUTTON_TRACK_DOWN && ((startLineTrack + 25) < trackScript->numOfLignes))
 		startLineTrack++;
@@ -706,7 +732,7 @@ void debugger::debugActor(int num)
     while (button != BUTTON_OK);
 }
 
-void debugger::addLine(char *buffer, scriptData * script)
+void debugger_addLine(char *buffer, scriptData * script)
 {
     script->lines = (scriptLineData *) realloc(script->lines, sizeof(scriptLineData) * (script->numOfLignes +1 ));
 
@@ -718,7 +744,7 @@ void debugger::addLine(char *buffer, scriptData * script)
     script->numOfLignes++;
 }
 
-void debugger::addLineColor(char *buffer, scriptData * script, debuggerColor color)
+void debugger_addLineColor(char *buffer, scriptData * script, debuggerColor color)
 {
     script->lines = (scriptLineData *) realloc(script->lines, sizeof(scriptLineData) * (script->numOfLignes +1 ));
 
@@ -730,7 +756,7 @@ void debugger::addLineColor(char *buffer, scriptData * script, debuggerColor col
     script->numOfLignes++;
 }
 
-scriptData *debugger::getActorTrackScript(int num)
+scriptData *debugger_getActorTrackScript(int num)
 {
     unsigned char *scriptPtr;
     int finish = 0;
@@ -754,42 +780,42 @@ scriptData *debugger::getActorTrackScript(int num)
 		case 0:
 		   {
 		       sprintf(buffer, "END");
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       finish = 1;
 		       break;
 		   }
 		case 1:
 		   {
-		       addLine("NOP", script);
+		       debugger_addLine("NOP", script);
 		       break;
 		   }
 		case 2:
 		   {
 		       sprintf(buffer, "BODY %d", *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 3:
 		   {
 		       sprintf(buffer, "ANIM %d", *(scriptPtr++));	// bleu
-		       addLineColor(buffer, script, SCRIPT_COLOR_ANIM);
+		       debugger_addLineColor(buffer, script, SCRIPT_COLOR_ANIM);
 		       break;
 		   }
 		case 4:
 		   {
 		       sprintf(buffer, "GOTO_POINT %d", *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 5:
 		   {
 		       sprintf(buffer, "WAIT_ANIM");
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 6:
 		   {
-		       addLine("LOOP", script);
+		       debugger_addLine("LOOP", script);
 		       break;
 		   }
 		case 7:
@@ -801,19 +827,19 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "ANGLE %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 8:
 		   {
 		       sprintf(buffer, "POS_POINT %d", *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 9:
 		   {
 		       sprintf(buffer, "LABEL %d", (*scriptPtr++));	// rouge
-               addLineColor(buffer, script, SCRIPT_COLOR_LABEL);
+               debugger_addLineColor(buffer, script, SCRIPT_COLOR_LABEL);
 		       break;
 		   }
 		case 10:
@@ -827,25 +853,25 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(actors[num].moveScript + temp + 1);
 
 		       sprintf(buffer, "GOTO %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 11:
 		   {
 		       sprintf(buffer, "STOP");
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 12:
 		   {
 		       sprintf(buffer, "GOTO_SYM_POINT %d", *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 13:
 		   {
 		       sprintf(buffer, "WAIT_NB_ANIM %d %d", *(scriptPtr++), *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 14:
@@ -857,13 +883,13 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "SAMPLE %d", temp);	// bleu
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 15:
 		   {
 		       sprintf(buffer, "GOTO_POINT_3D %d", *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 16:
@@ -874,13 +900,13 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "SPEED %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 17:
 		   {
 		       sprintf(buffer, "BACKGROUND %d", *(scriptPtr++));
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 18:
@@ -898,13 +924,13 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "WAIT_NB_SECOND %d", temp3);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 19:
 		   {
 		       sprintf(buffer, "NO_BODY");
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 20:
@@ -916,7 +942,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "BETA %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 21:
@@ -928,7 +954,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "OPEN_LEFT %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 22:
@@ -940,7 +966,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "OPEN_RIGHT %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 23:
@@ -952,7 +978,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "OPEN_UP %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 24:
@@ -964,20 +990,20 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 
 		       sprintf(buffer, "OPEN_DOWN %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 
 		case 25:
 		   {
 		       sprintf(buffer, "CLOSE");
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 26:
 		   {
 		       sprintf(buffer, "WAIT_DOOR");
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 27:
@@ -987,7 +1013,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "SAMPLE_RND %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 28:
@@ -997,7 +1023,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "SAMPLE_ALWAYS %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 29:
@@ -1007,14 +1033,14 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "SAMPLE_STOP %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 30:
 		   {
 		       sprintf(buffer, "PLAY_FLA %s", scriptPtr);
 		       scriptPtr += strlen((char *) scriptPtr) + 1;
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 31:
@@ -1024,7 +1050,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "REPEAT_SAMPLE %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 32:
@@ -1034,7 +1060,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "SIMPLE_SAMPLE %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 33:
@@ -1044,7 +1070,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "FACE_TWINKEL %d", temp);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		case 34:
@@ -1057,13 +1083,13 @@ scriptData *debugger::getActorTrackScript(int num)
 		       temp2 = *(short int *) scriptPtr;
 		       scriptPtr += 2;
 		       sprintf(buffer, "ANGLE_RND %d %d", temp1, temp2);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       break;
 		   }
 		default:
 		   {
 		       sprintf(buffer, "Unknown opcode %d", opcode);
-		       addLine(buffer, script);
+		       debugger_addLine(buffer, script);
 		       finish = 1;
 		       break;
 		   }
@@ -1074,7 +1100,7 @@ scriptData *debugger::getActorTrackScript(int num)
     return (script);
 }
 
-scriptData *debugger::getActorComScript(int num)
+scriptData *debugger_getActorComScript(int num)
 {
     unsigned char *scriptPtr;
     bool finish = false;
@@ -1100,7 +1126,7 @@ scriptData *debugger::getActorComScript(int num)
         if(*scriptPtr != 0)
         {
             sprintf(buffer, "COMPORTEMENT %d _________________________________", currentComportement);
-            addLine(buffer, script);
+            debugger_addLine(buffer, script);
             script->lines[script->numOfLignes-1].lineNumber = scriptPtr - actors[num].actorScript;
         }
 
@@ -1114,7 +1140,7 @@ scriptData *debugger::getActorComScript(int num)
 	        case 0:
 	        {
 		        strcat(buffer, "END");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        finish = 1;
                 endComportement = true;
 		        break;
@@ -1122,7 +1148,7 @@ scriptData *debugger::getActorComScript(int num)
 	        case 1:
 	        {
 		        strcat(buffer, "NOP");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 2:
@@ -1130,13 +1156,13 @@ scriptData *debugger::getActorComScript(int num)
 		        short int temp;
 
 		        strcat(buffer, "SNIF ");
-		        manipActor(&scriptPtr, buffer);
-		        doCalc(&scriptPtr, buffer);
+		        debugger_manipActor(&scriptPtr, buffer);
+		        debugger_doCalc(&scriptPtr, buffer);
 		        temp = *(short int *) scriptPtr;
 		        scriptPtr += 2;
 		        sprintf(buffer2, " goto %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 3:
@@ -1148,7 +1174,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "OFFSET %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 4:
@@ -1156,8 +1182,8 @@ scriptData *debugger::getActorComScript(int num)
 		        short int temp;
 
 		        strcat(buffer, "NEVERIF ");
-		        manipActor(&scriptPtr, buffer);
-		        doCalc(&scriptPtr, buffer);
+		        debugger_manipActor(&scriptPtr, buffer);
+		        debugger_doCalc(&scriptPtr, buffer);
 
 		        temp = *(short int *) scriptPtr;
 		        scriptPtr += 2;
@@ -1165,20 +1191,20 @@ scriptData *debugger::getActorComScript(int num)
 		        sprintf(buffer2, " goto %d", temp);
 		        strcat(buffer, buffer2);
 
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 10:
 	        {
 		        sprintf(buffer2, "LABEL %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 11:
 	        {
 		        strcat(buffer, "RETURN");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 12:
@@ -1186,13 +1212,13 @@ scriptData *debugger::getActorComScript(int num)
 		        short int temp;
 
 		        strcat(buffer, "IF ");
-		        manipActor(&scriptPtr, buffer);
-		        doCalc(&scriptPtr, buffer);
+		        debugger_manipActor(&scriptPtr, buffer);
+		        debugger_doCalc(&scriptPtr, buffer);
 		        temp = *(short int *) scriptPtr;
 		        scriptPtr += 2;
 		        sprintf(buffer2, " else goto %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 13:
@@ -1200,13 +1226,13 @@ scriptData *debugger::getActorComScript(int num)
 		        short int temp;
 
 		        strcat(buffer, "SWIF ");
-		        manipActor(&scriptPtr, buffer);
-		        doCalc(&scriptPtr, buffer);
+		        debugger_manipActor(&scriptPtr, buffer);
+		        debugger_doCalc(&scriptPtr, buffer);
 		        temp = *(short int *) scriptPtr;
 		        scriptPtr += 2;
 		        sprintf(buffer2, " else goto %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 14:
@@ -1214,13 +1240,13 @@ scriptData *debugger::getActorComScript(int num)
 		        short int temp;
 
 		        strcat(buffer, "ONEIF ");
-		        manipActor(&scriptPtr, buffer);
-		        doCalc(&scriptPtr, buffer);
+		        debugger_manipActor(&scriptPtr, buffer);
+		        debugger_doCalc(&scriptPtr, buffer);
 		        temp = *(short int *) scriptPtr;
 		        scriptPtr += 2;
 		        sprintf(buffer2, " else goto %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 15:
@@ -1233,14 +1259,14 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "ELSE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 17:
 	        {
 		        sprintf(buffer2, "BODY %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 18:
@@ -1253,14 +1279,14 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "BODY_OBJ %d %d", temp2, temp1);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 19:
 	        {
 		        sprintf(buffer2, "ANIM %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 20:
@@ -1273,7 +1299,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "ANIM_OBJ %d %d", temp2, temp1);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 21:
@@ -1285,7 +1311,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_LIFE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 22:
@@ -1299,7 +1325,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_LIFE_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 23:
@@ -1314,7 +1340,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_TRACK %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 24:
@@ -1331,7 +1357,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_TRACK_OBJ %d %d", temp2, temp1);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 25:
@@ -1344,14 +1370,14 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "MESSAGE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 26:
 	        {
 		        sprintf(buffer2, "FALLABLE %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 27:
@@ -1371,7 +1397,7 @@ scriptData *debugger::getActorComScript(int num)
 			        sprintf(buffer2, "SET_DIR %d", temp);
 		        }
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 28:
@@ -1394,7 +1420,7 @@ scriptData *debugger::getActorComScript(int num)
 			        sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d", temp3, temp);
 		        }
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 
 	        }
@@ -1402,14 +1428,14 @@ scriptData *debugger::getActorComScript(int num)
 	        {
 		        sprintf(buffer2, "CAM_FOLLOW %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 30:
 	        {
 		        sprintf(buffer2, "COMPORTEMENT_HERO %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 31:
@@ -1422,14 +1448,14 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_FLAG_CUBE %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 32:
 	        {
 		        scriptPtr++;
 		        strcat(buffer, "COMPORTEMENT %d");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 33:
@@ -1442,7 +1468,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_COMPORTEMENT %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 34:
@@ -1457,13 +1483,13 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_COMPORTEMENT_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 35:
 	        {
 		        strcat(buffer, "END_COMPORTEMENT");
-                addLine(buffer, script);
+                debugger_addLine(buffer, script);
 
                 endComportement = true;
 
@@ -1479,26 +1505,26 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_FLAG_GAME %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 37:
 	        {
 		        sprintf(buffer2, "KILL_OBJ %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 38:
 	        {
 		        strcat(buffer, "SUICIDE");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 39:
 	        {
 		        strcat(buffer, "USE_ONE_LITTLE_KEY");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 40:
@@ -1510,25 +1536,25 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "GIVE_GOLD_PIECES %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 41:
 	        {
 		        strcat(buffer, "END_LIFE");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 42:
 	        {
 		        strcat(buffer, "STOP_L_TRACK");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 43:
 	        {
 		        strcat(buffer, "RESTORE_L_TRACK");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 44:
@@ -1542,20 +1568,20 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "MESSAGE_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 45:
 	        {
 		        strcat(buffer, "INC_CHAPTER");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 46:
 	        {
 		        sprintf(buffer2, "FOUND_OBJECT %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 47:
@@ -1567,7 +1593,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_DOOR_LEFT %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 48:
@@ -1579,7 +1605,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_DOOR_RIGHT %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 49:
@@ -1591,7 +1617,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_DOOR_UP %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 50:
@@ -1603,35 +1629,35 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_DOOR_DOWN %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 51:
 	        {
 		        sprintf(buffer2, "GIVE_BONUS %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 52:
 	        {
 		        sprintf(buffer2, "CHANGE_CUBE %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 53:
 	        {
 		        sprintf(buffer2, "OBJ_COL %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 54:
 	        {
 		        sprintf(buffer2, "BRICK_COL %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 55:
@@ -1639,48 +1665,48 @@ scriptData *debugger::getActorComScript(int num)
 		        short int temp;
 
 		        strcat(buffer, "OR_IF ");
-		        manipActor(&scriptPtr, buffer);
-		        doCalc(&scriptPtr, buffer);
+		        debugger_manipActor(&scriptPtr, buffer);
+		        debugger_doCalc(&scriptPtr, buffer);
 		        temp = *(short int *) scriptPtr;
 		        scriptPtr += 2;
 		        sprintf(buffer2, " goto %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 56:
 	        {
 		        sprintf(buffer2, "INVISIBLE %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 57:
 	        {
 		        sprintf(buffer2, "ZOOM %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 58:
 	        {
 		        sprintf(buffer2, "POS_POINT %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 59:
 	        {
 		        sprintf(buffer2, "SET_MAGIC_LEVEL %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 60:
 	        {
 		        sprintf(buffer2, "SUB_MAGIC_POINT %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 61:
@@ -1693,7 +1719,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SET_LIFE_POINT_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 62:
@@ -1706,7 +1732,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SUB_LIFE_POINT_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 63:
@@ -1719,7 +1745,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "HIT_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 64:
@@ -1728,7 +1754,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "PLAY_FLA %s", (char *) scriptPtr);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        scriptPtr += temp + 1;
 		        break;
 	        }
@@ -1736,20 +1762,20 @@ scriptData *debugger::getActorComScript(int num)
 	        {
 		        sprintf(buffer2, "PLAY_MIDI %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 66:
 	        {
 		        strcat(buffer, "INC_CLOVER_BOX");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 67:
 	        {
 		        sprintf(buffer2, "SET_USED_INVENTORY %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 68:
@@ -1762,7 +1788,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "ADD_CHOICE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 69:
@@ -1775,7 +1801,7 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "ASK_CHOICE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 70:
@@ -1788,49 +1814,49 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "BIG_MESSAGE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 71:
 	        {
 		        sprintf(buffer2, "INIT_PINGOUIN %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 72:
 	        {
 		        sprintf(buffer2, "SET_HOLO_POS %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 73:
 	        {
 		        sprintf(buffer2, "CLR_HOLO_POS %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 74:
 	        {
 		        sprintf(buffer2, "ADD_FUEL %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 75:
 	        {
 		        sprintf(buffer2, "SUB_FUEL%d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 76:
 	        {
 		        sprintf(buffer2, "SET_GRM %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 77:
@@ -1843,20 +1869,20 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "SAY_MESSAGE %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 78:
 	        {
 		        sprintf(buffer2, "SAY_MESSAGE_OBJ %d", *(scriptPtr++));	// recheck !
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 79:
 	        {
 		        strcat(buffer, "FULL_POINT");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 80:
@@ -1869,49 +1895,49 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "BETA %d", angle);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 81:
 	        {
 		        strcat(buffer, "GRM_OFF");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 82:
 	        {
 		        strcat(buffer, "FADE_PAL_RED");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 83:
 	        {
 		        strcat(buffer, "FADE_ALARM_RED");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 84:
 	        {
 		        strcat(buffer, "FADE_ALARM_PAL");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 85:
 	        {
 		        strcat(buffer, "FADE_RED_PAL");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 86:
 	        {
 		        strcat(buffer, "FADE_RED_ALARM");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 87:
 	        {
 		        strcat(buffer, "FADE_PAL_ALARM");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
    	        case 88:
@@ -1922,19 +1948,19 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "EXPLODE_OBJ %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 89:
 	        {
 		        strcat(buffer, "BULLE_ON");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 90:
 	        {
 		        strcat(buffer, "BULLE_OFF");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 91:
@@ -1949,76 +1975,76 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "ASK_CHOICE_OBJ %d %d", temp1, temp2);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
             case 92:
 	        {
 		        strcat(buffer, "SET_DARK_PAL");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 93:
 	        {
 		        strcat(buffer, "SET_NORMAL_PAL");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 94:
 	        {
 		        strcat(buffer, "MESSAGE_SENDELL");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 95:
 	        {
 		        sprintf(buffer2, "ANIM_SET %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 96:
 	        {
 		        sprintf(buffer2, "HOLOMAP_TRAJ %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 97:
 	        {
 		        strcat(buffer, "GAME_OVER");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 98:
 	        {
 		        strcat(buffer, "THE_END");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 99:
 	        {
 		        strcat(buffer, "MIDI_OFF");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 100:
 	        {
 		        sprintf(buffer2, "PLAY_CD_TRACK %d", *(scriptPtr++));
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 101:
 	        {
 		        strcat(buffer, "PROJ_ISO");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 102:
 	        {
 		        strcat(buffer, "PROJ_3D");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 103:
@@ -2030,26 +2056,26 @@ scriptData *debugger::getActorComScript(int num)
 
 		        sprintf(buffer2, "TEXT %d", temp);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
 	        case 104:
 	        {
 		        strcat(buffer, "CLEAR_TEXT");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }
  	        case 105:
 	        {
 		        strcat(buffer, "BRUTAL_EXIT");
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        break;
 	        }     
 	        default:
 	        {
 		        sprintf(buffer2, "Unknown opcode %d", opcode);
 		        strcat(buffer, buffer2);
-		        addLine(buffer, script);
+		        debugger_addLine(buffer, script);
 		        finish = 1;
 		        break;
 	        }
@@ -2066,7 +2092,7 @@ scriptData *debugger::getActorComScript(int num)
     return (script);
 }
 
-void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
+void debugger_manipActor(unsigned char **scriptPtr, char *buffer)
 {
     unsigned char opcode;
     char buffer2[256];
@@ -2293,7 +2319,7 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 	}
 }
 
-void debugger::doCalc(unsigned char **scriptPtr, char *buffer)
+void debugger_doCalc(unsigned char **scriptPtr, char *buffer)
 {
     unsigned char opcode;
     int opcode2;

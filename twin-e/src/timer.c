@@ -1,5 +1,5 @@
 #include "lba.h"
 
-void startThreadTimer(LBA_engine* engine)
+/*void startThreadTimer(LBA_engine* engine)
 {
-}
+}*/

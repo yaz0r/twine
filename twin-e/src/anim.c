@@ -14,6 +14,8 @@ struct bodyHeaderStruct
 	int keyFrameTime;
 };
 
+typedef struct bodyHeaderStruct bodyHeaderStruct;
+
 int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr)
 {
     short int numOfKeyframeInAnim;
@@ -272,6 +274,7 @@ void loadGfxSub(unsigned char *bodyPtr)
     int i;
     int bp = 36;
     int bx = 38;
+    unsigned char *ptr2;
 
     bodyHeader = (bodyHeaderStruct *) bodyPtr;
 
@@ -285,7 +288,7 @@ void loadGfxSub(unsigned char *bodyPtr)
     bodyDataPtr = bodyPtr + offsetToData + 16;
 
     numOfElement1 = READ_LE_S16(bodyDataPtr);
-    unsigned char *ptr2 = bodyDataPtr + 2 + numOfElement1 * 6;
+    ptr2 = bodyDataPtr + 2 + numOfElement1 * 6;
 
     numOfPoint = READ_LE_S16(ptr2);
 

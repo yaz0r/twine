@@ -12,7 +12,7 @@ void makeFireEffect(int top, int param)
 
 	/*while(lastFireTime==time) // loop to wait next frame
 	{
-        osystem->delay(5);
+        osystem_delay(5);
 	};*/
 
 	lastFireTime=lba_time;

@@ -22,7 +22,7 @@
 struct hqr_entry
 {
 	char fileName[12];
-	bool preloadedResource;
+	char preloadedResource;
 
 	// non preloaded data
 	int size1;
@@ -37,6 +37,8 @@ struct hqr_entry
 	
 };
 
+typedef struct hqr_entry hqr_entry;
+
 struct subHqr
 {
     short int index;
@@ -44,6 +46,8 @@ struct subHqr
     unsigned int size;
     int lastAccessedTime;
 };
+
+typedef struct subHqr subHqr;
 
 extern short int HQR_Flag;
 extern volatile int lba_time;

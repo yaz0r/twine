@@ -315,7 +315,7 @@ int HQR_GetNumEntry(char* fileName)
     FILE *resourceFile;
 #else
 	//DC
-	GDFS resourceFile;
+	GDFS resourceFile = 0;
 #endif
  //   resourceFile = HQR_File_OpenRead(fileName);
     int headerSize;

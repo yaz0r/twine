@@ -207,7 +207,6 @@ void ZONE_DrawZones(void)
 
     for(currentZone=0; currentZone<=numOfZones; currentZone++)
     {
-		pZone = &zoneData[currentZone];
 	    pointTab frontBottomLeftPoint;
 	    pointTab frontBottomRightPoint;
 
@@ -231,6 +230,10 @@ void ZONE_DrawZones(void)
 
 	    point3dStruct backTopLeftPoint2D;
 	    point3dStruct backTopRightPoint2D;
+	    
+	    unsigned char color;
+	    
+	    pZone = &zoneData[currentZone];
 
         // compute the points in 3D
 
@@ -284,43 +287,43 @@ void ZONE_DrawZones(void)
 		{
 		case 0:
 			{
-				if(!_debugger.bShowCubeChangeZones)
+				if(!bShowCubeChangeZones)
 					continue;
 				break;
 			}
 		case 1:
 			{
-				if(!_debugger.bShowCameraZones)
+				if(!bShowCameraZones)
 					continue;
 				break;
 			}
 		case 2:
 			{
-				if(!_debugger.bShowScenaricZones)
+				if(!bShowScenaricZones)
 					continue;
 				break;
 			}
 		case 3:
 			{
-				if(!_debugger.bShowGRMZones)
+				if(!bShowGRMZones)
 					continue;
 				break;
 			}
 		case 4:
 			{
-				if(!_debugger.bShowObjZones)
+				if(!bShowObjZones)
 					continue;
 				break;
 			}
 		case 5:
 			{
-				if(!_debugger.bShowTextZones)
+				if(!bShowTextZones)
 					continue;
 				break;
 			}
 		case 6:
 			{
-				if(!_debugger.bShowLadderZones)
+				if(!bShowLadderZones)
 					continue;
 				break;
 			}
@@ -332,31 +335,31 @@ void ZONE_DrawZones(void)
 		}
 #endif
 
-        unsigned char color = 15*3+pZone->zoneType*16;
+        color = 15*3+pZone->zoneType*16;
 #ifdef USE_GL
 		// draw front part
-		osystem->addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,color);
-		osystem->addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,color);
-		osystem->addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,color);
-		osystem->addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,color);
+		osystem_addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,color);
+		osystem_addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,color);
+		osystem_addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,color);
+		osystem_addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,color);
 
 		// draw top part
-		osystem->addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,color);
-		osystem->addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,color);
-		osystem->addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,color);
-		osystem->addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,color);
+		osystem_addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,color);
+		osystem_addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,color);
+		osystem_addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,color);
+		osystem_addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,color);
 
 		// draw back part
-		osystem->addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,color);
-		osystem->addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,color);
-		osystem->addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,color);
-		osystem->addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,color);
+		osystem_addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,color);
+		osystem_addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,color);
+		osystem_addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,color);
+		osystem_addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,color);
 
 		// draw bottom part
-		osystem->addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,color);
-		osystem->addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,color);
-		osystem->addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,color);
-		osystem->addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,color);
+		osystem_addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,color);
+		osystem_addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,color);
+		osystem_addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,color);
+		osystem_addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,color);
 #else
         // draw front part
         drawLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,color);

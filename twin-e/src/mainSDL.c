@@ -24,6 +24,9 @@
 
 #ifndef USE_GL
 
+int osystem_mouseRight;
+int osystem_mouseLeft;
+
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
 SDL_Surface *sdl_buffer320x200;
@@ -34,29 +37,29 @@ SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 TTF_Font *font;
 
-void OSystem::delay(int time)
+void osystem_delay(int time)
 {
     SDL_Delay(time);
 }
 
-void OSystem::updateImage()
+void osystem_updateImage()
 {
 }
 
-void OSystem::getMouseStatus(mouseStatusStruct * mouseData)
+void osystem_getMouseStatus(mouseStatusStruct * mouseData)
 {
 
     SDL_GetMouseState(&mouseData->X, &mouseData->Y);
 
-    mouseData->left = mouseLeft;
-    mouseData->right = mouseRight;
+    mouseData->left = osystem_mouseLeft;
+    mouseData->right = osystem_mouseRight;
 
-    mouseLeft = 0;
-    mouseRight = 0;
+    osystem_mouseLeft = 0;
+    osystem_mouseRight = 0;
 }
 
-OSystem::OSystem(int argc, char *argv[])	// that's the constructor of the system dependent
-						// object used for the SDL port
+int osystem_init(int argc, char *argv[])	// that's the constructor of the system dependent
+											// object used for the SDL port
 {
     unsigned char *keyboard;
     int size;
@@ -134,11 +137,11 @@ OSystem::OSystem(int argc, char *argv[])	// that's the constructor of the system
 		SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
 	}
 
-    mouseLeft = 0;
-    mouseRight = 0;
+    osystem_mouseLeft = 0;
+    osystem_mouseRight = 0;
 }
 
-void OSystem::putpixel(int x, int y, int pixel)
+void osystem_putpixel(int x, int y, int pixel)
 {
     int bpp = sdl_screen->format->BytesPerPixel;
 
@@ -150,7 +153,7 @@ void OSystem::putpixel(int x, int y, int pixel)
     *p = pixel;
 }
 
-void OSystem::setColor(byte i, byte R, byte G, byte B)	// cette fonction est vraiment vraiment
+void osystem_setColor(byte i, byte R, byte G, byte B)	// cette fonction est vraiment vraiment
 							// tres tres lente...
 {
     sdl_colors[i].r = R;
@@ -160,7 +163,7 @@ void OSystem::setColor(byte i, byte R, byte G, byte B)	// cette fonction est vra
     SDL_SetColors(sdl_buffer, sdl_colors, i, 1);
 }
 
-void OSystem::setPalette(byte * palette)
+void osystem_setPalette(byte * palette)
 {
    // int i;
     SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
@@ -172,7 +175,7 @@ void OSystem::setPalette(byte * palette)
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
-void OSystem::setPalette320x200(byte * palette)
+void osystem_setPalette320x200(byte * palette)
 {
    // int i;
     SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
@@ -184,7 +187,7 @@ void OSystem::setPalette320x200(byte * palette)
   //  SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
-void OSystem::fadeBlackToWhite()
+void osystem_fadeBlackToWhite()
 {
     int i;
 
@@ -199,14 +202,14 @@ void OSystem::fadeBlackToWhite()
 	}
 }
 
-void OSystem::Flip(unsigned char *videoBuffer)
+void osystem_Flip(unsigned char *videoBuffer)
 {
     SDL_BlitSurface(sdl_buffer, NULL, sdl_screen, NULL);
 
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
-void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
+void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer)
 {
 	SDL_BlitSurface(sdl_buffer320x200,NULL,sdl_bufferRGBA,NULL);
 
@@ -221,7 +224,7 @@ void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
 	SDL_FreeSurface(sdl_bufferStretch);
 }
 
-void OSystem::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom)
+void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom)
 {
     SDL_Rect rectangle;
 
@@ -235,7 +238,7 @@ void OSystem::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int r
     SDL_UpdateRect(sdl_screen, left, top, right - left +1, bottom - top+1);
 }
 
-void OSystem::initVideoBuffer(char *buffer, int width, int height)
+void osystem_initVideoBuffer(char *buffer, int width, int height)
 {
     Uint32 rmask, gmask, bmask, amask;
 
@@ -257,12 +260,12 @@ void OSystem::initVideoBuffer(char *buffer, int width, int height)
 	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
 
-void OSystem::initBuffer(char *buffer, int width, int height)
+void osystem_initBuffer(char *buffer, int width, int height)
 {
     sdl_buffer = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 640, 0, 0, 0, 0);
 }
 
-void OSystem::crossFade(char *buffer, char *palette)
+void osystem_crossFade(char *buffer, char *palette)
 {
     SDL_Surface *backupSurface;
     SDL_Surface *newSurface;
@@ -328,7 +331,7 @@ void OSystem::crossFade(char *buffer, char *palette)
     SDL_FreeSurface(tempSurface);
 }
 
-void OSystem::drawText(int X, int Y, char *string)
+void osystem_drawText(int X, int Y, char *string)
 {
     SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
     SDL_Color black = { 0x00, 0x00, 0x00, 0 };
@@ -348,7 +351,7 @@ void OSystem::drawText(int X, int Y, char *string)
     SDL_FreeSurface(text);
 }
 
-void OSystem::drawTextColor(int X, int Y, char *string, unsigned char r, unsigned char g, unsigned char b)
+void osystem_drawTextColor(int X, int Y, char *string, unsigned char r, unsigned char g, unsigned char b)
 {
     SDL_Color forecol;
     SDL_Color white = { 0, 0, 0xFF, 0 };
@@ -372,7 +375,7 @@ void OSystem::drawTextColor(int X, int Y, char *string, unsigned char r, unsigne
   //  SDL_FreeSurface(text);
 }
 
-void OSystem::drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsigned char* palette)
+void osystem_drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsigned char* palette)
 {
     palette += color*3;
     Uint32 colorRGBA = *(Uint32*)palette;
@@ -381,37 +384,38 @@ void OSystem::drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsi
     lineColor(sdl_buffer, X1, Y1, X2, Y2, colorRGBA);
 }
 
-void OSystem::set320x200Mode( bool mode )
+void osystem_set320x200Mode( bool mode )
 {
 }
 
-void OSystem::startDisplayList()
+void osystem_startDisplayList()
 {
 }
 
-void OSystem::stopDisplayList()
+void osystem_stopDisplayList()
 {
 }
 
-void OSystem::startPoly()
+void osystem_startPoly()
 {
 }
 
-void OSystem::stopPoly()
+void osystem_stopPoly()
 {
 }
 
-void OSystem::addPointColor(float x, float y, float z, unsigned char color)
+void osystem_addPointColor(int x, int y, int z, unsigned char color)
 {
 }
 
-void OSystem::addLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color)
+void osystem_addLine(int x1, int y1, int z1, int x2, int y2, int z2, unsigned char color)
 {
 }
 
-void OSystem::addSphere(float x, float y, float z, float size, unsigned char color)
+void osystem_addSphere(int x, int y, int z, int size, unsigned char color)
 {
 }
+
 
 
 #endif

@@ -69,8 +69,8 @@ void DrawComportement(int lcomportement, int arg, int arg2)
 
     DrawObj3D(box_left, box_top, box_right, box_bottom, -600, arg, menuCostumeIndex);	// dessine le model
 
-    osystem->CopyBlockPhys(frontVideoBuffer, box_left, var_10, box_right, box_bottom);
-    osystem->CopyBlockPhys(frontVideoBuffer, 110, 239, 540, 279);
+    osystem_CopyBlockPhys(frontVideoBuffer, box_left, var_10, box_right, box_bottom);
+    osystem_CopyBlockPhys(frontVideoBuffer, 110, 239, 540, 279);
 
     loadSavedTextWindow();
 }
@@ -134,7 +134,7 @@ void DrawInfoMenu(short int arg_0, short int arg_4)
 	    AffGraph(0, RegleTrois32(arg_0 + 25, arg_0 + 325, 10, i) + 2, arg_4 + 60, HQR_Get(HQR_Sprites, 7));
 	}
 
-    osystem->CopyBlockPhys(frontVideoBuffer, arg_0, arg_4, arg_0 + 450, arg_4 + 80);
+    osystem_CopyBlockPhys(frontVideoBuffer, arg_0, arg_4, arg_0 + 450, arg_4 + 80);
 
 }
 
@@ -157,7 +157,7 @@ void drawMenuWin(short int var)
 
     DrawInfoMenu(100, 300);
 
-    osystem->CopyBlockPhys(frontVideoBuffer, 100, 100, 550, 290);
+    osystem_CopyBlockPhys(frontVideoBuffer, 100, 100, 550, 290);
 }
 
 void processComportementMenu(void)
@@ -234,9 +234,9 @@ void processComportementMenu(void)
 		}
 	    DrawComportement(comportementHero, -1, 1);
 #ifndef PCLIKE
-		time += 3;
+		lba_time += 3;
 #endif
-		osystem->updateImage();
+		osystem_updateImage();
 	}
 
     SetComportement(comportementHero);

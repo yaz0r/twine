@@ -58,11 +58,11 @@ void MainGameMenu(void)
 				    shadowMode = temp2;
 
 				    Cls();
-				    osystem->Flip(frontVideoBuffer);
+				    osystem_Flip(frontVideoBuffer);
 				    PlayAnimFla("The_end");
 				    Cls();
-				    osystem->Flip(frontVideoBuffer);
-				    osystem->setPalette(menuPalRGBA);
+				    osystem_Flip(frontVideoBuffer);
+				    osystem_setPalette(menuPalRGBA);
 				}
 			    CopyScreen(frontVideoBuffer, workVideoBuffer);
 			    do
@@ -98,12 +98,12 @@ void MainGameMenu(void)
 				    languageCD1 = temp3;
 				    shadowMode = temp2;
 				    Cls();
-				    osystem->Flip(frontVideoBuffer);
+				    osystem_Flip(frontVideoBuffer);
 				    PlayAnimFla("The_end");
 
 				    Cls();
-				    osystem->Flip(frontVideoBuffer);
-				    osystem->setPalette(menuPalRGBA);
+				    osystem_Flip(frontVideoBuffer);
+				    osystem_setPalette(menuPalRGBA);
 				}
 			    CopyScreen(frontVideoBuffer, workVideoBuffer);
 			    do
@@ -124,7 +124,7 @@ void MainGameMenu(void)
 	    else if (temp == 23)
 		{
 		    CopyScreen(workVideoBuffer, frontVideoBuffer);
-		    osystem->Flip(frontVideoBuffer);
+		    osystem_Flip(frontVideoBuffer);
 		    soundMenuData[5] = 26;
 		    optionMenu();
 		}
@@ -136,7 +136,7 @@ void MainGameMenu(void)
 		    CopyScreen(workVideoBuffer, frontVideoBuffer);
 
 		    SetBackPal();
-		    osystem->Flip(frontVideoBuffer);
+		    osystem_Flip(frontVideoBuffer);
 		    FadeToPal((char *) menuPalRGBA);
 		}
 	}
@@ -154,7 +154,7 @@ int chooseSave(int param)
     var_0C = 50;
 
     CopyScreen(workVideoBuffer, frontVideoBuffer);
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
     var_24 = alloc(1500);
     var_28 = alloc(200);
 
@@ -306,7 +306,7 @@ int processMenu(short int *menuData)
 			{
 			    readKeyboard();
 			    drawButton(localData, 1);
-				osystem->updateImage();
+				osystem_updateImage();
 			}
 		    while (printTextVar12 == 0 && key1 == 0 && skipIntro == 0);
 		    buttonNeedRedraw = 0;
@@ -323,7 +323,7 @@ int processMenu(short int *menuData)
 		    readKeyboard();
 		}
 
-		osystem->updateImage();
+		osystem_updateImage();
 	}
     while (!(key1 & 2) && !(key1 & 1));
 
@@ -385,7 +385,7 @@ void drawSelectableLetter(int x, int y, int arg)
 
     Font(centerX - SizeFont(buffer) / 2, centerY - 18, buffer);
 
-    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right2, bottom);
+    osystem_CopyBlockPhys(frontVideoBuffer, left, top, right2, bottom);
 
 }
 
@@ -402,12 +402,12 @@ int enterPlayerName(short int param)
     c = 0;
 
     CopyScreen(workVideoBuffer, frontVideoBuffer);
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
     InitDial(0);
     GetMultiText(param, buffer);
     CoulFont(15);
     Font(320 - (SizeFont(buffer) / 2), 20, buffer);
-    osystem->CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 99);
+    osystem_CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 99);
     playerName[0] = enterPlayerNameVar1;
    // drawSmallButton(320,100,playerName,1);
     drawSelectableLetters();
@@ -428,7 +428,7 @@ int enterPlayerName(short int param)
 
     enterPlayerNameVar2 = 0;
     CopyScreen(workVideoBuffer, frontVideoBuffer);
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 
     return (1);
 
@@ -600,7 +600,7 @@ void drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 
    // todo: implementer les boutons de volume...
 
-    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+    osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
 
 }
 
@@ -737,7 +737,7 @@ void Line(int a, int b, int c, int d, int e)
     short int var2;
     short int xchg;
 
-    osystem->drawLine(X1,Y1,X2,Y2,color,palette);
+    osystem_drawLine(X1,Y1,X2,Y2,color,palette);
     return;
 
     currentLineColor = color;
@@ -920,8 +920,8 @@ void Line(int a, int b, int c, int d, int e)
 
 int SizeFont(char *string)
 {
-    stringLenght = 0;
     unsigned char caractere;
+    stringLenght = 0;
 
     do
 	{
@@ -974,28 +974,28 @@ int optionMenu(void)
 	    else if (temp == 30)
 		{
 		    CopyScreen(workVideoBuffer, frontVideoBuffer);
-		    osystem->Flip(frontVideoBuffer);
+		    osystem_Flip(frontVideoBuffer);
 		   // volumeMenu();
 		}
 	    else if (temp == 46)
 		{
 
 		    CopyScreen(workVideoBuffer, frontVideoBuffer);
-		    osystem->Flip(frontVideoBuffer);
+		    osystem_Flip(frontVideoBuffer);
 		   // saveManipMenu();
 
 		}
 	    else if (temp == 47)
 		{
 		    CopyScreen(workVideoBuffer, frontVideoBuffer);
-		    osystem->Flip(frontVideoBuffer);
+		    osystem_Flip(frontVideoBuffer);
 		    optionMenu2();
 		}
 	}
     while (temp2 != 1);
 
     CopyScreen(workVideoBuffer, frontVideoBuffer);
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 
     return (0);
 }
@@ -1070,9 +1070,9 @@ void optionMenu2(void)
    // todo: implementer le process interne
 
     CopyScreen(workVideoBuffer, frontVideoBuffer);
-    osystem->Flip(frontVideoBuffer);
+    osystem_Flip(frontVideoBuffer);
 }
 
-void abort(void)
+/*void abort(void)
 {
-}
+}*/

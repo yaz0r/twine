@@ -49,11 +49,11 @@ void readKeyboard(void)
 		case SDL_MOUSEBUTTONDOWN:
 		    if (event.button.button == 3)
 			{
-			    osystem->mouseRight = 1;
+			    osystem_mouseRight = 1;
 			}
 		    else
 			{
-			    osystem->mouseLeft = 1;
+			    osystem_mouseLeft = 1;
 			}
 		    break;
 

@@ -6,6 +6,8 @@ void DoTrack(int actorNumber)
     int positionInScript;
     char currentOpcode;
     char *scriptPtr;
+    
+    int newAngle;
 
     actor *lactor;
     timeStruct *timePtr;
@@ -45,8 +47,7 @@ void DoTrack(int actorNumber)
 			}
 		    break;
 		case 4:	// GOTO_POINT
-		    int newAngle;
-
+		{
 		    lactor->positionInMoveScript++;
 		    manipActorResult = *scriptPtr;
 
@@ -73,6 +74,7 @@ void DoTrack(int actorNumber)
 			}
 
 		    break;
+		    }
 		case 5:
 			if (!(lactor->dynamicFlagsBF.bUnk0004))
 			{
