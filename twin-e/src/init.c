@@ -81,7 +81,7 @@ void initAll(char *fileName, int a)
     if (a & 1)
 	{
 	    printf("Initialising SVGA device. Please wait...\n");
-	}
+	} 
 
    /*
     * init stuff for sdl version... 
