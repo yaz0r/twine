@@ -29,7 +29,7 @@ void
     unsigned char *opcodePtr;
     int temp;
 
-	//return;
+//	return;
 
     lactor = &actors[actorNumber];
 
@@ -786,8 +786,6 @@ void LBA_engine::manipActor(actor * lactor)
     case 25:
 	{
 	    int temp;
-
-	    manipActorVar1 = 1;
 
 	    temp = *actorScriptPtr;
 	    actorScriptPtr = localScriptPtr;

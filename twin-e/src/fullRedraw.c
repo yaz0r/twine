@@ -417,15 +417,16 @@ void
 
 		positionInDebugBox++;
 
-	       /*
-	        * sprintf (stringTemp, "%d", actorNumber); setTextColor (157);
-	        * 
-	        * fullRedrawS2S1 (lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
-	        * 
-	        * if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 &&
-	        * fullRedrawVar4 < 440) printStringSimple (fullRedrawVar3, fullRedrawVar4,
-	        * stringTemp); 
-	        */
+	      
+		char stringTemp[256];
+	        sprintf (stringTemp, "%d", actorNumber); setTextColor (157);
+	         
+	         fullRedrawS2S1 (lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+	         
+	         if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 &&
+	         fullRedrawVar4 < 440) printStringSimple (fullRedrawVar3, fullRedrawVar4,
+	         stringTemp); 
+	        
 
 	    } else if (flags == 0x1800) {
 		printf("Draw actor ==0x1800 %d\n", fullRedrawVar6[arg_1E].field_2 & 0x3FF);

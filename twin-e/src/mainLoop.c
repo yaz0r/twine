@@ -1549,6 +1549,23 @@ void LBA_engine::checkZones(actor* lactor, int actorNumber)
 					opcode=*(short int*)(localPtr+12);
 					switch(opcode)
 					{
+					case 1:
+						{
+							printf("Ignoring camera opcode in Zone!\n");
+							break;
+							if(reinitVar8==actorNumber)
+							{
+								mainLoopVar10=1;
+								if(newCameraX!=lactor->field_10 || newCameraZ!=lactor->field_12 || newCameraY!=lactor->field_14)
+								{
+									newCameraX=lactor->field_10;
+									newCameraZ=lactor->field_12;
+									newCameraY=lactor->field_14;
+									mainLoopVar2=1;
+								}
+							}
+							break;
+						}
 					case 2:
 						{
 							lactor->field_5A=*(short int*)(localPtr+14);

@@ -1505,7 +1505,6 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 
 			sprintf(buffer2,"opcode 25: %d",temp);
 			strcat(buffer,buffer2);
-			manipActorVar1=1;
 			break;
 
 		}

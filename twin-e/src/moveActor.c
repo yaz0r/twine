@@ -71,6 +71,7 @@ void
 		continueMove = 0;
 		lactor->positionInMoveScript--;
 	    } else {
+		continueMove = 0;
 		changeActorAngle(lactor);
 	    }
 	    break;
