@@ -307,60 +307,30 @@ char* resolveVar(char* var,int* outputVar)
   {
   case 0: // COL
     {
-      if (currentScriptActor->life <= 0)
-        *outputVar = -1;
-      else
-        *outputVar = currentScriptActor->collision;
+      *outputVar = getCOL(currentScriptActor);
       break;
     }
   case 1: // COL_OBJ
     {
-      int actor2;
-      actor* lactor2;
+      int actorIdx;
 
-      sscanf(var,"COL_OBJ %d ",&actor2);
+      assert(sscanf(var,"COL_OBJ %d ",&actorIdx)==1);
 
-      lactor2 = &actors[actor2];
-
-      if (lactor2->life <= 0)
-      {
-        *outputVar = -1;
-      }
-      else
-      {
-        *outputVar = lactor2->collision;
-      }
+      *outputVar = getCOL(&actors[actorIdx]);
 
       numAdditionalArg = 1;
       break;
     }
   case 2: // DISTANCE
     {
-      int actor2;
-      actor* lactor2;
+      int actorIdx;
 
-      assert(sscanf(var,"DISTANCE %d ",&actor2) == 1);
+      assert(sscanf(var,"DISTANCE %d ",&actorIdx) == 1);
 
-      lactor2 = &actors[actor2];
-      manipActorVar1 = 1;
+      *outputVar = getDISTANCE(currentScriptActor,&actors[actorIdx]);
+
       numAdditionalArg = 1;
-      if (!(lactor2->dynamicFlagsBF.bUnk0020))
-      {
-        if ( abs(lactor2->Z - currentScriptActor->Z) >= 1500)
-        {
-          *outputVar = 32000;
-        }
-        else
-        {
-          *outputVar = Distance2D(currentScriptActor->X, currentScriptActor->Y, lactor2->X, lactor2->Y);
-          if (*outputVar > 32000)
-            *outputVar = 32000;
-        }
-      }
-      else
-      {
-        *outputVar = 32000;
-      }
+
       break;
     }
   case 3: // ZONE
@@ -469,9 +439,9 @@ char* resolveVar(char* var,int* outputVar)
 
       if (!(lactor2->dynamicFlagsBF.bUnk0020))
       {
-        if (lactor2->Z - currentScriptActor->Z < 1500)
+        if (lactor2->Y - currentScriptActor->Y < 1500)
         {
-          angle = GetAngle(currentScriptActor->X, currentScriptActor->Y, lactor2->X, lactor2->Y);
+          angle = GetAngle(currentScriptActor->X, currentScriptActor->Z, lactor2->X, lactor2->Z);
           if (DoTrackVar1 > 32000)
             DoTrackVar1 = 32000;
         }
@@ -589,7 +559,7 @@ char* resolveVar(char* var,int* outputVar)
       numAdditionalArg = 1;
       if (!(lactor2->dynamicFlagsBF.bUnk0020))
       {
-        *outputVar = Distance3D(currentScriptActor->X, currentScriptActor->Z, currentScriptActor->Y, lactor2->X, lactor2->Z, lactor2->Y);
+        *outputVar = Distance3D(currentScriptActor->X, currentScriptActor->Y, currentScriptActor->Z, lactor2->X, lactor2->Y, lactor2->Z);
 
         if (*outputVar > 32000)
           *outputVar = 32000;
@@ -994,8 +964,8 @@ void runActorScript(short int actorNumber)
         if (currentlyFollowedActor != newActorToFollow)
         {
           newCameraX = (actors[newActorToFollow].X >> 9);
-          newCameraZ = (actors[newActorToFollow].Z >> 8);
-          newCameraY = (actors[newActorToFollow].Y >> 9);
+          newCameraZ = (actors[newActorToFollow].Y >> 8);
+          newCameraY = (actors[newActorToFollow].Z >> 9);
 
           currentlyFollowedActor = newActorToFollow;
           requestBackgroundRedraw = 1;
@@ -1101,7 +1071,7 @@ void runActorScript(short int actorNumber)
         overlayObjectListStruct *edi;
         int oldNumCoin;
 
-        assert(sscanf("GIVE_GOLD_PIECES %d",&numGoldPieces) == 1);
+        assert(sscanf(tempPtr,"GIVE_GOLD_PIECES %d",&numGoldPieces) == 1);
 
         oldNumCoin = numCoin;
         numCoin -= numGoldPieces;
@@ -1188,7 +1158,7 @@ void runActorScript(short int actorNumber)
         assert(sscanf(tempPtr,"SET_DOOR_UP %d",&moveFactor) == 1);
 
         currentScriptActor->angle = 0x200;
-        currentScriptActor->Y = currentScriptActor->lastY - moveFactor;
+        currentScriptActor->Z = currentScriptActor->lastY - moveFactor;
         currentScriptActor->dynamicFlagsBF.bIsMoving = 0;
         currentScriptActor->speed = 0;
         break;
@@ -1200,7 +1170,7 @@ void runActorScript(short int actorNumber)
         assert(sscanf(tempPtr,"SET_DOOR_DOWN %d",&moveFactor) == 1);
 
         currentScriptActor->angle = 0;
-        currentScriptActor->Y = currentScriptActor->lastY + moveFactor;
+        currentScriptActor->Z = currentScriptActor->lastY + moveFactor;
         currentScriptActor->dynamicFlagsBF.bIsMoving = 0;
         currentScriptActor->speed = 0;
         break;
@@ -1252,8 +1222,8 @@ void runActorScript(short int actorNumber)
         assert(sscanf(tempPtr,"POS_POINT %d",&flagIdx) == 1);
 
         currentScriptActor->X = flagData[flagIdx].x;
-        currentScriptActor->Z = flagData[flagIdx].z;
-        currentScriptActor->Y = flagData[flagIdx].y;
+        currentScriptActor->Y = flagData[flagIdx].z;
+        currentScriptActor->Z = flagData[flagIdx].y;
 
         break;
       }

@@ -87,13 +87,13 @@ void ChangeCube(void)
     if (twinsenPositionModeInNewCube == 2 || twinsenPositionModeInNewCube == 0)
   {
       newTwinsenX = newTwinsenXByScene;
-      newTwinsenZ = newTwinsenZByScene;
-      newTwinsenY = newTwinsenYByScene;
+      newTwinsenZ = newTwinsenYByScene;
+      newTwinsenY = newTwinsenZByScene;
   }
 
     twinsen->X = newTwinsenX;
-    twinsen->Z = twinsenZBeforeFall = newTwinsenZ;
-    twinsen->Y = newTwinsenY;
+    twinsen->Y = twinsenZBeforeFall = newTwinsenZ;
+    twinsen->Z = newTwinsenY;
 
     SetLightVector(reinitVar1, reinitVar2, 0);
 
@@ -130,8 +130,8 @@ void ChangeCube(void)
     timeToNextRoomSample = 0;
 
     newCameraX = actors[currentlyFollowedActor].X >> 9;
-    newCameraZ = actors[currentlyFollowedActor].Z >> 8;
-    newCameraY = actors[currentlyFollowedActor].Y >> 9;
+    newCameraZ = actors[currentlyFollowedActor].Y >> 8;
+    newCameraY = actors[currentlyFollowedActor].Z >> 9;
 
     magicBallIdx = -1;
     twinsenMoved = 1;
@@ -380,10 +380,10 @@ void LoadScene(int sceneNumber)
     assert(sscanf(buffer,"X: %d",&newTwinsenXByScene) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Y: %d",&newTwinsenZByScene) == 1);
+    assert(sscanf(buffer,"Y: %d",&newTwinsenYByScene) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Z: %d",&newTwinsenYByScene) == 1);
+    assert(sscanf(buffer,"Z: %d",&newTwinsenZByScene) == 1);
 
     twinsen->moveScript = readTextMoveScript(fHandle);
     twinsen->actorScript = readTextLifeScript(fHandle);
@@ -506,14 +506,14 @@ void LoadScene(int sceneNumber)
       assert(sscanf(buffer,"X: %d",&actors[currentActor].X)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Y: %d",&actors[currentActor].Z)==1);
+      assert(sscanf(buffer,"Y: %d",&actors[currentActor].Y)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Z: %d",&actors[currentActor].Y)==1);
+      assert(sscanf(buffer,"Z: %d",&actors[currentActor].Z)==1);
 
       actors[currentActor].field_20 = actors[currentActor].X;
-      actors[currentActor].field_22 = actors[currentActor].Z;
-      actors[currentActor].field_24 = actors[currentActor].Y;
+      actors[currentActor].field_22 = actors[currentActor].Y;
+      actors[currentActor].field_24 = actors[currentActor].Z;
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
@@ -700,8 +700,8 @@ void LoadScene(int sceneNumber)
     sceneVar15 = READ_LE_U16(temp); temp+=2;
     roomMusic = READ_LE_BYTE(temp); temp++;
     newTwinsenXByScene = READ_LE_U16(temp); temp+=2; // ok jusque la
-    newTwinsenZByScene = READ_LE_U16(temp); temp+=2;
     newTwinsenYByScene = READ_LE_U16(temp); temp+=2;
+    newTwinsenZByScene = READ_LE_U16(temp); temp+=2;
 
     temp3 = READ_LE_U16(temp); temp+=2;
     twinsen->moveScript = temp;

@@ -150,8 +150,8 @@ int mainLoopInteration(void)
           if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0)  // recenter screen
         {
             newCameraX = actors[currentlyFollowedActor].X >> 9;
-            newCameraZ = actors[currentlyFollowedActor].Z >> 8;
-            newCameraY = actors[currentlyFollowedActor].Y >> 9;
+            newCameraZ = actors[currentlyFollowedActor].Y >> 8;
+            newCameraY = actors[currentlyFollowedActor].Z >> 9;
             requestBackgroundRedraw = 1;
             //needChangeRoom = 119;
            //needChangeRoom=currentRoom+1;
@@ -302,13 +302,13 @@ int mainLoopInteration(void)
           }
             else
           {
-              HQ_3D_MixSample(37, rand()%2000 + 3096, 1, actors[i].X, actors[i].Z, actors[i].Y);
+              HQ_3D_MixSample(37, rand()%2000 + 3096, 1, actors[i].X, actors[i].Y, actors[i].Z);
 
-                        if(i == currentPingouin)
-                        {
-                            printf("Pinguoin exploded ! Implement\n");
-                            exit(1);
-                        }
+              if(i == currentPingouin)
+              {
+                printf("Pinguoin exploded ! Implement\n");
+                exit(1);
+              }
           }
 
             if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1))
@@ -319,8 +319,8 @@ int mainLoopInteration(void)
           DoDir(i);
 
           actors[i].field_20 = actors[i].X;
-          actors[i].field_22 = actors[i].Z;
-          actors[i].field_24 = actors[i].Y;
+          actors[i].field_22 = actors[i].Y;
+          actors[i].field_24 = actors[i].Z;
 
           if (actors[i].positionInMoveScript != -1)
         {
@@ -375,13 +375,13 @@ int mainLoopInteration(void)
 
       if ( !disableScreenRecenter)
     {
-            projectPositionOnScreen( actors[currentlyFollowedActor].X - (newCameraX << 9), actors[currentlyFollowedActor].Z - (newCameraZ << 8), actors[currentlyFollowedActor].Y - (newCameraY << 9) );
+            projectPositionOnScreen( actors[currentlyFollowedActor].X - (newCameraX << 9), actors[currentlyFollowedActor].Y - (newCameraZ << 8), actors[currentlyFollowedActor].Z - (newCameraY << 9) );
 
             if( projectedPositionX < 80 || projectedPositionX > 539 || projectedPositionY < 80 || projectedPositionY > 429 )
             {
                 newCameraX = ((actors[currentlyFollowedActor].X + 0x100) >> 9) + (((actors[currentlyFollowedActor].X + 0x100) >> 9) - newCameraX) / 2;
-                newCameraZ = (actors[currentlyFollowedActor].Z) >> 8;
-                newCameraY = ((actors[currentlyFollowedActor].Y + 0x100) >> 9) + (((actors[currentlyFollowedActor].Y + 0x100) >> 9) - newCameraY) / 2;
+                newCameraZ = (actors[currentlyFollowedActor].Y) >> 8;
+                newCameraY = ((actors[currentlyFollowedActor].Z + 0x100) >> 9) + (((actors[currentlyFollowedActor].Z + 0x100) >> 9) - newCameraY) / 2;
 
                 if( newCameraX >= 64 )
                     newCameraX = 63;
@@ -1007,7 +1007,7 @@ void DoDir(int actorNum)
        {
            int tempAngle;
 
-           tempAngle = GetAngle(lactor->X, lactor->Y, actors[lactor->followedActor].X,actors[lactor->followedActor].Y);
+           tempAngle = GetAngle(lactor->X, lactor->Z, actors[lactor->followedActor].X,actors[lactor->followedActor].Z);
 
                if (lactor->staticFlagsBF.bIsSpriteActor)
          {
@@ -1035,7 +1035,7 @@ void DoDir(int actorNum)
     case 6: // MOVE_SAME_XZ
        {
            lactor->X = actors[lactor->followedActor].X;
-           lactor->Y = actors[lactor->followedActor].Y;
+           lactor->Z = actors[lactor->followedActor].Z;
        }
        break;
     case 7: // MOVE_RANDOM
@@ -1104,8 +1104,8 @@ void DoAnim(int actorNum)
     }
 
       processActorX = lactor->X;
-      processActorZ = lactor->Z;
-      processActorY = lactor->Y;
+      processActorZ = lactor->Y;
+      processActorY = lactor->Z;
 
     if (!(lactor->dynamicFlagsBF.bUnk0100)) // actor freeze movement
     {
@@ -1129,12 +1129,12 @@ void DoAnim(int actorNum)
 
           Rotate(dx, 0, lactor->field_78);
 
-          processActorZ = lactor->Z - destZ;
+          processActorZ = lactor->Y - destZ;
 
           Rotate(0, destX, lactor->angle);
 
           processActorX = lactor->X + destX;
-          processActorY = lactor->Y + destZ;
+          processActorY = lactor->Z + destZ;
 
           setActorAngle(0, lactor->speed, 50, &lactor->time);
 
@@ -1251,8 +1251,8 @@ void DoAnim(int actorNum)
         currentY = destZ;
 
         processActorX = lactor->X + currentX - lactor->lastX;
-        processActorZ = lactor->Z + currentZ - lactor->lastZ;
-        processActorY = lactor->Y + currentY - lactor->lastY;
+        processActorZ = lactor->Y + currentZ - lactor->lastZ;
+        processActorY = lactor->Z + currentY - lactor->lastY;
 
         lactor->lastX = currentX;
         lactor->lastZ = currentZ;
@@ -1321,8 +1321,8 @@ void DoAnim(int actorNum)
       processActorY -= actors[lactor->standOn].field_24;
 
       processActorX += actors[lactor->standOn].X;
-      processActorZ += actors[lactor->standOn].Z;
-      processActorY += actors[lactor->standOn].Y;
+      processActorZ += actors[lactor->standOn].Y;
+      processActorY += actors[lactor->standOn].Z;
 
       if (!CheckZvOnZv(actorNum, lactor->standOn))  // is actor still standing on another actor ?
       lactor->standOn = -1; // actor fall from the object
@@ -1347,7 +1347,7 @@ void DoAnim(int actorNum)
         if (position == 1)  // if this occure, that means the actor is already in the wall... Not good!
       {
           printf("Warping !!!\n");
-          lactor->Z = processActorZ = processActorZ / 256 * 256 + 256;  // warp upper...
+          lactor->Y = processActorZ = processActorZ / 256 * 256 + 256;  // warp upper...
       }
         else
       {
@@ -1393,7 +1393,7 @@ void DoAnim(int actorNum)
       {
           if (WorldColBrick(destX, processActorZ + 0x100, destY))
         {
-            InitSpecial(lactor->X, lactor->Z + 1000, lactor->Y, 0);
+            InitSpecial(lactor->X, lactor->Y + 1000, lactor->Z, 0);
             InitAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
 
           printf("Wall hit 2\n");
@@ -1425,7 +1425,7 @@ void DoAnim(int actorNum)
         {
             if (!actorNum && comportementHero == 1 && lactor->anim == var_4)
           {
-              InitSpecial(lactor->X, lactor->Z + 1000,lactor->Y, 0);
+              InitSpecial(lactor->X, lactor->Y + 1000,lactor->Z, 0);
               InitAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
 
             printf("Wall hit !\n");
@@ -1527,8 +1527,8 @@ void DoAnim(int actorNum)
   processActorY = 0x7E00;
 
     lactor->X = processActorX;
-    lactor->Z = processActorZ;
-    lactor->Y = processActorY;
+    lactor->Y = processActorZ;
+    lactor->Z = processActorY;
 }
 
 void DoCornerReadjustTwinkel(int X, int Y, int Z, int mask) // twinsen wall colision
@@ -1827,11 +1827,11 @@ int CheckObjCol(int actorNum)
       X1_2=lactor2->X+lactor2->boudingBox.X.bottomLeft;
       X2_2=lactor2->X+lactor2->boudingBox.X.topRight;
 
-      Z1_2=lactor2->Z+lactor2->boudingBox.Y.bottomLeft;
-      Z2_2=lactor2->Z+lactor2->boudingBox.Y.topRight;
+      Z1_2=lactor2->Y+lactor2->boudingBox.Y.bottomLeft;
+      Z2_2=lactor2->Y+lactor2->boudingBox.Y.topRight;
 
-      Y1_2=lactor2->Y+lactor2->boudingBox.Z.bottomLeft;
-      Y2_2=lactor2->Y+lactor2->boudingBox.Z.topRight;
+      Y1_2=lactor2->Z+lactor2->boudingBox.Z.bottomLeft;
+      Y2_2=lactor2->Z+lactor2->boudingBox.Z.topRight;
 
       if(X1<X2_2 && X2>X1_2 && Z1<Z2_2 && Z2>Z1_2 && Y1<Y2_2 && Y2>Y1_2)
       {
@@ -1871,7 +1871,7 @@ int CheckObjCol(int actorNum)
             HitObj(var_60,currentlyTestedActor,1,-1);
           }
 
-lab12AC5:     newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2->Y);
+lab12AC5:     newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2->Z);
 
                     if(lactor2->staticFlagsBF.bIsPushable && !(lactor->staticFlagsBF.bIsPushable))
           {
@@ -1941,11 +1941,11 @@ lab12AC5:     newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2->
         X1_2=lactor2->X+lactor2->boudingBox.X.bottomLeft;
         X2_2=lactor2->X+lactor2->boudingBox.X.topRight;
 
-        Z1_2=lactor2->Z+lactor2->boudingBox.Y.bottomLeft;
-        Z2_2=lactor2->Z+lactor2->boudingBox.Y.topRight;
+        Z1_2=lactor2->Y+lactor2->boudingBox.Y.bottomLeft;
+        Z2_2=lactor2->Y+lactor2->boudingBox.Y.topRight;
 
-        Y1_2=lactor2->Y+lactor2->boudingBox.Z.bottomLeft;
-        Y2_2=lactor2->Y+lactor2->boudingBox.Z.topRight;
+        Y1_2=lactor2->Z+lactor2->boudingBox.Z.bottomLeft;
+        Y2_2=lactor2->Z+lactor2->boudingBox.Z.topRight;
 
         if(X1<X2_2 && X2>X1_2 && Z1<Z2_2 && Z2>Z1_2 && Y1<Y2_2 && Y2>Y1_2)
         {
@@ -1970,14 +1970,13 @@ void ReceptionObj(void) // stop falling
 
       if (fall >= 0x1000)
     {
-        InitSpecial(processActorVar1->X, processActorVar1->Z + 1000,processActorVar1->Y, 0);
+        InitSpecial(processActorVar1->X, processActorVar1->Y + 1000,processActorVar1->Z, 0);
         processActorVar1->life = 0;
         InitAnim(ANIM_landHit, 2, 0, currentlyProcessedActorNum);
     }
       else if (fall >= 0x800)
     {
-        InitSpecial(processActorVar1->X, processActorVar1->Z + 1000,
-              processActorVar1->Y, 0);
+        InitSpecial(processActorVar1->X, processActorVar1->Y + 1000, processActorVar1->Z, 0);
         processActorVar1->life--;
         InitAnim(ANIM_landHit, 2, 0, currentlyProcessedActorNum);
     }
@@ -2214,11 +2213,11 @@ int CheckZvOnZv(int var0, int var1) // is actor still standing on object ?
     var_18 = lactor2->X + lactor2->boudingBox.X.bottomLeft;
     cx = lactor2->X + lactor2->boudingBox.X.topRight;
 
-    var_8 = lactor2->Z + lactor2->boudingBox.Y.bottomLeft;
-    var_10 = lactor2->Z + lactor2->boudingBox.Y.topRight;
+    var_8 = lactor2->Y + lactor2->boudingBox.Y.bottomLeft;
+    var_10 = lactor2->Y + lactor2->boudingBox.Y.topRight;
 
-    var_C = lactor2->Y + lactor2->boudingBox.Z.bottomLeft;
-    var_14 = lactor2->Y + lactor2->boudingBox.Z.topRight;
+    var_C = lactor2->Z + lactor2->boudingBox.Z.bottomLeft;
+    var_14 = lactor2->Z + lactor2->boudingBox.Z.topRight;
 
     if (bx >= cx)   // X1
   return (0);
@@ -2281,7 +2280,7 @@ void HitObj(int actorAttacking, int actorAttacked, int param, int angle)
             }
         }
 
-        InitSpecial(pActorAttacked->X, pActorAttacked->Z + 1000, pActorAttacked->Y, 0);
+        InitSpecial(pActorAttacked->X, pActorAttacked->Y + 1000, pActorAttacked->Z, 0);
 
         if( !actorAttacked ) // if twisen is attacked
         {

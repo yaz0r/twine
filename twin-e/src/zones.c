@@ -21,8 +21,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void CheckZoneSce(actor * lactor, int actorNumber)
 {
     int currentX = lactor->X;
-    int currentY = lactor->Y;
-    int currentZ = lactor->Z;
+    int currentY = lactor->Z;
+    int currentZ = lactor->Y;
 
     int var_C = 0;
     int i;
@@ -51,8 +51,8 @@ void CheckZoneSce(actor * lactor, int actorNumber)
                {
                   needChangeRoom = pZone->ZONE_ChangeRoom.newRoomNumber;
                   newTwinsenXByZone = lactor->X - pZone->bottomLeft.X + pZone->ZONE_ChangeRoom.positionX;
-                  newTwinsenZByZone = lactor->Z - pZone->bottomLeft.Y + pZone->ZONE_ChangeRoom.positionY;
-                  newTwinsenYByZone = lactor->Y - pZone->bottomLeft.Z + pZone->ZONE_ChangeRoom.positionZ;
+                  newTwinsenZByZone = lactor->Y - pZone->bottomLeft.Y + pZone->ZONE_ChangeRoom.positionY;
+                  newTwinsenYByZone = lactor->Z - pZone->bottomLeft.Z + pZone->ZONE_ChangeRoom.positionZ;
                   twinsenPositionModeInNewCube = 1;
                }
              }
@@ -137,10 +137,10 @@ void CheckZoneSce(actor * lactor, int actorNumber)
 
                  if (destX >= 0 && destZ >= 0 && destX <= 0x7E00 && destZ <= 0x7E00)
                {
-                   if (WorldColBrick(destX, lactor->Z + 0x100, destZ))
+                   if (WorldColBrick(destX, lactor->Y + 0x100, destZ))
                  {
                      currentActorInZoneProcess = 1;
-                                   if (lactor->Z >=abs(pZone->bottomLeft.Y+ pZone->topRight.Y) / 2)
+                   if (lactor->Y >=abs(pZone->bottomLeft.Y+ pZone->topRight.Y) / 2)
                    {
                        InitAnim(ANIM_reachTopOfLadder, 2, 0, actorNumber);  //get out of ladder
                    }
@@ -206,7 +206,7 @@ void ZoneGiveExtraBonus(ZONE_Box* pZone)
             if(!magicLevel && currentBonus ==2) // if bonus is magic and magicLevel 1 not reached
                 currentBonus = 1; //bonus is life
             
-            angle = GetAngle(abs(pZone->topRight.X + pZone->bottomLeft.X)/2, abs(pZone->topRight.Z + pZone->bottomLeft.Z)/2, twinsen->X, twinsen->Y);
+            angle = GetAngle(abs(pZone->topRight.X + pZone->bottomLeft.X)/2, abs(pZone->topRight.Z + pZone->bottomLeft.Z)/2, twinsen->X, twinsen->Z);
             index = ExtraBonus(abs(pZone->topRight.X + pZone->bottomLeft.X)/2, pZone->topRight.Y, abs(pZone->topRight.Z + pZone->bottomLeft.Z)/2, 180, angle, currentBonus + 3, *(short int*)(esi+0x12));
            
             if(index!=-1)

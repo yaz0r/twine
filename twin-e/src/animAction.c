@@ -105,7 +105,7 @@ void GereAnimAction(actor * lactor, int actorNum)
 
           if (temp == lactor->animPosition)
           {
-            HQ_3D_MixSample(READ_LE_S16(ebx), 0x1000, 1, lactor->X, lactor->Z, lactor->Y);
+            HQ_3D_MixSample(READ_LE_S16(ebx), 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
           }
 
           ebx += 2;
@@ -125,7 +125,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             temp_1C = READ_LE_S16(ebx);
             ebx+=2;
       
-            HQ_3D_MixSample(temp_28, (rand()%temp_1C) + 0x1000 - (abs(temp_1C)>>1), 1, lactor->X, lactor->Z, lactor->Y);
+            HQ_3D_MixSample(temp_28, (rand()%temp_1C) + 0x1000 - (abs(temp_1C)>>1), 1, lactor->X, lactor->Y, lactor->Z);
           }
           else
           {
@@ -161,7 +161,7 @@ void GereAnimAction(actor * lactor, int actorNum)
 
             temp_14 = *(ebx++);
 
-            ThrowExtra(actorNum, lactor->X, lactor->Z + temp_8, lactor->Y, temp_C, cx, dx, temp_24, temp_14, *(ebx++));
+            ThrowExtra(actorNum, lactor->X, lactor->Y + temp_8, lactor->Z, temp_C, cx, dx, temp_24, temp_14, *(ebx++));
           }
           else
           {
@@ -189,7 +189,7 @@ void GereAnimAction(actor * lactor, int actorNum)
               ebx +=2;
               var_14 = *(ebx++);
 
-              ThrowMagicBall(lactor->X, lactor->Z + var_8, lactor->Y, dx, lactor->angle, var_24, var_14);
+              ThrowMagicBall(lactor->X, lactor->Y + var_8, lactor->Z, dx, lactor->angle, var_24, var_14);
             }
             else
             {
@@ -215,7 +215,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             cx = READ_LE_S16(ebx);
             ebx += 2;
 
-            HQ_3D_MixSample(dx, 0x1000, cx, lactor->X, lactor->Z, lactor->Y);
+            HQ_3D_MixSample(dx, 0x1000, cx, lactor->X, lactor->Y, lactor->Z);
           }
           else
           {
@@ -242,7 +242,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             ebx += 2;
             temp = *(ebx++);
 
-            ExtraSearch(actorNum, lactor->X, lactor->Z + var_8, lactor->Y, var_C, dx, var_24, temp);
+            ExtraSearch(actorNum, lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, var_24, temp);
           }
           else
           {
@@ -266,8 +266,8 @@ void GereAnimAction(actor * lactor, int actorNum)
             int var_14;
             int temp;
 
-            distance = Distance2D(lactor->X,lactor->Y,twinsen->X,twinsen->Y);
-            angle = GetAngle(lactor->Z, 0, twinsen->Z, distance);
+            distance = Distance2D(lactor->X,lactor->Z,twinsen->X,twinsen->Z);
+            angle = GetAngle(lactor->Y, 0, twinsen->Y, distance);
 
             var_8 = READ_LE_S16(edi);
             ebx = edi+2;
@@ -281,7 +281,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             var_14 = *(ebx++);
             temp = *(ebx++);
 
-            ThrowExtra(actorNum,lactor->X, lactor->Z + var_8, lactor->Y, var_C, dx, cx, var_24, var_14, temp);
+            ThrowExtra(actorNum,lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, cx, var_24, var_14, temp);
           }
           else
           {
@@ -344,7 +344,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             int var14;
             int di;
 
-            newAngle = GetAngle(lactor->Z, 0, twinsen->Z, Distance2D(lactor->X, lactor->Y, twinsen->X, twinsen->Y));
+            newAngle = GetAngle(lactor->Y, 0, twinsen->Y, Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z));
             var20 = READ_LE_S16(edi);
             di = READ_LE_S16(var_48);
             Rotate(var20,READ_LE_S16(var_50),lactor->angle);
@@ -357,7 +357,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             var24=READ_LE_S16(var_4C);
             var14=*var_38;
 
-            ThrowExtra(actorNum, var20, di + lactor->Z, destZ + lactor->Y, varC, var10, lactor->angle + *(short int*)var_3C, var24, var14, *var_34);
+            ThrowExtra(actorNum, var20, di + lactor->Y, destZ + lactor->Z, varC, var10, lactor->angle + *(short int*)var_3C, var24, var14, *var_34);
             ebx = edx;
           }
           else

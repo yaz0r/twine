@@ -77,13 +77,13 @@ void fullRedraw(int param)
     lactor = &actors[arg_1A];
     lactor->dynamicFlagsBF.bUnk0010 = 0;  // recheck -> reinit the draw flags for the current objects
 
-    if ((useAnotherGrm == -1) || (lactor->Z <= READ_LE_S16((currentGrid2) * 24 + (char*)zoneData + 8))) // eject characters hidden when using another GRM
+    if ((useAnotherGrm == -1) || (lactor->Y <= READ_LE_S16((currentGrid2) * 24 + (char*)zoneData + 8))) // eject characters hidden when using another GRM
     {
 #ifndef USE_GL
       if ( lactor->staticFlagsBF.bIsBackgrounded && param == 0 )  // background actor, no redraw required
       {
          // calculate the actor position on screen
-          projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY);
+          projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ,lactor->Z - cameraY);
 
          // is the actor in the viewable screen ?
         if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
@@ -97,16 +97,16 @@ void fullRedraw(int param)
         if (lactor->costumeIndex != -1  && !(lactor->staticFlagsBF.bNoDisplay)) // 0x200 -> visible
         {
           // calculate the actor position on screen
-          projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+          projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
 
           if (((lactor->staticFlagsBF.bIsUsingClipping) && projectedPositionX > -112 && projectedPositionX < 752 && projectedPositionY > -50 && projectedPositionY < 651)
           || ((!(lactor->staticFlagsBF.bIsUsingClipping)) && projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580))
           {
-            temp3 = lactor->Y + lactor->X - cameraX - cameraY;
+            temp3 = lactor->Z + lactor->X - cameraX - cameraY;
 
             if (lactor->standOn != -1)  // if actor is on another actor
             {
-              temp3 = actors[lactor->standOn].X - cameraX + actors[lactor->standOn].Y - cameraY + 2;
+              temp3 = actors[lactor->standOn].X - cameraX + actors[lactor->standOn].Z - cameraY + 2;
             }
 
             if (lactor->staticFlagsBF.bIsSpriteActor)
@@ -131,12 +131,12 @@ void fullRedraw(int param)
               if(lactor->standOn!=-1) // quick shadow calc if on another actor
               {
                 shadowX = lactor->X;
-                shadowZ = lactor->Z - 1;
-                shadowY = lactor->Y;
+                shadowZ = lactor->Y - 1;
+                shadowY = lactor->Z;
               }
               else
               {
-                GetShadow(lactor->X,lactor->Z,lactor->Y);
+                GetShadow(lactor->X,lactor->Y,lactor->Z);
               }
 
               temp3--;
@@ -293,7 +293,7 @@ void fullRedraw(int param)
           if(bShowBoundingBoxes)
 #endif
           MDL_DrawBoundingBoxHiddenPart(lactor);
-          if (!AffObjetIso(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
+          if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ,lactor->Z - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
           {
 #ifdef PCLIKE
             if(bShowBoundingBoxes)  
@@ -311,12 +311,12 @@ void fullRedraw(int param)
               lactor->dynamicFlagsBF.bUnk0010;
 
               tempX = (lactor->X + 0x100 )>> 9;
-              tempZ = lactor->Z >> 8;
+              tempZ = lactor->Y >> 8;
 
               if (lactor->field_3 & 0x7F)
               tempZ++;
 
-              tempY = (lactor->Y + 0x100) >> 9;
+              tempY = (lactor->Z + 0x100) >> 9;
 
               DrawOverBrick(tempX, tempZ, tempY);
 
@@ -345,8 +345,7 @@ void fullRedraw(int param)
             sprintf(stringTemp, "%d", actorNumber);
             CoulFont(57);
 
-            projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ,
-                lactor->Y - cameraY);
+            projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
 
             if (projectedPositionX > 40 && projectedPositionX < 600
             && projectedPositionY > 40 && projectedPositionY < 440)
@@ -392,7 +391,7 @@ void fullRedraw(int param)
       }
       else if (flags == 0x1000) // sprite actor
       {
-        projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+        projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
         GetDxDyGraph(0, &spriteWidth, &spriteHeight,(char *) HQR_Get(HQR_Sprites,lactor->costumeIndex));
 
         renderLeft = projectedPositionX + *(short int *) (spriteActorData + lactor->costumeIndex * 16); // calculate center
@@ -437,10 +436,10 @@ void fullRedraw(int param)
             int tempY;
 
             tempX = (lactor->X + lactor->boudingBox.X.topRight +0x100) >> 9;
-            tempZ = lactor->Z >> 8;
+            tempZ = lactor->Y >> 8;
             if (lactor->field_3 & 0x7F)
               tempZ++;
-            tempY = (lactor->Y + lactor->boudingBox.Z.topRight +0x100) >> 9;
+            tempY = (lactor->Z + lactor->boudingBox.Z.topRight +0x100) >> 9;
 #ifndef USE_GL
             DrawOverBrick3(tempX, tempZ, tempY);
 #endif
@@ -475,7 +474,7 @@ void fullRedraw(int param)
           sprintf(stringTemp, "%d", actorNumber);
           CoulFont(157);
 
-          projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+          projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
 
           if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
             Font(projectedPositionX, projectedPositionY, stringTemp);

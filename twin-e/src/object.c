@@ -45,14 +45,14 @@ void GiveExtraBonus(actor * lactor)
         
     if( lactor->dynamicFlagsBF.bUnk0020)
         {
-            ExtraBonus(lactor->X, lactor->Z, lactor->Y, 0x100, 0, currentBonus, lactor->field_12);
-            HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Z, lactor->Y);
+            ExtraBonus(lactor->X, lactor->Y, lactor->Z, 0x100, 0, currentBonus, lactor->field_12);
+            HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
         }
         else
         {
-            angle = GetAngle(lactor->X, lactor->Y, twinsen->X, twinsen->Y);
-            ExtraBonus(lactor->X, lactor->Z + lactor->boudingBox.Y.topRight, lactor->Y, 200, angle, currentBonus, lactor->field_12);
-            HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Z + lactor->boudingBox.Y.topRight, lactor->Y);
+            angle = GetAngle(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
+            ExtraBonus(lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z, 200, angle, currentBonus, lactor->field_12);
+            HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z);
         }
     }
 

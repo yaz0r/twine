@@ -822,8 +822,8 @@ extern int staticMemoryUsage;
     extern short int sceneVar14;
     extern short int sceneVar15;
     extern short int newTwinsenXByScene;
-    extern short int newTwinsenZByScene;
     extern short int newTwinsenYByScene;
+    extern short int newTwinsenZByScene;
     extern flagDataStruct flagData[NUM_MAX_FLAGS];
     extern ZONE_Box zoneData[NUM_MAX_ZONES];
 

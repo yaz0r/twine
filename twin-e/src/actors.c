@@ -40,8 +40,8 @@ void StartInitObj(short int arg_0)
     if (lactor->staticFlagsBF.bIsUsingClipping)
     {
       lactor->lastX = lactor->X;
-      lactor->lastZ = lactor->Z;
-      lactor->lastY = lactor->Y;
+      lactor->lastZ = lactor->Y;
+      lactor->lastY = lactor->Z;
     }
 
   }
@@ -76,8 +76,8 @@ void resetActor(int actorNumber)
   localActor->body = 0;
   localActor->anim = 0;
   localActor->X = 0;
-  localActor->Z = -1;
-  localActor->Y = 0;
+  localActor->Y = -1;
+  localActor->Z = 0;
 
   localActor->boudingBox.X.bottomLeft = 0;
   localActor->boudingBox.X.topRight = 0;

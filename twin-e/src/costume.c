@@ -289,8 +289,8 @@ void MDL_DrawBoundingBoxHiddenPart(actor* pActor)
   point3dStruct backTopRightPoint2D;
 
   onScreenActorX = pActor->X - cameraX;
-  onScreenActorY = pActor->Z - cameraZ;
-  onScreenActorZ = pActor->Y - cameraY;
+  onScreenActorY = pActor->Y - cameraZ;
+  onScreenActorZ = pActor->Z - cameraY;
 
   // compute the points in 3D
 
@@ -397,8 +397,8 @@ void MDL_DrawBoundingBoxShownPart(actor* pActor)
   point3dStruct backTopRightPoint2D;
 
   onScreenActorX = pActor->X - cameraX;
-  onScreenActorY = pActor->Z - cameraZ;
-  onScreenActorZ = pActor->Y - cameraY;
+  onScreenActorY = pActor->Y - cameraZ;
+  onScreenActorZ = pActor->Z - cameraY;
 
     // compute the points in 3D
 

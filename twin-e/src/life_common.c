@@ -17,3 +17,42 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+
+// condition resolve helpers
+
+int getCOL(actor* ptrActor)
+{
+  if (ptrActor->life <= 0)
+    return(-1);
+  else
+    return(ptrActor->collision);
+}
+
+int getDISTANCE(actor* ptrActor1, actor* ptrActor2)
+{
+  int computedDistance;
+
+  if (!(ptrActor2->dynamicFlagsBF.bUnk0020))
+  {
+    // clamp for major height difference
+    if ( abs(ptrActor2->Y - ptrActor1->Y) >= 1500)
+    {
+      computedDistance = 32000;
+    }
+    else
+    {
+      computedDistance = Distance2D(ptrActor1->X, ptrActor1->Z, ptrActor2->X, ptrActor2->Z);
+
+      if (computedDistance > 32000) // clamp distance to 32000
+      {
+        computedDistance = 32000;
+      }
+    }
+  }
+  else
+  {
+    computedDistance = 32000;
+  }
+  
+  return(computedDistance);
+}

@@ -1183,24 +1183,15 @@ void manipActor(actor * lactor)
 
     localScriptPtr = actorScriptPtr + 1;
 
-    switch (opcode)
+  switch (opcode)
   {
   case 0:
-      if (lactor->life <= 0)
-    manipActorResult = -1;
-      else
-    manipActorResult = lactor->collision;
+    {
+      manipActorResult = getCOL(currentScriptActor);
       break;
+    }
   case 1:
-      lactor2 = &actors[*(actorScriptPtr++)];
-      if (lactor2->life <= 0)
-    {
-        manipActorResult = -1;
-    }
-      else
-    {
-        manipActorResult = lactor2->collision;
-    }
+      manipActorResult = getCOL(&actors[*(actorScriptPtr++)]);
       break;
   case 2:
       lactor2 = &actors[*(actorScriptPtr++)];

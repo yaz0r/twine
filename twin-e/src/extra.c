@@ -381,8 +381,8 @@ void GereExtras(void)
         targetedActor2 = targetedActor;
 
         currentExtraX = actors[targetedActor].X;
-        currentExtraZ = actors[targetedActor].Z + 1000;
-        currentExtraY = actors[targetedActor].Y;
+        currentExtraZ = actors[targetedActor].Y + 1000;
+        currentExtraY = actors[targetedActor].Z;
 
         angleToActor = GetAngle(extraList[i].X, extraList[i].Y, currentExtraX, currentExtraY);
 
@@ -665,11 +665,11 @@ int ExtraCheckObjCol(extraListStruct* extra, int param)
       aX1 = actors[i].X + actors[i].boudingBox.X.bottomLeft;
       aX2 = actors[i].X + actors[i].boudingBox.X.topRight;
 
-      aZ1 = actors[i].Z + actors[i].boudingBox.Y.bottomLeft;
-      aZ2 = actors[i].Z + actors[i].boudingBox.Y.topRight;
+      aZ1 = actors[i].Y + actors[i].boudingBox.Y.bottomLeft;
+      aZ2 = actors[i].Y + actors[i].boudingBox.Y.topRight;
 
-      aY1 = actors[i].Y + actors[i].boudingBox.Z.bottomLeft;
-      aY2 = actors[i].Y + actors[i].boudingBox.Z.topRight;
+      aY1 = actors[i].Z + actors[i].boudingBox.Z.bottomLeft;
+      aY2 = actors[i].Z + actors[i].boudingBox.Z.topRight;
 
       if( X1 < aX2 && X2 > aX1 && Z1 < aZ2 && Z2 > aZ1 && Y1 < aY2 && Y2 > aY1)
       {
@@ -730,7 +730,7 @@ int ExtraSearch(int actorNum, int X, int Z, int Y, int param1, int param2, int p
       extraList[i].field_12 = param3;
       extraList[i].field_1E = param4;
       setActorAngle(0,param3,50,(timeStruct*)&extraList[i].field_8);
-      extraList[i].field_16 = GetAngle(X,Y,actors[param2].X,actors[param2].Y);
+      extraList[i].field_16 = GetAngle(X,Y,actors[param2].X,actors[param2].Z);
       return(i);
     }
   }

@@ -648,7 +648,7 @@ void DoTrack(int actorNumber)
         destZ = flagData[pointIdx].z;
         destY = flagData[pointIdx].y;
 
-        newAngle = GetAngle(currentTrackActor->X, currentTrackActor->Y, destX, destY);
+        newAngle = GetAngle(currentTrackActor->X, currentTrackActor->Z, destX, destY);
 
         if (currentTrackActor->staticFlagsBF.bIsSpriteActor)
         {
@@ -726,8 +726,8 @@ void DoTrack(int actorNumber)
         }
 
         currentTrackActor->X = destX;
-        currentTrackActor->Z = destZ;
-        currentTrackActor->Y = destY;
+        currentTrackActor->Y = destZ;
+        currentTrackActor->Z = destY;
 
         break;
       }
@@ -803,8 +803,8 @@ void DoTrack(int actorNumber)
           destZ = flagData[flagIdx].z;
           destY = flagData[flagIdx].y;
 
-          currentTrackActor->angle = GetAngle(currentTrackActor->X, currentTrackActor->Y, destX, destY);  // X-Y move
-          currentTrackActor->field_78 = GetAngle(currentTrackActor->Z, 0, destZ, DoTrackVar1);  // Z (vertical) move
+          currentTrackActor->angle = GetAngle(currentTrackActor->X, currentTrackActor->Z, destX, destY);  // X-Y move
+          currentTrackActor->field_78 = GetAngle(currentTrackActor->Y, 0, destZ, DoTrackVar1);  // Z (vertical) move
 
           if (DoTrackVar1 > 100)
           {
@@ -813,8 +813,8 @@ void DoTrack(int actorNumber)
           else
           {
             currentTrackActor->X = destX;
-            currentTrackActor->Z = destZ;
-            currentTrackActor->Y = destY;
+            currentTrackActor->Y = destZ;
+            currentTrackActor->Z = destY;
 
             currentTrackActor->positionInMoveScript++;
           }
@@ -980,7 +980,7 @@ void DoTrack(int actorNumber)
         {
           if (currentTrackActor->faceTwinkenVar == -1 && currentTrackActor->time.numOfStep == 0)
           {
-            currentTrackActor->faceTwinkenVar = GetAngle(currentTrackActor->X, currentTrackActor->Y, twinsen->X, twinsen->Y);
+            currentTrackActor->faceTwinkenVar = GetAngle(currentTrackActor->X, currentTrackActor->Z, twinsen->X, twinsen->Z);
             ManualRealAngle(currentTrackActor->angle, currentTrackActor->faceTwinkenVar, currentTrackActor->speed, &currentTrackActor->time);
           }
 

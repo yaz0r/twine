@@ -588,8 +588,8 @@ sceneStruct sceneVar4;
 short int sceneVar14;
 short int sceneVar15;
 short int newTwinsenXByScene;
-short int newTwinsenZByScene;
 short int newTwinsenYByScene;
+short int newTwinsenZByScene;
 //flagDataStruct *flagData;
 flagDataStruct flagData[NUM_MAX_FLAGS];
 ZONE_Box zoneData[NUM_MAX_ZONES];
@@ -1046,8 +1046,8 @@ void initVars(void)
     newTwinsenYByZone = 0;
 
     newTwinsenXByScene = 0;
-    newTwinsenZByScene = 0;
     newTwinsenYByScene = 0;
+    newTwinsenZByScene = 0;
 
     twinsenZBeforeFall = 0;
 
@@ -1110,8 +1110,8 @@ void initVars(void)
     sceneVar14 = 0;
     sceneVar15 = 0;
     newTwinsenXByScene = 0;
-    newTwinsenZByScene = 0;
     newTwinsenYByScene = 0;
+    newTwinsenZByScene = 0;
 
     mainLoopVar4 = 0;
     autoAgressivity = 1;

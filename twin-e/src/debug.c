@@ -603,12 +603,12 @@ void debugger_debugActor(int num)
       debugger_addButtonNoColor(3, 87, 16, 15, 15, "+", BUTTON_GEN);
 
       debugger_addButtonNoColor(3, 0, 32, 15, 15, "-", BUTTON_GEN);
-      sprintf(string, "Y: %d", actors[num].Z);  // TODO: inverse Y/Z
+      sprintf(string, "Y: %d", actors[num].Y);  // TODO: inverse Y/Z
       debugger_addButtonNoColor(3, 16, 32, 70, 15, string, BUTTON_GEN);
       debugger_addButtonNoColor(3, 87, 32, 15, 15, "+", BUTTON_GEN);
 
       debugger_addButtonNoColor(3, 0, 48, 15, 15, "-", BUTTON_GEN);
-      sprintf(string, "Z: %d", actors[num].Y);
+      sprintf(string, "Z: %d", actors[num].Z);
       debugger_addButtonNoColor(3, 16, 48, 70, 15, string, BUTTON_GEN); // TODO: inverse Y/Z
       debugger_addButtonNoColor(3, 87, 48, 15, 15, "+", BUTTON_GEN);
 

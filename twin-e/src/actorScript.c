@@ -234,8 +234,8 @@ void foundObject(int objectNumber)
   int twinsenAnimKeyframe;
 
   newCameraX = (twinsen->X + 0x100)>>9;
-  newCameraZ = (twinsen->Z + 0x100)>>8;
-  newCameraY = (twinsen->Y + 0x100)>>9;
+  newCameraZ = (twinsen->Y + 0x100)>>8;
+  newCameraY = (twinsen->Z + 0x100)>>9;
 
   twinsen->staticFlagsBF.bNoDisplay = true;
   fullRedraw(1);
@@ -247,23 +247,23 @@ void foundObject(int objectNumber)
   objectZ = newCameraZ << 8;
   objectY = newCameraY << 9;
 
-  AffObjetIso(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY, 0, 0x80, 0, bodyPtrTab[twinsen->costumeIndex]);
+  AffObjetIso(twinsen->X - objectX, twinsen->Y - objectZ, twinsen->Z - objectY, 0, 0x80, 0, bodyPtrTab[twinsen->costumeIndex]);
 
   SetClip(renderLeft, renderTop, renderRight, renderBottom);
 
   object2X = (twinsen->X + 0x100)>>9;
-  object2Z = (twinsen->Z)>>8;
+  object2Z = (twinsen->Y)>>8;
 
   if(twinsen->field_3 & 0x7F)
     object2Z++;
 
-  object2Y = (twinsen->Y + 0x100)>>9;
+  object2Y = (twinsen->Z + 0x100)>>9;
 
   DrawOverBrick(object2X, object2Z, object2Y);
 
   osystem_Flip(frontVideoBuffer);
 
-  projectPositionOnScreen(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY);
+  projectPositionOnScreen(twinsen->X - objectX, twinsen->Y - objectZ, twinsen->Z - objectY);
 
   projectedPositionY -= 150;
 
@@ -352,7 +352,7 @@ else*/
       }
     }
 
-    AffObjetIso(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY, 0, 0x80, 0, bodyPtrTab[twinsen->costumeIndex]);
+    AffObjetIso(twinsen->X - objectX, twinsen->Y - objectZ, twinsen->Z - objectY, 0, 0x80, 0, bodyPtrTab[twinsen->costumeIndex]);
     SetClip(renderLeft, renderTop, renderRight, renderBottom);
     DrawOverBrick(object2X, object2Z, object2Y);
     AddPhysBox(renderLeft, renderTop, renderRight, renderBottom);
