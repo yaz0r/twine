@@ -236,12 +236,13 @@ Z        X
 
 */
 
-void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point2dStruct* pPoint2d)
+void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point3dStruct* pPoint3dProjected)
 {
     projectPositionOnScreen(pPoint3d->x,pPoint3d->y,pPoint3d->z);
 
-    pPoint2d->x = projectedPositionX;
-	pPoint2d->y = projectedPositionY;
+    pPoint3dProjected->x = projectedPositionX;
+	pPoint3dProjected->y = projectedPositionY;
+	pPoint3dProjected->z = projectedPositionZ;
 
 	if(renderLeft>projectedPositionX)
 		renderLeft = projectedPositionX;
@@ -275,17 +276,17 @@ void MDL_DrawBoundingBoxHiddenPart(actor* pActor)
 	pointTab backTopLeftPoint;
 	pointTab backTopRightPoint;
 
-    point2dStruct frontBottomLeftPoint2D;
-	point2dStruct frontBottomRightPoint2D;
+    point3dStruct frontBottomLeftPoint2D;
+	point3dStruct frontBottomRightPoint2D;
 
-	point2dStruct frontTopLeftPoint2D;
-	point2dStruct frontTopRightPoint2D;
+	point3dStruct frontTopLeftPoint2D;
+	point3dStruct frontTopRightPoint2D;
 
-	point2dStruct backBottomLeftPoint2D;
-	point2dStruct backBottomRightPoint2D;
+	point3dStruct backBottomLeftPoint2D;
+	point3dStruct backBottomRightPoint2D;
 
-	point2dStruct backTopLeftPoint2D;
-	point2dStruct backTopRightPoint2D;
+	point3dStruct backTopLeftPoint2D;
+	point3dStruct backTopRightPoint2D;
 
 	onScreenActorX = pActor->X - cameraX;
 	onScreenActorY = pActor->Z - cameraZ;
@@ -338,6 +339,19 @@ void MDL_DrawBoundingBoxHiddenPart(actor* pActor)
 
     // draw all lines
 
+#ifdef USE_GL
+    // draw back part
+	osystem->addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,255);
+    osystem->addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,255);
+    osystem->addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,255);
+    osystem->addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,255);
+
+    // draw bottom part
+    osystem->addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,255);
+    osystem->addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,255);
+    osystem->addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,255);
+    osystem->addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,255);
+#else
     // draw back part
     drawLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backTopLeftPoint2D.x,backTopLeftPoint2D.y,255);
     drawLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopRightPoint2D.x,backTopRightPoint2D.y,255);
@@ -349,7 +363,7 @@ void MDL_DrawBoundingBoxHiddenPart(actor* pActor)
     drawLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomRightPoint2D.x,backBottomRightPoint2D.y,255);
     drawLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,255);
     drawLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,255);
-
+#endif
 }
 
 void MDL_DrawBoundingBoxShownPart(actor* pActor)
@@ -370,17 +384,17 @@ void MDL_DrawBoundingBoxShownPart(actor* pActor)
 	pointTab backTopLeftPoint;
 	pointTab backTopRightPoint;
 
-    point2dStruct frontBottomLeftPoint2D;
-	point2dStruct frontBottomRightPoint2D;
+    point3dStruct frontBottomLeftPoint2D;
+	point3dStruct frontBottomRightPoint2D;
 
-	point2dStruct frontTopLeftPoint2D;
-	point2dStruct frontTopRightPoint2D;
+	point3dStruct frontTopLeftPoint2D;
+	point3dStruct frontTopRightPoint2D;
 
-	point2dStruct backBottomLeftPoint2D;
-	point2dStruct backBottomRightPoint2D;
+	point3dStruct backBottomLeftPoint2D;
+	point3dStruct backBottomRightPoint2D;
 
-	point2dStruct backTopLeftPoint2D;
-	point2dStruct backTopRightPoint2D;
+	point3dStruct backTopLeftPoint2D;
+	point3dStruct backTopRightPoint2D;
 
 	onScreenActorX = pActor->X - cameraX;
 	onScreenActorY = pActor->Z - cameraZ;
@@ -432,7 +446,19 @@ void MDL_DrawBoundingBoxShownPart(actor* pActor)
     MDL_DrawBoundingBox_ProjectPoints( &backTopRightPoint,       &backTopRightPoint2D );
 
     // draw all lines
+#ifdef USE_GL
+    // draw front part
+	osystem->addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,255);
+    osystem->addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,255);
+    osystem->addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,255);
+    osystem->addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,255);
 
+    // draw top part
+    osystem->addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,255);
+    osystem->addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,255);
+    osystem->addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,255);
+    osystem->addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,255);
+#else
     // draw front part
     drawLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,255);
     drawLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopRightPoint2D.x,frontTopRightPoint2D.y,255);
@@ -444,4 +470,5 @@ void MDL_DrawBoundingBoxShownPart(actor* pActor)
     drawLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopRightPoint2D.x,backTopRightPoint2D.y,255);
     drawLine(backTopRightPoint2D.x,backTopRightPoint2D.y,frontTopRightPoint2D.x,frontTopRightPoint2D.y,255);
     drawLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,255);
+#endif
 }

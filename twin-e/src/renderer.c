@@ -206,9 +206,15 @@ int renderAnimatedModel(unsigned char *costumePtr)
 		    coY = pointPtr->y + _Y;
 		    coZ = -(pointPtr->z + _Z);
 
+#ifdef USE_FLOAT
+		    pointPtrDest->x = (coX + coZ)* 24 /512.f + setSomethingVar1;
+		    pointPtrDest->y = (((coX - coZ) *12) - coY*30) /512.f + setSomethingVar2;
+            pointPtrDest->z = coZ - coX - coY;
+#else
 		    pointPtrDest->x = (coX + coZ)* 24 /512 + setSomethingVar1;
 		    pointPtrDest->y = (((coX - coZ) *12) - coY*30) /512 + setSomethingVar2;
             pointPtrDest->z = coZ - coX - coY;
+#endif
 
 		    if (pointPtrDest->x < renderLeft)
 			    renderLeft = pointPtrDest->x;
@@ -773,6 +779,7 @@ int finishRender(unsigned char *esi)
 
 			    bestDepth = -32000;
 			    renderV19 = edi;
+				osystem->startPoly();
 
 			    do
 				{
@@ -798,10 +805,14 @@ int finishRender(unsigned char *esi)
 
 				    currentDepth = currentVertex->z;
 
+					osystem->addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,shadeValue);
+
 				    if (currentDepth > bestDepth)
 					bestDepth = currentDepth;
 				}
 			    while (--counter);
+
+				osystem->stopPoly();
 			}
 		    else if (FillVertic_AType >= 7)	// only 1 shade value is used
 			{
@@ -823,6 +834,7 @@ int finishRender(unsigned char *esi)
 			    bestDepth = -32000;
 			    counter = destinationHeader->numOfVertex;
 
+				osystem->startPoly();
 			    do
 				{
 				    eax = READ_LE_S16(esi);
@@ -839,10 +851,13 @@ int finishRender(unsigned char *esi)
 
 				    currentDepth = currentVertex->z;
 
+					osystem->addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,color + shadeTable[shadeEntry]);
+
 				    if (currentDepth > bestDepth)
 					bestDepth = currentDepth;
 				}
 			    while (--counter);
+				osystem->stopPoly();
 			}
 		    else	// no shade is used
 			{
@@ -860,6 +875,7 @@ int finishRender(unsigned char *esi)
 			    eax = 0;
 			    counter = currentPolyHeader->numOfVertex;
 
+				osystem->startPoly();
 			    do
 				{
 				    eax = READ_LE_S16(esi);
@@ -876,10 +892,13 @@ int finishRender(unsigned char *esi)
 
 				    currentDepth = currentVertex->z;
 
+					osystem->addPointColor(destinationVertex->x,destinationVertex->y,currentDepth,destinationHeader->colorIndex);
+
 				    if (currentDepth > bestDepth)
 					bestDepth = currentDepth;
 				}
 			    while (--(counter));
+				osystem->stopPoly();
 			}
 
 		    render24 = edi;
@@ -947,13 +966,18 @@ int finishRender(unsigned char *esi)
 
 		    point1 = READ_LE_S16(&lineDataPtr->p1) / 6;
 		    point2 = READ_LE_S16(&lineDataPtr->p2) / 6;
-		    WRITE_LE_S32(&lineCoordinatesPtr->data, READ_LE_S32(&lineDataPtr->data));
+			int param = READ_LE_S32(&lineDataPtr->data);
+		    WRITE_LE_S32(&lineCoordinatesPtr->data, param);
 		    WRITE_LE_S16(&lineCoordinatesPtr->x1, _flattenPointTable[point1].x);
 		    WRITE_LE_S16(&lineCoordinatesPtr->y1, _flattenPointTable[point1].y);
 		    WRITE_LE_S16(&lineCoordinatesPtr->x2, _flattenPointTable[point2].x);
 		    WRITE_LE_S16(&lineCoordinatesPtr->y2, _flattenPointTable[point2].y);
 		    bestDepth = _flattenPointTable[point1].z;
 		    depth = _flattenPointTable[point2].z;
+
+			osystem->addLine(	_flattenPointTable[point1].x,_flattenPointTable[point1].y,_flattenPointTable[point1].z,
+								_flattenPointTable[point2].x,_flattenPointTable[point2].y,_flattenPointTable[point2].z,
+								(param & 0xFF00) >> 8 );
 
 		    if (depth >= bestDepth)
 			bestDepth = depth;
@@ -976,10 +1000,20 @@ int finishRender(unsigned char *esi)
 	   // numOfPrimitives+=temp;
 	    do
 		{
+			unsigned char color = *(esi+1);
+			short int center = *(short int*)(esi+6);
+			short int size = *(short int*)(esi+4);
+
+			osystem->addSphere( _flattenPointTable[center/6].x, _flattenPointTable[center/6].y, _flattenPointTable[center/6].z, size, color);
+
 		    esi += 8;
 		}
 	    while (--temp);
 	}
+
+#ifdef USE_GL
+	return(0);
+#endif
 
     renderTabEntryPtr2 = renderTab;
 
@@ -1479,7 +1513,7 @@ int ComputePoly_A(void)
     short int vertexX, vertexY;
     short int *ptr1, *ptr3;
     int i;
-    short int psh1, psh2;
+    short int push1, push2;
     char direction = 1;
     int echange;
     short int oldVertexX, oldVertexY;
@@ -1598,8 +1632,8 @@ int ComputePoly_A(void)
 		}
 	    else
 		{
-		    psh1 = currentVertexX;	// let's save the current coordinates since we are going to modify the values
-		    psh2 = currentVertexY;
+		    push1 = currentVertexX;	// let's save the current coordinates since we are going to modify the values
+		    push2 = currentVertexY;
 
 		    if (currentVertexY < oldVertexY)	// if we are going up
 			{
@@ -1753,8 +1787,8 @@ int ComputePoly_A(void)
 					}
 				}
 			    direction = 1;
-			    oldVertexY = psh2;
-			    oldVertexX = psh1;
+			    oldVertexY = push2;
+			    oldVertexX = push1;
 			}
 
 		    else	// if we are going down
@@ -1913,8 +1947,8 @@ int ComputePoly_A(void)
 				}
 
 			    direction = 1;
-			    oldVertexY = psh2;
-			    oldVertexX = psh1;
+			    oldVertexY = push2;
+			    oldVertexX = push1;
 			}
 		}
 	}

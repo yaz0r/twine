@@ -225,7 +225,74 @@ void LoadScene(int sceneNumber)
     while (currentActor < numActorInRoom)
 	{
 	    resetActor(currentActor);
-	    actors[currentActor].staticFlagsMask = READ_LE_U16(temp); temp+=2;
+		unsigned short int staticFlags = READ_LE_U16(temp); temp+=2;
+
+		if(staticFlags & 0x1)
+		{
+			actors[currentActor].staticFlagsBF.bComputeCollisionWithObj = 1;
+		}
+		if(staticFlags & 0x2)
+		{
+			actors[currentActor].staticFlagsBF.bComputeCollisionWithBricks = 1;
+		}
+		if(staticFlags & 0x4)
+		{
+			actors[currentActor].staticFlagsBF.bIsZonable = 1;
+		}
+		if(staticFlags & 0x8)
+		{
+			actors[currentActor].staticFlagsBF.bIsUsingClipping = 1;
+		}
+		if(staticFlags & 0x10)
+		{
+			actors[currentActor].staticFlagsBF.bIsPushable = 1;
+		}
+		if(staticFlags & 0x20)
+		{
+			actors[currentActor].staticFlagsBF.bIsDead = 1;
+		}
+		if(staticFlags & 0x40)
+		{
+			actors[currentActor].staticFlagsBF.bCanDrown = 1;
+		}
+		if(staticFlags & 0x80)
+		{
+			actors[currentActor].staticFlagsBF.bUnk80 = 1;
+		}
+
+		if(staticFlags & 0x100)
+		{
+			actors[currentActor].staticFlagsBF.bUnk0100 = 1;
+		}
+		if(staticFlags & 0x200)
+		{
+			actors[currentActor].staticFlagsBF.bNoDisplay = 1;
+		}
+		if(staticFlags & 0x400)
+		{
+			actors[currentActor].staticFlagsBF.bIsSpriteActor = 1;
+		}
+		if(staticFlags & 0x800)
+		{
+			actors[currentActor].staticFlagsBF.bIsFallable = 1;
+		}
+		if(staticFlags & 0x1000)
+		{
+			actors[currentActor].staticFlagsBF.bDoesntCastShadow = 1;
+		}
+		if(staticFlags & 0x2000)
+		{
+			actors[currentActor].staticFlagsBF.bIsBackgrounded = 1;
+		}
+		if(staticFlags & 0x4000)
+		{
+			actors[currentActor].staticFlagsBF.bIsCarrier = 1;
+		}
+		if(staticFlags & 0x8000)
+		{
+			actors[currentActor].staticFlagsBF.bIsUsingMiniZv = 1;
+		}
+
 	    modelNumber = READ_LE_U16(temp); temp+=2;
 
         if (!(actors[currentActor].staticFlagsBF.bIsSpriteActor))	// if not sprite actor
@@ -409,8 +476,8 @@ void loadHolomapGFX(void)
 void RestartPerso(void)
 {
     twinsen->comportement = 1;
-    twinsen->dynamicFlagsMask = 0;
-    twinsen->staticFlagsMask = 0;
+	memset(&twinsen->dynamicFlagsBF,0,2);
+	memset(&twinsen->staticFlagsBF,0,2);
 
     twinsen->staticFlagsBF.bComputeCollisionWithObj = true;
     twinsen->staticFlagsBF.bComputeCollisionWithBricks = true;
@@ -978,6 +1045,10 @@ int loadBrk(int gridSize)
 
     counter6 = 0;
 
+#ifdef USE_GL
+	osystem->startBricks();
+#endif
+
     while (currentBrick <= lastBrick)
 	{
 	    if (READ_LE_U16(outPtr4))
@@ -987,6 +1058,10 @@ int loadBrk(int gridSize)
 
 			Load_HQR("LBA_BRK.HQR",destPtr,currentBrick);
 			dataSize = Size_HQR("LBA_BRK.HQR",currentBrick);
+
+#ifdef USE_GL
+			osystem->addBrickToBuffer((char*)destPtr);
+#endif
 
 		    finalSize += dataSize;
 		    destPtr += dataSize;
@@ -998,6 +1073,9 @@ int loadBrk(int gridSize)
 	    ptrUnk+=4;
 	    currentBrick++;
 	}
+#ifdef USE_GL
+	osystem->finishBricks();
+#endif
 #endif
 
     counter6 = 1;

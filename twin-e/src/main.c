@@ -214,9 +214,9 @@ void init(void)
     FadeToBlack((char *) paletteRGBA);
 
     if (setup_lst == 0)		// switch pour les 2 version de l'ecran titre de LBA
-	RessPict(49);
+		RessPict(49);
     else
-	RessPict(12);
+		RessPict(12);
 
    // now unused since we cross fade the video !
    // TimerPause();
@@ -271,7 +271,7 @@ void newGame(void)
     InitDial(2);
     newGame2();
     TestCoulDial(15);
-
+/*
     printTextFullScreen(150);
     readKeyboard();
 
@@ -309,7 +309,7 @@ void newGame(void)
 
 		    printTextFullScreen(152);
 		}
-	}
+	}*/
 
     newGameVar5 = 0;
     newGame4();

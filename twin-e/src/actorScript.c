@@ -343,7 +343,7 @@ void runActorScript(short int actorNumber)
 
 			       CheckCarrier(temp);
 
-			       actors[temp].dynamicFlagsMask |= 0x20;
+				   actors[temp].dynamicFlagsBF.bUnk0020 = 1;
 			       actors[temp].costumeIndex = -1;
 			       actors[temp].zone = -1;
 			       actors[temp].life = 0;
@@ -354,7 +354,7 @@ void runActorScript(short int actorNumber)
 			case 38:
 			   {
 			       CheckCarrier(actorNumber);
-			       lactor->dynamicFlagsMask |= 0x20;
+				   lactor->dynamicFlagsBF.bUnk0020 = 1;
 			       lactor->costumeIndex = -1;
 			       lactor->zone = -1;
 			       lactor->life = 0;
@@ -492,7 +492,7 @@ void runActorScript(short int actorNumber)
 			   {
 			       lactor->angle = 0x300;
 			       lactor->X = lactor->lastX - READ_LE_S16(actorScriptPtr);
-			       lactor->dynamicFlagsMask &= 0xFFBF;
+				   lactor->dynamicFlagsBF.bIsMoving = 0;
 			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
@@ -501,7 +501,7 @@ void runActorScript(short int actorNumber)
 			   {
 			       lactor->angle = 0x100;
 			       lactor->X = lactor->lastX + READ_LE_S16(actorScriptPtr);
-			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->dynamicFlagsBF.bIsMoving = 0;
 			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
@@ -510,7 +510,7 @@ void runActorScript(short int actorNumber)
 			   {
 			       lactor->angle = 0x200;
 			       lactor->Y = lactor->lastY - READ_LE_S16(actorScriptPtr);
-			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->dynamicFlagsBF.bIsMoving = 0;
 			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
@@ -519,7 +519,7 @@ void runActorScript(short int actorNumber)
 			   {
 			       lactor->angle = 0;
 			       lactor->Y = lactor->lastY + READ_LE_S16(actorScriptPtr);
-			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->dynamicFlagsBF.bIsMoving = 0;
 			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
@@ -795,7 +795,7 @@ void runActorScript(short int actorNumber)
 				{
 					byte newActor;
 					newActor = *(actorScriptPtr++);
-					actors[newActor].dynamicFlagsMask |= 0x20;
+					actors[newActor].dynamicFlagsBF.bUnk0020 = 1;
 					currentPingouin = newActor;
 					actors[newActor].costumeIndex = -1;
 					actors[newActor].zone = -1;
@@ -1047,7 +1047,7 @@ void runActorScript(short int actorNumber)
 			case 97: // LM_GAME_OVER
 				{
 					OPbreak=-1;
-					twinsen->dynamicFlagsMask|=4;
+					twinsen->dynamicFlagsBF.bUnk0004 = 1;
 					twinsen->life=0;
 					numClover=0;
 					break;
@@ -1202,7 +1202,7 @@ void manipActor(actor * lactor)
 	case 2:
 	    lactor2 = &actors[*(actorScriptPtr++)];
 	    manipActorVar1 = 1;
-	    if (!(lactor2->dynamicFlagsMask & 0x20))
+		if (!(lactor2->dynamicFlagsBF.bUnk0020))
 		{
 		    if ( abs(lactor2->Z - lactor->Z) >= 1500)
 			{
@@ -1257,7 +1257,7 @@ void manipActor(actor * lactor)
 	    lactor2 = &actors[newActor];
 	    manipActorVar1 = 1;
 	    actorScriptPtr = localScriptPtr;
-	    if (!(lactor2->dynamicFlagsMask & 0x20))
+		if (!(lactor2->dynamicFlagsBF.bUnk0020))
 		{
 		    if (lactor2->Z - lactor->Z < 1500)
 			{
@@ -1335,7 +1335,7 @@ void manipActor(actor * lactor)
 	    lactor2 = &actors[*actorScriptPtr];
 	    manipActorVar1 = 1;
 	    actorScriptPtr = localScriptPtr;
-	    if (!(lactor2->dynamicFlagsMask & 0x20))
+		if (!(lactor2->dynamicFlagsBF.bUnk0020))
 		{
 		    manipActorResult =
 			Distance3D(lactor->X, lactor->Z, lactor->Y, lactor2->X, lactor2->Z,

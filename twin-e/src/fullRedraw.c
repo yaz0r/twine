@@ -44,6 +44,11 @@ void fullRedraw(int param)
 
     UnSetClip();
 
+#ifdef USE_GL
+	param = 1;
+	osystem->startFrame();
+#endif
+
     if (!param)
 	{
 	    blitBackgroundOnDirtyBoxes();	// blit background on dirty boxes
@@ -57,6 +62,8 @@ void fullRedraw(int param)
 	    CopyScreen(frontVideoBuffer, workVideoBuffer);
 	}
 
+	osystem->startDisplayList();
+
     arg_1A = 0;
     a12 = 0;
     arg_46 = arg_1A + 0x1000;
@@ -67,10 +74,11 @@ void fullRedraw(int param)
     for (arg_1A = 0; arg_1A < numActorInRoom; arg_1A++, arg_46++, arg_42++)	// process actors (and draw shadow if applicable)
 	{
 	    lactor = &actors[arg_1A];
-	    lactor->dynamicFlagsMask &= 0xFFEF;	// recheck -> reinit the draw flags for the current objects
+		lactor->dynamicFlagsBF.bUnk0010 = 0;	// recheck -> reinit the draw flags for the current objects
 
 	    if ((useAnotherGrm == -1) || (lactor->Z <= READ_LE_S16((currentGrid2) * 24 + (char*)zoneData + 8))) // eject characters hidden when using another GRM
 		{
+#ifndef USE_GL
             if ( lactor->staticFlagsBF.bIsBackgrounded && param == 0 )	// background actor, no redraw required
 			{
 			   // calculate the actor position on screen
@@ -79,10 +87,11 @@ void fullRedraw(int param)
 			   // is the actor in the viewable screen ?
 			    if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
 				{
-				    lactor->dynamicFlagsMask |= 0x10; // flag ?
+					lactor->dynamicFlagsBF.bUnk0010; // flag ?
 				}
 			}
 		    else
+#endif
 			{
 			    if (lactor->costumeIndex != -1	&& !(lactor->staticFlagsBF.bNoDisplay)) // 0x200 -> visible
 				{
@@ -281,11 +290,15 @@ void fullRedraw(int param)
 
 					SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex]);
 
+#ifdef PCLIKE
 					if(_debugger.bShowBoundingBoxes)
+#endif
 						MDL_DrawBoundingBoxHiddenPart(lactor);
 				    if (!AffObjetIso(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
 					{
+#ifdef PCLIKE
 						if(_debugger.bShowBoundingBoxes)  
+#endif
 							MDL_DrawBoundingBoxShownPart(lactor);
 
 					    SetClip(renderLeft, renderTop, renderRight,renderBottom);
@@ -296,7 +309,7 @@ void fullRedraw(int param)
 						    int tempZ;
 						    int tempY;
 
-						    lactor->dynamicFlagsMask |= 0x10;
+							lactor->dynamicFlagsBF.bUnk0010;
 
 						    tempX = (lactor->X + 0x100 )>> 9;
 						    tempZ = lactor->Z >> 8;
@@ -310,7 +323,7 @@ void fullRedraw(int param)
 
 						    AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
 
-						    if ((lactor->staticFlagsMask & 0x2000) && param == 1) // the actor is in background. Copy it to the back buffer
+						    if ((lactor->staticFlagsBF.bIsBackgrounded) && param == 1) // the actor is in background. Copy it to the back buffer
 							{
 							    blitRectangle(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (char *) frontVideoBuffer, textWindowLeft, textWindowTop, (char *) workVideoBuffer);
 							}
@@ -403,17 +416,21 @@ void fullRedraw(int param)
 			    if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
 				{
 				    AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
+#ifdef PCLIKE
 					if(_debugger.bShowBoundingBoxes)
+#endif
 					{
 						MDL_DrawBoundingBoxHiddenPart(lactor);
 						MDL_DrawBoundingBoxShownPart(lactor);
 					}
 
-				    lactor->dynamicFlagsMask |= 0x10;
+					lactor->dynamicFlagsBF.bUnk0010 = 1;
 
-				    if (lactor->staticFlagsMask & 8)
+				    if (lactor->staticFlagsBF.bIsUsingClipping)
 					{
+#ifndef USE_GL
 					    DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
+#endif
 					}
 				    else
 					{
@@ -426,16 +443,20 @@ void fullRedraw(int param)
 					    if (lactor->field_3 & 0x7F)
 						tempZ++;
 					    tempY = (lactor->Y + lactor->boudingBox.Z.topRight +0x100) >> 9;
-
+#ifndef USE_GL
 					    DrawOverBrick3(tempX, tempZ, tempY);
+#endif
+
 					}
 
+#ifndef USE_GL
 				    AddPhysBox(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom);
 
-				    if (lactor->staticFlagsMask & 0x2000 && param == 1)
+					if (lactor->staticFlagsBF.bIsBackgrounded && param == 1)
 					{
 					    blitRectangle(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom,(char *) frontVideoBuffer, textWindowLeft,textWindowTop, (char *) workVideoBuffer);
 					}
+#endif
 				}
 
 				{ // code to add the sprite actor box to the debugger handler
@@ -513,7 +534,6 @@ void fullRedraw(int param)
 	   // loop5
 	}
 
-#ifdef PCLIKE
     ZONE_DrawZones();
 
 	if(_debugger.bShowFlags)
@@ -533,7 +553,6 @@ void fullRedraw(int param)
 				Font(projectedPositionX, projectedPositionY, stringTemp);
 		}
 	}
-#endif
 
     counter2 = 0;
 
@@ -575,6 +594,10 @@ void fullRedraw(int param)
 		    unfreezeTime();
 		}
 	}
+
+#ifdef USE_GL
+	osystem->stopFrame();
+#endif
 
 	osystem->updateImage();
 
@@ -657,6 +680,10 @@ void fullRedrawSub5(void)
 
 void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
 {
+#ifdef USE_GL
+	return;
+#endif
+
     int var1;
     int i = 0;
     int var_C;
@@ -801,16 +828,20 @@ void zbuffer(int var1, int var2, int x, int z, int y)
     zbufferSub2(x - newCameraX, z - newCameraZ, y - newCameraY);
 
     if (zbufferVar1 < -24)
-	return;
+		return;
     if (zbufferVar1 >= 640)
-	return;
+		return;
     if (zbufferVar2 < -38)
-	return;
+		return;
     if (zbufferVar2 >= 480)
-	return;
+		return;
 
+#ifdef USE_GL
+	osystem->drawBrick(bx-1,x - newCameraX, z - newCameraZ, y - newCameraY);
+#else
 	// draw the background brick
     AffGraph(bx-1, zbufferVar1, zbufferVar2, bufferBrick);
+#endif
 
     zbufferIndex = (zbufferVar1 + 24) / 24;
 
@@ -837,10 +868,10 @@ unsigned char *zbufferSub1(int var)
     return (currentBll + *(unsigned int *) (currentBll + 4 * var));
 }
 
-void zbufferSub2(int x, int z, int y)
+void zbufferSub2(int x, int y, int z)
 {
-    zbufferVar1 = ((x - y) * 16) + (x - y) * 8 + 288;	// x pos
-    zbufferVar2 = (((x + y) * 8 + (x + y) * 4) - ((z * 16) - z)) + 215;	// y pos
+    zbufferVar1 = (x - z) * 24 + 288;	// x pos
+    zbufferVar2 = ((x + z)*12) - (y * 15) + 215;	// y pos
 }
 
 void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
@@ -875,8 +906,7 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
 
     ptr += 4;
 
-    if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight
-	&& bottom <= textWindowBottom)
+    if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight && bottom <= textWindowBottom)
 	{			// no crop
 	    right++;
 	    bottom++;
@@ -1186,6 +1216,7 @@ int projectPositionOnScreen(int coX, int coZ, int coY)
 
             projectedPositionX = (coX * cameraVar2)/bp + setSomethingVar1;
             projectedPositionY = (-coZ * cameraVar3)/bp + setSomethingVar2;
+			projectedPositionZ = bp;
 
             return(-1);
         }
@@ -1193,13 +1224,21 @@ int projectPositionOnScreen(int coX, int coZ, int coY)
         {
             projectedPositionX = 0;
             projectedPositionY = 0;
+			projectedPositionZ = 0;
             return(0);
         }
 	}
     else
 	{
+#ifdef USE_FLOAT
+	    projectedPositionX = (coX - coY) * 24 / 512.f + setSomethingVar1;
+	    projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512.f + setSomethingVar2;
+		projectedPositionZ = coZ - coX - coY;
+#else
 	    projectedPositionX = (coX - coY) * 24 / 512 + setSomethingVar1;
 	    projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512 + setSomethingVar2;
+		projectedPositionZ = coZ - coX - coY;
+#endif
 	    return (-1);
 	}
     return (-1);
@@ -1437,6 +1476,9 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
 
 void AddPhysBox(int left, int top, int right, int bottom)
 {
+#ifdef USE_GL
+	return;
+#endif
     if (left < 0)
 	left = 0;
     if (top < 0)
@@ -1486,6 +1528,10 @@ void SmallSort(drawListStruct *list, int listSize, int stepSize)
 
 void FlipBoxes(void)
 {
+#ifdef USE_GL
+	return;
+#endif
+
     int i;
 
     for (i = 0; i < numOfRedrawBox; i++) //draw the dirty box on screen

@@ -27,7 +27,7 @@ void StartInitObj(short int arg_0)
 	{
 	    if (lactor->field_66 != 0)
 		{
-		    lactor->dynamicFlagsMask |= 2;
+			lactor->dynamicFlagsBF.bUnk0002 = 1;
 		}
 
 	    lactor->costumeIndex = -1;
@@ -98,8 +98,8 @@ void resetActor(int actorNumber)
     localActor->collision = -1;
     localActor->standOn = -1;
     localActor->zone = -1;
-    localActor->staticFlagsMask = 0;
-    localActor->dynamicFlagsMask = 0;
+	memset(&localActor->staticFlagsBF,0,2);
+	memset(&localActor->dynamicFlagsBF,0,2);
     localActor->life = 50;
     localActor->field_14 = 1;
     localActor->hitBy = -1;

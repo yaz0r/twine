@@ -22,6 +22,8 @@
 #include "SDL_rotozoom.h"
 #include "SDL_gfxPrimitives.h"
 
+#ifndef USE_GL
+
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
 SDL_Surface *sdl_buffer320x200;
@@ -367,7 +369,7 @@ void OSystem::drawTextColor(int X, int Y, char *string, unsigned char r, unsigne
     rectangle.h = text->h;
 
     SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
-    SDL_FreeSurface(text);
+  //  SDL_FreeSurface(text);
 }
 
 void OSystem::drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsigned char* palette)
@@ -382,3 +384,34 @@ void OSystem::drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsi
 void OSystem::set320x200Mode( bool mode )
 {
 }
+
+void OSystem::startDisplayList()
+{
+}
+
+void OSystem::stopDisplayList()
+{
+}
+
+void OSystem::startPoly()
+{
+}
+
+void OSystem::stopPoly()
+{
+}
+
+void OSystem::addPointColor(float x, float y, float z, unsigned char color)
+{
+}
+
+void OSystem::addLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color)
+{
+}
+
+void OSystem::addSphere(float x, float y, float z, float size, unsigned char color)
+{
+}
+
+
+#endif

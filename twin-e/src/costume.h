@@ -74,55 +74,45 @@ struct actor
 	short int label;
 	short int pausedTrackPtr;
 
-    union
+    struct
     {
-	    U16 staticFlagsMask;
+        U16 bComputeCollisionWithObj            : 1; // 0x0001
+        U16 bComputeCollisionWithBricks         : 1; // 0x0002
+        U16 bIsZonable                          : 1; // 0x0004
+        U16 bIsUsingClipping                    : 1; // 0x0008
+        U16 bIsPushable                         : 1; // 0x0010
+        U16 bIsDead                             : 1; // 0x0020
+        U16 bCanDrown                           : 1; // 0x0040
+        U16 bUnk80                              : 1; // 0x0080
+        U16 bUnk0100                            : 1; // 0x0100
+        U16 bNoDisplay                          : 1; // 0x0200
+        U16 bIsSpriteActor                      : 1; // 0x0400
+        U16 bIsFallable                         : 1; // 0x0800
+        U16 bDoesntCastShadow                   : 1; // 0x1000
+        U16 bIsBackgrounded                     : 1; // 0x2000
+        U16 bIsCarrier                          : 1; // 0x4000
+        U16 bIsUsingMiniZv                      : 1; // 0x8000
+    } staticFlagsBF;
 
-        struct
-        {
-            U16 bComputeCollisionWithObj            : 1; // 0x0001
-            U16 bComputeCollisionWithBricks         : 1; // 0x0002
-            U16 bIsZonable                          : 1; // 0x0004
-            U16 bIsUsingClipping                    : 1; // 0x0008
-            U16 bIsPushable                         : 1; // 0x0010
-            U16 bIsDead                             : 1; // 0x0020
-            U16 bCanDrown                           : 1; // 0x0040
-            U16 bUnk80                              : 1; // 0x0080
-            U16 bUnk0100                            : 1; // 0x0100
-            U16 bNoDisplay                          : 1; // 0x0200
-            U16 bIsSpriteActor                      : 1; // 0x0400
-            U16 bIsFallable                         : 1; // 0x0800
-            U16 bDoesntCastShadow                   : 1; // 0x1000
-            U16 bIsBackgrounded                     : 1; // 0x2000
-            U16 bIsCarrier                          : 1; // 0x4000
-            U16 bIsUsingMiniZv                      : 1; // 0x8000
-        } staticFlagsBF;
-    };
-
-    union
+    struct
     {
-        U16 dynamicFlagsMask;
-
-        struct
-        {
-            U16 bUnk0001                            : 1; // 0x0001
-            U16 bUnk0002                            : 1; // 0x0002
-            U16 bUnk0004                            : 1; // 0x0004
-            U16 bUnk0008                            : 1; // 0x0008
-            U16 bUnk0010                            : 1; // 0x0010
-            U16 bUnk0020                            : 1; // 0x0020
-            U16 bIsMoving                           : 1; // 0x0040
-            U16 bUnk0080                            : 1; // 0x0080
-            U16 bUnk0100                            : 1; // 0x0100
-            U16 bUnk0200                            : 1; // 0x0200
-            U16 bUnk0400                            : 1; // 0x0400
-            U16 bUnk0800                            : 1; // 0x0800
-            U16 bUnk1000                            : 1; // 0x1000
-            U16 bUnk2000                            : 1; // 0x2000
-            U16 bUnk4000                            : 1; // 0x4000
-            U16 bUnk8000                            : 1; // 0x8000
-        } dynamicFlagsBF;
-    };
+        U16 bUnk0001                            : 1; // 0x0001
+        U16 bUnk0002                            : 1; // 0x0002
+        U16 bUnk0004                            : 1; // 0x0004
+        U16 bUnk0008                            : 1; // 0x0008
+        U16 bUnk0010                            : 1; // 0x0010
+        U16 bUnk0020                            : 1; // 0x0020
+        U16 bIsMoving                           : 1; // 0x0040
+        U16 bUnk0080                            : 1; // 0x0080
+        U16 bUnk0100                            : 1; // 0x0100
+        U16 bUnk0200                            : 1; // 0x0200
+        U16 bUnk0400                            : 1; // 0x0400
+        U16 bUnk0800                            : 1; // 0x0800
+        U16 bUnk1000                            : 1; // 0x1000
+        U16 bUnk2000                            : 1; // 0x2000
+        U16 bUnk4000                            : 1; // 0x4000
+        U16 bUnk8000                            : 1; // 0x8000
+    } dynamicFlagsBF;
 
 	short int hitBy;
 	short int field_66;

@@ -43,5 +43,26 @@ class OSystem
 
 	void set320x200Mode(bool mode);
 
+//////////////////
+
+	void sendBackgroundTexture(unsigned char* videoBuffer);
+
+	void startDisplayList();
+	void stopDisplayList();
+	void startPoly();
+	void stopPoly();
+	void addPointColor(float x, float y, float z, unsigned char color);
+	void addLine(float x1, float y1, float z1, float x2, float y2, float z2, unsigned char color);
+	void addSphere(float x, float y, float z, float size, unsigned char color);
+
+#ifdef USE_GL
+	void startBricks();
+	void addBrickToBuffer(char* brickData);
+	void finishBricks();
+	void drawBrick(int brickNumber, int x, int y, int z);
+	void startFrame();
+	void stopFrame();
+#endif
+
   private:
 };

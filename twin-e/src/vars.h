@@ -28,9 +28,15 @@ void startThreadTimer(void);
 {*/
     struct pointTab
 	{
+#ifdef USE_FLOAT
+	    float x;
+	    float y;
+	    float z;
+#else
 	    short int x;
 	    short int y;
 	    short int z;
+#endif
 	};
 
     struct pointEntry
@@ -236,6 +242,13 @@ struct point2dStruct
 {
     short int x;
     short int y;
+};
+
+struct point3dStruct
+{
+    short int x;
+    short int y;
+	short int z;
 };
 
 struct lineCoordinates
@@ -631,7 +644,7 @@ extern int staticMemoryUsage;
     extern int wordSizePixel;
 
     extern char spaceChar;
-    extern char talkingActor;
+    extern short int talkingActor;
 
    /*
     * short int backInitVar3; short int backDialogueBoxRight; short int backDialogueBoxBottom;
@@ -799,8 +812,15 @@ extern int staticMemoryUsage;
     extern int cameraZ;
     extern int cameraY;
 
-    extern short int projectedPositionX;
-    extern short int projectedPositionY;
+#ifdef USE_FLOAT
+	extern float projectedPositionX;
+	extern float projectedPositionY;
+	extern float projectedPositionZ;
+#else
+	extern short int projectedPositionX;
+	extern short int projectedPositionY;
+	extern short int projectedPositionZ;
+#endif
 
     extern int zbufferVar1;
     extern int zbufferVar2;
@@ -1000,7 +1020,7 @@ extern int staticMemoryUsage;
     void ZONE_DrawZones(void);
     void GetShadow(int X, int Z, int Y);
 
-    void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point2dStruct* pPoint2d);
+    void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point3dStruct* pPoint3dProjected);
 	void MDL_DrawBoundingBoxHiddenPart(actor* pActor);
     void MDL_DrawBoundingBoxShownPart(actor* pActor);
 

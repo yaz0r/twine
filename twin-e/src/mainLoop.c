@@ -283,7 +283,7 @@ int mainLoop(void)
 
 	    for (i = 0; i < numActorInRoom; i++)
 		{
-		    if (!(actors[i].dynamicFlagsMask & 0x20))
+			if (!(actors[i].dynamicFlagsBF.bUnk0020))
 			{
 			   // printf("Processing actor %d...\n",i);
 			    if (actors[i].life == 0)
@@ -349,7 +349,7 @@ int mainLoop(void)
 				    else
 					{
                         CheckCarrier(i);
-                        actors[i].dynamicFlagsMask |= 0x20;
+						actors[i].dynamicFlagsBF.bUnk0020 = 1;
                         actors[i].costumeIndex = -1;
                         actors[i].zone = -1;
 					}
@@ -392,7 +392,7 @@ int mainLoop(void)
 	    frameTime = time - currentTime;
 
 #ifndef PCLIKE
-		time+=3;
+		time+=2;
 #endif
 
 	}
@@ -750,7 +750,7 @@ void DoDir(int actorNum)
     if (lactor->costumeIndex == -1)
 	    return;
 
-    if (lactor->dynamicFlagsMask & 0x100)
+	if (lactor->dynamicFlagsBF.bUnk0100)
 	{
 	    short int tempAngle = 0;
 
@@ -950,7 +950,7 @@ void DoDir(int actorNum)
 					}
 				    else
 					{
-					    if (!(lactor->dynamicFlagsMask & 0x80))
+						if (!(lactor->dynamicFlagsBF.bUnk0080))
 						{
 						    lactor->angle =
 							GetRealAngle(&lactor->time);
@@ -967,7 +967,7 @@ void DoDir(int actorNum)
 					}
 				    else
 					{
-					    if (!(lactor->dynamicFlagsMask & 0x80))
+						if (!(lactor->dynamicFlagsBF.bUnk0080))
 						{
 						    lactor->angle = GetRealAngle(&lactor->time);
 						}
@@ -1031,7 +1031,7 @@ void DoDir(int actorNum)
 		   break;
 		case 7: // MOVE_RANDOM
 		   {
-               if( !(lactor->dynamicFlagsMask & 0x80) )
+			   if( !(lactor->dynamicFlagsBF.bUnk0080) )
                {
                    if( lactor->field_3 & 0x80)
                    {
@@ -1090,14 +1090,14 @@ void DoAnim(int actorNum)
 	{
 	    if (lactor->field_66)
 		{
-		    lactor->dynamicFlagsMask |= 2;
+			lactor->dynamicFlagsBF.bUnk0002;
 		}
 
 	    processActorX = lactor->X;
 	    processActorZ = lactor->Z;
 	    processActorY = lactor->Y;
 
-	    if (!(lactor->dynamicFlagsMask & 0x100))	// actor freeze movement
+		if (!(lactor->dynamicFlagsBF.bUnk0100))	// actor freeze movement
 		{
 		    if (lactor->speed)
 			{
@@ -1152,7 +1152,7 @@ void DoAnim(int actorNum)
 							    processActorX = lactor->lastX - lactor->doorStatus;
 							}
 
-						    lactor->dynamicFlagsMask &= 0xFFBF;
+							lactor->dynamicFlagsBF.bIsMoving = 0;
 						    lactor->speed = 0;
 						}
 					}
@@ -1187,7 +1187,7 @@ void DoAnim(int actorNum)
 						    processActorZ = lactor->lastZ;
 						    processActorY = lactor->lastY;
 
-						    lactor->dynamicFlagsMask &= 0xFFBF;
+							lactor->dynamicFlagsBF.bIsMoving = 0;
 						    lactor->speed = 0;
 						}
 					}
@@ -1219,18 +1219,19 @@ void DoAnim(int actorNum)
 	    if (lactor->previousAnimIndex != -1)
 		{
 		    animPtr = (char *) HQR_Get(HQR_Anims, lactor->previousAnimIndex);
-		   animData=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
+			
+			animData=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
 
 		   // get the current frame anim data (for step length ?)
 		   // animData = SetInterAnimObjet2(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get the current frame anim data (for step length ?)
 
 		    if (processActorVar5)
 			{
- 			    lactor->dynamicFlagsMask |= 0x80;
+				lactor->dynamicFlagsBF.bUnk0080 = 1;
 			}
 		    else
 			{
-			    lactor->dynamicFlagsMask &= 0xFF7F;
+				lactor->dynamicFlagsBF.bUnk0080 = 0;
 			}
 
 		    lactor->angle = (lactor->angle + processActorVar6 - lactor->lastRotationSpeed) & 0x3FF;
@@ -1249,7 +1250,8 @@ void DoAnim(int actorNum)
 		    lactor->lastZ = currentZ;
 		    lactor->lastY = currentY;
 
-		    lactor->dynamicFlagsMask &= 0xFFF3;
+			lactor->dynamicFlagsBF.bUnk0004 = 0;
+			lactor->dynamicFlagsBF.bUnk0008 = 0;
 
 		    if (animData)	// if keyFrame
 			{
@@ -1262,7 +1264,7 @@ void DoAnim(int actorNum)
 			    var_10 = lactor->animPosition;
 			    if (var_10 == GetNbFramesAnim(animPtr))
 				{
-				    lactor->dynamicFlagsMask &= 0xFFFD;
+					lactor->dynamicFlagsBF.bUnk0002 = 0;
 				    if (lactor->field_78 == 0)
 					{
 					    lactor->animPosition = GetBouclageAnim(animPtr);
@@ -1292,7 +1294,7 @@ void DoAnim(int actorNum)
 					    GereAnimAction(lactor, actorNum);
 					}
 
-				    lactor->dynamicFlagsMask |= 4;
+					lactor->dynamicFlagsBF.bUnk0004 = 1;
 				}
 
 			    lactor->lastRotationSpeed = 0;
@@ -1315,10 +1317,10 @@ void DoAnim(int actorNum)
 	    processActorY += actors[lactor->standOn].Y;
 
 	    if (!CheckZvOnZv(actorNum, lactor->standOn))	// is actor still standing on another actor ?
-		lactor->standOn = -1;	// actor fall from the object
+			lactor->standOn = -1;	// actor fall from the object
 	}
 
-    if (lactor->dynamicFlagsMask & 0x100)	// if falling, then no modification...
+	if (lactor->dynamicFlagsBF.bUnk0100)	// if falling, then no modification...
 	{
 	    processActorX = processActorVar2;
 	    processActorZ = processActorVar3 + mainLoopVar17;	// apply fall speed
@@ -1348,7 +1350,7 @@ void DoAnim(int actorNum)
         if (lactor->staticFlagsBF.bComputeCollisionWithObj)	// if we check collision with other objects
 		    CheckObjCol(actorNum);	//check collision and see if actor fall on an object
 
-	    if ((lactor->standOn != -1) && (lactor->dynamicFlagsMask & 0x100))	// if actor felt on another an object
+		if ((lactor->standOn != -1) && (lactor->dynamicFlagsBF.bUnk0100))	// if actor felt on another an object
 		    ReceptionObj();	// stop falling
 
 	    fieldCauseDamage = 0;
@@ -1372,7 +1374,7 @@ void DoAnim(int actorNum)
 		    DoCornerReajust(lactor->boudingBox.X.bottomLeft, lactor->boudingBox.Y.bottomLeft, lactor->boudingBox.Z.topRight, 8);
 		}
 
-	    if (fieldCauseDamage && !(lactor->dynamicFlagsMask & 0x100) && !currentlyProcessedActorNum && (comportementHero == 1) && (lactor->anim == 1))	// wall hit while running
+		if (fieldCauseDamage && !(lactor->dynamicFlagsBF.bUnk0100) && !currentlyProcessedActorNum && (comportementHero == 1) && (lactor->anim == 1))	// wall hit while running
 		{
 		    Rotate(lactor->boudingBox.X.bottomLeft, lactor->boudingBox.Z.bottomLeft, lactor->angle + 0x580);
 
@@ -1406,7 +1408,7 @@ void DoAnim(int actorNum)
 		{
 		    if (position == 1)	// if next step is in wall...
 			{
-			    if (lactor->dynamicFlagsMask & 0x100)	// if was falling
+				if (lactor->dynamicFlagsBF.bUnk0100)	// if was falling
 				{
 				    ReceptionObj();
 				    processActorZ = (getPosVar2 << 8) + 0x100;
@@ -1446,13 +1448,13 @@ void DoAnim(int actorNum)
 			}
 		    else	// not standing on flat floor
 			{
-			    if (lactor->dynamicFlagsMask & 0x100)
+				if (lactor->dynamicFlagsBF.bUnk0100)
 				ReceptionObj();
 
 			    ReajustPos(var_4);
 			}
 
-		    lactor->dynamicFlagsMask &= 0xFEFF;
+			lactor->dynamicFlagsBF.bUnk0100 = 0;
 		}
 	    else		// not standing on floor
 		{
@@ -1462,7 +1464,7 @@ void DoAnim(int actorNum)
 
 			    if (var_8)	// under is the floor
 				{
-				    if (lactor->dynamicFlagsMask & 0x100)	// if was falling...
+					if (lactor->dynamicFlagsBF.bUnk0100)	// if was falling...
 					{
 					    ReceptionObj();
 					}
@@ -1471,9 +1473,9 @@ void DoAnim(int actorNum)
 				}
 			    else	// start falling
 				{
-				    if (!(lactor->dynamicFlagsMask & 0x80))
+					if (!(lactor->dynamicFlagsBF.bUnk0080 == 1))
 					{
-					    lactor->dynamicFlagsMask |= 0x100;
+						lactor->dynamicFlagsBF.bUnk0100 = 1;
 
 					    if ((!actorNum) && twinsenZBeforeFall == 0)
 						{
@@ -1831,7 +1833,7 @@ int CheckObjCol(int actorNum)
 
                 if(lactor2->staticFlagsBF.bIsCarrier) // if carrier
 				{
-					if(lactor->dynamicFlagsMask&0x100) // if can stand on object
+					if(lactor->dynamicFlagsBF.bUnk0100) // if can stand on object
 					{
 						processActorZ=Z2_2-lactor->boudingBox.Y.bottomLeft+1; // new Z
 
@@ -1884,7 +1886,7 @@ lab12AC5:			int newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2
 					}
 					else
 					{
-						if(!(lactor->dynamicFlagsMask&0x100))
+						if(!(lactor->dynamicFlagsBF.bUnk0100))
 						{
 							processActorX=processActorVar2;
 							processActorZ=processActorVar3;
@@ -1898,7 +1900,7 @@ lab12AC5:			int newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2
 		currentlyTestedActor++;
 	}
 
-	if(lactor->dynamicFlagsMask & 0x2) // lactor is attacking
+	if(lactor->dynamicFlagsBF.bUnk0002) // lactor is attacking
 	{
 		int i;
 
@@ -1940,7 +1942,7 @@ lab12AC5:			int newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2
 				if(X1<X2_2 && X2>X1_2 && Z1<Z2_2 && Z2>Z1_2 && Y1<Y2_2 && Y2>Y1_2)
 				{
 					HitObj(actorNum,i,lactor->field_66,lactor->angle+0x200);
-                    lactor->dynamicFlagsMask &= 0xFFFD;
+					lactor->dynamicFlagsBF.bUnk0002 = 0;
 				}
 			}
 		}
@@ -1987,7 +1989,7 @@ void ReceptionObj(void)	// stop falling
 	    InitAnim(ANIM_land, 2, processActorVar1->field_2, currentlyProcessedActorNum);
 	}
 
-    processActorVar1->dynamicFlagsMask &= 0xFEFF;
+	processActorVar1->dynamicFlagsBF.bUnk0100 = 0;
 }
 
 int WorldColBrickFull(int var0, int var1, int var2, int var3)

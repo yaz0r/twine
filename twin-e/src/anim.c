@@ -425,34 +425,30 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 			{
 			    animOpcode = PatchType(&edi);
 
+				assert( animOpcode >= 0 && animOpcode <= 2);
+
 			    switch (animOpcode)
 				{
-				case 0:	// allow global rotate
+				case 0:	// anim angle
 				   {
 				       PatchInterAngle(&edi, eax, keyFrameLength);
 				       PatchInterAngle(&edi, eax, keyFrameLength);
 				       PatchInterAngle(&edi, eax, keyFrameLength);
 				       break;
 				   }
-				case 1:	// dissallow global rotate
+				case 1:	// anim step
 				   {
 				       PatchInterStep(&edi, eax, keyFrameLength);
 				       PatchInterStep(&edi, eax, keyFrameLength);
 				       PatchInterStep(&edi, eax, keyFrameLength);
 				       break;
 				   }
-				case 2:	// dissallow global rotate + hide
+				case 2:	// anim step
 				   {
 				       PatchInterStep(&edi, eax, keyFrameLength);
 				       PatchInterStep(&edi, eax, keyFrameLength);
 				       PatchInterStep(&edi, eax, keyFrameLength);
 				       break;
-				   }
-				default:
-				   {
-				       printf("Unsupported rotaton mode %d in SetInterAnimObjet!\n",
-					      animOpcode);
-				       exit(1);
 				   }
 				}
 
@@ -583,8 +579,9 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
     lactor->animExtraData = loadTwinsenCostumesVar1;
     lactor->field_78 = arg_4;
     lactor->animPosition = 0;
-    lactor->dynamicFlagsMask &= 0xFFF9;
-    lactor->dynamicFlagsMask |= 8;
+	lactor->dynamicFlagsBF.bUnk0002 = 0;
+	lactor->dynamicFlagsBF.bUnk0004 = 0;
+	lactor->dynamicFlagsBF.bUnk0008 = 1;
 
     if (lactor->animExtraData)
 	{
@@ -723,7 +720,7 @@ void GereAnimAction(actor * lactor, int actorNum)
 		        if (temp == lactor->animPosition)
 			    {
 			        lactor->field_66 = *(ebx++);
-			        lactor->dynamicFlagsMask |= 2;
+					lactor->dynamicFlagsBF.bUnk0002 = 1;
 			    }
 		        else
 			    {
@@ -938,7 +935,7 @@ void GereAnimAction(actor * lactor, int actorNum)
 		    if (temp == lactor->animPosition)
 			{
 			    lactor->field_66 = magicLevelForceTable[magicLevel];
-			    lactor->dynamicFlagsMask |= 2;
+				lactor->dynamicFlagsBF.bUnk0002 = 1;
 			}
 		    break;
         case 13:

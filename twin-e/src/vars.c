@@ -449,7 +449,7 @@ int wordSizeChar;
 int wordSizePixel;
 
 char spaceChar;
-char talkingActor;
+short int talkingActor;
 
 /*
 * short int backInitVar3; short int backDialogueBoxRight; short int backDialogueBoxBottom;
@@ -618,8 +618,15 @@ int cameraX;
 int cameraZ;
 int cameraY;
 
+#ifdef USE_FLOAT
+float projectedPositionX;
+float projectedPositionY;
+float projectedPositionZ;
+#else
 short int projectedPositionX;
 short int projectedPositionY;
+short int projectedPositionZ;
+#endif
 
 int zbufferVar1;
 int zbufferVar2;

@@ -101,7 +101,9 @@ void PlayAnimFla(char *flaName)
 
 							
 */
+#ifndef USE_GL
 							osystem->updateImage();
+#endif
 							readKeyboard();
 						}
 

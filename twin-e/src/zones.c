@@ -220,17 +220,17 @@ void ZONE_DrawZones(void)
 	    pointTab backTopLeftPoint;
 	    pointTab backTopRightPoint;
 
-        point2dStruct frontBottomLeftPoint2D;
-	    point2dStruct frontBottomRightPoint2D;
+        point3dStruct frontBottomLeftPoint2D;
+	    point3dStruct frontBottomRightPoint2D;
 
-	    point2dStruct frontTopLeftPoint2D;
-	    point2dStruct frontTopRightPoint2D;
+	    point3dStruct frontTopLeftPoint2D;
+	    point3dStruct frontTopRightPoint2D;
 
-	    point2dStruct backBottomLeftPoint2D;
-	    point2dStruct backBottomRightPoint2D;
+	    point3dStruct backBottomLeftPoint2D;
+	    point3dStruct backBottomRightPoint2D;
 
-	    point2dStruct backTopLeftPoint2D;
-	    point2dStruct backTopRightPoint2D;
+	    point3dStruct backTopLeftPoint2D;
+	    point3dStruct backTopRightPoint2D;
 
         // compute the points in 3D
 
@@ -278,6 +278,8 @@ void ZONE_DrawZones(void)
         MDL_DrawBoundingBox_ProjectPoints( &backTopRightPoint,       &backTopRightPoint2D );
 
         // draw all lines
+
+#ifdef PCLIKE
 		switch(pZone->zoneType)
 		{
 		case 0:
@@ -328,9 +330,34 @@ void ZONE_DrawZones(void)
 				break;
 			}
 		}
+#endif
 
         unsigned char color = 15*3+pZone->zoneType*16;
+#ifdef USE_GL
+		// draw front part
+		osystem->addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,color);
+		osystem->addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,color);
+		osystem->addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,color);
+		osystem->addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,color);
 
+		// draw top part
+		osystem->addLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,color);
+		osystem->addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,color);
+		osystem->addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,color);
+		osystem->addLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopRightPoint2D.z,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopLeftPoint2D.z,color);
+
+		// draw back part
+		osystem->addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,color);
+		osystem->addLine(backTopLeftPoint2D.x,backTopLeftPoint2D.y,backTopLeftPoint2D.z,backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,color);
+		osystem->addLine(backTopRightPoint2D.x,backTopRightPoint2D.y,backTopRightPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,color);
+		osystem->addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,color);
+
+		// draw bottom part
+		osystem->addLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,color);
+		osystem->addLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomLeftPoint2D.z,backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,color);
+		osystem->addLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,backBottomRightPoint2D.z,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,color);
+		osystem->addLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomRightPoint2D.z,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontBottomLeftPoint2D.z,color);
+#else
         // draw front part
         drawLine(frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,color);
         drawLine(frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,frontTopRightPoint2D.x,frontTopRightPoint2D.y,color);
@@ -354,5 +381,6 @@ void ZONE_DrawZones(void)
         drawLine(backBottomLeftPoint2D.x,backBottomLeftPoint2D.y,backBottomRightPoint2D.x,backBottomRightPoint2D.y,color);
         drawLine(backBottomRightPoint2D.x,backBottomRightPoint2D.y,frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,color);
         drawLine(frontBottomRightPoint2D.x,frontBottomRightPoint2D.y,frontBottomLeftPoint2D.x,frontBottomLeftPoint2D.y,color);
+#endif
     }
 }

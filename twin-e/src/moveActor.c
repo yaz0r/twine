@@ -74,7 +74,7 @@ void DoTrack(int actorNumber)
 
 		    break;
 		case 5:
-		    if (!(lactor->dynamicFlagsMask & 0x4))
+			if (!(lactor->dynamicFlagsBF.bUnk0004))
 			{
 			    continueMove = 0;
 			    lactor->positionInMoveScript--;
@@ -170,7 +170,7 @@ void DoTrack(int actorNumber)
 		    break;
 		case 13:
 		    lactor->positionInMoveScript += 2;
-		    if (lactor->dynamicFlagsMask & 4)
+			if (lactor->dynamicFlagsBF.bUnk0004)
 			{
 			    (*(scriptPtr + 1))++;
 
@@ -239,7 +239,7 @@ void DoTrack(int actorNumber)
 			    if (!(lactor->staticFlagsBF.bIsBackgrounded)) //if actor wasn't already in background
 				{
 				    lactor->staticFlagsBF.bIsBackgrounded = true; // set him to background
-				    if (lactor->dynamicFlagsMask & 0x10)
+					if (lactor->dynamicFlagsBF.bUnk0010)
 					{
 					    requestBackgroundRedraw = 1;
 					}
@@ -250,7 +250,7 @@ void DoTrack(int actorNumber)
                 if ( lactor->staticFlagsBF.bIsBackgrounded )
 				{
 				    lactor->staticFlagsBF.bIsBackgrounded = false;
-				    if (lactor->dynamicFlagsMask & 0x10)
+					if (lactor->dynamicFlagsBF.bUnk0010)
 					{
 					    requestBackgroundRedraw = 1;
 					}
@@ -326,7 +326,7 @@ void DoTrack(int actorNumber)
 				}
 
 			    lactor->doorStatus = READ_LE_S16(scriptPtr);
-			    lactor->dynamicFlagsMask |= 0x40;
+				lactor->dynamicFlagsBF.bIsMoving = 1;
 			    lactor->speed = 1000;
 			    setActorAngle(0, 1000, 50, timePtr);
 			}
@@ -335,7 +335,7 @@ void DoTrack(int actorNumber)
 		   {
 		       if (lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping )
 			   {
-			       lactor->dynamicFlagsMask |= 0x40;
+			       lactor->dynamicFlagsBF.bIsMoving = 1;
 			       lactor->doorStatus = 0;
 			       lactor->speed = -1000;
 			       setActorAngle(0, -1000, 50, timePtr);
