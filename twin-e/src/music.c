@@ -1,5 +1,5 @@
 #include "lba.h"
-#include "sdl.h"
+#include "SDL.h"
 
 void LBA_engine::playMusic(int musicNum)
 {

@@ -1,6 +1,5 @@
 #include "decomp.h"
-#include "sdl.h"
-
+#include "SDL.h"
 class LBA_engine;
 
 int threadTimer(void);
