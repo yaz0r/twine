@@ -1028,6 +1028,6 @@ void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed, timeStruct * an
   numOfStepLong *= angleSpeed;
   numOfStepLong >>= 8;
 
-  angleStruct->numOfStep = numOfStepLong;
+  angleStruct->numOfStep = (short int)numOfStepLong;
   angleStruct->timeOfChange = lba_time;
 }

@@ -57,10 +57,7 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
   int newY;
   int ebp;
   int edi;
-  int eax;
   int tempExchange;
-  int esi;
-  int ebx;
   int flag;
   int difX;
   int difY;

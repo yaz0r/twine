@@ -29,6 +29,8 @@ int mainLoop(void)
     setActorAngle(0, -256, 5, &mainLoopVar1);
 
   osystem_mainLoop();
+
+  return 0;
 }
 
 int mainLoopInteration(void)
@@ -406,6 +408,8 @@ int mainLoopInteration(void)
 
   }
   //  while (1);
+
+  return 0;
 }
 
 void reinitAll(int save)

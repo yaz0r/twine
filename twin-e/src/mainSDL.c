@@ -97,7 +97,7 @@ void osystem_mainLoop(void)
 
 int frames=0;                   /* Number of frames displayed */
 long int t_start,t_left;
-long int t_end;
+long unsigned int t_end;
 long int q=0;                     /* Dummy */
 
   while(1)
@@ -378,8 +378,9 @@ void osystem_initBuffer(char *buffer, int width, int height)
 
 void osystem_crossFade(char *buffer, char *palette)
 {
-    int i;
-
+#ifndef FASTDEBUG
+  int i;
+#endif
     SDL_Surface *backupSurface;
     SDL_Surface *newSurface;
     SDL_Surface *tempSurface;

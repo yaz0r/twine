@@ -1156,7 +1156,6 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
   int left;
   int right;
   unsigned char *outPtr;
-  unsigned char *outPtr2;
   int offset;
   int c1;
   int c2;
@@ -1579,15 +1578,10 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
   int right;
   unsigned char *outPtr;
   unsigned char *inPtr;
-  unsigned char *outPtr2;
   int offset;
-  int c1;
-  int c2;
   int vc3;
 
   int temp;
-  int iteration;
-  int i;
   int j;
 
   int absX;

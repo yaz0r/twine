@@ -395,24 +395,15 @@ void GereAnimAction(actor * lactor, int actorNum)
         {
           if(*ebx == lactor->animPosition)
           {
-            int newAngle;
-
-            int throwX;
-            int throwY;
-            int throwZ;
-
             int distanceX;
             int distanceY;
             int distanceZ;
 
             int spriteIdx;
 
-            int param1;
             int targetActor;
             int param3;
             int param4;
-
-            int strength;
 
             distanceX = READ_LE_S16(edi);
             distanceY = READ_LE_S16(edi+2);

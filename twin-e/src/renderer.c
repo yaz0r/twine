@@ -1132,13 +1132,10 @@ void FillVertic_A(int ecx, int edi)
   short int *ptr2;
   int vsize, hsize;
   int color;
-  int eax;
-  int i, j;
-  short int var2, var3;
+  int j;
 
  // char borrow;
   short int start, stop;
-  short int startColor, stopColor;
 
   float varf2;
   float varf3;
@@ -1313,7 +1310,7 @@ void FillVertic_A(int ecx, int edi)
 
         ptr2++;
 
-        varf4 = (int)varf2 - (int)varf3;
+        varf4 = (float)((int)varf2 - (int)varf3);
 
         if (hsize == 0)
         {
@@ -1491,7 +1488,6 @@ int ComputePoly_A(void)
   int temp2, temp4, temp5, temp6;
   int step;
   float vfloat, vfloat2;
-  float vcfloat, vcfloat2;
 
   pRenderV1 = vertexCoordinates;
   pRenderV2 = pRenderV3;
@@ -2110,25 +2106,7 @@ void setSomething2(int a, int b, int c)
 }
 
 void setSomething3(int a, int b, int c) // setupBaseMatrix
-{
-  int setSomething3Var2;
-  int setSomething3Var3;
-  int setSomething3Var18;
-  int setSomething3Var4;
-  int setSomething3Var5;
-  int setSomething3Var9;
-  int setSomething3Var6;
-  int setSomething3Var7;
-  int setSomething3Var10;
-
-  int var1;
-  int var2;
-  int var3;
-  int var4;
-  int var5;
-  int var6;
-  int var7;
-  
+{ 
   int angleXCos;
   int angleXSin;
 
