@@ -736,7 +736,7 @@ void LBA_engine::reinitData(void)
 		roomData2[counter].field_0=-1;
 	}
 
-	//changeRoom1Sub1(HQRanims);
+	changeRoom1Sub1(HQRanims);
 	changeRoom1Sub2();
 
 	reinitAll2Var3=0;
