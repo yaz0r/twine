@@ -23,6 +23,7 @@ class OSystem
     int mouseRight;
     int mouseLeft;
 
+    void delay(int time);
     void crossFade(char *buffer, char *palette);
     void fadeBlackToWhite();
     void initBuffer(char *buffer, int width, int height);

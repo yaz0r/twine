@@ -21,6 +21,8 @@ int LBA_engine::mainLoop(void)
 {
     int temp;
     int i;
+    int currentTime;
+    int frameTime;
 
     mainLoopVar2 = 1;
     mainLoopVar3 = 1;
@@ -28,7 +30,7 @@ int LBA_engine::mainLoop(void)
 
     do
 	{
-
+	    currentTime = time;
 	  mainLoopStart:
 
 	    readKeyboard();
@@ -348,6 +350,12 @@ int LBA_engine::mainLoop(void)
 	    fullRedraw(mainLoopVar2);
 	    mainLoopVar2 = 0;
 	    counter++;
+
+	    frameTime = time - currentTime;
+
+	    while (time == currentTime)
+		osystem->delay(5);
+
 	}
     while (1);
 }

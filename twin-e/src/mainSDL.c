@@ -27,6 +27,11 @@ SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 TTF_Font *font;
 
+void OSystem::delay(int time)
+{
+    SDL_Delay(time);
+}
+
 void OSystem::getMouseStatus(mouseStatusStruct * mouseData)
 {
     SDL_GetMouseState(&mouseData->X, &mouseData->Y);

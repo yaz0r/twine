@@ -4,11 +4,11 @@
 
 LBA_engine *tempEngine;
 
-int threadTimer(void *test)
+int threadTimer(void *test)	// LBA time is 50 frames per seconds ie,  a frame every 20 miliseconds
 {
     while (1)
 	{
-	    SDL_Delay(15);
+	    SDL_Delay(20);
 	    tempEngine->musicPosition++;
 	    tempEngine->time++;
 	}
