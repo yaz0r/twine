@@ -40,7 +40,7 @@ LBA_engine::runActorScript (short int actorNumber)
     {
       opcodePtr = actorScriptPtr++;
       opcode = *(opcodePtr);
-//  printf("Actor: %d Opcode= %2d\n",actorNumber,opcode);
+ // printf("Actor: %d Opcode= %2d\n",actorNumber,opcode);
       if (opcode <= 105)
 	{
 	  localScriptPtr = actorScriptPtr + 1;
@@ -682,8 +682,8 @@ LBA_engine::runActorScript (short int actorNumber)
 	}
       else
 	{
-	  printf ("Error: opcode too big: %d !\n", opcode);
-	  exit (1);
+	  printf ("Warning: opcode too big: %d !\n", opcode);
+//	  exit (1);
 	}
     }
 
@@ -1105,11 +1105,11 @@ LBA_engine::calcAngleToward (int X1, int Y1, int X2, int Y2)
   while (tab3[startAngle] > destVal)
     {
       startAngle++;
-      if (startAngle > 256)
+    /*  if (startAngle > 256)
 	{
 	  printf ("Can't find angle %d...\n", destVal);
 	  exit (1);
-	}
+	}*/
     }
 
   finalAngle = 128 + startAngle;

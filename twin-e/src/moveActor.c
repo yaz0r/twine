@@ -51,7 +51,7 @@ LBA_engine::moveActor (int actorNumber)
 	  lactor->positionInMoveScript++;
 	  manipActorResult = *scriptPtr;
 
-	  //  printf ("Actor %d go to flag %d\n", actorNumber, manipActorResult);
+	 printf ("Actor %d go to flag %d\n", actorNumber, manipActorResult);
 
 	  destX = flagData[manipActorResult].x;
 	  destZ = flagData[manipActorResult].z;
@@ -77,7 +77,7 @@ LBA_engine::moveActor (int actorNumber)
 
 	  break;
 	case 5:
-	  if (!(lactor->field_60 & 0x400))
+	  if (!(lactor->field_62 & 0x4))
 	    {
 	      continueMove = 0;
 	      lactor->positionInMoveScript--;
@@ -143,7 +143,8 @@ LBA_engine::moveActor (int actorNumber)
 	  continueMove = 0;
 	  lactor->positionInMoveScript = -1;
 	  break;
-	case 12:
+
+	case 12: // move (used in backward walk)
 	  lactor->positionInMoveScript++;
 	  manipActorResult = *scriptPtr;
 
@@ -356,8 +357,8 @@ LBA_engine::updateActorAngle (int angleFrom, int angleTo, int angleSpeed,
 {
   int numOfStep;
 
-  angleStruct->from = angleFrom & 0x3FFF;
-  angleStruct->to = angleTo & 0x3FFF;
+  angleStruct->from = angleFrom & 0x3FF;
+  angleStruct->to = angleTo & 0x3FF;
 
   numOfStep = ((abs ((angleFrom - angleTo) << 6) >> 6) * angleSpeed) >> 8;
 

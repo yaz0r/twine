@@ -969,7 +969,7 @@ LBA_engine::updateActors (int actorNum)
     }
   else
     {
-      if (!(lactor->field_62 & 0x400))
+      if (!(lactor->field_60 & 0x400))
 	{
 	  if (lactor->field_40 != 1)
 	    {
