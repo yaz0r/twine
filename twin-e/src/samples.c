@@ -10,22 +10,22 @@ sampleStructData sampleTable[16];
 
 void playSample(int sampleNum, int freq, int repeat, int x, int y)
 {
-	char filename[256];
+/*	char filename[256];
 
 	sprintf(filename,"samples/samples%03d.voc",sampleNum+1);
 
 	Mix_Chunk * sample=Mix_LoadWAV(filename);
-	Mix_PlayChannel(0,sample,repeat-1);
+	Mix_PlayChannel(0,sample,repeat-1);*/
 }
 
 void playSampleFla(int sampleNum, int freq, int repeat, int x, int y)
 {
-	char filename[256];
+/*	char filename[256];
 
 	sprintf(filename,"fla/flasamp/flasamp%02d.voc",sampleNum+1);
 
 	Mix_Chunk * sample=Mix_LoadWAV(filename);
-	Mix_PlayChannel(0,sample,repeat-1);
+	Mix_PlayChannel(0,sample,repeat-1);*/
 }
 
 void soundInit()
@@ -38,10 +38,10 @@ void soundInit()
 
 void playMidi(int musicNum)
 {
-	char filename[256];
+	/*char filename[256];
 
 	sprintf(filename,"midi_mi_win/midi_mi_win%02d.mid",musicNum+1);
 
 	Mix_Music * sample=Mix_LoadMUS(filename);
-	Mix_PlayMusic(sample,0);
+	Mix_PlayMusic(sample,0);*/
 }

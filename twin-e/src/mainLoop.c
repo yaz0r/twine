@@ -361,6 +361,7 @@ int mainLoop(void)
 
 			}
 		}
+
 #ifdef PCLIKE
 	    if (_debugger.processDebug())
 		requestBackgroundRedraw = 1;
@@ -1064,11 +1065,12 @@ void DoDir(int actorNum)
 	}
 }
 
+bool test = false;
+
 void DoAnim(int actorNum)
 {
     actor *lactor;
     char *animPtr;
-    int animData;
     short int var_10;
 
     short int var_C;
@@ -1081,7 +1083,7 @@ void DoAnim(int actorNum)
     processActorVar1 = lactor;
 
     if (lactor->costumeIndex == -1)
-	return;
+		return;
 
     processActorVar2 = lactor->field_20;
     processActorVar3 = lactor->field_22;
@@ -1221,10 +1223,7 @@ void DoAnim(int actorNum)
 		{
 		    animPtr = (char *) HQR_Get(HQR_Anims, lactor->previousAnimIndex);
 			
-			animData=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
-
-		   // get the current frame anim data (for step length ?)
-		   // animData = SetInterAnimObjet2(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get the current frame anim data (for step length ?)
+			int keyFramePassed=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
 
 		    if (processActorVar5)
 			{
@@ -1254,7 +1253,7 @@ void DoAnim(int actorNum)
 			lactor->dynamicFlagsBF.bUnk0004 = 0;
 			lactor->dynamicFlagsBF.bUnk0008 = 0;
 
-		    if (animData)	// if keyFrame
+		    if(keyFramePassed)	// if keyFrame
 			{
 			    lactor->animPosition++;
 			    if (lactor->animExtraData)	// if actor play sound attached to animation
@@ -1263,14 +1262,14 @@ void DoAnim(int actorNum)
 				}
 
 			    var_10 = lactor->animPosition;
-			    if (var_10 == GetNbFramesAnim(animPtr))
+			    if (var_10 == GetNbFramesAnim(animPtr)) // end of animation ?
 				{
 					lactor->dynamicFlagsBF.bUnk0002 = 0;
+
 				    if (lactor->field_78 == 0)
 					{
 					    lactor->animPosition = GetBouclageAnim(animPtr);
 					}
-
 				    else
 					{
 					    var_C = actorNum;
@@ -1522,7 +1521,6 @@ void DoAnim(int actorNum)
     lactor->X = processActorX;
     lactor->Z = processActorZ;
     lactor->Y = processActorY;
-
 }
 
 void DoCornerReadjustTwinkel(int X, int Y, int Z, int mask)	// twinsen wall colision
@@ -2168,90 +2166,6 @@ void Rotate(int initialX, int initialY, int angle)
 	    destX = (initialX * angle2 + initialY * angle1) >> 14;
 	    destZ = (initialY * angle2 - initialX * angle1) >> 14;
 	}
-}
-
-int SetInterDepObjet(int position, char *anim, char *body)
-{
-    short int bodyFlags;
-    char *edi;
-    char *ebx;
-    int ebp;
-    int eax;
-    int keyFrameLength;
-
-   // int numOfPointInBody;
-    int numOfPointInAnim;
-    char *keyFramePtrOld;
-
-    numOfPointInAnim = READ_LE_S16(anim + 2);
-
-    keyFramePtr = (numOfPointInAnim * 8 + 8) * position + anim + 8;
-
-    keyFrameLength = READ_LE_S16(keyFramePtr);
-
-    bodyFlags = READ_LE_S16(body);
-
-    if (bodyFlags & 2)
-	{
-	    edi = body + 16;
-
-	    animVar1 = edi;
-
-	    ebx = (char*)READ_LE_U32(edi);
-	    ebp = READ_LE_S32(edi + 4);
-
-	    if (!ebx)
-		{
-		    ebx = keyFramePtr;
-		    ebp = keyFrameLength;
-		}
-
-	    lastKeyFramePtr = ebx;
-
-	    eax = time - ebp;
-
-	    //printf("delta=%d / %d  -> time=%d -> ebp=%d\n", eax, keyFrameLength, time, ebp);
-
-	    if (eax >= keyFrameLength)
-		{
-		    WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-		    WRITE_LE_S32(animVar1 + 4, time);
-
-		    currentX = READ_LE_S16(keyFramePtr + 2);
-		    currentZ = READ_LE_S16(keyFramePtr + 4);
-		    currentY = READ_LE_S16(keyFramePtr + 6);
-
-		    processActorVar5 = READ_LE_S16(keyFramePtr + 8);
-		    processActorSub2Var0 = READ_LE_S16(keyFramePtr + 10);
-		    processActorVar6 = READ_LE_S16(keyFramePtr + 12);
-		    processActorSub2Var1 = READ_LE_S16(keyFramePtr + 14);
-
-		    return (1);
-		}
-	    else
-		{
-		    keyFramePtrOld = keyFramePtr;
-
-		    lastKeyFramePtr += 8;
-		    keyFramePtr += 8;
-
-		    processActorVar5 = READ_LE_S16(keyFramePtr);
-		    processActorSub2Var0 = (READ_LE_S16(keyFramePtr + 2) * eax) / keyFrameLength;
-		    processActorVar6 = (READ_LE_S16(keyFramePtr + 4) * eax) / keyFrameLength;
-		    processActorSub2Var1 = (READ_LE_S16(keyFramePtr + 6) * eax) / keyFrameLength;
-
-		    lastKeyFramePtr += 8;
-		    keyFramePtr += 8;
-
-		    currentX = (READ_LE_S16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-		    currentZ = (READ_LE_S16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-		    currentY = (READ_LE_S16(keyFramePtrOld + 6) * eax) / keyFrameLength;
-
-		    return (0);
-		}
-	}
-
-    return (0);
 }
 
 int CheckZvOnZv(int var0, int var1)	// is actor still standing on object ?

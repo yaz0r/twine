@@ -148,7 +148,7 @@ void init(void)
 
 #ifndef FASTDEBUG
 
-    AdelineLogo();
+ //   AdelineLogo();
 
 #endif
 
@@ -273,7 +273,7 @@ void newGame(void)
     InitDial(2);
     newGame2();
     TestCoulDial(15);
-/*
+
     printTextFullScreen(150);
     readKeyboard();
 
@@ -311,7 +311,7 @@ void newGame(void)
 
 		    printTextFullScreen(152);
 		}
-	}*/
+	}
 
     newGameVar5 = 0;
     newGame4();

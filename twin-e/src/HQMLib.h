@@ -8,7 +8,7 @@
 #endif // _DEBUG
 
 #ifdef _DEBUG
-    #define assert_ptr(ptr) assert((int)ptr!=0xCDCDCDCD)
+    #define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
 #else // _DEBUG
     #define assert_ptr(ptr)
 #endif // _DEBUG
