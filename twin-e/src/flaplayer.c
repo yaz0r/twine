@@ -85,7 +85,12 @@ void LBA_engine::playFLA(char *flaName)
 							convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
 							osystem->setPalette((byte*)flaPaletteRGBA);
 							osystem->drawBufferToScreen((unsigned char*)flaBuffer);
-							osystem->delay(40);
+							
+							do
+							{
+								osystem->delay(5);
+							}while(time<esi+2);
+
 							readKeyboard();
 						}
 
@@ -208,9 +213,9 @@ void LBA_engine::runFLAscript()
 		currentOpcodeGlob=*(unsigned short int*)ptr;
 		ptr+=2;
 
-		printf("Size=%d\n",currentOpcodeGlob);
+		/*printf("Size=%d\n",currentOpcodeGlob);
 
-		printf("Opcode: %d\n",currentOpcode-1);
+		printf("Opcode: %d\n",currentOpcode-1);*/
 
 		switch(currentOpcode-1)
 		{
