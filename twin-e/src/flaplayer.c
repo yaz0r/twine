@@ -10,6 +10,10 @@ void LBA_engine::playFLA(char *flaName)
 	int esi;
 	char buffer[256];
 
+	//TODO: remove
+
+	resetVideoBuffer1();
+
 	if(useFlaPCX==0)
 	{
 		printf("Unimplemented useFlaPCX!\n");
