@@ -18,10 +18,93 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "streamReader.h"
 
+#ifdef UNIX
+#define USE_IFOPEN
+#endif
+
+#ifdef USE_IFOPEN
+#include <sys/types.h> 
+#include <dirent.h> 
+    
+char ** split(char * s, char t) {
+    static char * p[100];
+    int i;
+    
+    for (i = 1, p[0] = s; *s; s++) {
+        if (*s == t) {
+            *s = 0;
+            p[i++] = s + 1;
+        }
+    }
+    p[i] = 0;
+
+    return p;
+}
+
+FILE * ifopen(const char * path, const char * mode) {
+    char * duppath = strdup(path), upath[1024], ** tab;
+    FILE * f = 0;
+    int opened = 0;
+
+    tab = split(duppath, '/');
+
+    upath[0] = 0;
+
+    if (tab[0][0] == '/') {
+        strcat(upath, "/");
+        (*tab)++;
+    } else {
+        strcat(upath, "./");
+    }
+    
+    while (1) {
+        DIR * d;
+        int found = 0;
+        struct dirent * entry;
+
+        if (!(d = opendir(upath))) {
+            break;
+        }
+        
+        while ((entry = readdir(d))) {
+            if (strcasecmp(*tab, entry->d_name) == 0) {
+                found = 1;
+                strcat(upath, entry->d_name);
+                break;
+            }
+        }
+        
+        closedir(d);
+
+        if (found) {
+            if (*(++tab)) {
+                strcat(upath, "/");
+            } else {
+                f = fopen(upath, mode);
+                opened = 1;
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+    free(duppath);
+
+    if (!opened)
+        f = fopen(path, mode);
+
+    return f;
+}
+#endif
+
 boolean streamReader_open(streamReader* pThis, const int8* fileName)
 {
 #ifdef PCLIKE
+#ifdef USE_IFOPEN
+  pThis->fileHandle = ifopen((const char*)fileName,"rb");
+#else
   pThis->fileHandle = fopen((const char*)fileName,"rb");
+#endif
 #else
   pThis->fileHandle = gdFsOpen((char*)fileName, NULL);
 #endif

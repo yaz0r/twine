@@ -93,7 +93,7 @@ void init(void)
 
    // check screenPtr
 
-  osystem_Flip(frontVideoBuffer);
+//  osystem_Flip(frontVideoBuffer);
 
 #ifndef FASTDEBUG
 

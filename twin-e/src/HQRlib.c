@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <shinobi.h>
 #endif
 
+#ifdef UNIX
+#define USE_IFOPEN
+#endif
+
 streamReader fileReader;
 
 int HQR_File_checkIfFileExist(char *fileName)
@@ -56,6 +60,10 @@ int HQR_File_checkIfFileExist(char *fileName)
 #endif
 }
 
+#ifdef USE_IFOPEN
+FILE * ifopen(const char *, const char *);
+#endif
+
 #ifdef PCLIKE 
 FILE* HQR_File_OpenRead(char *fileName)
 {
@@ -64,7 +72,11 @@ FILE* HQR_File_OpenRead(char *fileName)
   if (!fileName)
     return (NULL);
 
+#ifdef USE_IFOPEN
+  fileHandle = ifopen(fileName, "rb");
+#else
   fileHandle = fopen(fileName, "rb");
+#endif
 
   if (!fileHandle)
   {
@@ -316,10 +328,13 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
   {
     unsigned char* compressedDataPtr;
 
-    compressedDataPtr = ptr + dataSize - compressedSize + 500;
+//    compressedDataPtr = ptr + dataSize - compressedSize + 500;
+    compressedDataPtr = (unsigned char*) malloc(compressedSize + 500);
 
     streamReader_get( &fileReader, compressedDataPtr, compressedSize);
     HQR_Expand(dataSize, (unsigned char*)ptr, compressedDataPtr);
+
+    free(compressedDataPtr);
   }
 
   streamReader_close( &fileReader );
