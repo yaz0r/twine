@@ -25,12 +25,12 @@ int LBA_renderer::startRenderer (int X, int Y, int Z, int angleX,int angleY, int
 
   /* the use of setSomethingVar4 is still unknown */
 
- /* if (setSomethingVar4 == 0)
+  if (setSomethingVar4 == 0)
     {
       printf ("Unimplemented startRenderer\n");
       exit (1);
     }
-  else*/
+  else
     {
       _X = X;
       _Y = Y;
@@ -46,11 +46,13 @@ int LBA_renderer::startRenderer (int X, int Y, int Z, int angleX,int angleY, int
 
   ptr = costumePtr + 16 + *(short int *) (costumePtr + 14);	// we jump after the header
 
-  return(renderAnimatedModel(ptr));
- /* if(costumeHeader&2) // if animated
-	return (renderM1 (ptr));	// That's the mostly used renderer code
+  if(costumeHeader&2) // if animated
+	return (renderAnimatedModel (ptr));	// That's the mostly used renderer code
   else
-   return(renderM2(ptr));  // unanimated models*/
+  {
+	  printf("Unsupported unanimated model render!\n");
+	  exit(1);
+  }
 
   return(0);
 
@@ -925,7 +927,7 @@ LBA_renderer::finishRender (unsigned char *esi)
 	      {
 		lineCoordinatesPtr = (lineCoordinates *) esi;
 		color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
-		//drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
+		drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
 		break;
 	      }
 	    case 1:		// draw a polygon
@@ -1572,4 +1574,133 @@ LBA_renderer::prepareRender (void)
   while (--numOfVertexRemaining);
 
   return (1);
+}
+
+void
+LBA_renderer::drawLine (int a, int b, int c, int d, int e)
+{
+  int temp;
+  short int flag;
+  int flag2;
+  unsigned char *out;
+  short int color;
+  short int var2;
+  short int xchg;
+  int stringProcessVar = e;
+
+  if (a > c)			// pour toujours dessiner de gauche à droite
+    {
+      temp = c;
+      c = a;
+      a = temp;
+
+      temp = d;
+      d = b;
+      b = temp;
+
+    }
+
+  flag = 0;
+
+  if (a < textWindowLeft)
+    {
+      flag |= 1;
+    }
+  else
+    {
+      if (a > textWindowRight)
+	return;
+    }
+  if (b < textWindowTop)
+    {
+      flag |= 8;
+    }
+  else
+    {
+      if (b > textWindowBottom)
+	flag |= 4;
+    }
+
+  flag <<= 8;
+
+  if (c < textWindowLeft)
+    return;
+  if (c <= textWindowLeft)
+    flag |= 2;
+
+  if (d < textWindowTop)
+    {
+      flag |= 8;
+    }
+  else
+    {
+      if (d > textWindowBottom)
+	flag |= 4;
+    }
+
+  flag2 = flag;
+
+  if (flag)
+    return;
+
+  // implementer la suite
+
+  flag2 = 640;			//esi
+  c -= a;
+  d -= b;
+  if (d < 0)
+    {
+      flag2 = -flag2;
+      d = -d;
+    }
+
+  out = videoBuffer1 + screenLockupTable[b] + a;
+
+  color = stringProcessVar;
+  if (c < d)			// pente importante
+    {
+      xchg = c;
+      c = d;
+      d = xchg;
+      var2 = c;
+      var2 <<= 1;
+      b = c;
+      d <<= 1;
+      c++;
+      do
+	{
+	  *out = (unsigned char) color;
+	  b -= d;
+	  if (b > 0)
+	    {
+	      out += flag2;
+	    }
+	  else
+	    {
+	      b += var2;
+	      out += flag2 + 1;
+	    }
+	}
+      while (--c);
+    }
+  else				// pente reduite
+    {
+      var2 = c;
+      var2 <<= 1;
+      b = c;
+      d <<= 1;
+      c++;
+      do
+	{
+	  *out = (unsigned char) color;
+	  out++;
+	  b -= d;
+	  if (b < 0)
+	    {
+	      b += var2;
+	      out += flag2;
+	    }
+	}
+      while (--c);
+    }
 }

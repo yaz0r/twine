@@ -163,6 +163,9 @@ public:
 	void polyRender (int ecx, int edi);
 	int prepareRender (void);
 
+	void drawLine (int a, int b, int c, int d, int e);
+
+
 };
 
 struct zbufferDataStruct
