@@ -200,7 +200,7 @@ void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
 {
 	SDL_BlitSurface(sdl_buffer320x200,NULL,sdl_bufferRGBA,NULL);
 
-	sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_OFF);
+	sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_ON);
 
 //	SDL_FillRect(sdl_screen,NULL,0);
 
