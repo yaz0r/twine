@@ -38,9 +38,9 @@ void LBA_engine::loadRoomActors(short int arg_0)
   
   if(lactor->field_60 & 8)
   {
-   lactor->field_6C=lactor->X;
-   lactor->field_6E=lactor->Z;
-   lactor->field_70=lactor->Y;
+   lactor->lastX=lactor->X;
+   lactor->lastZ=lactor->Z;
+   lactor->lastY=lactor->Y;
   }
   
  }
@@ -50,7 +50,7 @@ void LBA_engine::loadRoomActors(short int arg_0)
   
   loadActorCostume(lactor->field_0,arg_0);
  	
-  lactor->field_74=-1;
+  lactor->currentAnim=-1;
   lactor->field_78=0;
   
   if(lactor->costumeIndex != -1)
@@ -92,7 +92,7 @@ void LBA_engine::resetActor(int actorNumber)
   localActor->field_54=0;
   localActor->field_3=0;
   localActor->field_56=-1;
-  localActor->field_58=-1;
+  localActor->standOn=-1;
   localActor->field_5A=-1;
   localActor->field_60=0;
   localActor->field_62=0;
@@ -100,13 +100,13 @@ void LBA_engine::resetActor(int actorNumber)
   localActor->field_14=1;
   localActor->field_64=-1;
   localActor->field_6A=0;
-  localActor->field_6C=0;
-  localActor->field_6E=0;
-  localActor->field_70=0;
+  localActor->lastX=0;
+  localActor->lastZ=0;
+  localActor->lastY=0;
   localActor->costumeIndex=-1;
-  localActor->field_74=-1;
+  localActor->currentAnim=-1;
   localActor->field_78=0;
-  localActor->field_76=0;
+  localActor->animPosition=0;
 
   setActorAngleSafe(0,0,0,&localActor->time);
 

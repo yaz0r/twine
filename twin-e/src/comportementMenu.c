@@ -22,10 +22,10 @@ void LBA_engine::drawComportementEntry(int lcomportement, int arg, int arg2)
 
 	if(draw3D1(temp3,(char*)temp2,(char*)currentCostume))
 	{
-		temp3++;
-		if(temp3==draw3D2((char*)temp2))
+		temp3++; //keyFrame
+		if(temp3==getAnimMaxIndex((char*)temp2)) //max for anim
 		{
-			temp3=draw3D3((char*)temp2);
+			temp3=getAnimStartIndex((char*)temp2); //start of anim
 		}
 		winTab[lcomportement]=temp3;
 	}

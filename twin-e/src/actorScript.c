@@ -301,28 +301,28 @@ void LBA_engine::runActorScript(short int actorNumber)
 		break;
 	case 47:
 		lactor->angle=0x300;
-		lactor->X=lactor->field_6C-*((short int*)actorScriptPtr);
+		lactor->X=lactor->lastX-*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
 	case 48:
 		lactor->angle=0x100;
-		lactor->X=lactor->field_6C+*((short int*)actorScriptPtr);
+		lactor->X=lactor->lastX+*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
 	case 49:
 		lactor->angle=0x200;
-		lactor->Z=lactor->field_70+*((short int*)actorScriptPtr);
+		lactor->Z=lactor->lastY+*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
 	case 50:
 		lactor->angle=0;
-		lactor->Z=lactor->field_70+*((short int*)actorScriptPtr);
+		lactor->Z=lactor->lastY+*((short int*)actorScriptPtr);
 		lactor->field_62&=0xFFBF;
 		lactor->field_34=0;
 		actorScriptPtr+=2;
@@ -400,13 +400,13 @@ void LBA_engine::runActorScript(short int actorNumber)
 	case 58:
 		manipActorResult=*actorScriptPtr++; // position flag number
 
-		mainTab[18]=flagData[manipActorResult].x;
-		mainTab[19]=flagData[manipActorResult].z;
-		mainTab[20]=flagData[manipActorResult].y;
+		destX=flagData[manipActorResult].x;
+		destZ=flagData[manipActorResult].z;
+		destY=flagData[manipActorResult].y;
 
-		lactor->X=mainTab[18];
-		lactor->Z=mainTab[19];
-		lactor->Y=mainTab[20];
+		lactor->X=destX;
+		lactor->Z=destZ;
+		lactor->Y=destY;
 		break;
 
     case 61:
@@ -660,7 +660,7 @@ void LBA_engine::manipActor(actor* lactor)
 	  printf("Ignoring manipActor opcode 25..\n");
 	  break;
   case 28:
-	  manipActorResult=lactor->field_58;
+	  manipActorResult=lactor->standOn;
 	  break;
   default:
 			printf("Unhandled manipActor opcode %d\n",opcode);

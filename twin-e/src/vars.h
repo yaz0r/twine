@@ -446,25 +446,6 @@ class LBA_engine
 	short int *tab2;
 	short int *tab3;
 
-//	int setSomething3Var1;
-//	int setSomething3Var2;
-//	int setSomething3Var3;
-//	int setSomething3Var4;
-//	int setSomething3Var5;
-//	int setSomething3Var6;
-//	int setSomething3Var7;
-//	int setSomething3Var8;
-//	int setSomething3Var9;
-//	int setSomething3Var10;
-//	int setSomething3Var11;
-//	int setSomething3Var12;
-//	int setSomething3Var13;
-//	int setSomething3Var14;
-//	int setSomething3Var15;
-//	int setSomething3Var16;
-//	int setSomething3Var17;
-//	int setSomething3Var18;
-
 	actor actors[100]; // yeah, can use up to 100 actor !
 	actor *twinsen;
 
@@ -662,7 +643,6 @@ class LBA_engine
  short int numOfPri2;
  unsigned char *pri2Ptr;
 
- int mainTab[57]; // attention, variables liees
  int renderTab2[271];
  int *renderTab3;
 
@@ -683,22 +663,6 @@ class LBA_engine
  
  short int primitiveCounter;
  
-
- 
-// int rmv1;
-// int rmv2;
-// int rmv3;
-// int rmv4;
-// int rmv5;
-// int rmv6;
-// int rmv7;
-// int rmv8;
-// int rmv9;
-// int rmv10;
- 
-// int renderV22;
-// int renderV23;
-// int renderV24;
  
  unsigned char renderTab7[10000];
  
@@ -721,12 +685,12 @@ class LBA_engine
  zbufferDataStruct zbufferData[28][150];
  short int zbufferTab[28];
 
- char* animVar0;
+ char* keyFramePtr;
  char* animVar1;
+ char* animVar2;
 
- int setSomething3Var11;
- int setSomething3Var13;
- int setSomething3Var15;
+ short int processActorSub2Var0;
+ short int processActorSub2Var1;
 
  int moveActorVar1;
 
@@ -739,16 +703,16 @@ class LBA_engine
  short int processActorVar3;
  short int processActorVar4;
 
- short int processActorVar10;
+ short int fieldCauseDamage;
  short int processActorX;
  short int processActorY;
  short int processActorZ;
 
  short int processActorVar5;
  short int processActorVar6;
- short int processActorVar7;
- short int processActorVar8;
- short int processActorVar9;
+ short int currentY;
+ short int currentX;
+ short int currentZ;
 
  int getPosVar1;
  int getPosVar2;
@@ -758,8 +722,64 @@ class LBA_engine
  short int processActorVar12;
  short int processActorVar13;
 
+
+// order important !
+
+
+	int setSomething2Var1;
+	int setSomething2Var2;
+	int setSomething2Var3;
+	int setSomething3Var12;
+	int setSomething3Var14;
+	int setSeomthing3Var16;
+	int reinitVar1;
+	int reinitVar2;
+	int reinitVar12;
+	int setSomething3Var1;
+	int setSomething3Var8;
+	int setSomething3Var17;
+	int renderV1;
+	int renderV2;
+	int renderV3;
+	int renderV22;
+	int renderV23;
+	int renderV24;
+	int destX;
+	int destZ;
+	int destY;
+	int rmv0;
+	int rmv1;
+	int rmv2;
+	int rmv3;
+	int rmv4;
+	int rmv5;
+	int rmv6;
+	int rmv7;
+	int rmv8;
+	int rmv9;
+	int rmv10;
+	int m2v0;
+	int m2v1;
+	int m2v2;
+	int m2v3;
+	int m2v4;
+	int m2v5;
+	int m2v6;
+	int m2v7;
+	int setSomething3Var2;
+	int setSomething3Var3;
+	int setSomething3Var18;
+	int setSomething3Var4;
+	int setSomething3Var5;
+	int setSomething3Var9;
+	int setSomething3Var6;
+	int setSomething3Var7;
+	int setSomething3Var10;
 	
 //----------------------------------------------------------------------------------------
+
+void renderS2Sub(unsigned char * esi, int ecx, pointTab *dest,int* eax);
+
 
 void processActorSub8(int var0,int var1,int var2,int var3);
 void processActorSub9(int var0,int var1,int var2,int var3);
@@ -769,7 +789,7 @@ void processActorSub6(int param);
 void processActorSub7(void);
 int getCurPos(int var0, int var1, int var2);
 void processActorSub1(int var0,int var1,int var2);
-int processActorSub2(int var0,char* ptr0,char* ptr1);
+int processActorSub2(int position,char* anim,char* body);
 int processActorSub4(int var0,int var1);
 
 void addObject(actor* lactor);
@@ -777,8 +797,8 @@ int anotherSqrt(int X1,int Z1,int Y1,int X2,int Z2,int Y2);
 int increaseAnim(char* lBufAnim,char* lBody);
 void initNewCSub(actor* lactor,int actorNum);
 
-int draw3D2(char* ptr);
-int draw3D3(char* ptr);
+int getAnimMaxIndex(char* ptr);
+int getAnimStartIndex(char* ptr);
 
 int mainLoopSub17(timeStruct* angleData);
 
@@ -832,6 +852,7 @@ void moveActor(int actorNumber);
  void renderS1S1(int* eax, int* ebp);
 
 	void renderS1(int edx, int ecx, int ebx, pointEntry* esi);
+	void renderS2(int edx, int ecx, int ebx, pointEntry* esi);
 
 	int prepareRender(void);
 

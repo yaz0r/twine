@@ -43,11 +43,13 @@ void LBA_engine::moveActor(int actorNumber)
 			lactor->positionInMoveScript++;
 			manipActorResult=*scriptPtr;
 
-			setSomething3Var11=flagData[manipActorResult].x;
-			setSomething3Var13=flagData[manipActorResult].z;
-			setSomething3Var15=flagData[manipActorResult].y;
+			printf("Actor %d go to flag %d\n",actorNumber,manipActorResult);
 
-			newAngle=calcAngleToward(lactor->X,lactor->Y,setSomething3Var11,setSomething3Var15);
+			destX=flagData[manipActorResult].x;
+			destZ=flagData[manipActorResult].z;
+			destY=flagData[manipActorResult].y;
+
+			newAngle=calcAngleToward(lactor->X,lactor->Y,destX,destY);
 
 			if(lactor->field_60&0x400)
 			{
@@ -85,18 +87,20 @@ void LBA_engine::moveActor(int actorNumber)
 			lactor->positionInMoveScript++;
 			manipActorResult=*scriptPtr;
 
-			setSomething3Var11=flagData[manipActorResult].x;
-			setSomething3Var13=flagData[manipActorResult].z;
-			setSomething3Var15=flagData[manipActorResult].y;
+			printf("Actor %d warp to flag %d\n",actorNumber,manipActorResult);
+
+			destX=flagData[manipActorResult].x;
+			destZ=flagData[manipActorResult].z;
+			destY=flagData[manipActorResult].y;
 
 			if(lactor->field_60&0x400)
 			{
 				lactor->field_34=0;
 			}
 
-			lactor->X=setSomething3Var11;
-			lactor->Z=setSomething3Var13;
-			lactor->Y=setSomething3Var15;
+			lactor->X=destX;
+			lactor->Z=destZ;
+			lactor->Y=destY;
 
 			break;
 
@@ -116,11 +120,11 @@ void LBA_engine::moveActor(int actorNumber)
 			lactor->positionInMoveScript++;
 			manipActorResult=*scriptPtr;
 
-			setSomething3Var11=flagData[manipActorResult].x;
-			setSomething3Var13=flagData[manipActorResult].z;
-			setSomething3Var15=flagData[manipActorResult].y;
+			destX=flagData[manipActorResult].x;
+			destZ=flagData[manipActorResult].z;
+			destY=flagData[manipActorResult].y;
 
-			newAngle=calcAngleToward(lactor->X,lactor->Y,setSomething3Var11,setSomething3Var15);
+			newAngle=calcAngleToward(lactor->X,lactor->Y,destX,destY);
 
 			newAngle+=0x200;
 
@@ -175,12 +179,12 @@ void LBA_engine::moveActor(int actorNumber)
 			{
 				manipActorResult=*scriptPtr;
 
-				setSomething3Var11=flagData[manipActorResult].x;
-				setSomething3Var13=flagData[manipActorResult].z;
-				setSomething3Var15=flagData[manipActorResult].y;
+				destX=flagData[manipActorResult].x;
+				destZ=flagData[manipActorResult].z;
+				destY=flagData[manipActorResult].y;
 
-				lactor->angle=calcAngleToward(lactor->X,lactor->Y,setSomething3Var11,setSomething3Var15);
-				lactor->field_78=calcAngleToward(lactor->Z,0,setSomething3Var13,moveActorVar1);
+				lactor->angle=calcAngleToward(lactor->X,lactor->Y,destX,destY);
+				lactor->field_78=calcAngleToward(lactor->Z,0,destZ,moveActorVar1);
 
 				if(moveActorVar1>100)
 				{
@@ -189,9 +193,9 @@ void LBA_engine::moveActor(int actorNumber)
 				}
 				else
 				{
-					lactor->X=setSomething3Var11;
-					lactor->Z=setSomething3Var13;
-					lactor->Y=setSomething3Var15;
+					lactor->X=destX;
+					lactor->Z=destZ;
+					lactor->Y=destY;
 				}
 			}
 			break;

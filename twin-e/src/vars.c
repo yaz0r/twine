@@ -261,25 +261,6 @@ void LBA_engine::initVars(void)
 	tab1=&tab[0];
 	tab2=&tab[256];
 	tab3=&tab[384];
-	/*
-	setSomething3Var1=0;
-	setSomething3Var2=0;
-	setSomething3Var3=0;
-	setSomething3Var4=0;
-	setSomething3Var5=0;
-	setSomething3Var6=0;
-	setSomething3Var7=0;	
-	setSomething3Var8=0;
-	setSomething3Var9=0;
-	setSomething3Var10=0;
-	setSomething3Var11=0;
-	setSomething3Var12=0;
-	setSomething3Var13=0;
-	setSomething3Var14=0;
-	setSomething3Var15=0;
-	setSomething3Var16=0;
-	setSomething3Var17=0;
-	setSomething3Var18=0;  */
 
 	twinsen=&actors[0];
 
@@ -454,6 +435,56 @@ void LBA_engine::initVars(void)
 	renderTab3=&renderTab2[9];
 
 	updateActorScript=0;
+
+	/*setSomething2Var1;
+	setSomething2Var2;
+	setSomething2Var3;
+	setSomething3Var12;
+	setSomething3Var14;
+	setSeomthing3Var16;
+	reinitVar1;
+	reinitVar2;
+	reinitVar12;
+	setSomething3Var1;
+	setSomething3Var8;
+	setSomething3Var17;
+	renderV1;
+	renderV2;
+	renderV3;
+	renderV22;
+	renderV23;
+	renderV24;
+	destX;
+	destZ;
+	destY;
+	rmv0;
+	rmv1;
+	rmv2;
+	rmv3;
+	rmv4;
+	rmv5;
+	rmv6;
+	rmv7;
+	rmv8;
+	rmv9;
+	rmv10;
+	rm2v0;
+	m2v1;
+	m2v2;
+	m2v3;
+	m2v4;
+	m2v5;
+	m2v6;
+	m2v7;
+	setSomething3Var2;
+	int setSomething3Var3;
+	int setSomething3Var18;
+	int setSomething3Var4;
+	int setSomething3Var5;
+	int setSomething3Var9;
+	int setSomething3Var6;
+	int setSomething3Var7;
+	int setSomething3Var10;*/
 
 }
 

@@ -22,6 +22,8 @@ int main(int argc, char* argv[])
   {
     printf("LBA_engine creation succeed !\n");
 
+	memset(engine,0,sizeof(LBA_engine));
+
 	engine->osystem=osystem;
     engine->initVars(); // init the vars (move to the object creator ?)
 	

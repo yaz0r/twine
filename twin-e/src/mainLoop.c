@@ -260,6 +260,12 @@ int LBA_engine::mainLoop(void)
         actors[i].field_22=actors[i].Z;
         actors[i].field_24=actors[i].Y;
 
+		//todo: should not be here:
+		destX=actors[i].X;
+		destZ=actors[i].Z;
+		destY=actors[i].Y;
+
+
         if(actors[i].positionInMoveScript != -1)
         {
 			moveActor(i);
@@ -294,8 +300,8 @@ int LBA_engine::mainLoop(void)
 void LBA_engine::reinitAll(int save)
 {
   maximizeTextWindow();
-  mainTab[6]=896;
-  mainTab[7]=950;
+  reinitVar1=896;
+  reinitVar2=950;
   reinitAll1();
   reinitVars();
   reinitAll3();
@@ -339,7 +345,7 @@ void LBA_engine::reinitAll1(void)
   setSomething(311,240,512);
   setSomething2(0,0,0);
   setSomething3(0,0,0);
-  setSomething4(mainTab[7],mainTab[6],0);
+  setSomething4(reinitVar2,reinitVar1,0);
 }
 
 
@@ -353,9 +359,9 @@ void LBA_engine::setSomething(int a, int b, int c)
 
 void LBA_engine::setSomething2(int a, int b, int c)
 {
-  mainTab[0]=a;
-  mainTab[1]=b;
-  mainTab[2]=c;
+  setSomething2Var1=a;
+  setSomething2Var2=b;
+  setSomething2Var3=c;
 }
 
 void LBA_engine::setSomething3(int a,int b,int c)
@@ -369,77 +375,73 @@ void LBA_engine::setSomething3(int a,int b,int c)
   int var6;
   int var7;
 
-  mainTab[9]=a&0x3FF;
+  setSomething3Var1=a&0x3FF;
 
-  var1=tab1[mainTab[9]];
+  var1=tab1[setSomething3Var1];
 
-  var2=tab1[(mainTab[9]+256)&0x3FF];
+  var2=tab1[(setSomething3Var1+256)&0x3FF];
 
-  mainTab[11]=c&0x3FF;
+  setSomething3Var17=c&0x3FF;
 
-  var3=tab1[mainTab[11]];
-  mainTab[39]=tab1[(mainTab[11]+256)&0x3FF];
+  var3=tab1[setSomething3Var17];
+  setSomething3Var2=tab1[(setSomething3Var17+256)&0x3FF];
 
-  mainTab[40]=-var3;
-
-
-  mainTab[42]=(var3*var2)>>14;
-  mainTab[43]=(mainTab[39]*var2)>>14;
-  mainTab[45]=(var3*var1)>>14;
-  mainTab[46]=(mainTab[39]*var1)>>14;
+  setSomething3Var3=-var3;
 
 
-  mainTab[10]=b&0x3FF;
+  setSomething3Var4=(var3*var2)>>14;
+  setSomething3Var5=(setSomething3Var2*var2)>>14;
+  setSomething3Var6=(var3*var1)>>14;
+  setSomething3Var7=(setSomething3Var2*var1)>>14;
 
 
-  var4=tab1[mainTab[10]];
-
-  var5=tab1[(mainTab[10]+256)&0x3FF];
-
-  mainTab[39]=(mainTab[39]*var5)>>14;
-  mainTab[41]=(var4*mainTab[39])>>14;
+  setSomething3Var8=b&0x3FF;
 
 
-  var6=mainTab[42];
+  var4=tab1[setSomething3Var8];
 
-  mainTab[42]=((var6*var5)+(var4*var1))>>14;
-  mainTab[44]=((var5*var1)+(var6*var4))>>14;
+  var5=tab1[(setSomething3Var8+256)&0x3FF];
 
-
-
-  var7=mainTab[45];
+  setSomething3Var2=(setSomething3Var2*var5)>>14;
+  setSomething3Var18=(var4*setSomething3Var2)>>14;
 
 
+  var6=setSomething3Var4;
 
-  mainTab[45]=((var2*var4)+(var5*var7))>>14;
+  setSomething3Var4=((var6*var5)+(var4*var1))>>14;
+  setSomething3Var9=((var5*var1)+(var6*var4))>>14;
 
-  mainTab[47]=((var2*var5)+(var4*var7))>>14;
+  var7=setSomething3Var6;
+
+
+  setSomething3Var6=((var2*var4)+(var5*var7))>>14;
+  setSomething3Var10=((var2*var5)+(var4*var7))>>14;
 
 //  setSomething3Sub(setSomething2Var3,setSomething2Var2,setSomething2Var1);
 
-  mainTab[2]=mainTab[18];
-  mainTab[3]=mainTab[19];
-  mainTab[4]=mainTab[20];
+  setSomething2Var3=destX;
+  setSomething3Var12=destZ;
+  setSomething3Var14=destY;
 
 }
 
 void LBA_engine::setSomething4(int a, int b, int c)
 {
-  mainTab[6]=a;
-  mainTab[12]=a;
-  mainTab[7]=b;
-  mainTab[13]=b;
-  mainTab[8]=c;
+  reinitVar1=a;
+  renderV1=a;
+  reinitVar2=b;
+  renderV2=b;
+  reinitVar12=c;
 
-  mainTab[14]=c;
+  renderV3=c;
 
 
-  renderS1S1(&mainTab[21],&mainTab[39]);
+  renderS1S1(&rmv1,&setSomething3Var2);
   renderS2S2(0,0,59);
 
-  mainTab[15]=mainTab[18];
-  mainTab[16]=mainTab[19];
-  mainTab[17]=mainTab[20];
+  renderV22=destX;
+  renderV23=destZ;
+  renderV24=destY;
 }
 
 void LBA_engine::renderS2S2(short int ax, short int bx, short int cx)
@@ -454,38 +456,38 @@ void LBA_engine::renderS2S2(short int ax, short int bx, short int cx)
   ebx=bx;
   ecx=cx;
 
-  edi=mainTab[21];
-  eax=mainTab[22];
+  edi=rmv1;
+  eax=rmv2;
   edi*=ebp;
   eax*=ebx;
   edi+=eax;
-  eax=mainTab[23];
+  eax=rmv3;
   eax*=ecx;
   eax+=edi;
   eax>>=14;
 
-  mainTab[18]=eax;
+  destX=eax;
 
-  edi=mainTab[24];
-  eax=mainTab[25];
+  edi=rmv4;
+  eax=rmv5;
   edi*=ebp;
   eax*=ebx;
   edi+=eax;
-  eax=mainTab[26];
+  eax=rmv6;
   eax*=ecx;
   eax+=edi;
   eax>>=14;
-  mainTab[19]=eax;
+  destZ=eax;
 
 
 
-  ebp*=mainTab[27];
-  ebx*=mainTab[28];
-  ecx*=mainTab[29];
+  ebp*=rmv7;
+  ebx*=rmv8;
+  ecx*=rmv9;
   ebx+=ebp;
   ebx+=ecx;
   ebx>>=14;
-  mainTab[20]=eax;
+  destY=eax;
 
 }
 
@@ -683,41 +685,87 @@ void LBA_engine::setTextWindowSize(int left, int top, int right, int bottom)
   textWindowBottom=bottom;
 }
 
-int LBA_engine::draw3D2(char* ptr)
+int LBA_engine::getAnimMaxIndex(char* ptr)
 {
 	return(*(short int*)ptr);
 }
 
-int LBA_engine::draw3D3(char* ptr)
+int LBA_engine::getAnimStartIndex(char* ptr)
 {
 	return(*(short int*)(ptr+4));
 }
 
-int LBA_engine::drawMenuWin1(int arg_0, unsigned char * ptr, unsigned char * arg_8)
+int LBA_engine::drawMenuWin1(int index, unsigned char * anim, unsigned char * body)
 {
+	short int numOfIndexInAnim;
+	short int numOfPointInAnim;
+	char* ptrToData;
+	char* ptrToDataBackup;
+	char* ptrToBodyData;
+	short int bodyHeader;
+	short int numOfElementInBody;
+	short int numOfPointInBody;
+	int i;
 
-  unsigned char * lptr2;
-  short int* lptr;
-// short int temp;
+	numOfIndexInAnim=*(short int*)anim;
 
+	if(index>=numOfIndexInAnim)
+		return(numOfIndexInAnim);
 
- lptr=(short int*) ptr;
+	numOfPointInAnim=*(short int*)(anim+2);
 
-  if(arg_0<*(lptr++))
-   return(0);
+	ptrToData=(char*)((numOfPointInAnim*8+8)*index+anim+8);
 
- lptr2=*(lptr)*8+ptr+8;
+	bodyHeader=*(short int*)body;
 
- if(*(short int*)arg_8 & 2)
-   return(0);
+	if(!(bodyHeader&2))
+		return(0);
 
- printf("unimplemented drawMenuWin1\n");
+	ptrToBodyData=(char*)(body+14);
 
+	*(char**)(ptrToBodyData+2)=ptrToData;
+	*(int*)(ptrToBodyData+6)=time;
 
- exit(1);
+	ptrToBodyData=ptrToBodyData+*(short int*)ptrToBodyData+2;
 
-  // implementer
-  return(0);
+	numOfElementInBody=*(short int*)ptrToBodyData;
+
+	ptrToBodyData=ptrToBodyData+numOfElementInBody*6+12;
+
+	numOfPointInBody=*(short int*)(ptrToBodyData-10);
+
+	if(numOfPointInAnim>numOfPointInBody)
+	{
+		numOfPointInAnim=numOfPointInBody;
+	}
+
+	ptrToDataBackup=ptrToData;
+
+	ptrToData+=8;
+
+	do
+	{
+		for(i=0;i<8;i++)
+		{
+			*(ptrToBodyData++)=*(ptrToData++);
+		}
+
+		ptrToBodyData+=30;
+
+	}while(--numOfPointInAnim);
+
+	ptrToData=ptrToDataBackup+2;
+
+	currentX=*(short int*)ptrToData;
+	currentZ=*(short int*)(ptrToData+2);
+	currentY=*(short int*)(ptrToData+4);
+
+	processActorVar5=*(short int*)(ptrToData+6);
+	processActorSub2Var0=*(short int*)(ptrToData+8);
+	processActorVar6=*(short int*)(ptrToData+10);
+	processActorSub2Var1=*(short int*)(ptrToData+12);
+
+	return(1);
 }
 
 void LBA_engine::drawBlackBox(int left,int top,int right,int bottom, unsigned char e)
@@ -1034,6 +1082,7 @@ void LBA_engine::updateActors(int actorNum)
 
 void LBA_engine::processActor(int actorNum)
 {
+	return;
 	actor* lactor;
 	char* animPtr;
 	int animData;
@@ -1054,7 +1103,7 @@ void LBA_engine::processActor(int actorNum)
 	processActorVar3=lactor->field_22;
 	processActorVar4=lactor->field_24;
 
-	if(lactor->field_60&0x400)
+	if(lactor->field_60&0x400) // is sprite actor
 	{
 		if(lactor->field_66)
 		{
@@ -1065,7 +1114,7 @@ void LBA_engine::processActor(int actorNum)
 		processActorZ=lactor->Z;
 		processActorY=lactor->Y;
 
-		if(!(lactor->field_62&0x100))
+		if(!(lactor->field_62&0x100)) //actor freeze movement
 		{
 			if(lactor->field_34)
 			{
@@ -1086,40 +1135,40 @@ void LBA_engine::processActor(int actorNum)
 
 					processActorSub1(dx,0,lactor->field_78);
 
-					processActorZ=lactor->Z-setSomething3Var13;
+					processActorZ=lactor->Z-destZ;
 
-					processActorSub1(0,setSomething3Var11,lactor->angle);
+					processActorSub1(0,destX,lactor->angle);
 
-					processActorX=lactor->X+setSomething3Var11;
-					processActorY=lactor->Y+setSomething3Var13;
+					processActorX=lactor->X+destX;
+					processActorY=lactor->Y+destZ;
 
 					setActorAngle(0,lactor->field_34,0,&lactor->time);
 
-					if(lactor->field_62&0x40)
+					if(lactor->field_62&0x40) //can rotate ?
 					{
 						if(lactor->field_72)
 						{
 							var_10=lactor->field_72;
-							if(var_10>=getDistanceToward(processActorX,processActorY,lactor->field_6C,lactor->field_70))
+							if(var_10>=getDistanceToward(processActorX,processActorY,lactor->lastX,lactor->lastY))
 							{
 								if(lactor->angle==0)
 								{
-									processActorY=lactor->field_70+lactor->field_72;
+									processActorY=lactor->lastY+lactor->field_72;
 								}
 								else
 								if(lactor->angle==0x100)
 								{
-									processActorX=lactor->field_6C+lactor->field_72;
+									processActorX=lactor->lastX+lactor->field_72;
 								}
 								else
 								if(lactor->angle==0x200)
 								{
-									processActorY=lactor->field_70-lactor->field_72;
+									processActorY=lactor->lastY-lactor->field_72;
 								}
 								else
 								if(lactor->angle==0x300)
 								{
-									processActorX=lactor->field_6C-lactor->field_72;
+									processActorX=lactor->lastX-lactor->field_72;
 								}
 
 								lactor->field_62&=0xFFBF;
@@ -1132,33 +1181,34 @@ void LBA_engine::processActor(int actorNum)
 
 							if(lactor->angle==0)
 							{
-								if(processActorY<=lactor->field_70)
+								if(processActorY<=lactor->lastY)
 									tempVar=1;
 							}
 							else
 							if(lactor->angle==0x100)
 							{
-								if(processActorX<=lactor->field_6C)
+								if(processActorX<=lactor->lastX)
 									tempVar=1;
 							}
 							else
 							if(lactor->angle==0x200)
 							{
-								if(processActorY>=lactor->field_70)
+								if(processActorY>=lactor->lastY)
 									tempVar=1;
 							}
 							else
 							if(lactor->angle==0x300)
 							{
-								if(processActorX>=lactor->field_6C)
+								if(processActorX>=lactor->lastX)
 									tempVar=1;
 							}
 
 							if(tempVar)
 							{
-								processActorX=lactor->field_6C;
-								processActorZ=lactor->field_6E;
-								processActorY=lactor->field_70;
+								processActorX=lactor->lastX;
+								processActorZ=lactor->lastZ;
+								processActorY=lactor->lastY;
+
 								lactor->field_62&=0xFFBF;
 								lactor->field_34=0;
 							}
@@ -1169,9 +1219,9 @@ void LBA_engine::processActor(int actorNum)
 
 			if(lactor->field_60&0x10)
 			{
-				processActorX=lactor->field_6C;
-				processActorZ=lactor->field_6E;
-				processActorY=lactor->field_70;
+				processActorX=lactor->lastX;
+				processActorZ=lactor->lastZ;
+				processActorY=lactor->lastY;
 
 				if(lactor->field_60 & 0x8000)
 				{
@@ -1179,20 +1229,21 @@ void LBA_engine::processActor(int actorNum)
 					processActorY=abs(processActorY);
 				}
 
-				lactor->field_6C=0;
-				lactor->field_6E=0;
-				lactor->field_70=0;
+				lactor->lastX=0;
+				lactor->lastZ=0;
+				lactor->lastY=0;
 
 			}
 		}
 
 	}
-	else
+	else //not sprite actor
 	{
-		if(lactor->field_74!=-1)
+		if(lactor->currentAnim!=-1)
 		{
-			animPtr=(char*)getHqrdataPtr(HQRanims,lactor->field_74);
-			animData=processActorSub2(lactor->field_76,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]);
+			animPtr=(char*)getHqrdataPtr(HQRanims,lactor->currentAnim);
+			animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); // get the current frame anim data (for step length ?)
+
 			if(processActorVar5)
 			{
 				lactor->field_62|=0x80;
@@ -1205,53 +1256,53 @@ void LBA_engine::processActor(int actorNum)
 			lactor->angle=(lactor->angle+processActorVar6-lactor->field_6A)&0x3FF;
 			lactor->field_6A=processActorVar6;
 
-			processActorSub1(processActorVar8,processActorVar7,lactor->angle);
+			processActorSub1(currentX,currentY,lactor->angle);
 
-			processActorVar8=setSomething3Var11; //dest
-			processActorVar7=setSomething3Var13;
+			currentX=destX; //dest
+			currentY=destZ;
 
-			processActorX=lactor->X+processActorVar8-lactor->field_6C;
-			processActorZ=lactor->Z+processActorVar9-lactor->field_6E;
-			processActorY=lactor->Y+processActorVar7-lactor->field_70;
+			processActorX=lactor->X+currentX-lactor->lastX;
+			processActorZ=lactor->Z+currentZ-lactor->lastZ;
+			processActorY=lactor->Y+currentY-lactor->lastY;
 
-			lactor->field_6C=processActorVar8;
-			lactor->field_6E=processActorVar9;
-			lactor->field_70=processActorVar7;
+			lactor->lastX=currentX;
+			lactor->lastZ=currentZ;
+			lactor->lastY=currentY;
 
 			lactor->field_62&=0xFFF3;
 
-			if(animData)
+			if(animData) // if keyFrame
 			{
-				lactor->field_76++;
-				if(lactor->field_4)
+				lactor->animPosition++;
+				if(lactor->field_4) //if actor play sound attached to animation
 				{
 					initNewCSub(lactor,actorNum);
 				}
 
-				var_10=lactor->field_76;
-				if(var_10==draw3D2(animPtr))
+				var_10=lactor->animPosition;
+				if(var_10==getAnimMaxIndex(animPtr))
 				{
 					lactor->field_62&=0xFFFD;
 					if(lactor->field_78==0)
 					{
-						lactor->field_76=draw3D3(animPtr);
+						lactor->animPosition=getAnimStartIndex(animPtr);
 					}
 					else
 					{
 						var_C=actorNum;
 						lactor->costume=lactor->field_2;
-						lactor->field_74=initCostume(lactor->costume,actorNum);
+						lactor->currentAnim=initCostume(lactor->costume,actorNum);
 
-						if(lactor->field_74==-1)
+						if(lactor->currentAnim==-1)
 						{
-							lactor->field_74=initCostume(0,var_C);
+							lactor->currentAnim=initCostume(0,var_C);
 							lactor->costume=0;
 						}
 
 						lactor->field_4=loadTwinsenCostumesVar1;
 
 						lactor->field_78=0;
-						lactor->field_76=0;
+						lactor->animPosition=0;
 						lactor->field_66=0;
 					}
 
@@ -1264,35 +1315,33 @@ void LBA_engine::processActor(int actorNum)
 				}
 
 				lactor->field_6A=0;
+
+				lactor->lastX=0;
+				lactor->lastZ=0;
+				lactor->lastY=0;
 			}
 		}
-
-
-		lactor->field_6C=0;
-		lactor->field_6E=0;
-		lactor->field_70=0;
-
 	}
 
-	if(lactor->field_58!=-1)
+	if(lactor->standOn!=-1) // standing on object
 	{
-		processActorX-=actors[lactor->field_58].field_20;
-		processActorZ-=actors[lactor->field_58].field_22;
-		processActorY-=actors[lactor->field_58].field_24;
+		processActorX-=actors[lactor->standOn].field_20; // apply under object movement
+		processActorZ-=actors[lactor->standOn].field_22;
+		processActorY-=actors[lactor->standOn].field_24;
 
-		processActorX+=actors[lactor->field_58].X;
-		processActorZ+=actors[lactor->field_58].Z;
-		processActorY+=actors[lactor->field_58].Y;
+		processActorX+=actors[lactor->standOn].X;
+		processActorZ+=actors[lactor->standOn].Z;
+		processActorY+=actors[lactor->standOn].Y;
 
-		if(processActorSub4(lactor->field_58,actorNum))
-			lactor->field_58=-1;
+		if(processActorSub4(actorNum,lactor->standOn)) // is actor still standing on another actor ?
+			lactor->standOn=-1; // actor fall from the object
 
 	}
 
-	if(lactor->field_62&0x100)
+	if(lactor->field_62&0x100) //movement freeze
 	{
 		processActorX=processActorVar2;
-		processActorZ=processActorVar3+mainLoopVar17;
+		processActorZ=processActorVar3+mainLoopVar17; // ??!? mainLoopVar17 isn't related to angle ?!
 		processActorY=processActorVar4;
 	}
 
@@ -1316,18 +1365,19 @@ void LBA_engine::processActor(int actorNum)
 			}
 		}
 
-		if(lactor->field_60&1)
+		if(lactor->field_60&1) // actor fall
 			processActorSub6(actorNum);
 
-		if((lactor->field_58!=-1) && (lactor->field_62&0x100))
+		if((lactor->standOn!=-1) && (lactor->field_62&0x100)) //if actor standing on another actor and ?
 			processActorSub7();
 
-		processActorVar10=0;
+		fieldCauseDamage=0;
+
 		processActorVar11=processActorX;
 		processActorVar12=processActorZ;
 		processActorVar13=processActorY;
 
-		if(!actorNum && !(lactor->field_60&0x20))
+		if(!actorNum && !(lactor->field_60&0x20)) // all this check if field around the actor can hurt
 		{
 			processActorSub8(lactor->field_26,lactor->field_2A,lactor->field_2E,1);
 			processActorSub8(lactor->field_28,lactor->field_2A,lactor->field_2E,2);
@@ -1342,26 +1392,26 @@ void LBA_engine::processActor(int actorNum)
 			processActorSub9(lactor->field_26,lactor->field_2A,lactor->field_30,8);
 		}
 
-		if(processActorVar10 && !(lactor->field_62&0x100) && currentlyProcessedActorNum && (comportement!=1) && (lactor->costume!=1))
+		if(fieldCauseDamage && !(lactor->field_62&0x100) && currentlyProcessedActorNum && (comportement!=1) && (lactor->costume!=1)) //field cause damage
 		{
 			processActorSub1(lactor->field_26,lactor->field_2E,lactor->angle+0x580);
 
-			setSomething3Var11+=processActorX;
-			setSomething3Var13+=processActorY;
+			destX+=processActorX;
+			destZ+=processActorY;
 
-			if(setSomething3Var11>=0 && setSomething3Var13>=0 && setSomething3Var11<=0x7E00 && setSomething3Var13<=0x7E00)
+			if(destX>=0 && destZ>=0 && destX<=0x7E00 && destZ<=0x7E00)
 			{
-				if(getCurPos(setSomething3Var11,processActorZ+0x100,setSomething3Var13))
+				if(getCurPos(destX,processActorZ+0x100,destZ))
 				{
 					processActorSub10(lactor->X,lactor->Z+1000,lactor->Y,0);
 					playAnim(6,2,0,currentlyProcessedActorNum);
 
 					if(currentlyProcessedActorNum==0)
 					{
-						changeRoomVar8=1;
+						changeRoomVar8=1; //twinsenHit
 					}
 
-					lactor->life--;
+					lactor->life--; //damage caused by field
 				}
 			}
 		}
@@ -1370,9 +1420,9 @@ void LBA_engine::processActor(int actorNum)
 		var_4=position;
 		lactor->field_3=position;
 
-		if(position)
+		if(position) //if standing on floor
 		{
-			if(position==1)
+			if(position==1) //if standing on floor ==1
 			{
 				if((lactor->field_62>>8)!=position)
 				{
@@ -1415,9 +1465,9 @@ void LBA_engine::processActor(int actorNum)
 
 			lactor->field_62&=0xFFFE;
 		}
-		else
+		else //standing on floor !=1
 		{
-			if(lactor->field_60&0x800 && lactor->field_58!=-1)
+			if(lactor->field_60&0x800 && lactor->standOn!=-1) // if ? and actor standing on another actor
 			{
 				var_8=getCurPos(processActorX,processActorZ-1,processActorY);
 
@@ -1448,18 +1498,18 @@ void LBA_engine::processActor(int actorNum)
 			}
 		}
 	
-		if(getPosVar2!=-1) // die because au drown ?
+		if(getPosVar2!=-1) // collision with floor under actor
 		{
-			lactor->life=0;
+			lactor->life=0; // die because au drown ?
 		}
 	}
-	else
+	else // if falling
 	{
-		if(lactor->field_60&0x1)
+		if(lactor->field_60&0x1) //actor fall
 			processActorSub6(actorNum);
 	}
 
-	if(processActorVar10)
+	if(fieldCauseDamage)
 		lactor->field_3|=0x80;
 
 	if(processActorX<0)
@@ -1470,7 +1520,6 @@ void LBA_engine::processActor(int actorNum)
 
 	if(processActorZ<0)
 		processActorZ=0;
-
 
 	if(processActorX>0x7E00)
 		processActorX=0x7E00;
@@ -1500,7 +1549,7 @@ void LBA_engine::processActorSub5(int param)
 {
 }
 
-void LBA_engine::processActorSub6(int param)
+void LBA_engine::processActorSub6(int param) // actor fall
 {
 }
 
@@ -1560,57 +1609,175 @@ int LBA_engine::getCurPos(int var0, int var1, int var2)
 	}
 }
 
-void LBA_engine::processActorSub1(int var0,int var1,int var2)
+void LBA_engine::processActorSub1(int var0,int var1,int angle)
 {
-	int ebx;
-	int ecx;
-	int ebp;
-	int edx;
-	int eax;
-	int edi;
+	int angle1;
+	int angle2;
 
-	ebx=var0;
-	ecx=var1;
-	ebp=var2;
-
-	if(!ebp)
+	if(!angle)
 	{
-		eax=ebp;
-		edx=ecx;
+		destX=var0;
+		destZ=var1;
 	}
 	else
 	{
-		eax=ebp;
-		eax&=0x3FF;
-		ebp=tab1[eax];
-		eax+=0x100;
-		eax&=0x3FF;
-		edx=tab1[eax];
+		angle1=tab1[angle&0x3FF];
+		angle2=tab1[(angle+0x100)&0x3FF];
 
-		eax=ebx;
-		eax*=edx;
-		edi=eax;
-		eax=ecx;
-		eax*=ebp;
-		edi+=eax;
-		edi>>=14;
-		edx*=ecx;
-		ebx*=ebp;
-		edx-=ebx;
-		edx>>=14;
-		eax=edi;
+		destX=(var0*angle2+var1*angle1)>>14;
+		destZ=(var1*angle2-var0*angle1)>>14;
+	}
+}
+
+int LBA_engine::processActorSub2(int position,char* anim,char* body)
+{
+	short int animOffset;
+	short int bodyFlags;
+	char* oldAnimDataPtr;
+	int ebp;
+	char* eax;
+	int edx;
+
+	animOffset=*(short int*)(anim+2);
+
+	keyFramePtr=(animOffset*8+8)*position+anim+8;
+
+	edx=*(short int*)keyFramePtr;
+
+	bodyFlags=*(short int*)body;
+
+	if(bodyFlags&2)
+	{
+		animVar1=body+0x10;
+
+		eax=*(char**)animVar1;
+		ebp=*(int*)(animVar1+4); //time
+
+		if(!eax) // start of anim
+		{
+			eax=keyFramePtr;
+			ebp=edx;
+		}
+
+		animVar2=eax;
+
+		ebp=-ebp;
+		ebp+=time;
+
+		if(!(ebp<edx))
+		{
+			char* esi; //new keyframe
+
+			*(char**)animVar1=keyFramePtr;
+			*(int*)(animVar1+4)=time;
+
+			esi=keyFramePtr;
+			esi+=2;
+
+			currentX=*(short int*)esi;
+			currentZ=*(short int*)(esi+2);
+			currentY=*(short int*)(esi+4);
+
+			processActorVar5=*(short int*)(esi+6);
+			processActorSub2Var0=*(short int*)(esi+8);
+			processActorVar6=*(short int*)(esi+10);
+			processActorSub2Var1=*(short int*)(esi+12);
+
+
+			return(1);
+		}
+
+		oldAnimDataPtr=keyFramePtr;
+
+		animVar2+=8;
+		keyFramePtr+=8;
+
+		processActorVar5=*(short int*)(keyFramePtr);
+
+		processActorSub2Var0=((*(short int*)(keyFramePtr+2))*ebp)/edx;
+		processActorVar6=((*(short int*)(keyFramePtr+4))*ebp)/edx;
+		processActorSub2Var1=((*(short int*)(keyFramePtr+6))*ebp)/edx;
+
+		keyFramePtr+=8;
+		animVar2+=8;
+
+		currentX=((*(short int*)(oldAnimDataPtr+2))*ebp)/edx;
+		currentZ=((*(short int*)(oldAnimDataPtr+4))*ebp)/edx;
+		currentY=((*(short int*)(oldAnimDataPtr+6))*ebp)/edx;
+
+		return(0);
+
+	}
+	else
+	{
+		return(0);
 	}
 
-	setSomething3Var11=eax;
-	setSomething3Var13=edx;
 }
 
-int LBA_engine::processActorSub2(int var0,char* ptr0,char* ptr1)
+int LBA_engine::processActorSub4(int var0,int var1) // is actor still standing on object ?
 {
-	return(0);
-}
+	actor* lactor1;
+	actor* lactor2;
 
-int LBA_engine::processActorSub4(int var0,int var1)
-{
-	return(0);
+	int bx;
+	int si;
+	int di;
+	int var_1C;
+	int var_4;
+	int var_20;
+	int var_18;
+	int cx;
+	int var_8;
+	int var_10;
+	int var_C;
+	int var_14;
+
+	lactor1=&actors[var0];
+	lactor2=&actors[var1];
+
+	//------------- actor1
+
+	bx=		processActorX+lactor1->field_26;
+	si=		processActorX+lactor1->field_28;
+
+	di=		processActorZ+lactor1->field_2A;
+	var_1C=	processActorZ+lactor1->field_2C;
+
+	var_4=	processActorY+lactor1->field_2E;
+	var_20=	processActorY+lactor1->field_30;
+
+	//------------- actor2
+
+	var_18=	lactor2->X+lactor2->field_26;
+	cx=		lactor2->X+lactor2->field_28;
+
+	var_8=	lactor2->Z+lactor2->field_2A;
+	var_10= lactor2->Z+lactor2->field_2C;
+
+	var_C=	lactor2->Y+lactor2->field_2E;
+	var_14= lactor2->Y+lactor2->field_30;
+
+	if(bx>=cx) //X1
+		return(0);
+
+	if(si<=var_18) //X2
+		return(0);
+
+	if(di>(var_10+1)) //Z1a
+		return(0);
+
+	if(di<=(var_10-0x100)) //Z1b
+		return(0);
+
+	if(var_1C<=var_8) //Z2
+		return(0);
+
+	if(var_4>=var_14) //Y1
+		return(0);
+
+	if(var_20<=var_C) //Y2
+		return(0);
+
+	return(1);
 }

@@ -9,11 +9,11 @@ int LBA_engine::applyAnim(int animState,char* animData,char* body)
 
 	var1=*(short int*)(animData+2);
 
-	animVar0=(var1*8)*animState+animData+8;
+	keyFramePtr=(var1*8)*animState+animData+8;
 
 	var0=*(short int*)body;
 
-	if(var0&2)
+	if(!(var0&2))
 	{
 		return(0);
 	}
@@ -57,49 +57,95 @@ int LBA_engine::draw3D1(int animState,char* animData,char* body)
 	short int animOpcode;
 
 	short int var0;
-	short int var1;
 
-	var1=*(short int*)(animData+2);
+	char* edi;
+	char* ebx;
+	int ebp;
+	int eax;
+	int keyFrameLength;
+	int numOfPointInBody;
+	int numOfPointInAnim;
 
-	animVar0=(var1*8)*animState+animData+8;
+	numOfPointInAnim=*(short int*)(animData+2);
+
+	keyFramePtr=((numOfPointInAnim*8+8)*animState)+animData+8;
+
+	keyFrameLength=*(short int*)keyFramePtr;
 
 	var0=*(short int*)body;
 
-	if(var0&2)
+	if(!(var0&2))
 	{
 		return(0);
 	}
 
-	animVar1=body+16;
+	edi=body+16;
 
-	printf("draw3D1 ok\n");
-	exit(1);
+	animVar1=edi;
 
-/*	while(--animVar4)
+	ebx=*(char**)edi;
+	ebp=*(int*)(edi+4);
+
+	if(!ebx)
 	{
-		animOpcode=getAnimOpcode();
-		if(animOpcode==0)
+		ebx=keyFramePtr;
+		ebp=keyFrameLength;
+	}
+
+	animVar2=ebx;
+
+	eax=*(short int*)(edi-2);
+	edi+=eax;
+
+	eax=*(short int*)(edi);
+	eax=eax+eax*2;
+	edi=edi+eax*2+12;
+
+	numOfPointInBody=*(short int*)(edi-10);
+
+	if(numOfPointInAnim>numOfPointInBody)
+	{
+		numOfPointInAnim=numOfPointInBody;
+	}
+
+	eax=time-ebp;
+
+	if(eax>=keyFrameLength)
+	{
+		int* destPtr; //keyFrame
+		int* sourcePtr;
+
+		sourcePtr=(int*)(keyFramePtr+8);
+		destPtr=(int*)edi;
+
+		do
 		{
-			applyAnimMode0();
-			applyAnimMode0();
-			applyAnimMode0();
-		}
-		else
-		if(animOpcode==1)
-		{
-			applyAnimMode1();
-			applyAnimMode1();
-			applyAnimMode1();
-		}
-		else
-		if(animOpcode==2)
-		{
-			applyAnimMode2();
-			applyAnimMode2();
-			applyAnimMode2();
-		}
-		edi+=30;
-	}*/
+			*(destPtr++)=*(sourcePtr++);
+			*(destPtr++)=*(sourcePtr++);
+			
+			destPtr=(int*)(((char*)destPtr)+30);
+
+		}while(--numOfPointInAnim);
+
+		*(char**)animVar1=keyFramePtr;
+		*(int*)(animVar1+4)=time;
+
+		currentX=*(short int*)(keyFramePtr+2);
+		currentZ=*(short int*)(keyFramePtr+4);
+		currentY=*(short int*)(keyFramePtr+6);
+
+		processActorVar5=*(short int*)(keyFramePtr+8);
+		processActorSub2Var0=*(short int*)(keyFramePtr+10);
+		processActorVar6=*(short int*)(keyFramePtr+12);
+		processActorSub2Var1=*(short int*)(keyFramePtr+14);
+	
+		return(1);
+	}
+	else
+	{
+		printf("Interpole animation\n");
+	}
+
 	return(0);
 }
 
@@ -116,7 +162,7 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
  if(lactor->field_60 & 0x400) // si c'est un sprite
  	return(0);
 
- if(costume== lactor->costume && lactor->field_74!=-1) // le costume est deja loadé
+ if(costume== lactor->costume && lactor->currentAnim!=-1) // le costume est deja loadé
  	return(1); 
   
  if(arg_8==255 && lactor->field_78 !=2)
@@ -149,7 +195,7 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
  if(arg_4==4)
  	arg_4=2;
  
- if(lactor->field_74 == -1)
+ if(lactor->currentAnim == -1)
  {
 	drawMenuWin1(0,getHqrdataPtr(HQRanims,var_4),bodyPtrTab[lactor->costumeIndex]);
  }
@@ -160,12 +206,12 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
   		bufAni2=bufAni1;
  } 
  
- lactor->field_74=var_4;
+ lactor->currentAnim=var_4;
  lactor->costume=costume;
  lactor->field_2=arg_8;
  lactor->field_4=loadTwinsenCostumesVar1;
  lactor->field_78=arg_4;
- lactor->field_76=0;
+ lactor->animPosition=0;
  *(unsigned char*)&lactor->field_62 &= 0xF9;
  *(unsigned char*)&lactor->field_62 |= 8;
  
@@ -175,8 +221,8 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
  }
   
  lactor->field_6A=0;
- lactor->field_6C=0;
- lactor->field_6E=0;
+ lactor->lastX=0;
+ lactor->lastZ=0;
   
 	return(1);
 }
@@ -285,7 +331,7 @@ void LBA_engine::initNewCSub(actor* lactor,int actorNum)
 		case 0:
 			temp=*(ebx++);
 			temp--;
-			if(temp==lactor->field_76)
+			if(temp==lactor->animPosition)
 			{
 				lactor->field_66=*(ebx++);
 				lactor->field_62|=2;
@@ -298,7 +344,7 @@ void LBA_engine::initNewCSub(actor* lactor,int actorNum)
 		case 1:
 			temp=*(ebx++);
 
-			if(temp==lactor->field_76)
+			if(temp==lactor->animPosition)
 			{
 				fullRedrawS3(*(short int*)ebx,0x1000,1,lactor->X,lactor->Z,lactor->Y);
 			}
@@ -307,7 +353,7 @@ void LBA_engine::initNewCSub(actor* lactor,int actorNum)
 			break;
 		case 2:
 			temp=*(ebx++);
-			if(temp==lactor->field_76)
+			if(temp==lactor->animPosition)
 			{
 				printf("Skipping initNewCSub 2\n");
 				ebx+=2;
@@ -319,7 +365,7 @@ void LBA_engine::initNewCSub(actor* lactor,int actorNum)
 			break;
 		case 5:
 			temp=*(ebx++);
-			if(temp==lactor->field_76)
+			if(temp==lactor->animPosition)
 			{
 				int dx;
 				int cx;

@@ -187,7 +187,7 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
   if(currentIndex==-1)
   	return;
    
-  if(lactor->field_74==-1)
+  if(lactor->currentAnim==-1)
   	return;
    
   loadActorCostumeSub(bodyPtrTab[currentIndex],bodyPtrTab[lactor->costumeIndex]);

@@ -93,7 +93,7 @@ void LBA_engine::changeRoom(void)
 	twinsen->Z=changeRoomVar2=GV10;
 	twinsen->Y=GV11;
 
-	setSomething4(mainTab[6],mainTab[7],0);
+	setSomething4(reinitVar1,reinitVar2,0);
 
 	if(currentRoom!=needChangeRoom)
 	{
@@ -129,7 +129,7 @@ void LBA_engine::changeRoom(void)
 	changeRoomVar10=1;
 	changeRoomVar11=14;
 
-	setSomething4(mainTab[6],mainTab[7],0);
+	setSomething4(reinitVar1,reinitVar2,0);
 
 	if(roomMusic!=-1)
 		playMusic(roomMusic);
@@ -185,8 +185,8 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	temp+=2;
 
 	temp2=(unsigned short int*)temp;
-	mainTab[6]=*(temp2++);
-	mainTab[7]=*(temp2++); // ok
+	reinitVar1=*(temp2++);
+	reinitVar2=*(temp2++); // ok
  
 	sceneVar2.field_0=*(temp2++);
 	sceneVar3.field_0=*(temp2++);
@@ -320,8 +320,8 @@ void LBA_engine::changeRoomSub1(int arg_0)
 	freezeTime();
  
  var_14=1;
- reinitVar1Copy=mainTab[6];
- reinitVar2Copy=mainTab[7];
+ reinitVar1Copy=reinitVar1;
+ reinitVar2Copy=reinitVar2;
  
 /* if(!isMenuDisplayed)
  	fadeOut((char*)menuPalRGBA);

@@ -52,7 +52,7 @@ struct actor {
 	short int field_52;
 	short int field_54;
 	short int field_56;
-	short int field_58;
+	short int standOn;
 	short int field_5A;
 	short int label;
 	short int field_5E;
@@ -62,12 +62,12 @@ struct actor {
 	short int field_66;
 	short int life;
 	short int field_6A;
-	short int field_6C;
-	short int field_6E;
-	short int field_70;
-	short int field_74; //animNum
+	short int lastX;
+	short int lastZ;
+	short int lastY;
+	short int currentAnim;
 	short int field_72;
-	short int field_76; //animPosition
+	short int animPosition; //animPosition
 	short int field_78;
 
 	unsigned char *moveScript;

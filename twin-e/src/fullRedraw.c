@@ -41,6 +41,11 @@ void LBA_engine::fullRedraw(int param)
 	int spriteWidth;
 	int spriteHeight;
 
+//debug:
+
+	char stringTemp[10];
+
+
 	//////////////////
 
 	param=1;
@@ -102,9 +107,10 @@ void LBA_engine::fullRedraw(int param)
 					|| ((!(lactor->field_60 & 8)) && fullRedrawVar3> -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4< 580))
 					{
 						temp3=lactor->Z+lactor->X-cameraX-cameraY;
-						if(lactor->field_58!=-1)
+
+						if(lactor->standOn!=-1) //if actor is on another actor
 						{
-							temp3=actors[lactor->field_58].X-cameraX+actors[lactor->field_58].Y-cameraY+2;
+							temp3=actors[lactor->standOn].X-cameraX+actors[lactor->standOn].Y-cameraY+2;
 						}
 
 						if(lactor->field_60&0x400)
@@ -112,7 +118,7 @@ void LBA_engine::fullRedraw(int param)
 							fullRedrawVar6[a12].field_2=arg_46; //0x1000
 							if(lactor->field_60&8)
 							{
-								temp3=lactor->field_6C-cameraX+lactor->field_70-cameraY;
+								temp3=lactor->lastX-cameraX+lactor->lastY-cameraY;
 							}
 						}
 						else
@@ -125,7 +131,7 @@ void LBA_engine::fullRedraw(int param)
 
 						if(shadowMode!=0 && !(lactor->field_60&0x1000)) //0x1000 -> no shadow cast
 						{
-	//						if(lactor->field_58!=-1) // quick shadow calc if not in air
+	//						if(lactor->field_58!=-1) // quick shadow calc if on another actor
 							{
 								shadowX=lactor->X;
 								shadowZ=lactor->Z-1;
@@ -277,7 +283,7 @@ void LBA_engine::fullRedraw(int param)
 				{
 				}
 
-				printf("Draw poly actor %d\n",actorNumber);
+				//printf("Draw poly actor %d\n",actorNumber);
 
 				//applyAnim(lactor->field_76,(char*)getHqrdataPtr(HQRanims,lactor->field_74),(char*)bodyPtrTab[lactor->costumeIndex]);
 
@@ -307,6 +313,16 @@ void LBA_engine::fullRedraw(int param)
 						}
 					}
 				}
+
+			sprintf(stringTemp,"%d",actorNumber);
+			setTextColor(57);
+
+			fullRedrawS2S1(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY);
+
+			if(fullRedrawVar3>40 && fullRedrawVar3<600 && fullRedrawVar4>40 && fullRedrawVar4<440)
+			printStringSimple(fullRedrawVar3,fullRedrawVar4,stringTemp);
+
+
 			}
 		}
 		else
@@ -341,6 +357,9 @@ void LBA_engine::fullRedraw(int param)
 		else
 		if(flags==0x1000) //sprite actor
 		{
+
+			//printf("Draw sprite actor %d\n",actorNumber);
+
 			fullRedrawS2S1(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY);
 			getSpriteSize(0,&spriteWidth,&spriteHeight,(char*)getHqrdataPtr(HQRPtrSpriteExtra,lactor->costumeIndex));
 
@@ -367,7 +386,7 @@ void LBA_engine::fullRedraw(int param)
 
 				if(lactor->field_60&8)
 				{
-					refreshUpperBricks(lactor->field_6C>>9,lactor->field_6E>>8,lactor->field_70>>9);
+					refreshUpperBricks(lactor->lastX>>9,lactor->lastZ>>8,lactor->lastY>>9);
 				}
 				else
 				{
@@ -391,6 +410,15 @@ void LBA_engine::fullRedraw(int param)
 					drawBoxTrans(textWindowLeft,textWindowTop,textWindowRight,textWindowBottom,(char*)videoBuffer1,textWindowLeft,textWindowTop,(char*)videoBuffer2);
 				}		
 			}
+
+			sprintf(stringTemp,"%d",actorNumber);
+			setTextColor(157);
+
+			fullRedrawS2S1(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY);
+
+			if(fullRedrawVar3>40 && fullRedrawVar3<600 && fullRedrawVar4>40 && fullRedrawVar4<440)
+				printStringSimple(fullRedrawVar3,fullRedrawVar4,stringTemp);
+
 		}
 		else
 		if(flags==0x1800)
@@ -410,7 +438,6 @@ void LBA_engine::fullRedraw(int param)
 
 	for(arg_1A=0;arg_1A<numFlags;arg_1A++) //affichage des flags
 	{
-		char stringTemp[10];
 		int X;
 		int Y;
 		int x,y,z;
