@@ -165,7 +165,7 @@ void
 	    }
 
 	    if (continueMove == 0) {
-		lactor->positionInActorScript -= 3;
+		lactor->positionInMoveScript -= 3;
 	    }
 	    break;
 	case 14:
