@@ -45,13 +45,6 @@ void LBA_engine::fullRedraw(int param)
 
 	char stringTemp[10];
 
-
-	//////////////////
-
-	param=1;
-
-	/////////////////
-
 	temp1=fullRedrawVar1;
 	temp2=fullRedrawVar2;
 
@@ -59,7 +52,7 @@ void LBA_engine::fullRedraw(int param)
 
 	if(!param)
 	{
-	//	fullRedrawSub1(); // blit background on the actors
+		fullRedrawSub1(); // blit background on the actors
 	}
 	else      // redraw the background as well
 	{
@@ -259,7 +252,7 @@ void LBA_engine::fullRedraw(int param)
 	}*/
 
   a0E=0;
-// fullRedrawVar8=0;
+ fullRedrawVar8=0;
   arg_1A=0;
   arg_1E=0;
 
@@ -307,6 +300,8 @@ void LBA_engine::fullRedraw(int param)
 
 						refreshUpperBricks3d(tempX,tempZ,tempY);
 
+						addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight,renderBottom);
+
 						if(lactor->field_60&0x2000 && param!=1)
 						{
 							drawBoxTrans(textWindowLeft,textWindowTop,textWindowRight,textWindowBottom,(char*)videoBuffer1,textWindowLeft,textWindowTop,(char*)videoBuffer2);
@@ -320,7 +315,7 @@ void LBA_engine::fullRedraw(int param)
 			fullRedrawS2S1(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY);
 
 			if(fullRedrawVar3>40 && fullRedrawVar3<600 && fullRedrawVar4>40 && fullRedrawVar4<440)
-			printStringSimple(fullRedrawVar3,fullRedrawVar4,stringTemp);
+				printStringSimple(fullRedrawVar3,fullRedrawVar4,stringTemp);
 
 
 			}
@@ -346,7 +341,7 @@ void LBA_engine::fullRedraw(int param)
 
 			if(textWindowLeft<=textWindowRight && textWindowTop<=textWindowBottom)
 			{
-		//		drawSprite(fullRedrawVar6[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
+				drawSprite(fullRedrawVar6[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
 			}
 		}
 		else
@@ -484,13 +479,13 @@ void LBA_engine::fullRedraw(int param)
   {
     if(param==0)
     {
-		fullRedrawSub11();
+		fullRedrawSub11(); // draw all to screen
     }
     else
     {
 		if(!mainLoopVar3)
 			osystem->drawBufferToScreen(videoBuffer1);
-      fullRedrawSub5();
+      fullRedrawSub5(); //
       unfreezeTime();
     }
   }
@@ -1116,6 +1111,8 @@ void LBA_engine::refreshUpperBricks(int X,int Z,int Y)
 	int refreshRight;
 	int i;
 	zbufferDataStruct* currentZbufferData;
+
+	return;
 
 	refreshLeft=(textWindowLeft+24)/24-1;
 	refreshRight=(textWindowRight+24)/24;
