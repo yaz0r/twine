@@ -20,3 +20,4 @@ extern unsigned char* Ptr_HQM_Next;
 
 int HQM_Init_Memory(int size);
 int HQM_Alloc(int dataSize, unsigned char ** ptr);
+

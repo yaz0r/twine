@@ -1,5 +1,5 @@
 #include "lba.h"
-#include <sdl_mixer.h>
+#include <SDL_mixer.h>
 
 struct sampleStructData
 {

@@ -1050,3 +1050,4 @@ void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
 	}
     while (--rs1s2v1);
 }
+

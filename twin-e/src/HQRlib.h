@@ -63,3 +63,4 @@ hqr_entry* HQR_Init_RessourcePreload(char *resourceName);
 unsigned char *HQR_GetCopy(hqr_entry * hqrPtr, short int arg_4);
 
 #endif
+

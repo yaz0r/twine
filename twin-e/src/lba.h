@@ -40,7 +40,7 @@
 #include"type.h"
 
 
-#include "HQRLib.h"
+#include "HQRlib.h"
 #include "HQMLib.h"
 
 #include "streamReader.h"

@@ -42,3 +42,4 @@ void streamReader_get(streamReader* pThis, void* destPtr, uint32 size);
 void streamReader_seek(streamReader* pThis, uint32 seekPosition);
 
 #endif // _STREAMREADER_
+

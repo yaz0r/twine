@@ -47,7 +47,7 @@ void PlayAnimFla(char *flaName)
 #else
 		strcpy(buffer,flaName);
 #endif
-		AddExt(buffer,".FLA");
+		AddExt(buffer,".fla");
 		if(InitFla(buffer))
 		{
 			if(!strcmp(flaHeaderData.version,"V1.3"))

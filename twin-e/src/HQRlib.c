@@ -3,7 +3,7 @@
 #include "type.h"
 #include "streamReader.h"
 
-#ifndef WIN32
+#ifndef PCLIKE 
 #include <shinobi.h>
 #endif
 
@@ -38,7 +38,7 @@ int HQR_File_checkIfFileExist(char *fileName)
 #endif
 }
 
-#ifdef WIN32
+#ifdef PCLIKE 
 FILE* HQR_File_OpenRead(char *fileName)
 {
     FILE *fileHandle;
@@ -74,7 +74,7 @@ GDFS HQR_File_OpenRead(char *fileName)
 }
 #endif
 
-#ifdef WIN32
+#ifdef PCLIKE 
 int HQR_File_Read(FILE * resourceFile, char *ptr, int length)
 {
     if (!resourceFile)
@@ -111,7 +111,7 @@ int HQR_File_Read(GDFS resourceFile, char *ptr, int length)
 }
 #endif
 
-#ifdef WIN32
+#ifdef PCLIKE 
 void HQR_File_Close(FILE * resourceFile)
 {
     fclose(resourceFile);
@@ -311,7 +311,7 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
 
 int HQR_GetNumEntry(char* fileName)
 {
-#ifdef WIN32
+#ifdef PCLIKE 
     FILE *resourceFile;
 #else
 	//DC
@@ -330,7 +330,7 @@ int HQR_GetNumEntry(char* fileName)
 
 unsigned char *LoadMalloc_HQR(char *fileName, short int imageNumber)
 {
-#ifdef WIN32
+#ifdef PCLIKE 
     FILE *resourceFile;
     int headerSize;
     int offToImage;
