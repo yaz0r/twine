@@ -12,8 +12,28 @@ typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
 
+class LBA_engine;
+
+struct mouseStatusStruct
+{
+	int left;
+	int right;
+	int X;
+	int Y;
+};
+
+struct actorBoxStruct
+{
+	int actorNum;
+	int left;
+	int right;
+	int top;
+	int bottom;
+};
+
 #include"osystem.h"
 #include"angle.h"
 #include"costume.h"
+#include"debug.h"
 #include"vars.h"
 

@@ -25,6 +25,18 @@ SDL_Surface *sdl_screen;	// that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 
+void OSystem::getMouseStatus(mouseStatusStruct* mouseData)
+{
+	SDL_GetMouseState(&mouseData->X, &mouseData->Y);
+
+	mouseData->left=mouseLeft;
+	mouseData->right=mouseRight;
+
+	mouseLeft=0;
+	mouseRight=0;
+}
+
+
 OSystem::OSystem (int argc, char *argv[])	// that's the creator of the system dependent object used for the SDL port
 {
   unsigned char *keyboard;
@@ -56,9 +68,9 @@ OSystem::OSystem (int argc, char *argv[])	// that's the creator of the system de
 
   SDL_WM_SetCaption ("Little Big Adventure", "LBA");
 
-  SDL_ShowCursor (SDL_DISABLE);
+  //SDL_ShowCursor (SDL_DISABLE);
 
-  SDL_EnableUNICODE (SDL_ENABLE);	// not much used in fact
+  //SDL_EnableUNICODE (SDL_ENABLE);	// not much used in fact
 
   SDL_PumpEvents ();
 

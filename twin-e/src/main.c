@@ -26,6 +26,8 @@ main (int argc, char *argv[])
       memset (engine, 0, sizeof (LBA_engine));
 
       engine->osystem = osystem;
+	  engine->_debugger.osystem=osystem;
+	  engine->_debugger.engine=engine;
       engine->initVars ();	// init the vars (move to the object creator ?)
 
       startThreadTimer (engine);

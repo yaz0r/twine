@@ -48,6 +48,17 @@ LBA_engine::readKeyboard (void)
 	  exit (0);
 	  break;
 
+	case SDL_MOUSEBUTTONDOWN:
+		if(event.button.button==0)
+		{
+			osystem->mouseRight=1;
+		}
+		else
+		{
+			osystem->mouseLeft=1;
+		}
+		break;
+
 	default:
 	  break;
 	}

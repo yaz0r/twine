@@ -314,7 +314,7 @@ class LBA_engine
 public:
   OSystem * osystem;
   LBA_renderer renderer;
-
+  debugger _debugger;
 
   int time;
   short int key;

@@ -288,6 +288,7 @@ LBA_engine::fullRedraw (int param)
     {
       unsigned int flags;
       int actorNumber;
+	  int positionInDebugBox=0;
 
       do
 	{
@@ -346,6 +347,14 @@ LBA_engine::fullRedraw (int param)
 			    }
 			}
 		    }
+
+			_debugger.actorBox[positionInDebugBox].actorNum=actorNumber;
+			_debugger.actorBox[positionInDebugBox].left=renderLeft;
+			_debugger.actorBox[positionInDebugBox].right=renderRight;
+			_debugger.actorBox[positionInDebugBox].top=renderTop;
+			_debugger.actorBox[positionInDebugBox].bottom=renderBottom;
+
+			positionInDebugBox++;
 
 /*		  sprintf (stringTemp, "%d", actorNumber);
 		  setTextColor (57);
@@ -464,6 +473,15 @@ LBA_engine::fullRedraw (int param)
 		    }
 		}
 
+			_debugger.actorBox[positionInDebugBox].actorNum=actorNumber;
+			_debugger.actorBox[positionInDebugBox].left=textWindowLeft;
+			_debugger.actorBox[positionInDebugBox].right=textWindowRight;
+			_debugger.actorBox[positionInDebugBox].top=textWindowTop;
+			_debugger.actorBox[positionInDebugBox].bottom=textWindowBottom;
+
+			positionInDebugBox++;
+
+
 	    /*  sprintf (stringTemp, "%d", actorNumber);
 	      setTextColor (157);
 
@@ -488,13 +506,16 @@ LBA_engine::fullRedraw (int param)
 	}
       while (arg_1A < a12);
 
+	  _debugger.numOfActorOnScreen=positionInDebugBox;
+
       //unknownLoop
 
       // loop5
     }
 
-  /*for (arg_1A = 0; arg_1A < numFlags; arg_1A++)	//affichage des flags
+ /* for (arg_1A = 0; arg_1A < numFlags; arg_1A++)	//affichage des flags
     {
+	char stringTemp[256];
       startRenderer (flagData[arg_1A].x - cameraX,
 		     flagData[arg_1A].z - cameraZ,
 		     flagData[arg_1A].y - cameraY, 0, 0, 0, flagModelPtr);
@@ -509,8 +530,6 @@ LBA_engine::fullRedraw (int param)
       if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40
 	  && fullRedrawVar4 < 440)
 	printStringSimple (fullRedrawVar3, fullRedrawVar4, stringTemp);
-
-
     }*/
 
   counter2 = 0;

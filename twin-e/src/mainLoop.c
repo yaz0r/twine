@@ -290,6 +290,9 @@ LBA_engine::mainLoop (void)
 	    }
 	}
 
+	if(_debugger.processDebug())
+		mainLoopVar2=1;
+
       if (mainLoopVar10)
 	{
 	  // implement this
