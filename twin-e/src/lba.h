@@ -1,6 +1,8 @@
 #ifndef _LBA_
 #define _LBA_
 
+#include"type.h"
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
@@ -37,9 +39,6 @@
 #endif
 
 #include<assert.h>
-
-#include"type.h"
-
 
 #include "HQRlib.h"
 #include "HQMLib.h"

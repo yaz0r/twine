@@ -151,7 +151,7 @@ void init(void)
 
 #ifndef FASTDEBUG
 
- //   AdelineLogo();
+    AdelineLogo();
 
 #endif
 

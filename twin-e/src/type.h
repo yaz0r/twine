@@ -16,6 +16,23 @@ typedef unsigned long U32;
 typedef signed char S8;
 typedef signed short S16;
 typedef signed long S32;
+/*
+#define byte unsigned char
+#define uint8 unsigned char
+#define uint16 unsigned short
+#define uint32 unsigned long
+#define uint unsigned int
+#define int8 signed char
+#define int16 signed short
+#define int32 signed long
+
+typedef unsigned char U8;
+typedef unsigned short U16;
+typedef unsigned long U32;
+typedef signed char S8;
+typedef signed short S16;
+typedef signed long S32;*/
+
 
 #if defined(_MSC_VER)
   
@@ -37,14 +54,6 @@ typedef signed long S32;
   #define FORCEINLINE __forceinline
   #define NORETURN _declspec(noreturn)
   
-  typedef unsigned char byte;
-  typedef unsigned char uint8;
-  typedef unsigned short uint16;
-  typedef unsigned long uint32;
-  typedef unsigned int uint;
-  typedef signed char int8;
-  typedef signed short int16;
-  typedef signed long int32;
 #else
 
   #define scumm_stricmp strcasecmp
@@ -56,16 +65,7 @@ typedef signed long S32;
   #define NORETURN __attribute__((__noreturn__))
   #define GCC_PACK __attribute__((packed))
   #define CDECL
-  
-  typedef unsigned char byte;
-  typedef unsigned char uint8;
-  typedef unsigned short uint16;
-  typedef unsigned long uint32;
-  typedef unsigned int uint;
-  typedef signed char int8;
-  typedef signed short int16;
-  typedef signed long int32;
-  
+   
   #define START_PACK_STRUCTS pack (push,1)
   #define END_PACK_STRUCTS   pack(pop)
 #endif

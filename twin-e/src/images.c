@@ -13,7 +13,9 @@ void AdelineLogo(void)
     blackToWhite();
     osystem_Flip(frontVideoBuffer);
     fadeIn(paletteRGBA);
+    #ifdef PCLIKE
     SDL_Delay(6000);
+    #endif
 }
 
 void CopyScreen(byte * source, byte * destination)

@@ -13,13 +13,14 @@ void PlayAnimFla(char *flaName)
 	int esi;
 	char buffer[256];
 
+#ifndef PCLIKE
+	return;
+#endif
+
 #ifdef FASTDEBUG
 	return;
 #endif
 
-#ifndef PCLIKE
-	return;
-#endif
     printf("PlayAnimFla: %s\n", flaName);
 
     todo("remove");
