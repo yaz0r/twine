@@ -542,12 +542,12 @@ void fullRedraw(int param)
     {
       char stringTemp[256];
 
-      AffObjetIso(flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y - cameraY, 0, 0, 0, flagModelPtr);
+      AffObjetIso(flagData[arg_1A].x - cameraX, flagData[arg_1A].y - cameraZ, flagData[arg_1A].z - cameraY, 0, 0, 0, flagModelPtr);
 
       sprintf(stringTemp, "%d", arg_1A);
       CoulFont(255);
 
-      projectPositionOnScreen(flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y - cameraY);
+      projectPositionOnScreen(flagData[arg_1A].x - cameraX, flagData[arg_1A].y - cameraZ, flagData[arg_1A].z - cameraY);
 
       if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
         Font(projectedPositionX, projectedPositionY, stringTemp);

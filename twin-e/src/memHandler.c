@@ -61,12 +61,12 @@ byte *Malloc(int size)
     assert(true);
   }
 
-    ptr = (byte *) malloc(size);
+  ptr = (byte *) malloc(size);
 
-    if (!ptr)
+  if (!ptr)
   {
-      printf("Can't alloc %d!\n", size);
-      exit(1);
+    printf("Can't alloc %d!\n", size);
+    exit(1);
   }
 
   memoryBlockArray[i].ptr = ptr;
@@ -75,7 +75,7 @@ byte *Malloc(int size)
 
   currentAllocatedMemory += size;
 
-    return (ptr);
+  return (ptr);
 }
 
 void MemFree(void* ptr)

@@ -20,29 +20,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 class OSystem
 {
   public:*/
-    int osystem_init(int argc, char *argv[]);
+  int osystem_init(int argc, char *argv[]);
 
-    extern int osystem_mouseRight;
-    extern int osystem_mouseLeft;
+  extern int osystem_mouseRight;
+  extern int osystem_mouseLeft;
 
-    void osystem_mainLoop(void);
-    void osystem_delay(int time);
-    void osystem_crossFade(char *buffer, char *palette);
-    void osystem_fadeBlackToWhite();
+  void osystem_mainLoop(void);
+  void osystem_delay(int time);
+  void osystem_crossFade(char *buffer, char *palette);
+  void osystem_fadeBlackToWhite();
   void osystem_updateImage();
-    void osystem_initBuffer(char *buffer, int width, int height);
+  void osystem_initBuffer(char *buffer, int width, int height);
   void osystem_initVideoBuffer(char *buffer, int width, int height);
-    void osystem_putpixel(int x, int y, int pixel);
-    void osystem_setColor(byte i, byte R, byte G, byte B);
-    void osystem_setPalette(byte * palette);
+  void osystem_putpixel(int x, int y, int pixel);
+  void osystem_setColor(byte i, byte R, byte G, byte B);
+  void osystem_setPalette(byte * palette);
   void osystem_setPalette320x200(byte * palette);
-    void osystem_Flip(unsigned char *videoBuffer);
+  void osystem_Flip(unsigned char *videoBuffer);
   void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer);
-    void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom);
-    void osystem_drawText(int X, int Y, char *text);
-    void osystem_drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B);
-    void osystem_drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette);
-    void osystem_getMouseStatus(mouseStatusStruct * mouseData);
+  void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom);
+  void osystem_drawText(int X, int Y, char *text);
+  void osystem_drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B);
+  void osystem_drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette);
+  void osystem_getMouseStatus(mouseStatusStruct * mouseData);
 
   void osystem_set320x200Mode(boolean mode);
 

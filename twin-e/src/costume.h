@@ -43,7 +43,7 @@ typedef struct animTimerDataStruct animTimerDataStruct;
 
 struct actor
     {
-#ifdef LBASTUDIO
+#ifdef TXT_SCRIPTS
       char name[256];
       int modelNumber;
       int timeDelay;

@@ -20,40 +20,39 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void GiveExtraBonus(actor * lactor)
 {
-    int i;
-    char extraTable[8];
-    int numOfExtra = 0;
-    char currentBonus;
-    int angle;
+  int i;
+  char extraTable[8];
+  int numOfExtra = 0;
+  char currentBonus;
+  int angle;
 
-    for(i=0;i<5;i++)
+  for(i=0;i<5;i++)
+  {
+      if(lactor->field_10&(1<<(i+4)))
+      {
+          extraTable[numOfExtra++]= i;
+      }
+  }
+
+  if(numOfExtra)
+  {
+    currentBonus = extraTable[rand()%numOfExtra];
+
+    currentBonus += 3;
+
+    if(!magicLevel && currentBonus ==2) // if bonus is magic and magicLevel 1 not reached
+      currentBonus = 1; //bonus is life
+      
+  if( lactor->dynamicFlagsBF.bUnk0020)
     {
-        if(lactor->field_10&(1<<(i+4)))
-        {
-            extraTable[numOfExtra++]= i;
-        }
+        ExtraBonus(lactor->X, lactor->Y, lactor->Z, 0x100, 0, currentBonus, lactor->field_12);
+        HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
     }
-
-    if(numOfExtra)
+    else
     {
-        currentBonus = extraTable[rand()%numOfExtra];
-
-        currentBonus += 3;
-
-        if(!magicLevel && currentBonus ==2) // if bonus is magic and magicLevel 1 not reached
-            currentBonus = 1; //bonus is life
-        
-    if( lactor->dynamicFlagsBF.bUnk0020)
-        {
-            ExtraBonus(lactor->X, lactor->Y, lactor->Z, 0x100, 0, currentBonus, lactor->field_12);
-            HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
-        }
-        else
-        {
-            angle = GetAngle(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
-            ExtraBonus(lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z, 200, angle, currentBonus, lactor->field_12);
-            HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z);
-        }
+        angle = GetAngle(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
+        ExtraBonus(lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z, 200, angle, currentBonus, lactor->field_12);
+        HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z);
     }
-
+  }
 }

@@ -21,85 +21,84 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void InitDial(int index)
 {
 
-    int bundleEntryPoint;
-    int size;
-    int textSize;
+  int bundleEntryPoint;
+  int size;
+  int textSize;
 
-    if (index == textVar1)
-  return;
-
-    textVar1 = index;
-    textVar2[0] = textVar3;
-
-    bundleEntryPoint = (language * 14) * 2 + index * 2;
-
-    size = Load_HQR("text.hqr", (byte *) bufOrder, bundleEntryPoint);
-
-    numTextEntry = size / 2;
-
-    bundleEntryPoint++;
-
-    textSize = Load_HQR("text.hqr", (byte *) bufText, bundleEntryPoint);
-
-    if (languageCD1 != 0)
-      loadVox(index);
-
+  if (index == textVar1)
     return;
+
+  textVar1 = index;
+  textVar2[0] = textVar3;
+
+  bundleEntryPoint = (language * 14) * 2 + index * 2;
+
+  size = Load_HQR("text.hqr", (byte *) bufOrder, bundleEntryPoint);
+
+  numTextEntry = size / 2;
+
+  bundleEntryPoint++;
+
+  textSize = Load_HQR("text.hqr", (byte *) bufText, bundleEntryPoint);
+
+  if (languageCD1 != 0)
+    loadVox(index);
+
+  return;
 }
 
 void printTextFullScreen(int textIndex)
 {
-    int isVoxSet;
-    int temp2;
-    int temp3 = 0;
+  int isVoxSet;
+  int temp2;
+  int temp3 = 0;
 
-    saveTextWindow();
-    UnSetClip();
-    CopyScreen(frontVideoBuffer, workVideoBuffer);
+  saveTextWindow();
+  UnSetClip();
+  CopyScreen(frontVideoBuffer, workVideoBuffer);
 
-    if (languageCD1 != 0) // si on doit player le vox, on met le pointeur à la bonne position
+  if (languageCD1 != 0) // si on doit player le vox, on met le pointeur à la bonne position
   {
-      isVoxSet = setVoxFileAtDigit(textIndex);
+    isVoxSet = setVoxFileAtDigit(textIndex);
   }
 
-    if (!flagDisplayText && isVoxSet) // si on doit player le Vox sans afficher le text
+  if (!flagDisplayText && isVoxSet) // si on doit player le Vox sans afficher le text
   {
-      do
+    do
     {
-        temp2 = printText4(voxFileHandle);
-    }
-      while (temp2 && skipIntro == 1);
+      temp2 = printText4(voxFileHandle);
+    }while (temp2 && skipIntro == 1);
 
-      printTextVar5 = 0;
+    printTextVar5 = 0;
 
-      if (!languageCD1 || !voxFileHandle)
+    if (!languageCD1 || !voxFileHandle)
     {
-        loadSavedTextWindow();
-        return;
-    }
-     // todo: recheck, je pense avoir oublie des truc la..
-
-      if (!printText6(4660))
-    {
-        loadSavedTextWindow();
-        return;
-    }
-
-      printText7(4660);
-
       loadSavedTextWindow();
       return;
+    }
+    // todo: recheck, je pense avoir oublie des truc la..
+
+    if (!printText6(4660))
+    {
+      loadSavedTextWindow();
+      return;
+    }
+
+    printText7(4660);
+
+    loadSavedTextWindow();
+    return;
   }
 
-    initText(textIndex);  // prépare le text
-    InitDialWindow();
+  initText(textIndex);  // prépare le text
+  InitDialWindow();
 
-    do        // debut de la boucle d'affichage du text+sons
+  do        // debut de la boucle d'affichage du text+sons
   {
-        waitRetrace();
-      readKeyboard();
-      isVoxSet = temp2 = printText10(); // on doit player le son ?
-      printText4(voxFileHandle);
+    waitRetrace();
+    readKeyboard();
+    isVoxSet = temp2 = printText10(); // on doit player le son ?
+    printText4(voxFileHandle);
 
     /*  if (isVoxSet == 2)
     {
@@ -122,49 +121,47 @@ void printTextFullScreen(int textIndex)
         while (1);
     }*/
 
-      if (skipIntro == 1)
+    if (skipIntro == 1)
     {
-        temp3 = 1;
-        break;
+      temp3 = 1;
+      break;
     }
 
-      if (!temp2)
+    if (!temp2)
     {
-        if (!printText11())
+      if (!printText11())
       {
-          break;
+        break;
       }
     }
     osystem_updateImage();
-  }
-    while (!temp3);
+  }while (!temp3);
 
-    printTextVar5 = 0;
-    if (languageCD1 != 0)
-  if (voxFileHandle != 0)
+  printTextVar5 = 0;
+
+  if (languageCD1 != 0)
+    if (voxFileHandle != 0)
       if (printText6(4660) != 0)
-    printText7(4660);
+        printText7(4660);
 
-    printTextVar13 = 0;
+  printTextVar13 = 0;
 
-    if (temp2 != 0)
+  if (temp2 != 0)
   {
-      loadSavedTextWindow();
-      return;
+    loadSavedTextWindow();
+    return;
   }
 
-    if (temp3 != 0)
+  if (temp3 != 0)
   {
-      loadSavedTextWindow();
-      return;
+    loadSavedTextWindow();
+    return;
   }
 
-    do        // ca doit etre la boucle d'attente de la fin de l'affichage du
-       // text
+  do        // ca doit etre la boucle d'attente de la fin de l'affichage du text
   {
-      readKeyboard();
-  }
-    while (skipIntro || key1 || printTextVar12);
+    readKeyboard();
+  }while (skipIntro || key1 || printTextVar12);
 
     /*do
   {
@@ -183,130 +180,125 @@ void printTextFullScreen(int textIndex)
   }
     while (!printTextVar12);*/
 
-    loadSavedTextWindow();
-    return;
-
+  loadSavedTextWindow();
+  return;
 }
 
 void saveTextWindow(void)
 {
-    textWindowLeftSave = textWindowLeft;
-    textWindowTopSave = textWindowTop;
-    textWindowRightSave = textWindowRight;
-    textWindowBottomSave = textWindowBottom;
+  textWindowLeftSave = textWindowLeft;
+  textWindowTopSave = textWindowTop;
+  textWindowRightSave = textWindowRight;
+  textWindowBottomSave = textWindowBottom;
 }
 
 void UnSetClip(void)
 {
-    textWindowTop = textWindowLeft = 0;
-    textWindowRight = largeurEcran - 1;
-    textWindowBottom = hauteurEcran - 1;
+  textWindowTop = textWindowLeft = 0;
+  textWindowRight = largeurEcran - 1;
+  textWindowBottom = hauteurEcran - 1;
 }
 
 int printText4(FILE * fileHandle)
 {
-    int result;
+  int result;
 
-    if (!languageCD1)
-  return (0);
+  if (!languageCD1)
+    return (0);
 
-    if (!fileHandle)
-  return (0);
+  if (!fileHandle)
+    return (0);
 
-    result = printText6(4660);
+  result = printText6(4660);
 
-    if (result)
-  return (1);
-
-    if (printTextVar5 == 0)
-  return (result);
-
-    readBufferSpeak(fileHandle);
+  if (result)
     return (1);
+
+  if (printTextVar5 == 0)
+    return (result);
+
+  readBufferSpeak(fileHandle);
+  return (1);
 }
 
 void readBufferSpeak(FILE * fileHandle)
 {
-    int a;
-    int b;
-    int c;
+  int a;
+  int b;
+  int c;
 
-    Read(fileHandle, (char *) &b, 4);
-    Read(fileHandle, (char *) &c, 4);
-    Read(fileHandle, (char *) &a, 2);
+  Read(fileHandle, (char *) &b, 4);
+  Read(fileHandle, (char *) &c, 4);
+  Read(fileHandle, (char *) &a, 2);
 
-   // todo: implementer la suite
+  // todo: implementer la suite
 }
 
 void loadSavedTextWindow(void)
 {
-    textWindowLeft = textWindowLeftSave;
-    textWindowTop = textWindowTopSave;
-    textWindowRight = textWindowRightSave;
-    textWindowBottom = textWindowBottomSave;
+  textWindowLeft = textWindowLeftSave;
+  textWindowTop = textWindowTopSave;
+  textWindowRight = textWindowRightSave;
+  textWindowBottom = textWindowBottomSave;
 }
 
 int printText6(int var)
 {
-   // todo: implement this
-   // sound function
-    return (0);
+  // todo: implement this
+  // sound function
+  return (0);
 }
 
 int printText7(int var)
 {
-   // todo: implement this
-   // sound function
-    return (0);
+  // todo: implement this
+  // sound function
+  return (0);
 
 }
 
 int initText(int var)
 {
-    printTextVar13 = 0;
+  printTextVar13 = 0;
 
-    if(!findString(var))
-      return (0);
-
-    printText8Ptr1 = buf1;
-    printText8Ptr2 = buf2;
-
-    printTextVar13 = 1;
-
-    printText8Var1 = 0;
-    buf1[0] = 0;
-    buf2[0] = 0;
-    printText8Var2 = var;
-    printText8Var3 = 0;
-    TEXT_CurrentLetterX = dialogueBoxLeft + 8;
-    printText8Var5 = 0;
-    printText8Var6 = 0;
-    TEXT_CurrentLetterY = dialogueBoxTop + 8;
-    printText8Var8 = currentTextPtr;
-
-    SetFont(lbaFont, 2, 7);
-
+  if(!findString(var))
     return (0);
+
+  printText8Ptr1 = buf1;
+  printText8Ptr2 = buf2;
+
+  printTextVar13 = 1;
+
+  printText8Var1 = 0;
+  buf1[0] = 0;
+  buf2[0] = 0;
+  printText8Var2 = var;
+  printText8Var3 = 0;
+  TEXT_CurrentLetterX = dialogueBoxLeft + 8;
+  printText8Var5 = 0;
+  printText8Var6 = 0;
+  TEXT_CurrentLetterY = dialogueBoxTop + 8;
+  printText8Var8 = currentTextPtr;
+
+  SetFont(lbaFont, 2, 7);
+
+  return (0);
 }
 
 void InitDialWindow(void)
 {
-    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
-     (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
-    if (newGameVar4 != 0)
+  blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,(char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
+  if (newGameVar4 != 0)
   {
-      DrawCadre(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
-      drawBoxInsideTrans(dialogueBoxLeft + 1, dialogueBoxTop + 1, dialogueBoxRight - 1,
-             dialogueBoxBottom - 1, 3);
+    DrawCadre(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+    drawBoxInsideTrans(dialogueBoxLeft + 1, dialogueBoxTop + 1, dialogueBoxRight - 1, dialogueBoxBottom - 1, 3);
   }
 
-    osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
-         dialogueBoxBottom);
+  osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 
-    printText8Var3 = 0;
+  printText8Var3 = 0;
 
-    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
-     (char *) frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) workVideoBuffer);
+  blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) workVideoBuffer);
 
   osystem_updateImage();
 }
@@ -314,258 +306,254 @@ void InitDialWindow(void)
 int printText10(void)
 {
 
-    int a;
-    int b;
+  int a;
+  int b;
 
-    if (printTextVar13 == 0)
+  if (printTextVar13 == 0)
+    return (0);
+
+  if (*printText8Ptr2 == 0)
+  {
+    if (printText8Var5 != 0)
+    {
+      if (newGameVar5 != 0)
+        printText10Sub();
+      printTextVar13 = 0;
       return (0);
-
-    if (*printText8Ptr2 == 0)
-  {
-      if (printText8Var5 != 0)
-    {
-        if (newGameVar5 != 0)
-      printText10Sub();
-        printTextVar13 = 0;
-        return (0);
     }
-
-      if (printText8Var6 != 0)
+    if (printText8Var6 != 0)
     {
-        blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
-        osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
-        printText8Var3 = 0;
-        printText8Var6 = 0;
-        TEXT_CurrentLetterX = dialogueBoxLeft + 8;
-        TEXT_CurrentLetterY = dialogueBoxTop + 8;
+      blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
+      osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+      printText8Var3 = 0;
+      printText8Var6 = 0;
+      TEXT_CurrentLetterX = dialogueBoxLeft + 8;
+      TEXT_CurrentLetterY = dialogueBoxTop + 8;
     }
-
-      if (*printText8Var8 == 0)
-    {
-        initProgressiveTextBuffer();
-        printText8Var5 = 1;
-        return (1);
-    }
-      processTextLine();
-  }
-
-    if (*printText8Ptr2 == 0)
-  return (1);
-
-    printText8Sub4(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *printText8Ptr2);
-    printText10Sub2();    // fonction responsable de l'affichage du text
-
-    TEXT_GetLetterSize(*printText8Ptr2, &a, &b, lbaFont);
-
-    if (*printText8Ptr2 != 0x20)
-  {
-      TEXT_CurrentLetterX += a + 2;
-  }
-    else
-  {
-      if (printText10Var1 != 0)
-    {
-        TEXT_CurrentLetterX++;
-        printText10Var1--;
-    }
-      TEXT_CurrentLetterX += spaceLength;
-  }
-
-    printText8Ptr2++;   // on passe au caractere suivant ?
-
-    if (*printText8Ptr2 != 0)
-  return (1);
-
-    TEXT_CurrentLetterY += 38;
-    TEXT_CurrentLetterX = dialogueBoxLeft + 8;
-    if (printText8Var6 == 1)
-  if (printText8Var5 == 0)
-      {
-    printText10Sub();
-    return (2);
-      }
-
-    printText8Var1++;
-    if (printText8Var1 < dialogueBoxParam1)
-  return (1);
-
-    initProgressiveTextBuffer();
-    printText8Var6 = 1;
 
     if (*printText8Var8 == 0)
-  printText8Var5 = 1;
+    {
+      initProgressiveTextBuffer();
+      printText8Var5 = 1;
+      return (1);
+    }
+    processTextLine();
+  }
 
+  if (*printText8Ptr2 == 0)
     return (1);
 
+  printText8Sub4(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *printText8Ptr2);
+  printText10Sub2();    // fonction responsable de l'affichage du text
+
+  TEXT_GetLetterSize(*printText8Ptr2, &a, &b, lbaFont);
+
+  if (*printText8Ptr2 != 0x20)
+  {
+    TEXT_CurrentLetterX += a + 2;
+  }
+  else
+  {
+    if (printText10Var1 != 0)
+    {
+      TEXT_CurrentLetterX++;
+      printText10Var1--;
+    }
+    TEXT_CurrentLetterX += spaceLength;
+  }
+
+  printText8Ptr2++;   // on passe au caractere suivant ?
+
+  if (*printText8Ptr2 != 0)
+    return (1);
+
+  TEXT_CurrentLetterY += 38;
+  TEXT_CurrentLetterX = dialogueBoxLeft + 8;
+  if (printText8Var6 == 1)
+    if (printText8Var5 == 0)
+    {
+      printText10Sub();
+      return (2);
+    }
+
+  printText8Var1++;
+  if (printText8Var1 < dialogueBoxParam1)
+    return (1);
+
+  initProgressiveTextBuffer();
+  printText8Var6 = 1;
+
+  if (*printText8Var8 == 0)
+    printText8Var5 = 1;
+
+  return (1);
 }
 
 void initProgressiveTextBuffer(void)
 {
-    int i = 0;
+  int i = 0;
 
-    buf2[0] = 0;
+  buf2[0] = 0;
 
-    while (i < progressiveTextBufferSize)
+  while (i < progressiveTextBufferSize)
   {
-      strcat(buf2, " ");
-      i++;
+    strcat(buf2, " ");
+    i++;
   };
 
-    printText8Ptr2 = buf2;
-    addLineBreakX = 16;
-    printText8Var1 = 0;
-    printText8PrepareBufferVar3 = progressiveTextBufferSize;
+  printText8Ptr2 = buf2;
+  addLineBreakX = 16;
+  printText8Var1 = 0;
+  printText8PrepareBufferVar3 = progressiveTextBufferSize;
 }
 
 void printText10Sub2(void)
 {
-    int currentLetter;
-    int currentIndex;
-    int counter;
-    int counter2;
-    short int *ptr;
+  int currentLetter;
+  int currentIndex;
+  int counter;
+  int counter2;
+  short int *ptr;
 
-    currentLetter = printText8Var3;
-    currentLetter--;
+  currentLetter = printText8Var3;
+  currentLetter--;
 
-    currentIndex = currentLetter * 3;
+  currentIndex = currentLetter * 3;
 
-    ptr = pt8s4var1 + currentIndex;
+  ptr = pt8s4var1 + currentIndex;
 
-   // todo: gerer le delay ici...
+  // todo: gerer le delay ici...
 
-    counter = printText8Var3;
-    counter2 = progressiveTextStartColor;
+  counter = printText8Var3;
+  counter2 = progressiveTextStartColor;
 
-    while (--counter >= 0)
+  while (--counter >= 0)
   {
-      CoulFont(counter2);
-      drawDoubleLetter(*(ptr + 1), *(ptr + 2), *ptr, counter2);
-      counter2 -= progressiveTextStepSize;
-      if (counter2 > progressiveTextStopColor)
-        counter2 = progressiveTextStopColor;
-      ptr -= 3;
+    CoulFont(counter2);
+    drawDoubleLetter(*(ptr + 1), *(ptr + 2), *ptr, counter2);
+    counter2 -= progressiveTextStepSize;
+    if (counter2 > progressiveTextStopColor)
+      counter2 = progressiveTextStopColor;
+    ptr -= 3;
   };
 
 }
 
 void drawDoubleLetter(int a, int b, int c, int d)
 {
-    int left, top, right, bottom;
+  int left, top, right, bottom;
 
-    if (c == 0x20)
-  return;
+  if (c == 0x20)
+    return;
 
-    CoulFont(0);    // on met la couleur grise
+  CoulFont(0);    // on met la couleur grise
 
-    drawLetter2(a + 2, b + 4, c); // le caractere derriere en gris
+  drawLetter2(a + 2, b + 4, c); // le caractere derriere en gris
 
-    CoulFont(d);    // on met la bonne couleur
+  CoulFont(d);    // on met la bonne couleur
 
-    drawLetter2(a, b, c);
+  drawLetter2(a, b, c);
 
-    left = a;
-    top = b;
-    right = a + 32;
-    bottom = b + 38;
+  left = a;
+  top = b;
+  right = a + 32;
+  bottom = b + 38;
 
-   // manque les check pour la taille de la boite de dialogue...
+  // manque les check pour la taille de la boite de dialogue...
 
-    osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+  osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
 }
 
 void drawLetter2(int x, int y, int c)
 {
-    char temp[2];   // todo: faire une vrais implementation de la chose...
+  char temp[2];   // todo: faire une vrais implementation de la chose...
 
-    temp[1] = 0;
-    temp[0] = (char) c;
+  temp[1] = 0;
+  temp[0] = (char) c;
 
-    Font(x, y, temp);
+  Font(x, y, temp);
 }
 
 void TEXT_GetLetterSize(byte character, int *pLetterWidth, int *pLetterHeight, byte * pFont)
 {
-    byte *temp;
+  byte *temp;
 
-    temp = pFont + *((short int *) (pFont + character * 4));
-    *pLetterWidth = *(temp);
-    *pLetterHeight = *(temp + 1);
-
+  temp = pFont + *((short int *) (pFont + character * 4));
+  *pLetterWidth = *(temp);
+  *pLetterHeight = *(temp + 1);
 }
 
 void printText8Sub4(short int a, short int b, short int c)
 {
-    int counter;
-    int temp;
-    int counter2 = 0;
-    int var1;
-    int var2;
+  int counter;
+  int temp;
+  int counter2 = 0;
+  int var1;
+  int var2;
 
-    counter = printText8Var3;
+  counter = printText8Var3;
 
-    if (counter < 32)
+  if (counter < 32)
   {
-      temp = counter * 3;
-      pt8s4var1[temp] = c;
-      pt8s4var2[temp] = a;
-      pt8s4var3[temp] = b;
+    temp = counter * 3;
+    pt8s4var1[temp] = c;
+    pt8s4var2[temp] = a;
+    pt8s4var3[temp] = b;
 
-      counter++;
+    counter++;
   }
-    else
+  else
   {
-      while (counter2 < 31)
+    while (counter2 < 31)
     {
-        var1 = (counter2 + 1) * 3;
-        var2 = counter2 * 3;
-        pt8s4var1[var2] = pt8s4var1[var1];
-        pt8s4var2[var2] = pt8s4var2[var1];
-        pt8s4var3[var2] = pt8s4var3[var1];
-        counter2++;
+      var1 = (counter2 + 1) * 3;
+      var2 = counter2 * 3;
+      pt8s4var1[var2] = pt8s4var1[var1];
+      pt8s4var2[var2] = pt8s4var2[var1];
+      pt8s4var3[var2] = pt8s4var3[var1];
+      counter2++;
     };
-      pt8s4var4[0] = c;
-      pt8s4var5[0] = a;
-      pt8s4var6[0] = b;
+    pt8s4var4[0] = c;
+    pt8s4var5[0] = a;
+    pt8s4var6[0] = b;
   }
 
-    printText8Var3 = counter;
+  printText8Var3 = counter;
 }
 
 void printText10Sub(void)
 {
-    vertexCoordinates[0] = progressiveTextStopColor;  // les 3 vertex ?
-    vertexCoordinates[1] = dialogueBoxRight - 3;
-    vertexCoordinates[2] = dialogueBoxBottom - 24;
-    vertexCoordinates[3] = progressiveTextStopColor;
-    vertexCoordinates[4] = dialogueBoxRight - 24;
-    vertexCoordinates[5] = dialogueBoxBottom - 3;
-    vertexCoordinates[6] = progressiveTextStartColor;
-    vertexCoordinates[7] = vertexCoordinates[1];
-    vertexCoordinates[8] = vertexCoordinates[5];
+  vertexCoordinates[0] = progressiveTextStopColor;  // les 3 vertex ?
+  vertexCoordinates[1] = dialogueBoxRight - 3;
+  vertexCoordinates[2] = dialogueBoxBottom - 24;
+  vertexCoordinates[3] = progressiveTextStopColor;
+  vertexCoordinates[4] = dialogueBoxRight - 24;
+  vertexCoordinates[5] = dialogueBoxBottom - 3;
+  vertexCoordinates[6] = progressiveTextStartColor;
+  vertexCoordinates[7] = vertexCoordinates[1];
+  vertexCoordinates[8] = vertexCoordinates[5];
 
-    FillVertic_AType = 0;
-    numOfVertex = 3;
+  FillVertic_AType = 0;
+  numOfVertex = 3;
 
-    if (ComputePoly())
+  if (ComputePoly())
   {
-      FillVertic(FillVertic_AType, progressiveTextStopColor);
+    FillVertic(FillVertic_AType, progressiveTextStopColor);
   }
 
-    osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxRight - 24, dialogueBoxBottom - 24,
-         dialogueBoxRight - 3, dialogueBoxBottom - 3);
+  osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
 }
 
 void FillVertic(int arg_0, int arg_4)
 {
-    FillVertic_A(arg_0, arg_4);
+  FillVertic_A(arg_0, arg_4);
 }
 
 int ComputePoly(void)
 {
-    pRenderV1 = vertexCoordinates;
-    return (ComputePoly_A());
+  pRenderV1 = vertexCoordinates;
+  return (ComputePoly_A());
 }
 
 /*int ComputePoly_A(void)
@@ -971,164 +959,161 @@ int ComputePoly(void)
 
 int findString(int index)
 {
-    int temp = 0;
-    int temp2 = 0;
-    int nEntry;
+  int temp = 0;
+  int temp2 = 0;
+  int nEntry;
 
-    int ptrCurrentEntry;
-    int ptrNextEntry;
+  int ptrCurrentEntry;
+  int ptrNextEntry;
 
-    short int *localTextBuf = (short int *) bufText;
-    short int *localOrderBuf = (short int *) bufOrder;
+  short int *localTextBuf = (short int *) bufText;
+  short int *localOrderBuf = (short int *) bufOrder;
 
-    nEntry = numTextEntry;  // nombre d'entrées dans la bank
+  nEntry = numTextEntry;  // nombre d'entrées dans la bank
 
-    goto e2;
+  goto e2;
 
-  e1:
+e1:
 
-    temp2 = 0;
-    temp2 = *(localOrderBuf);
-    localOrderBuf++;
-    if (temp2 == index)
-  goto e3;
-    temp++;
+  temp2 = 0;
+  temp2 = *(localOrderBuf);
+  localOrderBuf++;
+  if (temp2 == index)
+    goto e3;
+  temp++;
 
-  e2:
+e2:
 
-    temp2 = 0;
-    temp2 = nEntry;
-    if (temp < temp2)
-  goto e1;
-    temp = -1;
+  temp2 = 0;
+  temp2 = nEntry;
+  if (temp < temp2)
+    goto e1;
+  temp = -1;
 
-  e3:
+e3:
 
-    if (temp != -1)
-  goto ex;
-    temp = 0;
-    numTextEntry = nEntry;
+  if (temp != -1)
+    goto ex;
+  temp = 0;
+  numTextEntry = nEntry;
 
-    return (0);
+  return (0);
 
-  ex:
+ex:
 
-    ptrCurrentEntry = localTextBuf[temp]; // entrée courante
-    ptrNextEntry = localTextBuf[temp + 1];  // entrée d'apres
+  ptrCurrentEntry = localTextBuf[temp]; // entrée courante
+  ptrNextEntry = localTextBuf[temp + 1];  // entrée d'apres
 
-    currentTextPtr = (bufText + ptrCurrentEntry);
+  currentTextPtr = (bufText + ptrCurrentEntry);
 
-    currentTextLength = ptrNextEntry - ptrCurrentEntry; // largeur de l'entre courante
+  currentTextLength = ptrNextEntry - ptrCurrentEntry; // largeur de l'entre courante
 
-    numTextEntry = nEntry;
+  numTextEntry = nEntry;
 
-    return (1);
-
+  return (1);
 }
 
 int printText11(void)
 {
-    return (printText4(voxFileHandle));
+  return (printText4(voxFileHandle));
 }
 
 void processTextLine(void)
 {
-    short int var4;
-    char *buffer;
-    char *temp;
+  short int var4;
+  char *buffer;
+  char *temp;
 
-    buffer = printText8Var8;
-    spaceLength = 7;
-    var4 = 1;
+  buffer = printText8Var8;
+  spaceLength = 7;
+  var4 = 1;
 
-    addLineBreakX = 0;
-    printText8PrepareBufferVar2 = 0;
-    buf2[0] = 0;
+  addLineBreakX = 0;
+  printText8PrepareBufferVar2 = 0;
+  buf2[0] = 0;
 
-    pt8start:
-    if (*buffer == 0x20)
+  pt8start:
+  if (*buffer == 0x20)
   {
-      buffer++;
-      goto pt8start;
+    buffer++;
+    goto pt8start;
   }
 
-    if (*buffer != 0)
+  if (*buffer != 0)
   {
-      printText8Var8 = buffer;
-      getWordSize(buffer, buf1);
-      if (addLineBreakX + spaceLength + wordSizePixel < dialogueBoxParam2)
+    printText8Var8 = buffer;
+    getWordSize(buffer, buf1);
+    if (addLineBreakX + spaceLength + wordSizePixel < dialogueBoxParam2)
     {
-        temp = buffer + 1;
-        if (*buffer == 1)
+      temp = buffer + 1;
+      if (*buffer == 1)
       {
+        var4 = 0;
+        buffer = temp;
+      }
+      else
+      {
+        if (*buf1 == 0x40)
+        {
           var4 = 0;
           buffer = temp;
-      }
-        else
-      {
-          if (*buf1 == 0x40)
-        {
-            var4 = 0;
-            buffer = temp;
-            if (addLineBreakX == 0)
+          if (addLineBreakX == 0)
           {
-              addLineBreakX = 7;
-              *buf2 = spaceChar;
+            addLineBreakX = 7;
+            *buf2 = spaceChar;
           }
-            if (buf1[1] == 0x50)
+          if (buf1[1] == 0x50)
           {
-              printText8Var1 = dialogueBoxParam1;
-              buffer++;
+            printText8Var1 = dialogueBoxParam1;
+            buffer++;
           }
         }
-          else
+        else
         {
-            buffer += wordSizeChar;
-            printText8Var8 = buffer;
-            strcat(buf2, buf1);
-            strcat(buf2, " ");  // not 100% accurate
-            printText8PrepareBufferVar2++;
+          buffer += wordSizeChar;
+          printText8Var8 = buffer;
+          strcat(buf2, buf1);
+          strcat(buf2, " ");  // not 100% accurate
+          printText8PrepareBufferVar2++;
 
-            addLineBreakX += wordSizePixel + spaceLength;
-            if (*printText8Var8 != 0)
+          addLineBreakX += wordSizePixel + spaceLength;
+          if (*printText8Var8 != 0)
           {
-              printText8Var8++;
-              goto pt8start;
+            printText8Var8++;
+            goto pt8start;
           }
         }
       }
     }
   }
 
-    if (printText8PrepareBufferVar2 != 0)
-  printText8PrepareBufferVar2--;
+  if (printText8PrepareBufferVar2 != 0)
+    printText8PrepareBufferVar2--;
 
-    if (*printText8Var8 != 0 && var4 == 1)
+  if (*printText8Var8 != 0 && var4 == 1)
   {
-
-      spaceLength += (dialogueBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
-      printText10Var1 = dialogueBoxParam2 - addLineBreakX - dialogueBoxParam2 - addLineBreakX;  // stupid... recheck
+    spaceLength += (dialogueBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
+    printText10Var1 = dialogueBoxParam2 - addLineBreakX - dialogueBoxParam2 - addLineBreakX;  // stupid... recheck
   }
 
-    printText8Var8 = buffer;
+  printText8Var8 = buffer;
 
-    printText8Ptr2 = buf2;
+  printText8Ptr2 = buf2;
 
 }
 
 void getWordSize(char *arg1, char *arg2)
 {
-    int temp = 0;
-    char *arg2Save = arg2;
+  int temp = 0;
+  char *arg2Save = arg2;
 
-    while (*arg1 != 0 && *arg1 != 1 && *arg1 != 0x20)
+  while (*arg1 != 0 && *arg1 != 1 && *arg1 != 0x20)
   {
-      temp++;
-      *arg2++ = *arg1++;
+    temp++;
+    *arg2++ = *arg1++;
   };
 
-    wordSizeChar = temp;
-    *arg2 = 0;
-    wordSizePixel = SizeFont(arg2Save);
-
+  wordSizeChar = temp;
+  *arg2 = 0;
+  wordSizePixel = SizeFont(arg2Save);
 }

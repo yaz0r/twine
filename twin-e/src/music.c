@@ -25,22 +25,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void PlayMusic(int musicNum)
 {
-    if (musicNum == -1)
+  if (musicNum == -1)
   {     /* stop music */
-      fullStopMusic();
-      currentlyPlayingCDTrack = -1;
-     // playMusic2();
-      playMusciVar1 = -1;
-      return;
+    fullStopMusic();
+    currentlyPlayingCDTrack = -1;
+   // playMusic2();
+    playMusciVar1 = -1;
+    return;
   }
 
-    if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
+  if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
     playCDtrack(musicNum);
-    else
+  else
     playMidi(musicNum);
 
-    return;
-
+  return;
 }
 
 void playCDtrack(int trackNumber)
@@ -83,13 +82,13 @@ void fullStopMusic(void)
 
 void stopMusic(void)
 {
-    fullStopMusic();
-    currentlyPlayingCDTrack = -1;
+  fullStopMusic();
+  currentlyPlayingCDTrack = -1;
 }
 
 int IsMidiPlaying(void)
 {
-    return (0);
+  return (0);
 }
 
 void FadeMusicMidi(short int arg_0)
@@ -98,8 +97,8 @@ void FadeMusicMidi(short int arg_0)
 
 int getCurrentlyPlayingMusic(void)
 {
-    if (musicPosition > musicLength)
-  currentlyPlayingCDTrack = -1;
+  if (musicPosition > musicLength)
+    currentlyPlayingCDTrack = -1;
 
-    return (currentlyPlayingCDTrack);
+  return (currentlyPlayingCDTrack);
 }

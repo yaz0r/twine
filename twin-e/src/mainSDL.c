@@ -285,11 +285,11 @@ void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer)
 
 //  SDL_FillRect(sdl_screen,NULL,0);
 
-    SDL_BlitSurface(sdl_bufferStretch, NULL, sdl_screen, NULL);
+  SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
 
-    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+  SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 
-  SDL_FreeSurface(sdl_bufferStretch);
+  //SDL_FreeSurface(sdl_bufferStretch);
 }
 
 void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom)

@@ -42,22 +42,22 @@ int lbaMain(int argc, char *argv[]) // hello world !
   debugger_init();
 #endif
 
-    //  engine->osystem = osystem;
-    //  engine->_debugger.osystem = osystem;
-    //  engine->_debugger.engine = engine;
+//  engine->osystem = osystem;
+//  engine->_debugger.osystem = osystem;
+//  engine->_debugger.engine = engine;
 //  debugger_osystem = osystem;
-      initVars(); // init the vars (move to the object constructor ?)
+  initVars(); // init the vars (move to the object constructor ?)
 
 #ifdef PCLIKE
-      startThreadTimer(); // the little trouble maker ! This one is responsible for the game timming
+  startThreadTimer(); // the little trouble maker ! This one is responsible for the game timming
 #endif
 
-      init(); // startup the game engine !
+  init(); // startup the game engine !
 //  }
 
 //    delete(osystem);
 
-    return(0); // that's all folks !
+  return(0); // that's all folks !
 }
 
 // main for the SDL part
@@ -76,63 +76,63 @@ void init(void)
 
   soundInit();
 
-   // GetDiskEnv
-    InitProgram();
-   // ReadVolumeSettings
-   // setup_lst=Def_ReadValue(setup.lst,Version_US);
-   // InitLanguage
+ // GetDiskEnv
+  InitProgram();
+ // ReadVolumeSettings
+ // setup_lst=Def_ReadValue(setup.lst,Version_US);
+ // InitLanguage
 
-   /*
-    * if(useSound) { if(useSB) HQR_Midi=HQR_Init_Ressource("midi_sb.hqr",32000,2); else
-    * HQR_Midi=HQR_Init_Ressource("midi_mi.hqr",32000,2);
-    * 
-    * if(!HQR_Midi) useSound=0; }
-    */
+ /*
+  * if(useSound) { if(useSB) HQR_Midi=HQR_Init_Ressource("midi_sb.hqr",32000,2); else
+  * HQR_Midi=HQR_Init_Ressource("midi_mi.hqr",32000,2);
+  * 
+  * if(!HQR_Midi) useSound=0; }
+  */
 
-    workVideoBuffer = (byte *) Malloc(307700 * sizeof(byte));
+  workVideoBuffer = (byte *) Malloc(307700 * sizeof(byte));
 
    // check screenPtr
 
-    osystem_Flip(frontVideoBuffer);
+  osystem_Flip(frontVideoBuffer);
 
 #ifndef FASTDEBUG
 
 #ifndef LBASTUDIO
-    AdelineLogo();
+  AdelineLogo();
 #endif
 
 #endif
 
-    InitCDR("CD_LBA");
+  InitCDR("CD_LBA");
 
-   // todo: mettre les detection de problemes d'allocations...
+ // todo: mettre les detection de problemes d'allocations...
 
-    bufSpeak = (byte*)Malloc( BUF_SPEAK_SIZE ); // was allocated in dos memory
+  bufSpeak = (byte*)Malloc( BUF_SPEAK_SIZE ); // was allocated in dos memory
 
-    bufMemoSeek = (byte*)Malloc( BUF_MEMOSEEK_SIZE );
+  bufMemoSeek = (byte*)Malloc( BUF_MEMOSEEK_SIZE );
 
-    bufText = (char *) Malloc( BUF_TEXT_SIZE );
+  bufText = (char *) Malloc( BUF_TEXT_SIZE );
 
-    bufOrder = (char *) Malloc( BUF_ORDER_SIZE );
+  bufOrder = (char *) Malloc( BUF_ORDER_SIZE );
 
-    bufAni1 = bufAni2 = (byte*)Malloc( BUF_ANIM_SIZE );
+  bufAni1 = bufAni2 = (byte*)Malloc( BUF_ANIM_SIZE );
 
-    InitBufferCube();
+  InitBufferCube();
 
 //#ifndef PRELOAD_ALL
   //  HQM_Init_Memory( BUF_HQM_SIZE );
 //#endif
 
-    menuPal = LoadMalloc_HQR("ress.hqr", 0);
-    convertPalToRGBA(menuPal, menuPalRGBA);
+  menuPal = LoadMalloc_HQR("ress.hqr", 0);
+  convertPalToRGBA(menuPal, menuPalRGBA);
 
-    shadowSprite = LoadMalloc_HQR("ress.hqr", 4);
-    spriteActorData = LoadMalloc_HQR("ress.hqr", 3);
+  shadowSprite = LoadMalloc_HQR("ress.hqr", 4);
+  spriteActorData = LoadMalloc_HQR("ress.hqr", 3);
 
-    lbaFont = LoadMalloc_HQR("ress.hqr", 1);
-    SetFont(lbaFont, 2, 8);
-    CoulFont(14);
-    CoulDial(136, 143, 2);
+  lbaFont = LoadMalloc_HQR("ress.hqr", 1);
+  SetFont(lbaFont, 2, 8);
+  CoulFont(14);
+  CoulDial(136, 143, 2);
 
 #ifdef PRELOAD_ALL
   HQR_Fic =     HQR_Init_RessourcePreload("file3d.hqr");
@@ -165,13 +165,13 @@ void init(void)
   samplesLoaded = 1;
 
 #ifdef LBASTUDIO
-    reinitAll(1);
+  reinitAll(1);
 #else
-    FadeToBlack((char *) paletteRGBA);
+  FadeToBlack((char *) paletteRGBA);
 
-    if (setup_lst == 0)   // switch pour les 2 version de l'ecran titre de LBA
+  if (setup_lst == 0)   // switch pour les 2 version de l'ecran titre de LBA
     RessPict(49);
-    else
+  else
     RessPict(12);
 
    // now unused since we cross fade the video !
@@ -179,65 +179,82 @@ void init(void)
 
    // FadeToBlack((char*)paletteRGBA);
 
-    loadImageCrossFade(52); // Electronic Arts Logo
+  loadImageCrossFade(52); // Electronic Arts Logo
 
-    TimerPause();
+  TimerPause();
 
-    FadeToBlack((char *) paletteRGBA);
+  FadeToBlack((char *) paletteRGBA);
 
-    PlayAnimFla("DRAGON3");
+  PlayAnimFla("DRAGON3");
 
-    Load_HQR("ress.hqr", workVideoBuffer, 14);
+  Load_HQR("ress.hqr", workVideoBuffer, 14);
 
-    CopyScreen(workVideoBuffer, frontVideoBuffer);
+  CopyScreen(workVideoBuffer, frontVideoBuffer);
 
-    osystem_Flip(frontVideoBuffer);
+  osystem_Flip(frontVideoBuffer);
 
-    FadeToPal((char *) menuPalRGBA);
+  FadeToPal((char *) menuPalRGBA);
 
-    MainGameMenu();
+  MainGameMenu();
 #endif
 }
 
 void newGame(void)
 {
-    int flagDisplayTextSave;
+  int flagDisplayTextSave;
 
-    stopMusic();
-    if (needChangeRoom)
-      return;
-    if (chapter)
-      return;
+  stopMusic();
+  if (needChangeRoom)
+    return;
+  if (chapter)
+    return;
 
-    flagDisplayTextSave = flagDisplayText;
+  flagDisplayTextSave = flagDisplayText;
 
-    flagDisplayText = 1;
+  flagDisplayText = 1;
 
-    Load_HQR("ress.hqr", workVideoBuffer, 15);  // Ecran de Twinsun (ecran 1 de l'intro)
+  Load_HQR("ress.hqr", workVideoBuffer, 15);  // Ecran de Twinsun (ecran 1 de l'intro)
+  CopyScreen(workVideoBuffer, frontVideoBuffer);
+  Load_HQR("ress.hqr", palette, 16);
+  convertPalToRGBA(palette, paletteRGBA);
+
+  osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+  osystem_setPalette(paletteRGBA);
+ // osystem_Flip(frontVideoBuffer);
+ // FadeToPal((char*)paletteRGBA);
+
+  newGameVar4 = 0;
+  newGameVar5 = 1;
+  InitDial(2);
+  newGame2();
+  TestCoulDial(15);
+
+  printTextFullScreen(150);
+  readKeyboard();
+
+  if (skipIntro != 1)
+  {
+     // SetBackPal();
+    Load_HQR("ress.hqr", workVideoBuffer, 17);  // Ecran de la citadelle (ecran 2 de l'intro)
     CopyScreen(workVideoBuffer, frontVideoBuffer);
-    Load_HQR("ress.hqr", palette, 16);
+    Load_HQR("ress.hqr", palette, 18);
     convertPalToRGBA(palette, paletteRGBA);
 
     osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
     osystem_setPalette(paletteRGBA);
+
    // osystem_Flip(frontVideoBuffer);
-   // FadeToPal((char*)paletteRGBA);
+   // osystem_setPalette(paletteRGBA);
+    printTextFullScreen(151);
 
-    newGameVar4 = 0;
-    newGameVar5 = 1;
-    InitDial(2);
-    newGame2();
-    TestCoulDial(15);
-
-    printTextFullScreen(150);
     readKeyboard();
-
     if (skipIntro != 1)
-  {
-     // SetBackPal();
-      Load_HQR("ress.hqr", workVideoBuffer, 17);  // Ecran de la citadelle (ecran 2 de l'intro)
+    {
+       // SetBackPal();
+      Load_HQR("ress.hqr", workVideoBuffer, 19);  // Ecran du reve de Twisen (ecran 3 de l'intro)
       CopyScreen(workVideoBuffer, frontVideoBuffer);
-      Load_HQR("ress.hqr", palette, 18);
+      Load_HQR("ress.hqr", palette, 20);
+
       convertPalToRGBA(palette, paletteRGBA);
 
       osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
@@ -245,69 +262,52 @@ void newGame(void)
 
      // osystem_Flip(frontVideoBuffer);
      // osystem_setPalette(paletteRGBA);
-      printTextFullScreen(151);
 
-      readKeyboard();
-      if (skipIntro != 1)
-    {
-       // SetBackPal();
-        Load_HQR("ress.hqr", workVideoBuffer, 19);  // Ecran du reve de Twisen (ecran 3 de l'intro)
-        CopyScreen(workVideoBuffer, frontVideoBuffer);
-        Load_HQR("ress.hqr", palette, 20);
-
-        convertPalToRGBA(palette, paletteRGBA);
-
-        osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
-        osystem_setPalette(paletteRGBA);
-
-       // osystem_Flip(frontVideoBuffer);
-       // osystem_setPalette(paletteRGBA);
-
-        printTextFullScreen(152);
+      printTextFullScreen(152);
     }
   }
 
-    newGameVar5 = 0;
-    newGame4();
-    newGameVar4 = 1;
-    FadeToBlack((char *) paletteRGBA);
-    Cls();
-    osystem_Flip(frontVideoBuffer);
-    playMidi(1);
+  newGameVar5 = 0;
+  newGame4();
+  newGameVar4 = 1;
+  FadeToBlack((char *) paletteRGBA);
+  Cls();
+  osystem_Flip(frontVideoBuffer);
+  playMidi(1);
 
-    PlayAnimFla("INTROD");
-    SetBackPal();
-    Cls();
-    osystem_Flip(frontVideoBuffer);
+  PlayAnimFla("INTROD");
+  SetBackPal();
+  Cls();
+  osystem_Flip(frontVideoBuffer);
 
-    flagDisplayText = flagDisplayTextSave;  // on remet le flag comme il était au debut
+  flagDisplayText = flagDisplayTextSave;  // on remet le flag comme il était au debut
 }
 
 void newGame2(void)
 {       /* ok */
-    dialogueBoxLeft = 8;
-    dialogueBoxTop = 8;
-    dialogueBoxRight = 631;
+  dialogueBoxLeft = 8;
+  dialogueBoxTop = 8;
+  dialogueBoxRight = 631;
 
-    dialogueBoxBottom = 471;
-    dialogueBoxParam1 = 11;
-    dialogueBoxParam2 = 607;
+  dialogueBoxBottom = 471;
+  dialogueBoxParam1 = 11;
+  dialogueBoxParam2 = 607;
 }
 
 void newGame4(void)
 {       /* ok */
-    dialogueBoxLeft = 16;
-    dialogueBoxTop = 334;
-    dialogueBoxRight = 623;
-    dialogueBoxBottom = 463;
-    dialogueBoxParam1 = 3;
-    dialogueBoxParam2 = 591;
+  dialogueBoxLeft = 16;
+  dialogueBoxTop = 334;
+  dialogueBoxRight = 623;
+  dialogueBoxBottom = 463;
+  dialogueBoxParam1 = 3;
+  dialogueBoxParam2 = 591;
 }
 
 void TestCoulDial(short int param)
 {
-    progressiveTextStepSize = -1;
-    progressiveTextBufferSize = 14;
-    progressiveTextStartColor = param << 4;
-    progressiveTextStopColor = (param << 4) + 12;
+  progressiveTextStepSize = -1;
+  progressiveTextBufferSize = 14;
+  progressiveTextStartColor = param << 4;
+  progressiveTextStopColor = (param << 4) + 12;
 }

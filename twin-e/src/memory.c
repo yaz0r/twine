@@ -50,6 +50,6 @@ void InitBufferCube(void)
 {
    // todo: mettre les codes d'erreur
 
-    bufCube = (byte *) Malloc(204800);  // 204800 = 64*64*25*2
-    bufferBrick = (byte *) Malloc(361472);
+  bufCube = (byte *) Malloc(204800);  // 204800 = 64*64*25*2
+  bufferBrick = (byte *) Malloc(361472);
 }

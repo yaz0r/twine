@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 #include "life_common.h"
 
-#ifndef LBASTUDIO
+#ifndef TXT_SCRIPTS
 
 void runActorScript(short int actorNumber)
 {
@@ -1186,33 +1186,14 @@ void manipActor(actor * lactor)
   switch (opcode)
   {
   case 0:
-    {
-      manipActorResult = getCOL(currentScriptActor);
+      manipActorResult = getCOL(lactor);
       break;
-    }
   case 1:
       manipActorResult = getCOL(&actors[*(actorScriptPtr++)]);
       break;
   case 2:
-      lactor2 = &actors[*(actorScriptPtr++)];
       manipActorVar1 = 1;
-    if (!(lactor2->dynamicFlagsBF.bUnk0020))
-    {
-        if ( abs(lactor2->Z - lactor->Z) >= 1500)
-      {
-          manipActorResult = 32000;
-      }
-        else
-      {
-                manipActorResult = Distance2D(lactor->X, lactor->Y, lactor2->X, lactor2->Y);
-          if (manipActorResult > 32000)
-            manipActorResult = 32000;
-      }
-    }
-      else
-    {
-        manipActorResult = 32000;
-    }
+      manipActorResult = getDISTANCE(lactor,&actors[*(actorScriptPtr++)]);
       break;
   case 3:
       manipActorResult = lactor->zone;
