@@ -37,6 +37,17 @@ void LBA_engine::polyRender(int ecx, int edi)
   float varf4;
   float varf5;
 
+	if(vtop<=0 || vbottom<=0)
+		return;
+	if(vleft<=0 || vright<=0)
+		return;
+	if(vleft>=640)
+		return;
+//	if(vright>=640)
+//		return;
+	if(vtop>=480 || vbottom>=480)
+		return;
+
   out=videoBuffer1+screenLockupTable[vtop];
   
   ptr1=&polyTab[vtop];

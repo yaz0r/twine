@@ -782,6 +782,7 @@ void LBA_engine::drawLine(int a, int b, int c, int d, int e)
  }
 
  flag2=flag;
+
  // implementer la suite
 
  flag2=640; //esi

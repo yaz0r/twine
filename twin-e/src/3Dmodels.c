@@ -649,7 +649,7 @@ int LBA_engine::finishRender(unsigned char *esi)
                 {
                  lineCoordinatesPtr=(lineCoordinates*)esi;
                  color=(lineCoordinatesPtr->data&0xFF00)>>8;
-                 drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
+                 //drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
                  break;
                 }
         case 1:  // draw a polygon
@@ -670,8 +670,8 @@ int LBA_engine::finishRender(unsigned char *esi)
                     esi+=2;
                   }
 
-                  prepareRender();
-                  polyRender(polyRenderType,color);
+                  if(prepareRender()!=2)
+					polyRender(polyRenderType,color);
 
                  break;
                 }
