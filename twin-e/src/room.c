@@ -633,29 +633,28 @@ LBA_engine::processBuffer2Buffer (unsigned int *buffer1,
   int i;
   int sizeOfCurrentBrick;
   int startOffset;
+  unsigned int firstBrickOffset;
 
-/*	int counter;
-	int counter2;
-	int var2;*/
-
-  destPtr = (unsigned char *) (destBuffer + *buffer1);
-  numOfBricks = (*buffer1) / 4;
+  firstBrickOffset=*buffer1;
+  destPtr = (unsigned char *) (destBuffer + firstBrickOffset);
+  numOfBricks = (*buffer1) >> 2;
 
   *(destBuffer++) = startOffset = *buffer1;
 
-  for (i = 0; i < numOfBricks; i++)
+  for (i = 0; i < numOfBricks-1; i++)
     {
       sizeOfCurrentBrick =
 	processBuffer2BufferSub (i, buffer1, (unsigned int *) destPtr);
 
       destPtr += sizeOfCurrentBrick;
+      counter += sizeOfCurrentBrick;
 
       startOffset += sizeOfCurrentBrick;
 
       *(destBuffer++) = startOffset;
     }
 
-  return (counter);
+  return (firstBrickOffset);
 }
 
 int

@@ -927,7 +927,7 @@ LBA_renderer::finishRender (unsigned char *esi)
 	      {
 		lineCoordinatesPtr = (lineCoordinates *) esi;
 		color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
-		drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
+		//drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
 		break;
 	      }
 	    case 1:		// draw a polygon

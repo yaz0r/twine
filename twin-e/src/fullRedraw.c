@@ -372,7 +372,7 @@ LBA_engine::fullRedraw (int param)
 	    }
 	  else if (flags == 0xC00)	// shadows
 	    {
-			if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
+/*			if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
 	         {
 	         //                           arg_0E=1;       
 	         }
@@ -391,7 +391,7 @@ LBA_engine::fullRedraw (int param)
 	         if(textWindowLeft<=textWindowRight && textWindowTop<=textWindowBottom)
 	         {
 	         drawSprite(fullRedrawVar6[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
-	         }
+	         }*/
 	    }
 	  else if (flags < 0x1000)
 	    {
@@ -513,7 +513,7 @@ LBA_engine::fullRedraw (int param)
       // loop5
     }
 
- /* for (arg_1A = 0; arg_1A < numFlags; arg_1A++)	//affichage des flags
+  for (arg_1A = 0; arg_1A < numFlags; arg_1A++)	//affichage des flags
     {
 	char stringTemp[256];
       startRenderer (flagData[arg_1A].x - cameraX,
@@ -530,7 +530,7 @@ LBA_engine::fullRedraw (int param)
       if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40
 	  && fullRedrawVar4 < 440)
 	printStringSimple (fullRedrawVar3, fullRedrawVar4, stringTemp);
-    }*/
+    }
 
   counter2 = 0;
 
