@@ -81,7 +81,7 @@ void LBA_engine::initVars(void)
 	key=0;
 
 	mainMenuData[0]=0;                             //0
- mainMenuData[1]=4;		// nombre de boutons   	  //2
+	mainMenuData[1]=4;		// nombre de boutons   	  //2
 	mainMenuData[2]=200;                           //4
 	mainMenuData[3]=0;                             //6
 	mainMenuData[4]=0;                             //8
@@ -94,7 +94,7 @@ void LBA_engine::initVars(void)
 	mainMenuData[11]=22;  // Exit point 4                                              // 22->quit
 
 	subMenu2Data[0]=0;
- subMenu2Data[1]=2;
+	subMenu2Data[1]=2;
 	subMenu2Data[2]=240;
 	subMenu2Data[3]=0;
 	subMenu2Data[4]=0;
@@ -132,7 +132,7 @@ void LBA_engine::initVars(void)
 
 	buttonDrawVar1=550;
 
-	language=0;             // langue ecrite
+	language=1;             // langue ecrite
 
 	languageCD1=0;
 
@@ -148,9 +148,9 @@ void LBA_engine::initVars(void)
 	setSomethingVar3=500;
 	setSomethingVar4=0;
 
-//	setSomething2Var1=0;
-//	setSomething2Var2=0;
-//	setSomething2Var3=0;
+	//	setSomething2Var1=0;
+	//	setSomething2Var2=0;
+	//	setSomething2Var3=0;
 
 	dialogueBoxParam1=3;
 	dialogueBoxParam2=591;
@@ -235,12 +235,12 @@ void LBA_engine::initVars(void)
 	allowedCharIndex[69]=0x0D;
 	allowedCharIndex[70]=0x00;
 
- enterPlayerNameVar2=0;
+	enterPlayerNameVar2=0;
 
 	spaceChar=' ';
 
 	vertexCoordinates[0]=0x1234;
-/*	backDialogueBoxRight=0;
+	/*	backDialogueBoxRight=0;
 	backDialogueBoxBottom=0;
 	back2InitVar3=0;
 	back2DialogueBoxRight=0;
@@ -253,7 +253,7 @@ void LBA_engine::initVars(void)
 
 	pt8s4var2=pt8s4var1+1;
 	pt8s4var3=pt8s4var1+2;
-	
+
 	pt8s4var4=pt8s4var1+93;
 	pt8s4var5=pt8s4var1+94;
 	pt8s4var6=pt8s4var1+95;
@@ -261,7 +261,7 @@ void LBA_engine::initVars(void)
 	tab1=&tab[0];
 	tab2=&tab[256];
 	tab3=&tab[384];
-/*
+	/*
 	setSomething3Var1=0;
 	setSomething3Var2=0;
 	setSomething3Var3=0;
@@ -339,17 +339,17 @@ void LBA_engine::initVars(void)
 	fireEffectVar2=NULL;
 
 	sceneRoomNumber=0;
- 
+
 	sceneVar2.field_0=0;
 	sceneVar2.field_2=0;
 	sceneVar2.field_4=0;
 	sceneVar2.field_6=0;
-  
+
 	sceneVar3.field_0=0;
 	sceneVar3.field_2=0;
 	sceneVar3.field_4=0;
 	sceneVar3.field_6=0;
-  
+
 	sceneVar4.field_0=0;
 	sceneVar4.field_2=0;
 	sceneVar4.field_4=0;
@@ -364,95 +364,97 @@ void LBA_engine::initVars(void)
 	sceneVar20=0;
 
 	mainLoopVar4=0;
- agressivity=1;
- 
- mainLoopVar5=0;
- mainLoopVar6=0;
- mainLoopVar7=0;
- 
- musicPosition=0;
- musicLength=0;
- 
- useSamples=0;
- 
- time1=0;
- time3=0;
- 
- counter=0;
- 
- numOfRedrawBox=0;
- 
- fullRedrawVar8=0; 
+	agressivity=1;
 
- scanCodeTab1[0]=0x48;
- scanCodeTab1[1]=0x50;
- scanCodeTab1[2]=0x4B;
- scanCodeTab1[3]=0x4D;
- scanCodeTab1[4]=0x47;
- scanCodeTab1[5]=0x49;
+	mainLoopVar5=0;
+	mainLoopVar6=0;
+	mainLoopVar7=0;
 
- scanCodeTab1[6]=0x51;
- scanCodeTab1[7]=0x4F;
- scanCodeTab1[8]=0x39;
- scanCodeTab1[9]=0x1C;
- scanCodeTab1[10]=0x1D;
- scanCodeTab1[11]=0x38;
- scanCodeTab1[12]=0x53;
- scanCodeTab1[13]=0x2A;
- scanCodeTab1[14]=0x36;
- scanCodeTab1[15]=0x3B;
- scanCodeTab1[16]=0x3C;
- scanCodeTab1[17]=0x3D;
- scanCodeTab1[18]=0x3E;
- scanCodeTab1[19]=0x3F;
- scanCodeTab1[20]=0x40;
- scanCodeTab1[21]=0x41;
- scanCodeTab1[22]=0x42;
- scanCodeTab1[23]=0x43;
- scanCodeTab1[24]=0x44;
- scanCodeTab1[25]=0x57;
- scanCodeTab1[26]=0x58;
- scanCodeTab1[27]=0x2A;
- scanCodeTab1[28]=0x0;
- 
- scanCodeTab2[0]=0x0100; // up
- scanCodeTab2[1]=0x0200; // down
- scanCodeTab2[2]=0x0400; // left
- scanCodeTab2[3]=0x0800; // right
- scanCodeTab2[4]=0x0500;
- scanCodeTab2[5]=0x0900;
- scanCodeTab2[6]=0x0A00;
- scanCodeTab2[7]=0x0600;
- scanCodeTab2[8]=0x0101;
- scanCodeTab2[9]=0x0201;
- scanCodeTab2[10]=0x0401;
- scanCodeTab2[11]=0x0801;
- scanCodeTab2[12]=0x1001;
- scanCodeTab2[13]=0x2001;
- scanCodeTab2[14]=0x2001;
- scanCodeTab2[15]=0x0102;
- scanCodeTab2[16]=0x0202;
- scanCodeTab2[17]=0x0402;
- scanCodeTab2[18]=0x0802;
- scanCodeTab2[19]=0x1002;
- scanCodeTab2[20]=0x2002;
- scanCodeTab2[21]=0x4002;
- scanCodeTab2[22]=0x8002;
- scanCodeTab2[23]=0x0103;
- scanCodeTab2[24]=0x0203;
- scanCodeTab2[25]=0x0403;
- scanCodeTab2[26]=0x0803;
- scanCodeTab2[27]=0x00FF;
- scanCodeTab2[28]=0x00FF;
- scanCodeTab2[29]=0x0;
- scanCodeTab2[30]=0x0;
- 
+	musicPosition=0;
+	musicLength=0;
+
+	useSamples=0;
+
+	time1=0;
+	time3=0;
+
+	counter=0;
+
+	numOfRedrawBox=0;
+
+	fullRedrawVar8=0; 
+
+	scanCodeTab1[0]=0x48;
+	scanCodeTab1[1]=0x50;
+	scanCodeTab1[2]=0x4B;
+	scanCodeTab1[3]=0x4D;
+	scanCodeTab1[4]=0x47;
+	scanCodeTab1[5]=0x49;
+
+	scanCodeTab1[6]=0x51;
+	scanCodeTab1[7]=0x4F;
+	scanCodeTab1[8]=0x39;
+	scanCodeTab1[9]=0x1C;
+	scanCodeTab1[10]=0x1D;
+	scanCodeTab1[11]=0x38;
+	scanCodeTab1[12]=0x53;
+	scanCodeTab1[13]=0x2A;
+	scanCodeTab1[14]=0x36;
+	scanCodeTab1[15]=0x3B;
+	scanCodeTab1[16]=0x3C;
+	scanCodeTab1[17]=0x3D;
+	scanCodeTab1[18]=0x3E;
+	scanCodeTab1[19]=0x3F;
+	scanCodeTab1[20]=0x40;
+	scanCodeTab1[21]=0x41;
+	scanCodeTab1[22]=0x42;
+	scanCodeTab1[23]=0x43;
+	scanCodeTab1[24]=0x44;
+	scanCodeTab1[25]=0x57;
+	scanCodeTab1[26]=0x58;
+	scanCodeTab1[27]=0x2A;
+	scanCodeTab1[28]=0x0;
+
+	scanCodeTab2[0]=0x0100; // up
+	scanCodeTab2[1]=0x0200; // down
+	scanCodeTab2[2]=0x0400; // left
+	scanCodeTab2[3]=0x0800; // right
+	scanCodeTab2[4]=0x0500;
+	scanCodeTab2[5]=0x0900;
+	scanCodeTab2[6]=0x0A00;
+	scanCodeTab2[7]=0x0600;
+	scanCodeTab2[8]=0x0101;
+	scanCodeTab2[9]=0x0201;
+	scanCodeTab2[10]=0x0401;
+	scanCodeTab2[11]=0x0801;
+	scanCodeTab2[12]=0x1001;
+	scanCodeTab2[13]=0x2001;
+	scanCodeTab2[14]=0x2001;
+	scanCodeTab2[15]=0x0102;
+	scanCodeTab2[16]=0x0202;
+	scanCodeTab2[17]=0x0402;
+	scanCodeTab2[18]=0x0802;
+	scanCodeTab2[19]=0x1002;
+	scanCodeTab2[20]=0x2002;
+	scanCodeTab2[21]=0x4002;
+	scanCodeTab2[22]=0x8002;
+	scanCodeTab2[23]=0x0103;
+	scanCodeTab2[24]=0x0203;
+	scanCodeTab2[25]=0x0403;
+	scanCodeTab2[26]=0x0803;
+	scanCodeTab2[27]=0x00FF;
+	scanCodeTab2[28]=0x00FF;
+	scanCodeTab2[29]=0x0;
+	scanCodeTab2[30]=0x0;
+
 	loadCostumeVar=-32000;
- 
- drawInventoryVar=0;
 
- renderTab3=&renderTab2[9];
- 
+	drawInventoryVar=0;
+
+	renderTab3=&renderTab2[9];
+
+	updateActorScript=0;
+
 }
 
 void LBA_engine::setTextColor(byte i)

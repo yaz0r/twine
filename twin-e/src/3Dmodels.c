@@ -21,328 +21,361 @@
 
 int LBA_engine::startRenderer(int arg_0,int arg_4,int arg_8,int arg_C,int arg_10,int arg_14,unsigned char* costumePtr)
 {
-  unsigned char *ptr;
+	unsigned char *ptr;
 
-  mainTab[12]=arg_C;
-  mainTab[13]=arg_10;
-  mainTab[14]=arg_14;
+	mainTab[12]=arg_C;
+	mainTab[13]=arg_10;
+	mainTab[14]=arg_14;
 
-/* Those 4 vars are used to know the size of the rendered model.
-   They are reseted to their maximum value at the begining of the renderer */
+	/* Those 4 vars are used to know the size of the rendered model.
+	They are resetted to their maximum value at the begining of the renderer */
 
-  renderLeft=32767;
-  renderTop=32767;
+	renderLeft=32767;
+	renderTop=32767;
 
-  renderRight=-32767;
-  renderBottom=-32767;
+	renderRight=-32767;
+	renderBottom=-32767;
 
-/* the use of setSomethingVar4 is still unknown */
+	/* the use of setSomethingVar4 is still unknown */
 
-  if(setSomethingVar4==0)
-  {
-    printf("Unimplemented startRenderer\n");
-    exit(1);
-  }
-  else
-  {
-    renderV9=arg_0;
-    renderV11=arg_4;
-    renderV10=arg_8;
-  }
+	if(setSomethingVar4==0)
+	{
+		printf("Unimplemented startRenderer\n");
+		exit(1);
+	}
+	else
+	{
+		renderV9=arg_0;
+		renderV11=arg_4;
+		renderV10=arg_8;
+	}
 
 
-  numOfPrimitives=0; // we reset the number of primitives in the model
+	numOfPrimitives=0; // we reset the number of primitives in the model
 
-  renderTabEntryPtr=renderTab; // we restart at the beginning of the renderTable
+	renderTabEntryPtr=renderTab; // we restart at the beginning of the renderTable
 
-  costumeHeader=*(short int*)costumePtr; // costumeHeader seems to contains important flags for the rendering
+	costumeHeader=*(short int*)costumePtr; // costumeHeader seems to contains important flags for the rendering
 
-  // note: most of the LBA1 models are using renderM1
-  // renderM2 may be used for render in Bu temple (light from the bottom)
+	// note: most of the LBA1 models are using renderM1
+	// renderM2 may be used for render in Bu temple (light from the bottom)
 
-  ptr=costumePtr+16+*(short int*)(costumePtr+14); // we jump after the header
+	ptr=costumePtr+16+*(short int*)(costumePtr+14); // we jump after the header
 
-  if(costumeHeader&2)
-    return(renderM1(ptr));  // That's the mostly used renderer code
-  else
-    return(renderM2(ptr));
+	if(costumeHeader&2)
+		return(renderM1(ptr));  // That's the mostly used renderer code
+	else
+		return(renderM2(ptr));  // probably render in Bù temple
 
 }
 
 int LBA_engine::renderM1(unsigned char * costumePtr)
 {
+	unsigned int var1;
+	//  unsigned char* ptr1;
+	//  unsigned char* ptr2;
+	unsigned char* ptr3;
+	int *ptr4;
+	int *ptr5;
 
-  unsigned int var1;
-//  unsigned char* ptr1;
-//  unsigned char* ptr2;
-  unsigned char* ptr3;
-  int *ptr4;
-  int *ptr5;
+	int coX;
+	int coY;
+	int coZ;
 
-  int coX;
-  int coY;
-  int coZ;
+	unsigned char* ptr6;
+	int eax;
+	int ebx;
+	int ebp;
+	int edx;
+	int ecx;
+	int edi;
+	short int flag;
+	int temp;
+	pointEntry *ptEntryPtr;
+	pointTab *pointPtr;
+	pointTab *pointPtr2;
 
-  unsigned char* ptr6;
-  int eax;
-  int ebx;
-  int ebp;
-  int edx;
-  int ecx;
-  int edi;
-  short int flag;
-  int temp;
-  pointEntry *ptEntryPtr;
-  pointTab *pointPtr;
-  pointTab *pointPtr2;
+	numOfPri1=*(short int*)costumePtr;
+	costumePtr+=2;
 
-  numOfPri1=*(short int*)costumePtr;
-  costumePtr+=2;
+	pri1Ptr=costumePtr;
 
-  pri1Ptr=costumePtr;
+	var1=numOfPri1+numOfPri1*2;
+	costumePtr=costumePtr+var1*2;
 
-  var1=numOfPri1+numOfPri1*2;
-  costumePtr=costumePtr+var1*2;
+	numOfPri2=*(short int*)costumePtr; // that's the number of points in the model
 
-  numOfPri2=*(short int*)costumePtr; // that's the number of points in the model
+	costumePtr+=2; // we jump to the points data
 
-  costumePtr+=2; // we jump to the points data
+	pri2Ptr2=pri2Ptr=costumePtr; // we save the point data ptr
 
-  pri2Ptr2=pri2Ptr=costumePtr; // we save the point data ptr
+	renderV19=(unsigned char *)renderTab2;
 
-  renderV19=(unsigned char *)renderTab2;
+	renderS1(mainTab[14],mainTab[13],mainTab[12],(pointEntry*)pri2Ptr2); // that's the process of the "base point"
 
-  renderS1(mainTab[14],mainTab[13],mainTab[12],(pointEntry*)pri2Ptr2); // that's the process of the "base point"
+	pri2Ptr2+=38; // jump to the next point data
 
-  pri2Ptr2+=38; // jump to the next point data
+	ptEntryPtr=(pointEntry*)pri2Ptr2; // that's the structure used to load the points
 
-  ptEntryPtr=(pointEntry*)pri2Ptr2; // that's the structure used to load the points
+	if(numOfPri2 -1 !=0 ) // if there is points after the base point
+	{
+		primitiveCounter=numOfPri2-1; // Since the base point is already processed, we need to load numOfPri2-1 points
+		renderV19=(unsigned char *)renderTab3; // the use of renderTab3 is still unknown. It's a table with 36byte long element
 
-  if(numOfPri2 -1 !=0 ) // if there is points after the base point
-  {
-    primitiveCounter=numOfPri2-1; // Since the base point is already processed, we need to load numOfPri2-1 points
-    renderV19=(unsigned char *)renderTab3; // the use of renderTab3 is still unknown. It's a table with 36byte long element
+		do   // That's the loop that load and convert all the points in the model
+		{
+			ebx=ptEntryPtr->flag1;  // actualy, there should be 4 flags in that order = ebx,flag,edx,ecx. So this part may be buggy. at the momment
+			flag=ebx;
+			ebx>>=16;
 
-    do   // That's the loop that load and convert all the points in the model
-    {
-      ebx=ptEntryPtr->flag1;  // actualy, there should be 4 flags in that order = ebx,flag,edx,ecx. So this part may be buggy. at the momment
-      flag=ebx;
-      ebx>>=16;
+			edx=ptEntryPtr->flag2;
+			ecx=(short int)edx;
+			edx>>=16;
 
-      edx=ptEntryPtr->flag2;
-      ecx=(short int)edx;
-      edx>>=16;
+			if(flag == 0)
+			{
+				renderS1(edx,ecx,ebx,ptEntryPtr); // renderS1 load the points, rotate them and store them in renderTab5 (it may do other things too..)
+			}
+			else
+			{
+				if(flag == 1)
+				{
 
-      if(flag == 0)
-      {
-        renderS1(edx,ecx,ebx,ptEntryPtr); // renderS1 load the points, rotate them and store them in renderTab5 (it may do other things too..)
-      }
-      else
-      {
-        if(flag == 1)
-        {
+					//renderS2      // this part seems to be rarely used...
 
-          //renderS2      // this part seems to be rarely used...
+					printf("renderM1\n");
+					exit(1);
+				}
+			}
 
-          printf("renderM1\n");
-          exit(1);
-        }
-      }
+			renderV19+=36; // next entry in renderTab3
 
-      renderV19+=36; // next entry in renderTab3
+			pri2Ptr2+=38;  // next point data
+			ptEntryPtr=(pointEntry*)pri2Ptr2; // we use the structure to load the point data
+		}while(--primitiveCounter);
+	}
 
-      pri2Ptr2+=38;  // next point data
-      ptEntryPtr=(pointEntry*)pri2Ptr2; // we use the structure to load the point data
-    }while(--primitiveCounter);
-  }
+	primitiveCounter = numOfPri1;
 
-  primitiveCounter = numOfPri1;
+	pointPtr2=(pointTab*)renderTab5;
+	pointPtr=renderTab6;
 
-  pointPtr2=(pointTab*)renderTab5;
-  pointPtr=renderTab6;
+	if(setSomethingVar4!=0) // boucle de convertion des points de 3D (de renderTab5) à 2D (de renderTab6)
+	{
+		do{  // this loop convert the 3D points (renderTab5) into 2D points (renderTab6)
+			coX=pointPtr2->x+renderV9;
+			coY=pointPtr2->y+renderV11;
+			coZ=-(pointPtr2->z+renderV10);
 
-  if(setSomethingVar4!=0) // boucle de convertion des points de 3D (de renderTab5) à 2D (de renderTab6)
-  {
-    do{  // this loop convert the 3D points (renderTab5) into 2D points (renderTab6)
-      coX=pointPtr2->x+renderV9;
-      coY=pointPtr2->y+renderV11;
-      coZ=-(pointPtr2->z+renderV10);
+			pointPtr->x=(((coX+coZ)*8+(coX+coZ)*16)>>9)+setSomethingVar1; // those lines may be buggy
+			pointPtr->y=((((coX-coZ)*4+(coX-coZ)*8)+(2*coY-(coY<<5)))>>9)+setSomethingVar2;
+			pointPtr->z=coZ-coX-coY;
 
-      pointPtr->x=(((coX+coZ)*8+(coX+coZ)*16)>>9)+setSomethingVar1; // those lines may be buggy
-      pointPtr->y=((((coX-coZ)*4+(coX-coZ)*8)+(2*coY-(coY<<5)))>>9)+setSomethingVar2;
-      pointPtr->z=coZ-coX-coY;
+			if(pointPtr->x < renderLeft)  // this part setup the size of the rendered model (to be used by the main drawing function)
+				renderLeft=pointPtr->x;
+			if(pointPtr->x > renderRight)
+				renderRight=pointPtr->x;
 
-      if(pointPtr->x < renderLeft)  // this part setup the size of the rendered model (to be used by the main drawing function)
-        renderLeft=pointPtr->x;
-      if(pointPtr->x > renderRight)
-        renderRight=pointPtr->x;
+			if(pointPtr->y < renderTop)
+				renderTop=pointPtr->y;
+			if(pointPtr->y > renderBottom)
+				renderBottom=pointPtr->y;
 
-      if(pointPtr->y < renderTop)
-        renderTop=pointPtr->y;
-      if(pointPtr->y > renderBottom)
-        renderBottom=pointPtr->y;
+			pointPtr2++; // next 3D point entry
+			pointPtr++;  // next 2D point entry
 
-      pointPtr2++; // next 3D point entry
-      pointPtr++;  // next 2D point entry
+		}while(--primitiveCounter);
 
-    }while(--primitiveCounter);
+		ptr5=(int*)pri2Ptr2;
+		eax=-1;
 
-    ptr5=(int*)pri2Ptr2;
-    eax=-1;
-
-  }
-  else
-  {
-    printf("renderM1\n"); // another rarely used part.
-    exit(1);
-  }
+	}
+	else
+	{
+		printf("renderM1\n"); // another rarely used part.
+		exit(1);
+	}
 
 #ifdef DRAWPOINTS
-/* This part draw all the points of the model */
-    primitiveCounter = numOfPri1;
-    pointPtr=renderTab6;
-    do{
-      if((pointPtr->x>0 && pointPtr->x < 640) && (pointPtr->y>0 && pointPtr->y <480))
-      {
-        *(videoBuffer1+screenLockupTable[pointPtr->y]+pointPtr->x)=255;
-      }
-      else
-      {
-        printf("Buggy point...\n");
-      }
+	/* This part draw all the points of the model */
+	primitiveCounter = numOfPri1;
+	pointPtr=renderTab6;
+	do{
+		if((pointPtr->x>0 && pointPtr->x < 640) && (pointPtr->y>0 && pointPtr->y <480))
+		{
+			*(videoBuffer1+screenLockupTable[pointPtr->y]+pointPtr->x)=255;
+		}
+		else
+		{
+			printf("Buggy point...\n");
+		}
 
-      pointPtr++;
+		pointPtr++;
 
-    }while(--primitiveCounter);
+	}while(--primitiveCounter);
 
-    osystem->drawBufferToScreen(videoBuffer1);
+	osystem->drawBufferToScreen(videoBuffer1);
 #endif
 
-  temp=*(short int*)ptr5;
+	temp=*(short int*)ptr5;
 
-  ptr5=(int*)(((unsigned char*)ptr5)+2);
+	ptr5=(int*)(((unsigned char*)ptr5)+2);
 
-  if(temp)
-  {
-    renderV19=(unsigned char*)renderTab4;
-    renderV21=renderTab2;
-    primitiveCounter=numOfPri2;
-    ptr3=pri2Ptr2=pri2Ptr+18;
+	if(temp) // process shading table
+	{
+		renderV19=(unsigned char*)shadeTable;
+		renderV21=renderTab2;
+		primitiveCounter=numOfPri2;
+		ptr3=pri2Ptr2=pri2Ptr+18;
 
-    do      // pour chaque poly ?
-    {
-      temp=*(short int*)ptr3;
-      if(temp)
-      {
-        rs1s2v1=temp;
+		do      // pour chaque poly ?
+		{
+			temp=*(short int*)ptr3;
+			if(temp)
+			{
+				rs1s2v1=temp;
 
-        mainTab[21]=(*renderV21)*mainTab[15];
-        mainTab[22]=(*(renderV21+1))*mainTab[15];
-        mainTab[23]=(*(renderV21+2))*mainTab[15];
+				mainTab[15]=0; //light position
+				mainTab[16]=40;
+				mainTab[17]=40;
 
-        mainTab[24]=(*(renderV21+3))*mainTab[16];
-        mainTab[25]=(*(renderV21+4))*mainTab[16];
-        mainTab[26]=(*(renderV21+5))*mainTab[16];
+				mainTab[21]=(*renderV21)*mainTab[15];
+				mainTab[22]=(*(renderV21+1))*mainTab[15];
+				mainTab[23]=(*(renderV21+2))*mainTab[15];
 
-        mainTab[27]=(*(renderV21+6))*mainTab[17];
-        mainTab[28]=(*(renderV21+7))*mainTab[17];
-        mainTab[29]=(*(renderV21+8))*mainTab[17];
+				mainTab[24]=(*(renderV21+3))*mainTab[16];
+				mainTab[25]=(*(renderV21+4))*mainTab[16];
+				mainTab[26]=(*(renderV21+5))*mainTab[16];
 
-        do    // pour chaque vertex ?
-        {
-          ebx=*ptr5;
-          ebp=(short int)ebx;
-          ebx>>=16;
+				mainTab[27]=(*(renderV21+6))*mainTab[17];
+				mainTab[28]=(*(renderV21+7))*mainTab[17];
+				mainTab[29]=(*(renderV21+8))*mainTab[17];
 
-          ecx=*(ptr5+1);
+				do    // pour chaque vertex ?
+				{
+					short int col1;
+					short int col2;
+					short int col3;
 
-          eax=mainTab[21];
-          edx=mainTab[22];
-          eax*=ebp;
-          edx*=ebx;
-          eax+=edx;
-          edx=mainTab[23];
-          edx*=ecx;
-          eax+=edx;
-          edi=mainTab[24];
+					short int *colPtr;
 
-          edx=mainTab[25];
-          edi*=ebp;
-          edx*=ebx;
-          eax+=edi;
-          edi=mainTab[26];
+					colPtr=(short int*)ptr5;
 
-          edi*=ecx;
-          eax+=edx;
-          eax+=edi;
-          edi=0;
-          ebp*=mainTab[27];
-          ebx*=mainTab[28];
-          eax+=ebp;
-          eax*=mainTab[29];
-          eax+=ebx;
-          eax+=ecx;
+					col1=*(colPtr++);
+					col2=*(colPtr++);
+					col3=*(colPtr++);
 
-          if(eax>=0)
-          {
-            eax>>=14;
-            ptr6=(unsigned char*)ptr5;
-            eax/=*(short int*)(ptr6+6);
-            edi=(short int)eax;
-          }
+					eax=mainTab[21]*col1+mainTab[22]*col2+mainTab[23]*col3;
+					eax+=mainTab[24]*col1+mainTab[25]*col2+mainTab[26]*col3;
+					eax+=mainTab[27]*col1+mainTab[28]*col2+mainTab[29]*col3;
 
-          *(short int*)renderV19=edi;
-          renderV19+=2;
-          ptr5+=2;
+					edi=0;
 
-        }while(--rs1s2v1);
+					if(eax>0)
+					{
+						eax>>=14;
+						ptr6=(unsigned char*)ptr5;
+						eax/=*(unsigned short int*)(ptr6+6);
+						edi=(unsigned short int)eax;
+					}
 
-      }
-      ptr3=pri2Ptr2=pri2Ptr2+38;
-      ptr4=renderV21=renderV21+9;
-    }while(--primitiveCounter);
-  }
+					*(short int*)renderV19=edi;
+					renderV19+=2;
+					ptr5+=2;
 
-  return(finishRender((unsigned char*)ptr5));
+				}while(--rs1s2v1);
+
+			}
+			ptr3=pri2Ptr2=pri2Ptr2+38;
+			ptr4=renderV21=renderV21+9;
+		}while(--primitiveCounter);
+
+/*		FILE* fileHandle;
+
+		fileHandle=fopen("shade.dmp","wb+");
+
+		int i;
+
+		for(i=0;i<500;i++)
+		{
+			fwrite(&shadeTable[i],1,2,fileHandle);
+		}
+
+		fclose(fileHandle);*/
+	}
 
 
+
+	return(finishRender((unsigned char*)ptr5));
 }
 
 int LBA_engine::finishRender(unsigned char *esi)
 {
-  unsigned char *edi;
-  short int temp;
-  int eax, ecx;
-  short int bp;
-  unsigned char temp2;
-  unsigned char counter;
-  short int temp3;
-  short int type;
-  short int color;
-//  short int ebx;
- // short int edx;
-  lineData* lineDataPtr;
-  lineCoordinates* lineCoordinatesPtr;
+	unsigned char *edi;
+	short int temp;
+	int eax, ecx;
+	unsigned char temp2;
+	short int counter;
+	short int type;
+	short int color;
+	float tempFloat;
+	//  short int ebx;
+	// short int edx;
+	lineData* lineDataPtr;
+	lineCoordinates* lineCoordinatesPtr;
 
-  int point1;
+	FILE* fileH;
+	fileH=fopen("modelPoly.dmp","wb+");
 
-  int point2;
+	int point1;
 
-  int depth;
-  int bestDepth;
-  short int bestZ;
-  int j;
-  int bestPoly=0;
+	int point2;
 
-  short int ax,bx,cx;
-//  short int borrom;
+	int depth;
+	int bestDepth;
+	int currentDepth;
+	short int bestZ;
+	int j;
+	int bestPoly=0;
+	short int shadeEntry;
+	short int shadeValue;
 
-  unsigned char *destPtr;
-  int i;
+	short int ax,bx,cx;
+	//  short int borrom;
 
-  edi=renderTab7; // renderTab7 c'est le buffer de coordonnées
-  temp=*(short int*)esi; // we read the number of polygones
-  esi+=2;
+	unsigned char *destPtr;
+	int i;
+
+	struct polyHeader
+	{
+		unsigned char polyRenderType;
+		unsigned char numOfVertex;
+		short int colorIndex;
+	};
+
+	struct polyVertexHeader
+	{
+		short int shadeEntry;
+		short int dataOffset;
+	};
+
+	struct computedVertex
+	{
+		short int shadeValue;
+		short int x;
+		short int y;
+	};
+
+	polyVertexHeader* currentPolyVertex;
+	polyHeader* currentPolyHeader;
+	polyHeader* destinationHeader;
+	computedVertex* currentComputedVertex;
+	pointTab* currentVertex;
+	pointTab* destinationVertex;
+
+	edi=renderTab7; // renderTab7 c'est le buffer de coordonnées
+	temp=*(short int*)esi; // we read the number of polygones
+	esi+=2;
 
   if(temp) // if there is polygones
   {
@@ -351,89 +384,135 @@ int LBA_engine::finishRender(unsigned char *esi)
     do // loop that load all the polygones
     {
       render23=edi;
-      ecx=*(int*)esi;
+	  currentPolyHeader=(polyHeader*)esi;
+	  ecx=*(int*)esi;
       esi+=2;
-      temp2=ecx&0xFF;
+      polyRenderType=currentPolyHeader->polyRenderType;
 
-      if(temp2>=9)
+      if(polyRenderType>=9)
       {
-        ecx-=2;
-        *(int*)edi=ecx;
+		destinationHeader=(polyHeader*)edi;
+
+		destinationHeader->polyRenderType	=	currentPolyHeader->polyRenderType-2;
+		destinationHeader->numOfVertex		=	currentPolyHeader->numOfVertex;
+		destinationHeader->colorIndex		=	currentPolyHeader->colorIndex;
+
         esi+=2;
         edi+=4;
 
-        ecx>>=8;
-        counter=ecx&0xFF;
-        bp=0x8300;
-        renderV19=edi;
-        eax=0;
-        do
-        {
-          *(short int*)edi=((*(unsigned char*)renderTab4)+(*(short int*)esi)*2)+((ecx&0xFF00)>>8);
-          eax=*(short int*)(esi+2);
-          *(int*)(edi+2)=*(int*)((unsigned char*)renderTab6+eax);
-          esi+=4;
-          edi+=6;
+        counter=destinationHeader->numOfVertex;
 
-          temp3=*(short int*)((((unsigned char*)renderTab6)+4)+eax);
-          if(temp3>bp)
-            bp=temp3;
-        }while(--counter);
+        bestDepth=-32000;
+        renderV19=edi;
+
+		do
+		{
+			currentPolyVertex=(polyVertexHeader*)esi;
+
+			shadeValue=currentPolyHeader->colorIndex+shadeTable[currentPolyVertex->shadeEntry];
+
+			currentComputedVertex=(computedVertex*)edi;
+
+			currentComputedVertex->shadeValue=shadeValue;
+
+
+			currentVertex=&renderTab6[currentPolyVertex->dataOffset/6];
+			destinationVertex=(pointTab*)(edi+2);
+
+			destinationVertex->x=currentVertex->x;
+			destinationVertex->y=currentVertex->y;
+
+			edi+=6;
+			esi+=4;
+
+			currentDepth=currentVertex->z;
+
+			if(currentDepth>bestDepth)
+				bestDepth=currentDepth;
+		}while(--counter);
       }
       else
-      if(temp2>=7)
+      if(polyRenderType>=7) // only 1 shade value is used
       {
-        ecx-=7;
-        *(short int*)edi=(short int) ecx;
-        bp=*(short int*)esi;
-        eax=*(short int*)(esi+2);
+		destinationHeader=(polyHeader*)edi;
+
+		destinationHeader->polyRenderType	=	currentPolyHeader->polyRenderType-7;
+		destinationHeader->numOfVertex		=	currentPolyHeader->numOfVertex;
+      
+        color=currentPolyHeader->colorIndex;
+
+		shadeEntry=*(short int*)(esi+2);
+
         esi+=4;
-        bp+=*(short int*)(((unsigned char*)renderTab4)+eax*2);
-        *(short int*)(edi+2)=bp;
+ 
+        *(short int*)(edi+2)=color+shadeTable[shadeEntry];
+
         edi+=4;
         renderV19=edi;
-        bp=0x8300;
-        counter=(ecx&0xFF00)>>8;
+        bestDepth=-32000;
+        counter=destinationHeader->numOfVertex;
+
         do
         {
-          eax=*(short int*)esi;
-          esi+=2;
-          *(int*)(edi+2)=*(int*)(((unsigned char*)renderTab6)+eax);
-          edi+=6;
-          temp3=*(short int*)((((unsigned char*)renderTab6)+4)+eax);
+			eax=*(short int*)esi;
+			esi+=2;
 
-          if(temp3>bp)
-            bp=temp3;
+			currentVertex=&renderTab6[eax/6];
+
+			destinationVertex=(pointTab*)(edi+2);
+
+			destinationVertex->x=currentVertex->x;
+			destinationVertex->y=currentVertex->y;
+
+			edi+=6;
+			
+			currentDepth=currentVertex->z;
+
+          if(currentDepth>bestDepth)
+            bestDepth=currentDepth;
         }while(--counter);
       }
-      else
+      else // no shade is used
       {
-        *(int*)edi=ecx;
+		destinationHeader=(polyHeader*)edi;
+
+		destinationHeader->polyRenderType	=	currentPolyHeader->polyRenderType-2;
+		destinationHeader->numOfVertex		=	currentPolyHeader->numOfVertex;
+		destinationHeader->colorIndex		=	currentPolyHeader->colorIndex;
+
         esi+=2;
         edi+=4;
 
-        bp=0x8300;
+        bestDepth=-32000;
         renderV19=edi;
         eax=0;
-        counter=(ecx&0xFF00)>>8;
+        counter=currentPolyHeader->numOfVertex;
+
         do
         {
-          eax=*(short int*)esi;
-          esi+=2;
+			eax=*(short int*)esi;
+			esi+=2;
 
-          *(int*)(edi+2)=*(int*)(((unsigned char*)renderTab6)+eax);
-          edi+=6;
-          temp3=*(short int*)((((unsigned char*)renderTab6)+4)+eax);
+			currentVertex=&renderTab6[eax/6];
 
-          if(temp3>bp)
-            bp=temp3;
+			destinationVertex=(pointTab*)(edi+2);
+
+			destinationVertex->x=currentVertex->x;
+			destinationVertex->y=currentVertex->y;
+
+			edi+=6;
+			
+			currentDepth=currentVertex->z;
+
+          if(currentDepth>bestDepth)
+            bestDepth=currentDepth;
         }while(--(counter));
       }
 
       render24=edi;
       edi=renderV19;
 
-      render25=bp;
+      render25=bestDepth;
 
       ax=*(short int*)(edi+4);
       bx=*(short int*)(edi+8);
@@ -444,8 +523,8 @@ int LBA_engine::finishRender(unsigned char *esi)
 
       ax*=bx;
 
-      bp=ax;
-      bx=temp3;
+      bestDepth=ax;
+      bx=currentDepth;
 
       ax=*(short int*)(edi+2);
       cx=*(short int*)(edi+10);
@@ -455,10 +534,10 @@ int LBA_engine::finishRender(unsigned char *esi)
 
       ax*=cx;
 
-      ax-=bp;
-      temp3-=(bx)-1; // peut-etre une erreur là
+      ax-=bestDepth;
+      currentDepth-=(bx)-1; // peut-etre une erreur là
 
-      if(temp3<0)
+      if(currentDepth<0)
       {
         edi=render23;
       }
@@ -532,14 +611,11 @@ int LBA_engine::finishRender(unsigned char *esi)
     }while(--temp);
   }
 
-
-
-
   renderTabEntryPtr2=renderTab;
+
+
   renderTabSortedPtr=renderTabSorted;
-
-
-  for(i=0;i<numOfPrimitives;i++)  // then we sort the polygones (FIXME: very slow !)
+ for(i=0;i<numOfPrimitives;i++)  // then we sort the polygones (FIXME: very slow !)
   {
     renderTabEntryPtr2=renderTab;
     bestZ=-0x7FFF;
@@ -558,12 +634,13 @@ int LBA_engine::finishRender(unsigned char *esi)
     renderTabSortedPtr++;
     renderTab[bestPoly].depth=-0x7FFF;
   }
-
   renderTabEntryPtr2=renderTabSorted;
+
   if(numOfPrimitives)
   {
     primitiveCounter=numOfPrimitives;
     renderV19=esi;
+
     do
     {
       type=renderTabEntryPtr2->renderType;
@@ -578,7 +655,7 @@ int LBA_engine::finishRender(unsigned char *esi)
                  drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
                  break;
                 }
-        case 1:  // draw a polygone
+        case 1:  // draw a polygon
                 {
                   eax=*(int*)esi;
                   esi+=4;
@@ -610,6 +687,7 @@ int LBA_engine::finishRender(unsigned char *esi)
       esi=renderV19;
       renderTabEntryPtr2++;
     }while(--primitiveCounter);
+	//while(0);
   }
   else
   {
@@ -656,8 +734,6 @@ void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry* ptr)
  }
  else
  {
-
-
   ebp=(int*)(((unsigned char*)renderTab2)+var);
 
   mainTab[18]=renderTab5[ptr->data3/6].x;
@@ -665,15 +741,21 @@ void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry* ptr)
   mainTab[20]=renderTab5[ptr->data3/6].z;
  }
 
- renderS1S1((int*)renderV19,ebp); // copie dans renderTab2
+ //renderV19= dest
+ //ebp= source
+ renderS1S1((int*)renderV19,ebp); // copie dans renderTab2 + application de la rotation
 
-
+ // ? , numOfPoint , destination, rotation data
  renderS1S2(pri1Ptr+rs1v1,rs1v2,&renderTab5[rs1v1/6],(int*)renderV19);
 }
 
 void LBA_engine::renderS1S2(unsigned char * esi, int ecx, pointTab *dest,int* eax)
 {
 //  int i;
+ short int param1;
+ short int param2;
+ short int param3;
+
  int ebx;
  int edx;
 // int var;
@@ -682,58 +764,22 @@ void LBA_engine::renderS1S2(unsigned char * esi, int ecx, pointTab *dest,int* ea
  int esip;
  int ebp;
 
+ short int* tempPtr;
 
   rs1s2v1=ecx;
 
  do
  {
-  rs1s2v2=(unsigned char*)esi;
+  rs1s2v2=esi;
+  tempPtr=(short int*)(esi);
 
-  edx=ebx=*(int*)esi;
-  ebx>>=16;
-  ecx=*(short int*)(esi+4);
+  param1=tempPtr[0];
+  param2=tempPtr[1];
+  param3=tempPtr[2];
 
-  esip=eax[0];
-  ebp=eax[1];
-  esip*=edx;
-  ebp*=ebx;
-  esip+=ebp;
-  ebp=eax[2];
-  ebp*=ecx;
-  esip+=ebp;
-  esip>>=14;
-
-  esip+=mainTab[18];
-  dest->x=esip;
-
-  esip=eax[3];
-
-  ebp=eax[4];
-  esip*edx;
-  ebp*=ebx;
-  esip+=ebp;
-
-
-  ebp=eax[5];
-
-  ebp*=ecx;
-  esip+=ebp;
-  esip>>=14;
-  esip+=mainTab[19];
-  dest->y=esip;
-
-  edx*=eax[6];
-  ebx*=eax[7];
-  ecx*=eax[8];
-  ecx+=edx;
-  ecx+=ebx;
-  ecx>>=14;
-  ecx+=mainTab[20];
-  dest->z=ecx;
-
-/*  dest->x=(((*eax)*edx+(*(eax+1))*ebx+(*(eax+2))*ecx)>>14+(short int)mainTab[18]);
-  dest->y=(((*eax+3)*edx+(*(eax+4))*ebx+(*(eax+5))*ecx)>>14+(short int)mainTab[19]);
-  dest->z=(((*eax+6)*edx+(*(eax+7))*ebx+(*(eax+8))*ecx)>>14+(short int)mainTab[20]);*/
+  dest->x=((eax[0]*param1+eax[1]*param2+eax[2]*param3)>>14)+mainTab[18];
+  dest->y=((eax[3]*param1+eax[4]*param2+eax[5]*param3)>>14)+mainTab[19];
+  dest->z=((eax[6]*param1+eax[7]*param2+eax[8]*param3)>>14)+mainTab[20];
 
   dest++;
   esi=rs1s2v2+6;
@@ -749,159 +795,66 @@ void LBA_engine::renderS1S1(int* eax, int* ebp)
   int edi;
   int *ptr;
 
-  if(mainTab[12])
+  int angle;
+  int angleVar1; //esi
+  int angleVar2; //ecx
+
+  if(mainTab[12]) // rotation par vers l'avant
  {
-  edx=mainTab[12];
-  edx&=0x3FF;
-  esi=tab1[edx];
-  edx+=0x100;
-  edx&=0x3FF;
-  ecx=tab1[edx];
+	angle=mainTab[12]&0x3FF;
+	angleVar2=tab1[angle];
+	angle+=0x100;
+	angle&=0x3FF;
+	angleVar1=tab1[angle];
 
-  edi=ebp[0];
-  edx=ebp[3];
-  eax[0]=edi;
-  edi=ebp[6];
-  eax[3]=edx;
-  eax[6]=edi;
+	eax[0]=ebp[0];
+	eax[3]=ebp[3];
+	eax[6]=ebp[6];
 
-  edx=ebp[1];
-  edi=ebp[2];
-  edx*=ecx;
-  edi*=esi;
-  edi+=edx;
-  edi>>=14;
-  eax[1]=edi;
+	eax[1]=(ebp[2]*angleVar2+ebp[1]*angleVar1)>>14;
+	eax[2]=(ebp[2]*angleVar1-ebp[1]*angleVar2)>>14;
+	eax[4]=(ebp[5]*angleVar2+ebp[4]*angleVar1)>>14;
+	eax[5]=(ebp[5]*angleVar1-ebp[4]*angleVar2)>>14;
+	eax[7]=(ebp[8]*angleVar2+ebp[7]*angleVar1)>>14;
+	eax[8]=(ebp[8]*angleVar1-ebp[7]*angleVar2)>>14;
 
-  edx=ebp[1];
-  edi=ebp[2];
-  edx*=esi;
-  edi*=ecx;
-  edi-=edx;
-  edi>>=14;
-  eax[2]=edi;
-
-  // pause
-
-  edx=ebp[4];
-  edi=ebp[5];
-  edx*=ecx;
-
-  edi*=esi;
-  edi+=edx;
-  edi>>=14;
-  eax[4]=edi;
-
-  edx=ebp[4];
-  edi=ebp[5];
-  edx*=esi;
-  edi*=ecx;
-  edi-=edx;
-  edi>>=14;
-  eax[5]=edi;
-
-  edx=ebp[7];
-  edi=ebp[8];
-  edx*=ecx;
-  edi*=esi;
-  edi+=edx;
-  edi>>=14;
-  eax[7]=edi;
-
-  edx=ebp[7];
-
-  edi=ebp[8];
-  edx*=esi;
-  edi*=ecx;
-  edi-=edx;
-  edi>>=14;
-  eax[8]=edi;
-
-  ebp=eax;
+	ebp=eax;
 
  }
  if(mainTab[14])
  {
-  printf("renderS1S1\n");
+  printf("renderS1S1 -> unhandled maintTab[14] rotation\n");
   exit(1);
  }
- if(mainTab[13])
+ if(mainTab[13]) // rotation de coté (la plus courante)
  {
 
   if(ebp==eax)
   {
-    edx=mainTab[13];
-
     ebp=&mainTab[30];
 
-    ptr=ebp;
     for(i=0;i<9;i++)
-      *(ptr++)=*(eax++);
+      *(ebp++)=*(eax++);
   }
 
-  edx&=0x3FF;
-  esi=tab1[edx];
-  edx+=0x100;
-  edx&=0x3FF;
-  ecx=tab1[edx];
+  angle=mainTab[13]&0x3FF;
+  angleVar2=tab1[angle]; //esi
+  angle+=0x100;
+  angle&=0x3FF;
+  angleVar1=tab1[angle]; //ecx
 
-  edi=ebp[1];
-  edx=ebp[4];
-  eax[1]=edi;
-  edi=ebp[7];
-  eax[4]=edx;
-  eax[7]=edi;
 
-  edx=ebp[2];
-  edi=ebp[0];
-  edx*=esi;
-  edi*=ecx;
-  edi-=edx;
-  edi>>=14;
-  eax[0]=edi;
+  eax[1]=ebp[1];
+  eax[4]=ebp[4];
+  eax[7]=ebp[7];
 
-  edx=ebp[2];
-  edi=ebp[0];
-  edx*=ecx;
-  edi*=esi;
-  edi+=edx;
-  edi>>=14;
-  eax[2]=edi;
 
-  // pause
-
-  edx=ebp[5];
-  edi=ebp[3];
-  edx*=esi;
-  edi*=ecx;
-
-  edi-=edx;
-  edi>>=14;
-  eax[3]=edi;
-
-  edx=ebp[5];
-  edi=ebp[3];
-  edx*=ecx;
-  edi*=ecx;
-  edi+=edx;
-  edi>>=14;
-  eax[5]=edi;
-
-  edx=ebp[8];
-  edi=ebp[6];
-  edx*=esi;
-  edi*=ecx;
-  edi-=edx;
-  edi>>=14;
-  eax[6]=edi;
-
-  edx=ebp[8];
-  edi=ebp[6];
-  edx*=ecx;
-  edi*=esi;
-  edi+=edx;
-  edi>>=14;
-  eax[8]=edi;
+  eax[0]=(ebp[0]*angleVar1-ebp[2]*angleVar2)>>14;
+  eax[2]=(ebp[0]*angleVar2+ebp[2]*angleVar1)>>14;
+  eax[3]=(ebp[3]*angleVar2-ebp[5]*angleVar1)>>14;
+  eax[5]=(ebp[5]*angleVar2+ebp[3]*angleVar1)>>14;
+  eax[6]=(ebp[6]*angleVar1-ebp[8]*angleVar2)>>14;
+  eax[8]=(ebp[6]*angleVar2+ebp[8]*angleVar1)>>14;
 
   return;
 

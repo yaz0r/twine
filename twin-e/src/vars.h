@@ -1,3 +1,8 @@
+class LBA_engine;
+
+int threadTimer(void);
+void startThreadTimer(LBA_engine*);
+
 struct pointTab
 {
   short int x;
@@ -651,7 +656,7 @@ class LBA_engine
  
  pointTab renderTab5[800];
  pointTab renderTab6[800];
- int renderTab4[250];
+ short int shadeTable[500];
  
  int *renderV21;
 
@@ -691,7 +696,11 @@ class LBA_engine
 
  int renderLoop;
 
+ int updateActorScript;
+
 //----------------------------------------------------------------------------------------
+
+	int fullRedrawS3(int param0,int param1,int param2,int param3,int param4,int param5);
 
   int draw3D4sub1(timeStruct *arg_0);
 

@@ -32,6 +32,11 @@ void LBA_engine::polyRender(int ecx, int edi)
   short int colorStep;
   short int colorSize;
 
+  float varf2;
+  float varf3;
+  float varf4;
+  float varf5;
+
   out=videoBuffer1+screenLockupTable[vtop];
   
   ptr1=&polyTab[vtop];
@@ -42,10 +47,10 @@ void LBA_engine::polyRender(int ecx, int edi)
   
   color=edi;
 
+//  osystem->drawBufferToScreen(videoBuffer1);
+
   switch(ecx)
   {
-   case 8:
-   case 7:
    case 0:   // flat polygone
    {
    	eax=(color&0xFF) | ((color&0xFF)<<8) | ((color&0xFF)<<16) | ((color&0xFF)<<24);
@@ -70,106 +75,103 @@ void LBA_engine::polyRender(int ecx, int edi)
     }
     break;
    }
-   case -1: // main codec
+   case 7: // main codec
+   case 8:
    {
     renderLoop=vsize;
     do
     {
-/*     stop=ptr1[480];
-     start=ptr1[0];
+		stop=ptr1[480]; // stop
+		start=ptr1[0];   // start
 
-     startColor=ptr2[0];
-     stopColor=ptr2[480];
+		ptr1++;
+		out2=start+out;
+		hsize=stop-start;
 
-     ptr1++;
-     ptr2++;
+		var2=stopColor=ptr2[480];
+		var3=startColor=ptr2[0];
 
-     colorSize=stopColor-startColor;
-     hsize=stop-start;
+		ptr2++;
+
+		varf2=var2;
+		varf3=var3;
+
+		varf4=varf2-varf3;
+
+		if(hsize==0)
+		{
+			*out2=(varf3+varf2)/2; // moyenne des 2 couleurs
+		}
+		else
+		if(hsize>0)
+		{
+			if(hsize==1)
+			{
+				*(out2+1)=(char)varf2;
+				*(out2)=(char)varf3;
+			}
+			else
+			if(hsize==2)
+			{
+				*(out2+2)=(char)varf2;
+				*(out2+1)=(char)((varf2+varf3)/2);
+				*(out2)=(char)varf3;
+			}
+			else
+			{
+				varf4/=hsize;
+
+				do
+				{
+					*(out2++)=(char)varf3;
+					varf3+=varf4;
+				}while(--hsize);
+			}
+		}
 
 
-     if(hsize>0)
-     {
-      colorStep=abs(colorSize)/hsize;
 
-     color=startColor;
 
-      hsize++;
-      out2=start+out;
-      for(j=0;j<hsize;j++)
-      {
-       *(out2++)=color;
-       color+=colorStep;
-      }
-      drawBuffer1ToScreen();
-     }
-     out+=640; */
-/*      var2=ptr1[480];
-      var1=ptr1[0];
-
-      var4=ptr2[480];
-      var3=ptr2[0];
-
-      if(var2==0)
-        var2=var1;
-
-      if(var3==0)
-        var3=var4;
-
-      drawLine(var2,vtop+vsize-renderLoop,var1,vtop+vsize-renderLoop,color);
-      ptr1++;
-      ptr2++;*/
-
-      stop=ptr1[480]; // stop
-      start=ptr1[0];   // start
-
-      ptr1++;
-      out2=start+out;
-      hsize=stop-start;
-
-      var2=stopColor=ptr2[480];
-      var3=startColor=ptr2[0];
-
-      if(hsize==0) // ok
+   /*  if(hsize==0) // ok
       {
         stopColor+=startColor;
         ptr2++;
         stopColor>>=1;
-        *out2=((stopColor&0xFF00)>>8);
+		*out2=((stopColor&0xFF00)>>8);
       }
       else
       if(hsize>0)      // face dans le bon sens
       {
-//        printf("startColor= %d, stopColor= %d\n",var3,var2);
-        var2=stopColor-=startColor;
+        var2=stopColor-=startColor; //largeur de la bande
+		varf2=var2;
         if(stopColor<0) // ok
         {
-          if(hsize<=2) // ok
+         if(hsize<=2) // ok
           {
-            var3=ptr2[480];
-            var2=ptr2[0];
+            varf3=ptr2[480];
+            varf2=ptr2[0];
             ptr2++;
-            *(out2+hsize)=(var3&0xFF00)>>8;
+			*(out2+hsize)=(char)varf3;
             if(--hsize)
             {
-              var3+=var2;
-              var3>>=1;
-              *(out2+1)=(var3&0xFF00)>>8;
+              varf3+=varf2;
+              varf3/=2;
+			  *(out2+1)=(char)varf3;
             }
-            *(out2)=(var2&0xFF00)>>8;
+			*out2=(char)varf2;
           }
           else  // ok
           {
-            var2=-var2;
-            var3=0;
-            var2/=hsize;
-            var3=ptr2[0];
+            varf2=-varf2;
+            varf3=0;
+            varf2/=hsize;
+            varf3=ptr2[0];
             ptr2++;
             hsize++;
             do
             {
-              (*out2++)=var3;
-              var3-=var2;
+              (*out2++)=(char)varf3;
+              varf3-=varf2;
             }while(--hsize);
           }
         }
@@ -179,30 +181,35 @@ void LBA_engine::polyRender(int ecx, int edi)
           {
             var2=ptr2[480];
             ptr2++;
-            *(out2+hsize)=(var2&0xFF00)>>8;
+			*(out2+hsize)=var2;
             if(--hsize)
             {
               var3+=var2;
               var3>>=1;
-              *(out2+1)=(var3&0xFF00)>>8;
+			  *(out2+1)=var3;
             }
-            *(out2)=(var2&0xFF00)>>8;
+			*(out2)=var2;
           }
           else // le plus interessant, face visible + couleurs normales
           {
             var3=0;
-            var2/=hsize;
-            var3=ptr2[0];
+            //var2/=hsize; //largeur de la bande
+
+			varf2=var2;
+			varf2/=(hsize);
+
+            varf3=ptr2[0];
+
             ptr2++;
             hsize++;
             do
             {
-              (*out2++)=var3;
-              var3+=var2;
+              (*out2++)=(char)varf3;
+              varf3+=varf2;
             }while(--hsize);
           }
         }
-      }
+      }*/
       out+=640;
     }while(--renderLoop);
 
@@ -210,7 +217,7 @@ void LBA_engine::polyRender(int ecx, int edi)
    }
   default:
    {
-      printf("Unsuported render type %d\n",polyRenderType);
+     // printf("Unsuported render type %d\n",polyRenderType);
       break;
     }
   };

@@ -731,53 +731,55 @@ int LBA_engine::prepareRender(void)
     {
       ptr3=&polyTab2[temp2+480];
 
-      temp4=((vertexParam2-oldVertexParam)<<8);
+      temp4=((vertexParam2-oldVertexParam));
 
       if(temp4>=0)
       {
-        temp5=temp4/oldVertexX;
-        temp6=temp4%oldVertexX;
+/*        temp5=temp4/oldVertexX;
+        temp6=temp4%oldVertexX;*/
 
-        vcfloat=((float)(vertexParam2-oldVertexParam))/((float)oldVertexX);
+        vcfloat=((float)(temp4))/((float)oldVertexX);
 
-        (*(unsigned char*)&temp6)>>=1;
-        (*(unsigned char*)&temp6)+=0x7F;
+/*        (*(unsigned char*)&temp6)>>=1;
+        (*(unsigned char*)&temp6)+=0x7F;*/
 
-        temp6=(temp6&0xFF) | (oldVertexParam)<<8;
+//        temp6=(temp6&0xFF) | (oldVertexParam)<<8;
 
-        vcfloat2=vertexParam2;
+        vcfloat2=oldVertexParam;
 
-        temp6=oldVertexParam;
+//        temp6=oldVertexParam;
 
         oldVertexX+=2;
-
-        for(i=0;i<oldVertexX;i++)
-        {
-          *(ptr3++)=vcfloat2;
-          vcfloat2+=vcfloat;
-        }
+		
+		for(i=0;i<=oldVertexX;i++)
+			{
+				*(ptr3)=(short int)vcfloat2;
+				ptr3+=direction;
+				vcfloat2+=vcfloat;
+			}
       }
       else
       {
         temp5=temp4/oldVertexX;
         temp6=temp4%oldVertexX;
 
-        vcfloat=-((float)(vertexParam2-oldVertexParam))/((float)oldVertexX);
+        vcfloat=-((float)(temp4))/((float)oldVertexX);
 
         (*(unsigned char*)&temp6)>>=1;
         (*(unsigned char*)&temp6)+=0x7F;
 
         temp6=(temp6&0xFF) | (oldVertexParam&0xFF)<<8;
 
-        vcfloat2=vertexParam2;
+        vcfloat2=oldVertexParam;
 
         temp6=oldVertexParam;
 
         oldVertexX+=2;
 
-        for(i=0;i<oldVertexX;i++)
+        for(i=0;i<=oldVertexX;i++)
         {
-          *(ptr3++)=vcfloat2;
+          *(ptr3)=(short int)vcfloat2;
+		  ptr3+=direction;
           vcfloat2-=vcfloat;
         }
       }
@@ -848,7 +850,7 @@ int LBA_engine::prepareRender(void)
     {
       ptr3=&polyTab2[temp2];
 
-      temp4=((vertexParam2-oldVertexParam)<<8);
+      temp4=((vertexParam2-oldVertexParam));
 
       if(temp4>=0)
       {
@@ -862,15 +864,16 @@ int LBA_engine::prepareRender(void)
 
         temp6=(temp6&0xFF) | (oldVertexParam)<<8;
 
-        vcfloat2=vertexParam2;
+        vcfloat2=oldVertexParam;
 
         temp6=oldVertexParam;
 
         oldVertexX+=2;
 
-        for(i=0;i<oldVertexX;i++)
+        for(i=0;i<=oldVertexX;i++)
         {
-          *(ptr3++)=vcfloat2;
+          *(ptr3)=(short int)vcfloat2;
+		  ptr3+=direction;
           vcfloat2+=vcfloat;
         }
       }
@@ -886,15 +889,16 @@ int LBA_engine::prepareRender(void)
 
         temp6=(temp6&0xFF) | (oldVertexParam&0xFF)<<8;
 
-        vcfloat2=vertexParam2;
+        vcfloat2=oldVertexParam;
 
         temp6=oldVertexParam;
 
-        oldVertexX+=2;
+        //oldVertexX+=2;
 
-        for(i=0;i<oldVertexX;i++)
+        for(i=0;i<=oldVertexX;i++)
         {
-          *(ptr3++)=vcfloat2;
+          *(ptr3)=(short int)vcfloat2;
+		  ptr3+=direction;
           vcfloat2-=vcfloat;
         }
       }

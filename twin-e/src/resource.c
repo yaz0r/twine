@@ -71,6 +71,8 @@ void LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr) 
 			// implementer qq chose de manquant là...
 		}
 	}
+
+	fclose(resourceFile);
 }
 
 
@@ -100,6 +102,8 @@ int LBA_engine::prepareResource(char* fileName, int index)
 
 	fseek(file,offToData,SEEK_SET);
 	readResourceData(file,(char*)&dataSize,4);
+
+	fclose(file);
 
 	return(dataSize);
 }

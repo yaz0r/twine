@@ -12,8 +12,6 @@ int main(int argc, char* argv[])
   printf("LBA_engine object size is: %d\n",sizeof(LBA_engine));
   engine = (LBA_engine*)malloc(sizeof(LBA_engine)); // creation of the LBA_engine
 
-  engine->osystem=osystem;
-
   if(!engine) // if the allocation failed
   {
     printf("Failed to create the LBA_engine object !!!\n");
@@ -24,7 +22,11 @@ int main(int argc, char* argv[])
   {
     printf("LBA_engine creation succeed !\n");
 
+	engine->osystem=osystem;
     engine->initVars(); // init the vars (move to the object creator ?)
+	
+	startThreadTimer(engine);
+
     engine->init();     // startup the game engine !
   }
 

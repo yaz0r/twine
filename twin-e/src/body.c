@@ -55,7 +55,10 @@ actor* lactor;
     
     if(!(flag & 0x8000)) // if it's not an sprite object
     {
-      loadDataFileToPtr("body.hqr",flag,&bodyPtrTab[reinitAll2Var3]);
+     loadDataFileToPtr("body.hqr",flag&0xFFFF,&bodyPtrTab[reinitAll2Var3]);
+	//	loadDataFileToPtr("body.hqr",1,&bodyPtrTab[reinitAll2Var3]);
+	
+	//	loadDataFileToPtr("invobj.hqr",5,&bodyPtrTab[reinitAll2Var3]);
       if(!bodyPtrTab[reinitAll2Var3])
       {
         printf("Body.HQR in HQ_Mem\n");

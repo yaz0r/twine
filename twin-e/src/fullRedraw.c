@@ -19,125 +19,135 @@
 
 void LBA_engine::fullRedraw(int param)
 {
-  short int temp1;
-  short int temp2;
-  int counter;
-  int counter2;
-//  int i;
+	short int temp1;
+	short int temp2;
+	int counter;
+	int counter2;
+	//  int i;
 
-  int arg_1A;
-  int a12;
-  int arg_46;
-  int arg_42;
-  int a0E;
-  int arg_1E;
-  actor* lactor;
-  int result,result2;
-  short int arg_36;
-  short int arg_4A;
-  int a2E;
+	int arg_1A;
+	int a12;
+	int arg_46;
+	int arg_42;
+	int a0E;
+	int arg_1E;
+	actor* lactor;
+	int result,result2;
+	short int arg_36;
+	short int arg_4A;
+	int a2E;
+	int temp3;
 
-  temp1=fullRedrawVar1;
-  temp2=fullRedrawVar2;
+	temp1=fullRedrawVar1;
+	temp2=fullRedrawVar2;
 
-  maximizeTextWindow();
+	maximizeTextWindow();
 
-  if(!param) // redraw only the actors
-  {
-    fullRedrawSub1();
-  }
-  else      // redraw the background as well
-  {
-    freezeTime();
-    resetVideoBuffer1();
-    fullRedrawSub2();
-    fullRedrawSub3(temp1,temp2,fullRedrawVar1,fullRedrawVar2);
-//  fullRedrawSub4();
-    copyToBuffer(videoBuffer1,videoBuffer2);
-  }
+	if(!param) // redraw only the actors
+	{
+		fullRedrawSub1();
+	}
+	else      // redraw the background as well
+	{
+		freezeTime();
+		resetVideoBuffer1();
+		fullRedrawSub2();
+		fullRedrawSub3(temp1,temp2,fullRedrawVar1,fullRedrawVar2);
+		//  fullRedrawSub4();
+		copyToBuffer(videoBuffer1,videoBuffer2);
+	}
 
-  arg_1A=0;
-  a12=0;
-  arg_46=arg_1A+0x1000;
-  arg_42=arg_1A+0x0C00;
+	arg_1A=0;
+	a12=0;
+	arg_46=arg_1A+0x1000;
+	arg_42=arg_1A+0x0C00;
 
-  for(arg_1A=0;arg_1A<numActorInRoom;arg_1A++,arg_46++,arg_42++)
-  {
-    lactor=&actors[arg_1A];
-    *(byte*)&lactor->field_62 &= 0xEF;
-    if(!(changeRoomVar9!=-1 && lactor->field_1C>*(short int*)(currentGrid2*24+sceneVarPtr+8)))
-    {
-      if(lactor->field_60 & 0x2000 && param == 0)
-      {
-        fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
-        if(fullRedrawVar3 > -50 && fullRedrawVar3 < 680 && fullRedrawVar4> -30 && fullRedrawVar4< 580)
-          *(byte*)&lactor->field_62|=0x10;
-      }
-      else
-      {
-        if(lactor->costumeIndex != -1 && !(lactor->field_60 & 0x200)) // if the costume is set and if the actor is a sprite actor
-        {
-          fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
-          if((lactor->field_60 & 8 && fullRedrawVar2 >-112 && fullRedrawVar2 < 752 && fullRedrawVar4 > -50 && fullRedrawVar4 < 651)
-          || ((!(lactor->field_60 & 8)) && fullRedrawVar3> -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4< 580))
-          {
-//            printf("process sprite actor %d\n",arg_1A);
-          }
-        }
-      }
-    }
-  }
+	for(arg_1A=0;arg_1A<numActorInRoom;arg_1A++,arg_46++,arg_42++) // process shadows/priority ?
+	{
+		lactor=&actors[arg_1A];
+		*(byte*)&lactor->field_62 &= 0xEF;
 
-  arg_1A=0;
-  counter=arg_1A+0x1800;
-  counter2=0;
+		if(!(changeRoomVar9!=-1 && lactor->field_1C>*(short int*)(currentGrid2*24+sceneVarPtr+8)))
+		{
+			if(lactor->field_60 & 0x2000 && param == 0)
+			{
+				fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
 
-  do
-  {
-    if(reinitAll2SubVar1[counter2].field_0 != -1)
-    {
-      if(reinitAll2SubVar1[counter2].field_15 & 4)
-      {
-        if(time-reinitAll2SubVar1[counter2].field_18 > 35)
-        {
-          reinitAll2SubVar1[counter2].field_18 = time;
-          reinitAll2SubVar1[counter2].field_15 &= 0xFB;
-//     fullRedrawS3(11,0x1000,1,reinitAll2SubVar1[counter2].field_2,reinitAll2SubVar1[counter2].field_4,reinitAll2SubVar1[counter2].field_6);
-        }
-      }
-      else
-      {
-      }
-    //process
-    }
-    arg_1A++;
-    counter++;
-    counter2++;
-  }while(arg_1A<50);
+				if(fullRedrawVar3 > -50 && fullRedrawVar3 < 680 && fullRedrawVar4> -30 && fullRedrawVar4< 580)
+					*(byte*)&lactor->field_62|=0x10;
+			}
+			else
+			{
+				if(lactor->costumeIndex != -1 && !(lactor->field_60 & 0x200)) // if the costume is set and if the actor is a sprite actor
+				{
+					fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
+
+					if((lactor->field_60 & 8 && fullRedrawVar2 >-112 && fullRedrawVar2 < 752 && fullRedrawVar4 > -50 && fullRedrawVar4 < 651)
+					|| ((!(lactor->field_60 & 8)) && fullRedrawVar3> -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4< 580))
+					{
+						temp3=(lactor->field_1E+((lactor->field_1A)-changeRoomVar4Bis))-changeRoomVar6Bis;
+						if(lactor->field_58!=-1)
+						{
+							printf("Sprite actor %d follow actor %d !\n",arg_1A,lactor->field_58);
+						}
+					//	            printf("process sprite actor %d\n",arg_1A);
+					}
+				}
+			}
+		}
+	}
+
+	arg_1A=0;
+	counter=arg_1A+0x1800;
+	counter2=0;
+
+	do
+	{
+		if(reinitAll2SubVar1[counter2].field_0 != -1)
+		{
+			if(reinitAll2SubVar1[counter2].field_15 & 4)
+			{
+				if(time-reinitAll2SubVar1[counter2].field_18 > 35)
+				{
+					reinitAll2SubVar1[counter2].field_18 = time;
+					reinitAll2SubVar1[counter2].field_15 &= 0xFB;
+				    fullRedrawS3(11,0x1000,1,reinitAll2SubVar1[counter2].field_2,reinitAll2SubVar1[counter2].field_4,reinitAll2SubVar1[counter2].field_6);
+				}
+			}
+			else
+			{
+				fullRedrawS2S1(roomData2->field_2-changeRoomVar4Bis,roomData2->field_4-changeRoomVar5Bis,roomData2->field_6-changeRoomVar6Bis);
+			}
+		//process
+		}
+		arg_1A++;
+		counter++;
+		counter2++;
+	}while(arg_1A<50);
 
 // fullRedrawSub6(&fullRedrawVar6,a12,12);
 
-  if(twinsen->costumeIndex != -1 && !(twinsen->field_60 & 0x200))
-  {
-    twinsen->field_46=twinsen->field_1A+twinsen->field_26;
-    arg_36=twinsen->field_1E+twinsen->field_2E;
-    twinsen->field_52=twinsen->field_1A+twinsen->field_28;
-    arg_4A=twinsen->field_1E+twinsen->field_30;
-    a2E=0;
-    result=-1;
+	if(twinsen->costumeIndex != -1 && !(twinsen->field_60 & 0x200))
+	{
+		twinsen->field_46=twinsen->field_1A+twinsen->field_26;
+		arg_36=twinsen->field_1E+twinsen->field_2E;
+		twinsen->field_52=twinsen->field_1A+twinsen->field_28;
+		arg_4A=twinsen->field_1E+twinsen->field_30;
+		a2E=0;
+		result=-1;
 
-    while(arg_1A<a12)
-    {
-      if(fullRedrawVar6[arg_1A].field_2 == 0)
-      {
-        result=arg_1A;
-        result2=fullRedrawVar6[arg_1A].field_0;
-        break;
-      }
-    }
+		while(arg_1A<a12)
+		{
+			if(fullRedrawVar6[arg_1A].field_2 == 0)
+			{
+				result=arg_1A;
+				result2=fullRedrawVar6[arg_1A].field_0;
+				break;
+			}
+		}
 
-  //twinsen process
-  }
+	//twinsen process
+	}
 
   a0E=0;
 // fullRedrawVar8=0;
@@ -585,3 +595,13 @@ int LBA_engine::fullRedrawS2S1(int arg_0, int arg_4, int arg_8)
  return(-1);
 }
 
+
+int LBA_engine::fullRedrawS3(int param0,int param1,int param2,int param3,int param4,int param5)
+{
+	if(samplesLoaded!=0)
+	{
+		printf("sampleLoaded != 0 in fullRedrawS3!\n");
+		exit(1);
+	}
+	return(0);
+}

@@ -27,7 +27,7 @@ void LBA_engine::runActorScript(short int actorNumber)
  unsigned char *opcodePtr;
  int temp;
 
-  return;
+return;
 
  lactor=&actors[actorNumber];
  
@@ -235,6 +235,9 @@ void LBA_engine::manipActor(actor* lactor)
   case 13:
   	manipActorResult=lactor->field_64;
    break;
+  case 14:
+	  manipActorResult=updateActorScript;
+	  break;
   case 15:
   	temp=*(actorScriptPtr++);
    if(!vars[28] || ( vars[28] && temp>=28))

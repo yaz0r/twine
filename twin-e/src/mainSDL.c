@@ -16,6 +16,7 @@
  ***************************************************************************/
 
 #include "SDL.h"
+#include "SDL_thread.h"
 #include "lba.h"
 
 SDL_Surface *sdl_screen; // that's the SDL global object for the screen

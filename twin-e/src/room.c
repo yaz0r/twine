@@ -106,7 +106,7 @@ void LBA_engine::changeRoom(void)
 
 	for(i=1;i<numActorInRoom;i++)
 	{
-//		loadRoomActors(i);
+		loadRoomActors(i);
 	}
 
 	numKey=0;
@@ -226,7 +226,7 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	temp2=(unsigned short int*)(temp+temp3);
 
 	numActorInRoom=*(temp2++);
- numActorInRoom=roomMusic;
+// numActorInRoom=roomMusic;
 
 	while(currentActor<numActorInRoom)
 	{
@@ -416,6 +416,7 @@ int LBA_engine::loadGridAndBll(short int roomNumber)
 	int size;
 
 	gridSize=prepareResource("lba_gri.hqr",roomNumber); // pour recuperer la taille
+	
 	allocHQRMemory(gridSize,&currentGrid);
 	if(currentGrid==NULL)
 		return(0);
@@ -571,6 +572,7 @@ void LBA_engine::changeTwinsenComp(int newComportement)
  };
  
  temp = twinsen->field_0;
+
  twinsen->costumeIndex=-1;
  twinsen->field_0=-1;
 

@@ -173,12 +173,6 @@ int LBA_engine::mainLoop(void)
           mainLoop2(1);
 //        processHolomap();
           mainLoopVar3=1;
-
-
-
-
-
-
           unfreezeTime();
           fullRedraw(1);
         }
@@ -676,6 +670,8 @@ void LBA_engine::drawInGameMenu(void)
 
  drawMenuWin1(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),currentCostume);
 
+ readKeyboard();
+
  while(key1&4 || (skipIntro>59 && skipIntro<62))
  {
   readKeyboard();
@@ -747,25 +743,26 @@ void LBA_engine::drawMenuWin(short int var)
   osystem->refresh(videoBuffer1,100,100,550,290);
 }
 
-void LBA_engine::drawInGameMenuEntry(int anim, int arg, int costume)
+void LBA_engine::drawInGameMenuEntry(int lcomportement, int arg, int arg2)
 {
-  short int temp;
+  
   unsigned char * temp2;
   int temp3;
-  int var_4;
-  int var_C;
-  int var_8;
+
+  int box_left;
+  int box_right;
+  int box_top;
+  int box_bottom;
   int var_10;
 
- temp=anim*110+110;
- var_4=temp+99;
+ box_left=lcomportement*110+110;
+ box_right=box_left+99;
+ box_top=110;
+ box_bottom=229;
 
- temp2=getHqrdataPtr(HQRanims,TCOS[anim]);
+ temp2=getHqrdataPtr(HQRanims,TCOS[lcomportement]);
 
- var_C=110;
- var_8=229;
-
- temp3=winTab[anim];
+ temp3=winTab[lcomportement];
 
 /* if(draw3D1(temp3,temp2,currentCostume))
  {
@@ -777,38 +774,44 @@ void LBA_engine::drawInGameMenuEntry(int anim, int arg, int costume)
   winTab[anim]=temp3;
  }   */
 
- if(costume==0)
-   drawBoxOutLine(temp-1,var_C-1,var_4+1,var_8+1);
+ if(arg2==0)
+ {
+   drawBoxOutLine(box_left-1,box_top-1,box_right+1,box_bottom+1);
+ }
 
  saveTextWindow();
  maximizeTextWindow();
 
- if(anim!=comportement)
+ if(lcomportement!=comportement)
  {
-  drawBlackBox(temp,var_C,var_4,var_8,0);
+  drawBlackBox(box_left,box_top,box_right,box_bottom,0); // color of unselected
  }
  else
  {
-  drawBlackBox(temp,var_C,var_4,var_8,68);
-  drawBlackBox(110,239,540,279,0);
+  drawBlackBox(box_left,box_top,box_right,box_bottom,68); // color of selected
+
+  drawBlackBox(110,239,540,279,0); // comportement name box
   drawBoxOutLine(110,239,540,279);
 
   setTextColor(15);
+
   if(comportement== 2 && agressivity == 1)
   {
    printString(4,dataString);       // pour afficher le "auto" ou non
   }
   else
+  {
     printString(comportement,dataString);
+  }
 
   printStringSimple((650-getStringLength(dataString))/2,240,dataString); // ecrit le nom du comportement dans lequel on se trouve
  }
 
- var_10=var_C;
+ var_10=box_top;
 
- draw3D4(temp,var_C,var_4,var_8,-600,arg,currentCostume);   // dessine le model
+ draw3D4(box_left,box_top,box_right,box_bottom,-600,arg,currentCostume);   // dessine le model
 
- osystem->refresh(videoBuffer1,temp,var_10,var_4,var_8);
+ osystem->refresh(videoBuffer1,box_left,var_10,box_right,box_bottom);
  osystem->refresh(videoBuffer1,110,239,540,279);
 
  loadSavedTextWindow();
@@ -837,24 +840,61 @@ void LBA_engine::draw3D4(short int arg_0, short int arg_4, short int arg_8, shor
 
  if(arg_14==-1)
  {
-/*  temp=draw3D4sub1(&timeVar);
-
+  temp=draw3D4sub1(&timeVar);
   if(timeVar.var3==0)
   {
     tempbis=temp;
     setActorTime(tempbis,temp-256,50,&timeVar);
   }
-  startRenderer(0,arg_10,0,0,1,0,costumePtr); */
+  startRenderer(0,arg_10,0,0,temp,0,costumePtr);
  }
  else
    startRenderer(0,arg_10,0,0,arg_14,0,costumePtr);
 
 }
 
+// should be: updateTimeVar
 int LBA_engine::draw3D4sub1(timeStruct* arg_0)
 {
-  // implement this
-  return(0);
+	int edx;
+	int eax;
+
+	eax=arg_0->var2;
+
+	if(arg_0->var3)
+	{
+		edx=time-arg_0->var4;
+
+		if(edx>=arg_0->var3)
+		{
+			arg_0->var3=0;
+			return(eax);
+		}
+
+		eax-=arg_0->var1;
+		if(eax<0xFE00)
+		{
+			eax+=0x400;
+			eax*=edx;
+			eax/=arg_0->var3;
+			return(eax+arg_0->var1);
+		}
+		if(eax<=0x200)
+		{
+			eax*=edx;
+			eax/=arg_0->var3;
+			return(eax+arg_0->var1);
+		}
+
+		eax-=0x800;
+		eax+=0x400;
+		eax*=edx;
+		eax/=arg_0->var3;
+		return(eax+arg_0->var1);
+
+	}
+
+	return(eax);
 }
 
 void LBA_engine::setTextWindowSize(int left, int top, int right, int bottom)
