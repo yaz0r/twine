@@ -53,8 +53,8 @@ void LBA_engine::init(void)
 			useSound=0;
 	}*/
 
-	loadDataFileToPtr("body.hqr",121,&flagModelPtr);
-	loadGfxSub(flagModelPtr);
+	//loadDataFileToPtr("body.hqr",121,&flagModelPtr);
+	//loadGfxSub(flagModelPtr);
 
 	videoBuffer2=(byte*)malloc(307700*sizeof(byte));
 

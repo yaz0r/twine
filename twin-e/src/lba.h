@@ -13,7 +13,7 @@ typedef signed short int16;
 typedef signed long int32;
 
 #include"osystem.h"
-#include"lbaTime.h"
+#include"angle.h"
 #include"costume.h"
 #include"vars.h"
 

@@ -66,6 +66,7 @@ struct actor {
  short int field_6E;
  short int field_70;
  short int field_74;
+ short int field_72;
  short int field_76;
  short int field_78;
 

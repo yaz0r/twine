@@ -62,10 +62,10 @@ int LBA_engine::startRenderer(int arg_0,int arg_4,int arg_8,int arg_C,int arg_10
 
 	ptr=costumePtr+16+*(short int*)(costumePtr+14); // we jump after the header
 
-	if(costumeHeader&2)
+	//if(costumeHeader&2)
 		return(renderM1(ptr));  // That's the mostly used renderer code
-	else
-		return(renderM2(ptr));  // probably render in Bù temple
+	//else
+	//	return(renderM2(ptr));  // probably render in Bù temple
 
 }
 

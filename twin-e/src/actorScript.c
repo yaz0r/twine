@@ -16,7 +16,9 @@
  ***************************************************************************/
 
 #include "lba.h"
- 
+#include "math.h"
+
+
 void LBA_engine::runActorScript(short int actorNumber)
 {
 //char string[256];
@@ -116,10 +118,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 		loadActorCostume(param2,param1);
 	break;
 	case 19:
-		initNewCostume(*(actorScriptPtr++),0,0,actorNumber);
+		playAnim(*(actorScriptPtr++),0,0,actorNumber);
 		break;
     case 20:
-    	initNewCostume(*(actorScriptPtr+1),0,0,*actorScriptPtr);
+    	playAnim(*(actorScriptPtr+1),0,0,*actorScriptPtr);
      actorScriptPtr+=2;
      break;
     case 23:
@@ -151,11 +153,11 @@ void LBA_engine::runActorScript(short int actorNumber)
 		break;
     case 27:
     	temp=*(actorScriptPtr++);
-     lactor->field_40=temp;
-     if(temp==2)
-     {
-      lactor->field_54=*(actorScriptPtr++);
-     }
+		lactor->field_40=temp;
+		if(temp==2)
+		{
+		lactor->field_54=*(actorScriptPtr++);
+		}
      break;
 	case 29:
 		int newActorToFollow;
@@ -176,7 +178,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 		break;
 	case 30:
-		initNewCostume(0,0,-1,0);
+		playAnim(0,0,-1,0);
 		changeTwinsenComp(*(actorScriptPtr++));
 		break;
     case 31:
@@ -304,8 +306,8 @@ void LBA_engine::runActorScript(short int actorNumber)
 		manipActorResult=*actorScriptPtr++; // position flag number
 
 		mainTab[18]=flagData[manipActorResult].x;
-		mainTab[19]=flagData[manipActorResult].y;
-		mainTab[20]=flagData[manipActorResult].z;
+		mainTab[19]=flagData[manipActorResult].z;
+		mainTab[20]=flagData[manipActorResult].y;
 
 		lactor->X=mainTab[18];
 		lactor->Z=mainTab[19];
@@ -419,7 +421,7 @@ void LBA_engine::manipActor(actor* lactor)
 	   }
 	   else
 	   {
-		   manipActorResult=getCoordinatesDistance(lactor->X,lactor->Y,lactor2->X,lactor2->Y);
+		   manipActorResult=getDistanceToward(lactor->X,lactor->Y,lactor2->X,lactor2->Y);
 		   if(manipActorResult>32000)
 			   manipActorResult=32000;
 	   }
@@ -457,18 +459,50 @@ void LBA_engine::manipActor(actor* lactor)
   	manipActorResult=roomData1[*(actorScriptPtr++)];
    break;
   case 12:
-  	lactor2=&actors[*actorScriptPtr];
-   manipActorVar1=1;
-   actorScriptPtr=localScriptPtr;
-   if(!(lactor2->field_62&0x20))
-   {
-    printf("Unhandled manip actor opcode 12...\n");
-   }
-   else
-   {
-   	manipActorResult=32000; 
-   }
-  	break;
+	short int angle;
+	int newActor;
+
+	angle=0; //todo: not supposed to have that
+
+	newActor=*actorScriptPtr;
+	lactor2=&actors[newActor];
+	manipActorVar1=1;
+	actorScriptPtr=localScriptPtr;
+	if(!(lactor2->field_62&0x20))
+	{
+		if(lactor2->Z-lactor->Z<1500)
+		{
+			angle=calcAngleToward(lactor->X,lactor->Y,lactor2->X,lactor2->Y);
+			if(moveActorVar1>32000)
+				moveActorVar1=32000;
+		}
+		else
+		{
+			moveActorVar1=32000;
+		}
+
+		if(!newActor)
+		{
+			int newAngle;
+
+			newAngle=(lactor->angle+0x480)-(angle+0x400);
+			newAngle&=0x3FF;
+
+			if(newAngle>=0x100)
+			{
+				manipActorResult=32000;
+			}
+			else
+			{
+				manipActorResult=moveActorVar1;
+			}
+		}
+	}
+	else
+	{
+		manipActorResult=32000; 
+	}
+	break;
   case 13:
   	manipActorResult=lactor->field_64;
    break;
@@ -640,7 +674,113 @@ int LBA_engine::doCalc(void)
  
 }
 
-int LBA_engine::getCoordinatesDistance(int X1,int Y1, int X2,int Y2)
+int LBA_engine::getDistanceToward(int X1,int Y1, int X2,int Y2)
 {
-	return(32000);
+	int Xdata;
+	int Ydata;
+
+	Xdata=X2-X1;
+	Xdata*=Xdata;
+
+	Ydata=Y2-Y1;
+	Ydata*=Ydata;
+
+	return(sqrt(Xdata+Ydata));
+}
+
+int LBA_engine::calcAngleToward(int X1,int Y1,int X2,int Y2)
+{
+	int newX;
+	int newY;
+	int ebp;
+	int edi;
+	int eax;
+	int tempExchange;
+	short int *tab3ptr;
+	short int *tempPtr;
+	int esi;
+	int ebx;
+
+	edi=Y2-Y1;
+	newY=edi*edi;
+
+	ebp=X2-X1;
+	newX=ebp*ebp;
+
+	if(!(newX<newY))
+	{
+		tempExchange=edi;
+		edi=ebp;
+		ebp=tempExchange;
+		ebp|=1;
+	}
+	else
+	{
+		ebp&=0xFFFFFFFE;
+	}
+
+	moveActorVar1=eax=sqrt(newX+newY);
+
+	if(!eax)
+		return(0);
+
+	tempExchange=eax;
+	eax=edi;
+	edi=tempExchange;
+
+	eax<<=14;
+	eax/=edi;
+
+	esi=(int)tab3;
+	edi=esi+0x200;
+
+	do
+	{
+		ebx=esi;
+		ebx+=edi;
+		ebx>>=1;
+
+		if(eax>*(short int*)ebx)
+		{
+			edi=ebx;
+		}
+		else
+		{
+			esi=ebx;
+			if(eax==*(short int*)ebx)
+			{
+				goto endCalc;
+			}
+			ebx=edi;
+		}
+		ebx-=esi;
+	}while(--ebx);
+
+	if((*(short int*)esi+*(short int*)edi)/2<=eax)
+	{
+		esi=edi;
+	}
+
+endCalc:
+
+	esi-=(int)tab2;
+	eax=esi;
+	eax>>=1;
+
+	if(ebp<=0)
+	{
+		eax=-eax;
+	}
+
+	if(ebp&1)
+	{
+		eax=-eax;
+		eax+=0x100;
+	}
+
+	eax&=0x3FF;
+
+	return(eax);
+
+
 }

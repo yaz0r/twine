@@ -3,11 +3,20 @@ class LBA_engine;
 int threadTimer(void);
 void startThreadTimer(LBA_engine*);
 
+struct zbufferDataStruct
+{
+	short int y;
+	short int z;
+	short int x;
+	short int drawY;
+	short int spriteNum;
+};
+
 struct flagDataStruct
 {
 	short int x;
-	short int y;
 	short int z;
+	short int y;
 };
 
 struct pointTab
@@ -588,8 +597,6 @@ class LBA_engine
  short int fullRedrawVar3;
  short int fullRedrawVar4;
  
- unsigned char zbufferTab[56];
- 
  int zbufferVar1;
  int zbufferVar2;
  
@@ -600,8 +607,6 @@ class LBA_engine
  short int mainLoopVar9;
  
  unsigned char* bodyPtrTab[200];
-
- 
 
  short int loadCostumeVar;
  short int loadCostumeVar2;
@@ -713,11 +718,44 @@ class LBA_engine
 
  unsigned char* flagModelPtr;
 
+ zbufferDataStruct zbufferData[28][150];
+ short int zbufferTab[28];
+
+ char* animVar0;
+ char* animVar1;
+
+ int setSomething3Var11;
+ int setSomething3Var13;
+ int setSomething3Var15;
+
+ int moveActorVar1;
+	
 //----------------------------------------------------------------------------------------
+
+void updateActorAngle(int angleFrom,int angleTo,int angleSpeed,timeStruct* angleStruct);
+
+int calcAngleToward(int X1,int Y1,int X2,int Y2);
+
+void updateActors(int actorNum);
+
+int applyAnim(int animState,char* animData,char* body);
+
+void fullRedrawSub11(void);
+
+void sortRenderList(fullRedrawVar6Struct list,int listSize,int param);
+
+void redrawBrick(int spriteNum,int x,int y,byte *bufferBrick,byte* buffer);
+
+void addToRedrawBoxMain(int left,int top,int right,int bottom);
+
+void refreshUpperBricks(int X,int Z,int Y);
+void refreshUpperBricks3d(int X,int Z,int Y);
+
+void loadActorSub(int imageNumber,int actorNumber);
 
 void getSpriteSize(int arg_0,int* arg_4,int* arg_8,char* ptr);
 
-int getCoordinatesDistance(int X1,int Y1, int X2,int Y2);
+int getDistanceToward(int X1,int Y1, int X2,int Y2);
 
 void moveActor(int actorNumber);
 
@@ -727,7 +765,7 @@ void moveActor(int actorNumber);
 
 	int fullRedrawS3(int param0,int param1,int param2,int param3,int param4,int param5);
 
-  int draw3D4sub1(timeStruct *arg_0);
+  int processActorAngle(timeStruct *arg_0);
 
   void setTextWindowSize(int left, int top, int right, int bottom);
 
@@ -792,7 +830,7 @@ void moveActor(int actorNumber);
 
 	void manipActor(actor* lactor);
 
-	int initNewCostume(char costume, short int arg_4, unsigned char arg_8, short int actorNum);
+	int playAnim(char costume, short int arg_4, unsigned char arg_8, short int actorNum);
 
 	void loadActorCostume(char arg_0, short int arg_4);
  
@@ -801,6 +839,7 @@ void moveActor(int actorNumber);
 	void loadVariousGFX(void);
 
 	void drawSprite(int num, int var1, int var2, unsigned char* localBufferBrick);
+	void drawSprite2(int num, int var1, int var2, unsigned char* localBufferBrick);
 
 	void zbufferSub2(int y, int z, int x);
  
@@ -820,7 +859,7 @@ void moveActor(int actorNumber);
 
 	void fullRedrawSub3(short int arg_0, short int arg_4, short int arg_8, short int arg_C);
 
-	void setActorTime(short int arg_0, short int arg_4, short int arg_8, timeStruct *timePtr);
+	void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8, timeStruct *timePtr);
 
  void resetActor(int actorNumber);
  
@@ -842,7 +881,7 @@ void moveActor(int actorNumber);
 	int getCurrentlyPlayingMusic(void);
  void fullRedraw(int param);
 	void waitRetrace(void);
-	void mainLoop1(short int arg0, short int arg4, short int arg8, timeStruct *ptr);
+	void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct *ptr);
 
 	void createCube(void);
 	void addCubeEntry(unsigned char* gridEntry, unsigned char* dest);

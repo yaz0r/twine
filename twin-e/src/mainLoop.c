@@ -24,7 +24,7 @@ int LBA_engine::mainLoop(void)
  
   mainLoopVar2=1;
   mainLoopVar3=1;
-  mainLoop1(0,-256,5,&mainLoopVar1);
+  setActorAngle(0,-256,5,&mainLoopVar1);
 
   do
   {
@@ -141,7 +141,7 @@ int LBA_engine::mainLoop(void)
 /*             camera debugger                 */
 /***********************************************/      
             
-        if(printTextVar12&2) // x--     -> bas
+ /*       if(printTextVar12&2) // x--     -> bas
         {
           changeRoomVar6++;
           mainLoopVar2=1;
@@ -163,7 +163,7 @@ int LBA_engine::mainLoop(void)
         {
           newCameraX++;
           mainLoopVar2=1;
-        }
+        }*/
 
 /**********************************************/      
            
@@ -214,7 +214,7 @@ int LBA_engine::mainLoop(void)
 //  if(!mainLoopVar17)
 //    mainLoopVar17=1;
 
-    mainLoop1(0,-256,5,&mainLoopVar1);
+    setActorAngle(0,-256,5,&mainLoopVar1);
     mainLoopVar10=0;
 //  mainLoopSub18();
 
@@ -236,7 +236,7 @@ int LBA_engine::mainLoop(void)
         {
  //       printf("Unsuported actor[i].field_68\n");
         }
-//      updateActors(i);
+		updateActors(i);
 
         actors[i].field_20=actors[i].X;
         actors[i].field_22=actors[i].Z;
@@ -502,20 +502,10 @@ void LBA_engine::mainLoop2(int arg_0)
 }
 
 void LBA_engine::mainLoop2sub1(void)
-
-
 {
   //code dpmi non géré.
 
  initVideoVar1=-1;
-}
-
-void LBA_engine::mainLoop1(short int arg0, short int arg4, short int arg8, timeStruct *ptr)
-{
-  ptr->var1=arg0;
-  ptr->var2=arg4;
-  ptr->var3=arg8;
-  ptr->var4=time;
 }
 
 void LBA_engine::waitRetrace(void)
@@ -648,7 +638,7 @@ void LBA_engine::drawInGameMenu(void)
  TCOS[2]=TCos2Init;
  TCOS[3]=TCos3Init;
 
- setActorTime(twinsen->angle,twinsen->angle-256,50,&timeVar);
+ setActorAngleSafe(twinsen->angle,twinsen->angle-256,50,&timeVar);
 
 
  copyToBuffer(videoBuffer1,videoBuffer2);
@@ -690,7 +680,7 @@ void LBA_engine::drawInGameMenu(void)
   {
    drawInGameMenuEntry(comportement,twinsen->angle,1);
    savedLevel=comportement;
-   setActorTime(twinsen->angle,twinsen->angle-256,50,&timeVar);
+   setActorAngleSafe(twinsen->angle,twinsen->angle-256,50,&timeVar);
    drawMenuWin1(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),currentCostume);
 
    while(printTextVar12)
@@ -835,60 +825,16 @@ void LBA_engine::draw3D4(short int arg_0, short int arg_4, short int arg_8, shor
 
  if(arg_14==-1)
  {
-  temp=draw3D4sub1(&timeVar);
-  if(timeVar.var3==0)
+  temp=processActorAngle(&timeVar);
+  if(timeVar.numOfStep==0)
   {
-    setActorTime(temp,temp-256,50,&timeVar);
+    setActorAngleSafe(temp,temp-256,50,&timeVar);
   }
   startRenderer(0,arg_10,0,0,temp,0,costumePtr);
  }
  else
    startRenderer(0,arg_10,0,0,arg_14,0,costumePtr);
 
-}
-
-// should be: updateTimeVar
-int LBA_engine::draw3D4sub1(timeStruct* arg_0)
-{
-	int edx;
-	int eax;
-
-	eax=arg_0->var2;
-
-	if(arg_0->var3)
-	{
-		edx=time-arg_0->var4;
-
-		if(edx>=arg_0->var3)
-		{
-			arg_0->var3=0;
-			return(eax);
-		}
-
-		eax-=arg_0->var1;
-		if(eax<0xFE00)
-		{
-			eax+=0x400;
-			eax*=edx;
-			eax/=arg_0->var3;
-			return(eax+arg_0->var1);
-		}
-		if(eax<=0x200)
-		{
-			eax*=edx;
-			eax/=arg_0->var3;
-			return(eax+arg_0->var1);
-		}
-
-		eax-=0x800;
-		eax+=0x400;
-		eax*=edx;
-		eax/=arg_0->var3;
-		return(eax+arg_0->var1);
-
-	}
-
-	return(eax);
 }
 
 void LBA_engine::setTextWindowSize(int left, int top, int right, int bottom)
@@ -1230,4 +1176,90 @@ int LBA_engine::drawInventory2(hqr_entry *hqrPtr, int var)
  hqrPtr->remainingSize=retVal;
  
  return(retVal);
+}
+
+void LBA_engine::updateActors(int actorNum)
+{
+	actor* lactor;
+
+	lactor=&actors[actorNum];
+
+	if(lactor->costumeIndex==-1)
+		return;
+
+	if(lactor->field_62&0x100)
+	{
+	}
+	else
+	{
+		if(!(lactor->field_62&0x400))
+		{
+			if(lactor->field_40!=1)
+			{
+				lactor->angle=processActorAngle(&lactor->time);
+			}
+		}
+		
+		if(lactor->field_40>6)
+			return;
+
+		switch(lactor->field_40)
+		{
+		case 0:
+			break;
+		case 1: // comp_normal
+			if(!actorNum)// if it's twinsen
+			{
+				int angleModif;
+
+				updateActorScript=0;
+				switch(comportement)
+				{
+				case 0: // normal
+					if(mainLoopVar5&1)
+					{
+						updateActorScript=1;
+					}
+					break;
+				case 3: // discret
+					if(mainLoopVar5&1)
+					{
+						playAnim(16,0,255,0);
+					}
+					break;
+				}
+
+				angleModif=0;
+
+				if(key&4)
+				{
+					angleModif=0x100;
+				}
+
+				if(key&8)
+				{
+					angleModif=-0x100;
+				}
+
+				updateActorAngle(lactor->angle,lactor->angle+angleModif,lactor->field_34,&lactor->time);
+			}
+			else
+			{
+			}
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		default:
+			printf("Unhandled comportement %d in update actors\n",lactor->field_40);
+			exit(1);
+		}
+	}
 }

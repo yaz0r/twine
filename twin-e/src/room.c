@@ -536,7 +536,7 @@ void LBA_engine::reinitTwinsen(void)
  twinsen->positionInActorScript = 0;
 	twinsen->field_5A=-1;
  twinsen->angle=reinitVar9;
- setActorTime(twinsen->angle,twinsen->angle,0,&twinsen->time);
+ setActorAngleSafe(twinsen->angle,twinsen->angle,0,&twinsen->time);
  changeTwinsenComp(reinitVar10);
  reinitVar7=0;
 }
@@ -579,7 +579,7 @@ void LBA_engine::changeTwinsenComp(int newComportement)
  twinsen->costume=-1;
  twinsen->field_78=0;
  
- initNewCostume(0,0,255,0);
+ playAnim(0,0,255,0);
 }
 
 void LBA_engine::memoryBufferProcess(unsigned char * ptr, int size)
@@ -601,35 +601,35 @@ void LBA_engine::memoryBufferProcess(unsigned char * ptr, int size)
 	*(int*)(ptr-8)-=temp;
 }
 
-int LBA_engine::processBuffer2Buffer(unsigned int* buffer1, unsigned int* buffer2)
+
+
+/* this function uncompress all the bricks to the destBuffer */
+int LBA_engine::processBuffer2Buffer(unsigned int* buffer1, unsigned int* destBuffer)
 {
-	unsigned int* ptr1;
-	int var;
-	int counter;
+	unsigned char* destPtr;
+	int numOfBricks;
+	int i;
+	int sizeOfCurrentBrick;
+	int startOffset;
 
+/*	int counter;
 	int counter2;
-	int var2;
+	int var2;*/
 
-	var=*buffer1;
-	ptr1=buffer2+var;
-	var=var>>2;
-	
-	counter=*(unsigned int*)buffer1;
+	destPtr=(unsigned char*)(destBuffer+*buffer1);
+	numOfBricks=(*buffer1)/4;
 
-	*(unsigned int *)buffer2=*(unsigned int *)buffer1;
+	*(destBuffer++)=startOffset=*buffer1;
 
-	buffer2+=4;
-
-	counter2=0;
-
-	while(counter2<var)
+	for(i=0;i<numOfBricks;i++)
 	{
-		var2=processBuffer2BufferSub(counter2,buffer1,ptr1);
-		ptr1=(unsigned int*)((unsigned char*)ptr1+var2);
-		counter+=var2;
-		counter2++;
-		*(unsigned int*)buffer2=counter2;
-		buffer2+=4;
+		sizeOfCurrentBrick=processBuffer2BufferSub(i,buffer1,(unsigned int*)destPtr);
+
+		destPtr+=sizeOfCurrentBrick;
+
+		startOffset+=sizeOfCurrentBrick;
+
+		*(destBuffer++)=startOffset;
 	}
 
 	return(counter);

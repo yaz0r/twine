@@ -32,9 +32,9 @@ void LBA_engine::loadRoomActors(short int arg_0)
   
   lactor->costumeIndex=-1;
   
-//  loadActorSub(lactor->field_8,arg_0);
+  loadActorSub(lactor->field_8,arg_0);
   
-  setActorTime(0,0,0,&lactor->time);
+  setActorAngleSafe(0,0,0,&lactor->time);
   
   if(lactor->field_60 & 8)
   {
@@ -55,10 +55,10 @@ void LBA_engine::loadRoomActors(short int arg_0)
   
   if(lactor->costumeIndex != -1)
   {
-   initNewCostume(lactor->costume,0,255,arg_0);
+   playAnim(lactor->costume,0,255,arg_0);
   }
   
-  setActorTime(lactor->angle,lactor->angle,0,&lactor->time);
+  setActorAngleSafe(lactor->angle,lactor->angle,0,&lactor->time);
  }
  
  lactor->positionInMoveScript=-1;
@@ -107,15 +107,30 @@ void LBA_engine::resetActor(int actorNumber)
   localActor->field_74=-1;
   localActor->field_78=0;
   localActor->field_76=0;
-  setActorTime(0,0,0,&localActor->time);
+
+  setActorAngleSafe(0,0,0,&localActor->time);
+
   localActor->positionInMoveScript=-1;
   localActor->positionInActorScript=0;
 }
 
-void LBA_engine::setActorTime(short int arg_0, short int arg_4, short int arg_8, timeStruct *timePtr)
+void LBA_engine::loadActorSub(int imageNumber,int actorNumber)
 {
-  timePtr->var1=arg_0&0x3FF;
-  timePtr->var2=arg_4&0x3FF;
-  timePtr->var3=arg_8&0x3FF;
-  timePtr->var4=time;
+	actor* lactor=&actors[actorNumber];
+
+	if(lactor->field_60&0x400 && imageNumber!=-1 && lactor->costumeIndex!=imageNumber)
+	{
+		short int* ptr;
+
+		lactor->costumeIndex=imageNumber;
+
+		ptr=(short int*)(HQRess3+imageNumber*16+4);
+
+		lactor->field_26=*(ptr++);
+		lactor->field_28=*(ptr++);
+		lactor->field_2A=*(ptr++);
+		lactor->field_2C=*(ptr++);
+		lactor->field_2E=*(ptr++);
+		lactor->field_30=*(ptr++);
+	}
 }

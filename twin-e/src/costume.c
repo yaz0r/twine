@@ -213,7 +213,7 @@ void LBA_engine::loadActorCostumeSub(unsigned char *arg_0, unsigned char* arg_4)
 // allé hop ! à implementer plus tard....
 }
 
-int LBA_engine::initNewCostume(char costume, short int arg_4, unsigned char arg_8, short int actorNum)
+int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, short int actorNum)
 {
  actor* lactor;
  int var_4;
@@ -281,7 +281,7 @@ int LBA_engine::initNewCostume(char costume, short int arg_4, unsigned char arg_
  
  if(lactor->field_4!=0)
  {
-  printf("Unsupported initNewCostume\n");
+  printf("Unsupported playAnim\n");
 //  exit(1);
  }
   
