@@ -23,7 +23,7 @@ void LBA_engine::initVars(void)
     HQRess3 = 0;
     lbaFont = 0;
 
-    bufCube = 0;
+    bufCube = NULL;
 
     HQMemory = 0;
     HQMemory2 = 0;

@@ -268,7 +268,7 @@ void LBA_engine::fullRedraw(int param)
 					}
 				   // printf("Draw poly actor %d\n",actorNumber);
 
-				   //applyAnim(lactor->animPosition,(char*)getHqrdataPtr(HQRanims,lactor->currentAnim),(char*)bodyPtrTab[lactor->costumeIndex]);
+					applyAnim(lactor->animPosition,(char*)getHqrdataPtr(HQRanims,lactor->currentAnim),(char*)bodyPtrTab[lactor->costumeIndex]);
 
 				    if (!startRenderer(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
 					{
@@ -292,8 +292,7 @@ void LBA_engine::fullRedraw(int param)
 
 						    refreshUpperBricks3d(tempX, tempZ, tempY);
 
-							// todo: no +1
-						    addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight+1, renderBottom+1);
+						    addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight, renderBottom);
 
 						    if (lactor->field_60 & 0x2000 && param == 1)
 							{
@@ -310,8 +309,8 @@ void LBA_engine::fullRedraw(int param)
 
 				    positionInDebugBox++;
 
-					/*
-				    {
+					
+				   /* {
 						char stringTemp[256];
 
 						sprintf(stringTemp, "%d", actorNumber);
@@ -333,7 +332,7 @@ void LBA_engine::fullRedraw(int param)
 		    else if (flags == 0xC00)	// shadows
 			{
 			   
-			     if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
+			/*     if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
 				 {
 				//	arg_0E=1;
 				 }
@@ -357,9 +356,7 @@ void LBA_engine::fullRedraw(int param)
 
 				 refreshUpperBricks3d(fullRedrawVar6[arg_1E].X, fullRedrawVar6[arg_1E].Z, fullRedrawVar6[arg_1E].Y);
 
-
-				 //todo: no +1
-				 addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight+1, renderBottom+1);
+				 addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight, renderBottom);*/
 			    
 			}
 		    else if (flags < 0x1000)
@@ -467,7 +464,7 @@ void LBA_engine::fullRedraw(int param)
 	   // loop5
 	}
 
-    for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags { char stringTemp[256];
+ /*   for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags { char stringTemp[256];
 	{
 	    char stringTemp[256];
 
@@ -480,7 +477,7 @@ void LBA_engine::fullRedraw(int param)
 
 	    if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 && fullRedrawVar4 < 440)
 			printStringSimple(fullRedrawVar3, fullRedrawVar4, stringTemp);
-	}
+	}*/
 
     counter2 = 0;
 
@@ -720,7 +717,7 @@ void LBA_engine::zbuffer(int var1, int var2, int x, int z, int y)
 	return;
 
 	// draw the background brick
-    drawSprite(bx - 1, zbufferVar1, zbufferVar2, bufferBrick);
+    drawSprite(bx-1, zbufferVar1, zbufferVar2, bufferBrick);
 
     zbufferIndex = (zbufferVar1 + 24) / 24;
 
@@ -1120,31 +1117,28 @@ void LBA_engine::refreshUpperBricks3d(int X, int Z, int Y)
     int refreshLeft;
     int refreshRight;
     int i;
+	int j;
     zbufferDataStruct *currentZbufferData;
 
     refreshLeft = (textWindowLeft + 24) / 24 - 1;
     refreshRight = (textWindowRight + 24) / 24;
 
-    if (refreshLeft <= refreshRight)
+//	printf("left: %d right: %d X:%d Y:%d Z:%d\n",refreshLeft,refreshRight,X,Y,Z);
+
+	for(j=refreshLeft;j<refreshRight;j++)
 	{
-	    do
-		{
-		    currentZbufferData = zbufferData[refreshLeft];
+		currentZbufferData = zbufferData[j];
 
-		    for (i = 0; i < zbufferTab[refreshLeft]; i++)
+		for (i = 0; i < zbufferTab[j]; i++)
+		{			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
 			{
-			    if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
+				if (currentZbufferData->x + currentZbufferData->y > Y + X)
 				{
-				    if (currentZbufferData->x + currentZbufferData->y > Y + X)
-					{
-					    redrawBrick(currentZbufferData->spriteNum,(refreshLeft * 24) - 24,currentZbufferData->drawY, bufferBrick2,videoBuffer2);
-					}
+					redrawBrick(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,videoBuffer2);
 				}
-			    currentZbufferData++;
 			}
-
+			currentZbufferData++;
 		}
-	    while (++refreshLeft <= refreshRight);
 	}
 }
 
@@ -1155,7 +1149,7 @@ void LBA_engine::refreshUpperBricks(int X, int Z, int Y)
     int i;
     zbufferDataStruct *currentZbufferData;
 
-    return;
+	return;
 
     refreshLeft = (textWindowLeft + 24) / 24 - 1;
     refreshRight = (textWindowRight + 24) / 24;
@@ -1215,7 +1209,7 @@ void LBA_engine::redrawBrick(int spriteNum, int x, int y, byte * localBufferBric
 
     sourcePtr = ptr + 4;
 
-    //drawSprite2(spriteNum, x, y, bufferBrick);
+    drawSprite(spriteNum, x, y, bufferBrick);
 }
 
 void LBA_engine::addToRedrawBoxMain(int left, int top, int right, int bottom)

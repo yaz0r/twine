@@ -961,6 +961,8 @@ class LBA_engine
 
    // ---------------------------------------------------------------------------------------
 
+	int processActorSub8Sub1(int var0, int var1, int var2, int var3);
+
 	void processInGameMenu(int index);
 
 	void flaUnpackFrame1(char* ptr, int width, int height);

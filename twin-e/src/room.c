@@ -249,6 +249,9 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	    actors[currentActor].body = *(localScenePtr++);
 	    actors[currentActor].anim = *(localScenePtr++);
 
+		if(currentActor==5 && actors[currentActor].anim==70)
+			printf("Anim = %d\n",actors[currentActor].anim);
+
 	    temp2 = (unsigned short int *) localScenePtr;
 
 	    actors[currentActor].field_8 = *(temp2++);
@@ -454,36 +457,31 @@ int LBA_engine::loadGridAndBll(short int roomNumber)
     return (1);
 }
 
+// this unpack the grid to the cube buffer
 void LBA_engine::createCube(void)
 {
-    int var1 = 0;
     int var2 = 0;
     int ptr1;
     int ptr2;
     int i;
+	int j;
 
-    do
+    for(j=0;j<64;j++)
 	{
 	    ptr1 = var2;
-	    ptr2 = var1;
-	    i = 0;
-	    ptr2 = ptr2 << 6;
+	    ptr2 = j << 6;
 
-	    do
+	    for(i=0;i<64;i++)
 		{
-		    addCubeEntry(currentGrid +
-				 *(unsigned short int *) (currentGrid + 2 * (i + ptr2)),
-				 bufCube + ptr1);
+		    addCubeEntry(currentGrid + *(unsigned short int *) (currentGrid + 2 * (i + ptr2)), bufCube + ptr1);
 		    ptr1 += 50;
 		}
-	    while (++i < 64);
 
-	    var1++;
 	    var2 += 3200;
 	}
-    while (var1 < 64);
 }
 
+// this unpack a vertical column from the grid to the cube buffer
 void LBA_engine::addCubeEntry(unsigned char *gridEntry, unsigned char *dest)
 {
 
@@ -495,7 +493,6 @@ void LBA_engine::addCubeEntry(unsigned char *gridEntry, unsigned char *dest)
 
     int i;
     unsigned short int *source;
-
     unsigned short int *arrive;
 
     temp1 = *(gridEntry++);
@@ -530,7 +527,7 @@ void LBA_engine::addCubeEntry(unsigned char *gridEntry, unsigned char *dest)
 	    dest = (unsigned char *) arrive;
 
 	}
-    while (--temp1 > 0);
+    while (--temp1);
 }
 
 void LBA_engine::reinitTwinsen(void)

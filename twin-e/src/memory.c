@@ -4,7 +4,7 @@ void LBA_engine::allocBufCube(void)
 {
    // todo: mettre les codes d'erreur
 
-    bufCube = (byte *) malloc(204800);	// 204800 = 64*3200
+    bufCube = (byte *) malloc(204800);	// 204800 = 64*64*25*2
     bufferBrick = (byte *) malloc(361472);
 }
 

@@ -1,5 +1,7 @@
 #include "lba.h"
 
+int lastFireTime=0;
+
 void LBA_engine::makeFireEffect(int top, int param)
 {
     unsigned char *temp;
@@ -7,6 +9,12 @@ void LBA_engine::makeFireEffect(int top, int param)
     int i, j;
     unsigned char temp3;
     unsigned char bh, bl;
+
+	while(lastFireTime==time)
+	{
+	};
+
+	lastFireTime=time;
 
     makeFireEffectInit();
 

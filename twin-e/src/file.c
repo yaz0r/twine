@@ -30,7 +30,6 @@ FILE *LBA_engine::openResource(char *fileName)
     if (!fileHandle)
 	{
 	    printf("%s can't be found !\n", fileName);
-	    exit(1);
 	}
 
     return (fileHandle);

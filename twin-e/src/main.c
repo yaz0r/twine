@@ -5,6 +5,10 @@ void test(void)
 	printf("Quit !\n");
 }
 
+/**
+fonction main
+*/
+
 int main(int argc, char *argv[])
 {
     LBA_engine *engine;

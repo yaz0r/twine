@@ -26,7 +26,7 @@ void LBA_engine::initAll(char *fileName, int a)
     environment = getenv("Adeline");
     usedCFG = &environment;
 
-    if (a != -50)
+  /*  if (a != -50)
 	{
 	    if (a & 1)
 		{
@@ -66,7 +66,7 @@ void LBA_engine::initAll(char *fileName, int a)
 		    if (environment)
 			usedCFG = &environment;
 		}
-	}
+	}*/
 
     if (a & 4)
 	{

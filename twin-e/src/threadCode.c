@@ -8,7 +8,7 @@ int threadTimer(void *test)	// LBA time is 50 frames per seconds ie,  a frame ev
 {
     while (1)
 	{
-	    SDL_Delay(10);
+	    SDL_Delay(15); // granularity restriction
 	    tempEngine->musicPosition++;
 	    tempEngine->time++;
 	}

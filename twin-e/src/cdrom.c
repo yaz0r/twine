@@ -69,10 +69,16 @@ int LBA_engine::checkCD(char *string)
 	    }
 	    SDL_CDClose(cdrom);
 	}
+
+	cdrom=NULL;
+
+	printf("Can't find LBA1 CD!\n");
+
     return (0);
 }
 
 void LBA_engine::stopCD(void)
 {
-    SDL_CDStop(cdrom);
+	if(cdrom!=NULL)
+		SDL_CDStop(cdrom);
 }

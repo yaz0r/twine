@@ -584,7 +584,7 @@ void LBA_engine::unfreezeTime(void)
 {
     --time1;
 
- /*  if(time1==0)
+   /*if(time1==0)
      time = time3;*/
 }
 
@@ -1200,10 +1200,10 @@ void LBA_engine::processActor(int actorNum)
 	    if (lactor->currentAnim != -1)
 		{
 		    animPtr = (char *) getHqrdataPtr(HQRanims, lactor->currentAnim);
-		   //animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
+		   animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
 
 		   // get the current frame anim data (for step length ?)
-		    animData = applyAnim(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get the current frame anim data (for step length ?)
+		   // animData = applyAnim(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get the current frame anim data (for step length ?)
 
 		    if (processActorVar5)
 			{
@@ -1253,8 +1253,7 @@ void LBA_engine::processActor(int actorNum)
 					{
 					    var_C = actorNum;
 					    lactor->anim = lactor->field_2;
-					    lactor->currentAnim =
-						getAnimIndexForBody(lactor->anim, actorNum);
+					    lactor->currentAnim = getAnimIndexForBody(lactor->anim, actorNum);
 
 					    if (lactor->currentAnim == -1)
 						{
@@ -1344,14 +1343,14 @@ void LBA_engine::processActor(int actorNum)
 		{
 		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_2E, 1);	// twinsen wall collision code
 		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_2E, 2);
-		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
+//		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
 		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_30, 8);
 		}
 	    else
 		{
 		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_2E, 1);	// other objects wall collision code
 		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_2E, 2);
-		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
+//		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
 		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_30, 8);
 		}
 
@@ -1368,6 +1367,8 @@ void LBA_engine::processActor(int actorNum)
 				{
 				    processActorSub10(lactor->X, lactor->Z + 1000, lactor->Y, 0);
 				    playAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
+
+					printf("Wall hit 2\n");
 
 				    if (currentlyProcessedActorNum == 0)
 					{
@@ -1396,9 +1397,10 @@ void LBA_engine::processActor(int actorNum)
 				{
 				    if (!actorNum && comportementHero == 1 && lactor->anim == var_4)
 					{
-					    processActorSub10(lactor->X, lactor->Z + 0x1000,
-							      lactor->Y, 0);
+					    processActorSub10(lactor->X, lactor->Z + 0x1000,lactor->Y, 0);
 					    playAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
+
+						printf("Wall hit !\n");
 
 					    if (!actorNum)
 						{
@@ -1412,7 +1414,6 @@ void LBA_engine::processActor(int actorNum)
 					{
 						processActorY = processActorVar4;
 					}
-
 
 					if (!getCurPos(processActorVar2, processActorZ, processActorY)) // no X problem
 					{
@@ -1516,15 +1517,15 @@ void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3)	// twi
     if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00	&& processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
-	    pos = getCurPos(processActorX, processActorZ, processActorY);
+	    pos = processActorSub8Sub1(processActorX, processActorZ, processActorY,processActorVar1->field_2C);
 
 	    if (pos == 1)	// next position is a wall
 		{
 		    fieldCauseDamage |= var3;
-		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
+		    pos = processActorSub8Sub1(processActorX, processActorZ, processActorVar4 + var2, processActorVar1->field_2C);
 		    if (pos == 1)
 			{
-			    pos = getCurPos(var0 + processActorVar2, processActorZ, processActorY);
+			    pos = processActorSub8Sub1(var0 + processActorVar2, processActorZ, processActorY,processActorVar1->field_2C);
 
 			    if (pos != 1)
 				{
@@ -1603,37 +1604,97 @@ void LBA_engine::processActorSub5(int param)
    //****************** special collisions ******************//
     if (param >= 6 && param <= 13)
 	{
-	    switch (param)
+		switch (param)
 		{
+		case 6:
+			{
+				if((processActorY - getPosVar3) <= (processActorX - getPosVar1))
+				{
+					param = 2;
+				}
+				else
+				{
+					param = 3;
+				}
+				break;
+			}
+		case 7:
+			{
+				if((processActorY - getPosVar3) <= (processActorX - getPosVar1))
+				{
+					param = 4;
+				}
+				else
+				{
+					param = 5;
+				}
+				break;
+			}
+		case 8:
+			{
+				if((512-(processActorX - getPosVar1)) <= (processActorY - getPosVar3))
+				{
+					param = 2;
+				}
+				else
+				{
+					param = 4;
+				}
+				break;
+			}
+		case 9:
+			{
+				if((512-(processActorX - getPosVar1)) <= (processActorY - getPosVar3))
+				{
+					param = 3;
+				}
+				else
+				{
+					param = 5;
+				}
+				break;
+			}
 		case 10:
 		   {
-		       if ((processActorX - getPosVar1) < (processActorY - getPosVar3))
+		       if ((processActorX - getPosVar1) >= (processActorY - getPosVar3))
 			   {
-			       param = 2;
+			       param = 3;
 			   }
 		       else
 			   {
-			       param = 3;
+			       param = 2;
 			   }
 		       break;
 		   }
 		case 11:
 		   {
-		       if ((processActorY - getPosVar3) > (processActorX - getPosVar1))
+		       if ((processActorY - getPosVar3) <= (processActorX - getPosVar1))
 			   {
-			       param = 4;
+			       param = 5;
 			   }
 		       else
 			   {
-			       param = 5;
+			       param = 4;
 			   }
 		       break;
 		   }
 		case 12:
 		   {
-		       if ((0x200 - processActorX - getPosVar1) > (processActorY - getPosVar3))
+		       if ((512 - processActorX - getPosVar1) <= (processActorY - getPosVar3))
+			   {
+			       param = 4;
+			   }
+		       else
 			   {
 			       param = 2;
+			   }
+		       break;
+		   }
+		case 13:
+		   {
+		       if ((512 - processActorX - getPosVar1) <= (processActorY - getPosVar3))
+			   {
+			       param = 5;
 			   }
 		       else
 			   {
@@ -1914,12 +1975,115 @@ void LBA_engine::processActorSub7(void)	// stop falling
     processActorVar1->field_62 &= 0xFEFF;
 }
 
+int LBA_engine::processActorSub8Sub1(int var0, int var1, int var2, int var3)
+{
+    unsigned char *ptr;
+    char *ptr2;
+    unsigned char temp0;
+    unsigned char temp3;
+
+    ptr = (unsigned char *) bufCube;
+
+    getPosVar1 = (var0 + 0x100) >> 9;
+    getPosVar2 = var1 >> 8;
+    getPosVar3 = (var2 + 0x100) >> 9;
+
+    if (getPosVar1 < 0 || getPosVar1 >= 64)
+	return (0);
+
+    ptr += getPosVar1 * 50;
+
+    if (getPosVar2 <= -1)
+	return (1);
+
+    if (getPosVar2 < 0 || getPosVar2 >= 24)
+	return (0);
+
+    ptr += getPosVar2 * 2;
+
+    if (getPosVar3 < 0 || getPosVar3 >= 64)
+	return (0);
+
+    ptr += (getPosVar3 << 7) * 25;
+
+    temp0 = *ptr;
+
+    if (temp0)
+	{
+		int i;
+		int j;
+		char al;
+		int edx;
+
+	    ptr2 = (char *) currentBll;
+
+	    ptr2 += *(int *) (ptr2 + temp0 * 4 - 4);
+	    ptr2 += 3;
+
+	    temp3 = *(ptr + 1);
+
+	    ptr2 = ptr2 + temp3 * 4;
+
+	    al = *ptr2;
+
+		edx=((var3+255)>>8);
+
+		j=getPosVar2;
+
+		for(i=0;i<edx;i++) // search from bottom to top
+		{
+			if(j>24) // check if we are not out of the cube
+			{
+				return(al);
+			}
+
+			ptr+=2;
+			j++;
+
+			if(*(short int*)ptr != 0)
+			{
+				return(1);
+			}
+		}
+
+		return(al);
+	}
+    else
+	{
+		int i;
+		int j;
+		char al;
+		int edx;
+
+		al=*(ptr+1);
+		edx=((var3+255)>>8);
+
+		j=getPosVar2;
+
+		for(i=0;i<edx;i++)
+		{
+			if(j>24)
+			{
+				return(al);
+			}
+
+			ptr+=2;
+			j++;
+
+			if(*(short int*)ptr != 0)
+			{
+				return(1);
+			}
+		}
+	}
+}
+
 int LBA_engine::getCurPos(int var0, int var1, int var2)
 {
     char *ptr;
     char *ptr2;
     unsigned char temp0;
-    char temp3;
+    unsigned char temp3;
 
     ptr = (char *) bufCube;
 
@@ -2026,7 +2190,7 @@ int LBA_engine::processActorSub2(int position, char *anim, char *body)
 
 	    eax = time - ebp;
 
-	    printf("delta=%d / %d  -> time=%d -> ebp=%d\n", eax, keyFrameLength, time, ebp);
+	    //printf("delta=%d / %d  -> time=%d -> ebp=%d\n", eax, keyFrameLength, time, ebp);
 
 	    if (eax >= keyFrameLength)
 		{
