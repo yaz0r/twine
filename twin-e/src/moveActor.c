@@ -405,8 +405,7 @@ void DoTrack(int actorNumber)
           manipActorResult = READ_LE_S16(scriptPtr);
           if (manipActorResult == -1 && lactor->time.numOfStep == 0)
           {
-            manipActorResult =
-            GetAngle(lactor->X, lactor->Y, twinsen->X, twinsen->Y);
+            manipActorResult = GetAngle(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
             ManualRealAngle(lactor->angle, manipActorResult, lactor->speed, &lactor->time);
             WRITE_LE_S16(scriptPtr, manipActorResult);
           }
@@ -1001,6 +1000,8 @@ void DoTrack(int actorNumber)
 
 void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed, timeStruct * angleStruct)
 {
+  // it's supposed to work with shorts, but for some reasons, it doesn't always.... (numOfStep overflow when lFrom is 0x100 and lTo is 0x300)...
+  long int numOfStepLong;
   short int numOfStep;
   short int lFrom;
   short int lTo;
@@ -1015,14 +1016,18 @@ void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed, timeStruct * an
 
   if (numOfStep < 0)
   {
-    numOfStep = -numOfStep;
+    numOfStepLong = -numOfStep;
+  }
+  else
+  {
+    numOfStepLong = numOfStep;
   }
 
-  numOfStep >>= 6;
+  numOfStepLong >>= 6;
 
-  numOfStep *= angleSpeed;
-  numOfStep >>= 8;
+  numOfStepLong *= angleSpeed;
+  numOfStepLong >>= 8;
 
-  angleStruct->numOfStep = numOfStep;
+  angleStruct->numOfStep = numOfStepLong;
   angleStruct->timeOfChange = lba_time;
 }

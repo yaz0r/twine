@@ -422,7 +422,7 @@ void fullRedraw(int param)
         if (lactor->staticFlagsBF.bIsUsingClipping)
         {
         // if sprite actor use croping
-          //SetClip(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
+          SetClip(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
         }
         else 
         {
@@ -450,7 +450,7 @@ void fullRedraw(int param)
           if (lactor->staticFlagsBF.bIsUsingClipping)
           {
 #ifndef USE_GL
-            //DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
+            DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
 #endif
           }
           else
@@ -465,7 +465,7 @@ void fullRedraw(int param)
               tempZ++;
             tempY = (lactor->Z + lactor->boudingBox.Z.topRight +0x100) >> 9;
 #ifndef USE_GL
-            //DrawOverBrick3(tempX, tempZ, tempY);
+            DrawOverBrick3(tempX, tempZ, tempY);
 #endif
 
           }
@@ -589,7 +589,7 @@ void fullRedraw(int param)
     for(i=0;i<debugger_numOfActorOnScreen;i++)
     {
   #define actorBoxColor 120
-      draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
+    //  draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
     }
   }
 #endif
@@ -1450,15 +1450,15 @@ void DrawOverBrick3(int X, int Z, int Y)
   int j;
   zbufferDataStruct *currentZbufferData;
 
-  CopyBlockPhysLeft = (textWindowLeft + 24) / 24 - 1;
+  CopyBlockPhysLeft = ((textWindowLeft + 24) / 24) - 1;
   CopyBlockPhysRight = (textWindowRight + 24) / 24;
 
   for(j = CopyBlockPhysLeft; j <= CopyBlockPhysRight; j++)
   {
-    currentZbufferData = zbufferData[j];
-
     for (i = 0; i < zbufferTab[j]; i++)
     {
+      currentZbufferData = &zbufferData[j][i];
+
       if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
       {
         if (currentZbufferData->x == Y && currentZbufferData->y == X)
@@ -1466,16 +1466,59 @@ void DrawOverBrick3(int X, int Z, int Y)
           CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
         }
 
-        if (currentZbufferData->x > Y || currentZbufferData->y > X)
+      /*  if (currentZbufferData->x >= Y || currentZbufferData->y >= X)
         {
           CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
+        } */
+        if (currentZbufferData->x + currentZbufferData->y > Y + X)
+        {
+          CopyMask(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,workVideoBuffer);
         }
       }
+    }
+  }
+}
+
+/*
+void DrawOverBrick3(int X, int Y, int Z)
+{
+  int CopyBlockPhysLeft;
+  int CopyBlockPhysRight;
+  int i;
+  int j;
+  int edi;
+  zbufferDataStruct *currentZbufferData;
+
+  CopyBlockPhysLeft = ((textWindowLeft + 24) / 24) - 1;
+  CopyBlockPhysRight = (textWindowRight + 24) / 24;
+
+  DrawOverBrick(X,Y,Z);
+  return;
+
+  if(CopyBlockPhysLeft>CopyBlockPhysRight)
+    return;
+
+  do
+  {
+    currentZbufferData = zbufferData[CopyBlockPhysLeft];
+    edi = 0;
+
+    while(zbufferTab[CopyBlockPhysLeft] < edi)
+    {
+      if((currentZbufferData->drawY + 38 > textWindowTop) && (currentZbufferData->drawY <= textWindowBottom) && (currentZbufferData->z >= Y))
+      {
+        if((currentZbufferData->x == Z) && (currentZbufferData->y == X))
+        {
+          CopyMask(currentZbufferData->spriteNum, (CopyBlockPhysLeft*24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
+        }
+      }
+
+      edi++;
       currentZbufferData++;
     }
 
-  }
-}
+  }while(++CopyBlockPhysLeft <= CopyBlockPhysRight);
+}*/
 
 void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
 {

@@ -90,7 +90,9 @@ void osystem_mainLoop(void)
     if (diff_time(origin) < WTIME)
     {
 #ifdef _WIN32
+#ifndef FASTDEBUG
       SDL_Delay((Uint32)(WTIME - diff_time(origin)));
+#endif
 #else
       usleep((WTIME - diff_time(origin)) * 1000);
 #endif
