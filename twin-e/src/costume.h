@@ -119,7 +119,7 @@ struct actor
         U16 bUnk0002                            : 1; // 0x0002
         U16 bUnk0004                            : 1; // 0x0004
         U16 bUnk0008                            : 1; // 0x0008
-        U16 bUnk0010                            : 1; // 0x0010
+        U16 wasDrawn                            : 1; // 0x0010
         U16 bUnk0020                            : 1; // 0x0020
         U16 bIsMoving                           : 1; // 0x0040
         U16 bUnk0080                            : 1; // 0x0080

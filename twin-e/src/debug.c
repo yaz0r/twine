@@ -26,6 +26,8 @@ int debugger_cubeClipZ;
 
 boolean bShowBoundingBoxes;
 
+boolean bShowSpriteClip;
+
 boolean bShowCubeChangeZones;
 boolean bShowCameraZones;
 boolean bShowScenaricZones;
@@ -416,6 +418,8 @@ void debugger_debugMainMenu(void)
     debugger_addButton(0, 20, 120, 140, 10, "Show Actors Number", BUTTON_SHOW_ACTORS_NUMBER, bShowActorNumbers);
     debugger_addButton(0, 20, 131, 140, 10, "Show Flags", BUTTON_SHOW_FLAGS, bShowFlags);
 
+    debugger_addButton(0, 20, 142, 140, 10, "Show Sprite Clip", BUTTON_SHOW_SPRITE_CLIP, bShowSpriteClip);
+
 
       debugger_addButtonNoColor(0, 65, 285, 80, 10, "       OK", BUTTON_OK);
 
@@ -507,14 +511,19 @@ void debugger_debugMainMenu(void)
         fullRedraw(1);
         break;
       }
-        default:
-            {
-                break;
-            }
-        }
-
+    case BUTTON_SHOW_SPRITE_CLIP:
+      {
+        bShowSpriteClip ^=1;
+        fullRedraw(1);
+        break;
+      }
+    default:
+      {
+        break;
+      }
     }
-    while(!bQuit);
+
+  }while(!bQuit);
 }
 
 void debugger_debugActor(int num)

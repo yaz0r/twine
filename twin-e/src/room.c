@@ -468,7 +468,7 @@ void LoadScene(int sceneNumber)
       }
       if(staticFlags & 0x2000)
       {
-        actors[currentActor].staticFlagsBF.bIsBackgrounded = 1;
+        //actors[currentActor].staticFlagsBF.bIsBackgrounded = 1;
       }
       if(staticFlags & 0x4000)
       {
@@ -775,7 +775,7 @@ void LoadScene(int sceneNumber)
     }
     if(staticFlags & 0x2000)
     {
-      actors[currentActor].staticFlagsBF.bIsBackgrounded = 1;
+      //actors[currentActor].staticFlagsBF.bIsBackgrounded = 1;
     }
     if(staticFlags & 0x4000)
     {
@@ -812,10 +812,10 @@ void LoadScene(int sceneNumber)
     actors[currentActor].angle = READ_LE_U16(temp); temp+=2;
     actors[currentActor].speed = READ_LE_U16(temp); temp+=2;
     actors[currentActor].comportement = READ_LE_U16(temp); temp+=2;
-    actors[currentActor].cropLeft = READ_LE_U16(temp); temp+=2;
-    actors[currentActor].cropTop = READ_LE_U16(temp); temp+=2;
-    actors[currentActor].cropRight = READ_LE_U16(temp); temp+=2;
-    actors[currentActor].cropBottom = READ_LE_U16(temp); temp+=2;
+    actors[currentActor].cropLeft = READ_LE_S16(temp); temp+=2;
+    actors[currentActor].cropTop = READ_LE_S16(temp); temp+=2;
+    actors[currentActor].cropRight = READ_LE_S16(temp); temp+=2;
+    actors[currentActor].cropBottom = READ_LE_S16(temp); temp+=2;
 
     actors[currentActor].field_12 = READ_LE_BYTE(temp); temp++;
     actors[currentActor].talkColor = READ_LE_BYTE(temp); temp++;

@@ -76,6 +76,8 @@ enum buttonType
 
 	BUTTON_SHOW_FLAGS,
 
+  BUTTON_SHOW_SPRITE_CLIP,
+
 // cube clip buttons
     BUTTON_CUBE_CLIP_INC_X,
     BUTTON_CUBE_CLIP_DEC_X,
@@ -128,6 +130,8 @@ typedef struct winStruct winStruct;
     //
 
 	extern boolean bShowBoundingBoxes;
+
+  extern boolean bShowSpriteClip;
 
 	extern boolean bShowCubeChangeZones;
 	extern boolean bShowCameraZones;

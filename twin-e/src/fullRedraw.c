@@ -22,6 +22,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 actor* pCurrentActorRender;
 #endif
 
+#ifdef _DEBUG
+void draw2dBox(int x1, int y1, int x2, int y2, int color)
+{
+  drawLine(x1, y1, x1, y2,color);
+  drawLine(x2, y1, x2, y2,color);
+  drawLine(x1, y1, x2, y1,color);
+  drawLine(x1, y2, x2, y2,color);
+}
+#endif
+
 void fullRedraw(int param)
 {
   short int temp1;
@@ -79,10 +89,11 @@ void fullRedraw(int param)
   for (arg_1A = 0; arg_1A < numActorInRoom; arg_1A++, arg_46++, arg_42++) // process actors (and draw shadow if applicable)
   {
     lactor = &actors[arg_1A];
-    lactor->dynamicFlagsBF.bUnk0010 = 0;  // recheck -> reinit the draw flags for the current objects
+    lactor->dynamicFlagsBF.wasDrawn = 0;  // recheck -> reinit the draw flags for the current objects
 
     if ((useAnotherGrm == -1) || (lactor->Y <= READ_LE_S16((currentGrid2) * 24 + (char*)zoneData + 8))) // eject characters hidden when using another GRM
     {
+      
 #ifndef USE_GL
       if ( lactor->staticFlagsBF.bIsBackgrounded && param == 0 )  // background actor, no redraw required
       {
@@ -92,7 +103,7 @@ void fullRedraw(int param)
          // is the actor in the viewable screen ?
         if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
         {
-          lactor->dynamicFlagsBF.bUnk0010; // flag ?
+          lactor->dynamicFlagsBF.wasDrawn = 1; // flag ?
         }
       }
       else
@@ -316,7 +327,7 @@ void fullRedraw(int param)
               int tempZ;
               int tempY;
 
-              lactor->dynamicFlagsBF.bUnk0010;
+              lactor->dynamicFlagsBF.wasDrawn;
 
               tempX = (lactor->X + 0x100 )>> 9;
               tempZ = lactor->Y >> 8;
@@ -332,7 +343,7 @@ void fullRedraw(int param)
 
               if ((lactor->staticFlagsBF.bIsBackgrounded) && param == 1) // the actor is in background. Copy it to the back buffer
               {
-                blitRectangle(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (char *) frontVideoBuffer, textWindowLeft, textWindowTop, (char *) workVideoBuffer);
+              //  blitRectangle(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (char *) frontVideoBuffer, textWindowLeft, textWindowTop, (char *) workVideoBuffer);
               }
             }
           }
@@ -411,30 +422,35 @@ void fullRedraw(int param)
         if (lactor->staticFlagsBF.bIsUsingClipping)
         {
         // if sprite actor use croping
-          SetClip(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
+          //SetClip(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
         }
-        else
+        else 
         {
           SetClip(renderLeft, renderTop, renderRight, renderBottom);
         }
 
         if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
         {
-          AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
 #ifdef _DEBUG
           if(bShowBoundingBoxes)
           {
             MDL_DrawBoundingBoxHiddenPart(lactor);
+          }
+#endif
+          AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
+#ifdef _DEBUG
+          if(bShowBoundingBoxes)
+          {
             MDL_DrawBoundingBoxShownPart(lactor);
           }
 #endif
 
-          lactor->dynamicFlagsBF.bUnk0010 = 1;
+          lactor->dynamicFlagsBF.wasDrawn = 1;
 
           if (lactor->staticFlagsBF.bIsUsingClipping)
           {
 #ifndef USE_GL
-            DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
+            //DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
 #endif
           }
           else
@@ -449,7 +465,7 @@ void fullRedraw(int param)
               tempZ++;
             tempY = (lactor->Z + lactor->boudingBox.Z.topRight +0x100) >> 9;
 #ifndef USE_GL
-            DrawOverBrick3(tempX, tempZ, tempY);
+            //DrawOverBrick3(tempX, tempZ, tempY);
 #endif
 
           }
@@ -459,7 +475,7 @@ void fullRedraw(int param)
 
           if (lactor->staticFlagsBF.bIsBackgrounded && param == 1)
           {
-            blitRectangle(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom,(char *) frontVideoBuffer, textWindowLeft,textWindowTop, (char *) workVideoBuffer);
+        //    blitRectangle(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom,(char *) frontVideoBuffer, textWindowLeft,textWindowTop, (char *) workVideoBuffer);
           }
 #endif
         }
@@ -467,10 +483,10 @@ void fullRedraw(int param)
 #ifdef _DEBUG
         { // code to add the sprite actor box to the debugger handler
           actorBox[positionInDebugBox].actorNum = actorNumber;
-          actorBox[positionInDebugBox].left = textWindowLeft;
-          actorBox[positionInDebugBox].right = textWindowRight;
-          actorBox[positionInDebugBox].top = textWindowTop;
-          actorBox[positionInDebugBox].bottom = textWindowBottom;
+          actorBox[positionInDebugBox].left = renderLeft;
+          actorBox[positionInDebugBox].right = renderRight;
+          actorBox[positionInDebugBox].top = renderTop;
+          actorBox[positionInDebugBox].bottom = renderBottom;
 
           positionInDebugBox++;
         }
@@ -490,7 +506,6 @@ void fullRedraw(int param)
           AddPhysBox(projectedPositionX, projectedPositionY, projectedPositionX + 50, projectedPositionY + 50);
         }
 #endif
-
       }
       else if (flags == 0x1800) // extras
       {
@@ -540,6 +555,44 @@ void fullRedraw(int param)
 
      // loop5
   }
+
+#ifdef _DEBUG
+  if(bShowSpriteClip)
+  {
+    int i;
+
+    for(i=0;i<a12;i++)
+    {
+      int actorNumber = drawList[i].field_2 & 0x3FF;
+      int flags;
+
+      lactor = &actors[actorNumber];
+      flags = ((unsigned int) drawList[i].field_2) & 0xFC00;
+
+      if(flags == 0x1000 && lactor->staticFlagsBF.bIsUsingClipping);
+      {
+  #define clipColor 100
+  //            drawLine(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom,clipColor);
+
+        draw2dBox(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom,clipColor);
+        draw2dBox(fullRedrawVar1 + lactor->cropLeft+1, fullRedrawVar2 + lactor->cropTop+1, fullRedrawVar1 + lactor->cropRight+1, fullRedrawVar2 + lactor->cropBottom+1,clipColor);
+      }
+    }
+  }
+#endif
+
+#ifdef _DEBUG
+ //if(bShowSpriteClip)
+  {
+    int i;
+
+    for(i=0;i<debugger_numOfActorOnScreen;i++)
+    {
+  #define actorBoxColor 120
+      draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
+    }
+  }
+#endif
 
 #ifdef _DEBUG
   ZONE_DrawZones();
@@ -878,7 +931,7 @@ void zbufferSub2(int x, int y, int z)
   zbufferVar1 = (x - z) * 24 + 288; // x pos
   zbufferVar2 = ((x + z)*12) - (y * 15) + 215;  // y pos
 }
-
+/*
 void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
 {
   unsigned char *ptr;
@@ -1040,6 +1093,103 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
     }
   }
 }
+*/
+
+void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
+{
+  unsigned char *ptr;
+  int top;
+  int bottom;
+  int left;
+  int right;
+  unsigned char *outPtr;
+  unsigned char *outPtr2;
+  int offset;
+  int c1;
+  int c2;
+  int vc3;
+
+  int temp;
+  int iteration;
+  int i;
+
+  int x;
+  int y;
+
+  assert( textWindowLeft >= 0 );
+  assert( textWindowRight <= 639 );
+  assert( textWindowTop >= 0 );
+  assert( textWindowBottom <= 479 );
+
+  ptr = localBufferBrick + READ_LE_U32(localBufferBrick + num * 4);
+
+  left = var1 + *(ptr + 2);
+  top = var2 + *(ptr + 3);
+  right = *ptr + left - 1;
+  bottom = *(ptr + 1) + top - 1;
+
+  ptr += 4;
+
+  x = left;
+  y = top;
+
+ // if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight && bottom <= textWindowBottom)
+  {     // no crop
+    right++;
+    bottom++;
+
+    outPtr = frontVideoBuffer + screenLockupTable[top] + left;
+
+    offset = -((right - left) - largeurEcran);
+
+    for (c1 = 0; c1 < bottom - top; c1++)
+    {
+      vc3 = *(ptr++);
+      for (c2 = 0; c2 < vc3; c2++)
+      {
+        temp = *(ptr++);
+        iteration = temp & 0x3F;
+        if (temp & 0xC0)
+        {
+          iteration++;
+          if (!(temp & 0x40))
+          {
+            temp = *(ptr++);
+            for (i = 0; i < iteration; i++)
+            {
+              if(x>=textWindowLeft && x<textWindowRight && y>=textWindowTop && y<textWindowBottom)
+                frontVideoBuffer[y*640+x] = temp;
+
+              x++;
+              outPtr++;
+            }
+          }
+          else
+          {
+            for (i = 0; i < iteration; i++)
+            {
+              if(x>=textWindowLeft && x<textWindowRight && y>=textWindowTop && y<textWindowBottom)
+                frontVideoBuffer[y*640+x] = *ptr;
+
+              x++;
+              ptr++;
+              outPtr++;
+            }
+          }
+        }
+        else
+        {
+          outPtr += iteration + 1;
+          x+=iteration + 1;
+        }
+      }
+      outPtr += offset;
+      x = left;
+      y++;
+    }
+  }
+}
+
 
 void drawSprite2(int num, int var1, int var2, unsigned char *localBufferBrick)
 {
@@ -1256,7 +1406,7 @@ int HQ_3D_MixSample(int param0, int param1, int param2, int param3, int param4, 
   return (0);
 }
 
-void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, char *ptr)
+void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, unsigned char *ptr)
 {
   ptr += READ_LE_S32(ptr + arg_0 * 4);
 

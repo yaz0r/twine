@@ -255,8 +255,8 @@ void DoTrack(int actorNumber)
         {
           if (!(lactor->staticFlagsBF.bIsBackgrounded)) //if actor wasn't already in background
           {
-            lactor->staticFlagsBF.bIsBackgrounded = true; // set him to background
-            if (lactor->dynamicFlagsBF.bUnk0010)
+          //  lactor->staticFlagsBF.bIsBackgrounded = true; // set him to background
+            if (lactor->dynamicFlagsBF.wasDrawn)
             {
               requestBackgroundRedraw = 1;
             }
@@ -267,7 +267,7 @@ void DoTrack(int actorNumber)
           if ( lactor->staticFlagsBF.bIsBackgrounded )
           {
             lactor->staticFlagsBF.bIsBackgrounded = false;
-            if (lactor->dynamicFlagsBF.bUnk0010)
+            if (lactor->dynamicFlagsBF.wasDrawn)
             {
               requestBackgroundRedraw = 1;
             }
@@ -836,7 +836,7 @@ void DoTrack(int actorNumber)
           if (!(currentTrackActor->staticFlagsBF.bIsBackgrounded)) //if actor wasn't already in background
           {
             currentTrackActor->staticFlagsBF.bIsBackgrounded = true; // set him to background
-            if (currentTrackActor->dynamicFlagsBF.bUnk0010)
+            if (currentTrackActor->dynamicFlagsBF.wasDrawn)
             {
               requestBackgroundRedraw = 1;
             }
@@ -847,7 +847,7 @@ void DoTrack(int actorNumber)
           if ( currentTrackActor->staticFlagsBF.bIsBackgrounded )
           {
             currentTrackActor->staticFlagsBF.bIsBackgrounded = false;
-            if (currentTrackActor->dynamicFlagsBF.bUnk0010)
+            if (currentTrackActor->dynamicFlagsBF.wasDrawn)
             {
               requestBackgroundRedraw = 1;
             }
