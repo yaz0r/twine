@@ -21,34 +21,33 @@ void LBA_engine::loadTwinsenCostumes(void)
 {
     loadDataFileToPtr("file3d.hqr", 1, &file3D1);
     twinsen->bodyPtr = file3D1;
-    TCos1Init = initCostume(0, 0);
+    TCos1Init = getAnimIndexForBody(0, 0);
 
     loadDataFileToPtr("file3d.hqr", 2, &file3D2);
     twinsen->bodyPtr = file3D2;
-    TCos2Init = initCostume(0, 0);
+    TCos2Init = getAnimIndexForBody(0, 0);
 
     loadDataFileToPtr("file3d.hqr", 3, &file3D3);
     twinsen->bodyPtr = file3D3;
-    TCos3Init = initCostume(0, 0);
+    TCos3Init = getAnimIndexForBody(0, 0);
 
     loadDataFileToPtr("file3d.hqr", 4, &file3D4);
     twinsen->bodyPtr = file3D4;
-    TCos4Init = initCostume(0, 0);
+    TCos4Init = getAnimIndexForBody(0, 0);
 
     loadDataFileToPtr("file3d.hqr", 0, &file3D0);
     twinsen->bodyPtr = file3D0;
-    TCos0Init = initCostume(0, 0);
+    TCos0Init = getAnimIndexForBody(0, 0);
 
     twinsen->field_4 = loadTwinsenCostumesVar1;
 
 }
 
-int LBA_engine::initCostume(byte arg_0, short int actorNumber)
+int LBA_engine::getAnimIndexForBody(byte anim, short int actorNumber)
 {
     actor *act;
     char type;
 
-   // int temp;
     unsigned char *bodyPtr;
     unsigned char *ptr, *ptr2;
     unsigned char *costumePtr = 0;
@@ -59,7 +58,6 @@ int LBA_engine::initCostume(byte arg_0, short int actorNumber)
 
     do
 	{
-
 	    type = *(bodyPtr++);
 
 	    if (type == -1)
@@ -72,7 +70,7 @@ int LBA_engine::initCostume(byte arg_0, short int actorNumber)
 
 	    if (type == 3)
 		{
-		    if (arg_0 == *bodyPtr)
+		    if (anim == *bodyPtr)
 			{
 			    ptr++;
 			    var1 = *(unsigned short int *) ptr;
@@ -96,7 +94,7 @@ int LBA_engine::initCostume(byte arg_0, short int actorNumber)
     return (0);
 }
 
-void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
+void LBA_engine::loadActorCostume(char bodyNum, short int actorNumber)
 {
     actor *lactor;
     int temp;
@@ -110,34 +108,19 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
 
     result = 0;
 
-    lactor = &actors[arg_4];
+    lactor = &actors[actorNumber];
 
     if (lactor->field_60 & 0x400)	// 0x400 -> actor = sprite
 	return;
 
-    if (arg_4 == 0 && comportement == 4 && lactor->field_14 != 0 && lactor->field_14 != 1)	// Si 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // 
-       // c'est 
-       // twinsen 
-       // qu'on 
-       // load
+    if (actorNumber == 0 && comportementHero == 4 && lactor->field_14 != 0 && lactor->field_14 != 1)	// Si c'est twinsen qu'on load
 	{
 	    changeTwinsenComp(0);
 	}
 
-    if (arg_0 != -1)
+    if (bodyNum != -1)
 	{
-	    temp = loadBody(arg_0, arg_4);
+	    temp = loadBody(bodyNum, actorNumber);
 	}
     else
 	{
@@ -151,7 +134,7 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
 
 	    temp2 = lactor->costumeIndex;
 	    lactor->costumeIndex = temp;
-	    lactor->field_0 = (char) lactor->field_14;
+	    lactor->body = (char) lactor->field_14;
 	    currentIndex = lactor->costumeIndex;
 
 	    if (loadCostumeVar == -32000)
@@ -213,7 +196,7 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
 	    return;
 	}
 
-    lactor->field_0 = -1;
+    lactor->body = -1;
     lactor->costumeIndex = -1;
     lactor->field_2A = 0;
     lactor->field_2C = 0;

@@ -58,7 +58,7 @@ int LBA_engine::mainLoop(void)
 			{
 			   // debut des inputs
 
-			    if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && (twinsen->field_60 & 0x200))	// recheck
+			    if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && (twinsen->field_60 & 0x200))// ->visible	// recheck
 				{
 				    mainLoop2(1);
 				    freezeTime();
@@ -103,38 +103,14 @@ int LBA_engine::mainLoop(void)
 				    fullRedraw(1);
 				}
 			    mainLoopVar9 = -1;
-			    if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->field_40 == 1)	// inventory 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // menu
+			    if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->field_40 == 1)	// inventory menu
 				{
 				    freezeTime();
 				    mainLoop2(1);
 				   // processInput();
 				   // todo: implementer ce cas
 				}
-			    if ((byte) mainLoopVar5 & 4 && twinsen->costumeIndex != -1 && twinsen->field_40 == 1)	// comportement 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // 
-			       // menu
+			    if ((byte) mainLoopVar5 & 4 && twinsen->costumeIndex != -1 && twinsen->field_40 == 1)	// comportement menu
 				{
 				    freezeTime();
 				    mainLoop2(1);
@@ -178,11 +154,11 @@ int LBA_engine::mainLoop(void)
 
 				if(mainLoopVar7 == 't')
 				{
-					printf("StoryState: %d\n",++newGameVar2);
+					printf("StoryState: %d\n",++chapter);
 				}
 				if(mainLoopVar7 == 'g')
 				{
-					printf("StoryState: %d\n",--newGameVar2);
+					printf("StoryState: %d\n",--chapter);
 				}
 
 
@@ -193,7 +169,7 @@ int LBA_engine::mainLoop(void)
 /***********************************************/
 
 			   
-			  /*    if (printTextVar12 & 2)      // x-- -> bas
+			/*      if (printTextVar12 & 2)      // x-- -> bas
 			      {
 			      changeRoomVar6++;
 			      mainLoopVar2 = 1;
@@ -282,7 +258,7 @@ int LBA_engine::mainLoop(void)
 
 	    for (i = 0; i < numActorInRoom; i++)
 		{
-		    actors[i].field_64 = -1;
+		    actors[i].hitBy = -1;
 		}
 
 	   // mainLoopSub19(); //process all the objects in the room
@@ -363,23 +339,23 @@ void LBA_engine::reinitAll(int save)
     GV10 = 0x1800;
     GV11 = 0x2000;
     currentRoom = -1;
-    reinitVar3 = -1;
+    brutalExit = -1;
     numClover = 2;
     numCloverBox = 2;
-    reinitVar4 = -1;
+    currentPingouin = -1;
     needChangeRoom = 0;
-    GV6 = 0;
-    GV7 = 0;
+    magicLevel = 0;
+    magicPoint = 0;
     numCoin = 0;
     numKey = 0;
-    newGameVar2 = 0;
+    chapter = 0;
     GV18 = 0;
     currentTextBank = 0;
     GV15 = 0;
     reinitVar7 = 0;
     reinitVar8 = 0;
     reinitVar9 = 0;
-    comportement = 0;
+    comportementHero = 0;
     reinitVar10 = 0;
    /*
     * if(save==-1) { loadSaveGame(); if(GV9==-1) { reinitVar11=0; } } 
@@ -575,8 +551,8 @@ void LBA_engine::unfreezeTime(void)
 {
 	--time1;
 
-	if(time1==0)
-	time = time3;
+	//if(time1==0)
+	//time = time3;
 }
 
 int LBA_engine::mainLoop4(void)	// process le menu "continuer ou abandonner"
@@ -616,13 +592,13 @@ void LBA_engine::reinitVars(void)
 	roomData2[i].field_0 = -1;
 
     for (i = 0; i < 80; i++)
-	roomData1[i] = 0;
+	cubeFlags[i] = 0;
 
     for (i = 0; i < 255; i++)
 	vars[i] = 0;
 
     for (i = 0; i < 28; i++)
-	GV16[i] = 0;
+	itemUsed[i] = 0;
 
     sceneVar2.field_0 = -1;
     sceneVar2.field_2 = -1;
@@ -658,9 +634,9 @@ void LBA_engine::reinitAll3(void)
     numClover = 2;
     numCoin = 0;
     numKey = 0;
-    GV7 = 0;
+    magicPoint = 0;
     GV18 = 0;
-    twinsen->field_0 = 0;
+    twinsen->body = 0;
     twinsen->life = 50;
     twinsen->talkColor = 4;
 
@@ -1013,14 +989,14 @@ void LBA_engine::updateActors(int actorNum)
 			{
 			    int angleModif;
 
-			    updateActorScript = 0;
-			    switch (comportement)
+			    action = 0;
+			    switch (comportementHero)
 				{
 				case 0:	// normal
 				   {
 				       if (mainLoopVar5 & 1)	// action button
 					   {
-					       updateActorScript = 1;
+					       action = 1;
 					   }
 				       break;
 				   }
@@ -1050,7 +1026,7 @@ void LBA_engine::updateActors(int actorNum)
 
 			}
 
-		    if (mainLoopVar5 == 0 || updateActorScript != 0)
+		    if (mainLoopVar5 == 0 || action != 0)
 			{
 			    if (key & 3)
 				changeRoomVar8 = 0;
@@ -1083,7 +1059,7 @@ void LBA_engine::updateActors(int actorNum)
 			    if (key & 4)	// turn left
 				{
 				    changeRoomVar8 = 1;
-				    if (lactor->costume == 0)
+				    if (lactor->anim == 0)
 					{
 					    playAnim(3, 0, 255, actorNum);
 					}
@@ -1100,7 +1076,7 @@ void LBA_engine::updateActors(int actorNum)
 			    if (key & 8)	// turn right
 				{
 				    changeRoomVar8 = 1;
-				    if (lactor->costume == 0)
+				    if (lactor->anim == 0)
 					{
 					    playAnim(4, 0, 255, actorNum);
 					}
@@ -1148,7 +1124,7 @@ void LBA_engine::updateActors(int actorNum)
 			   }
 		       else
 			   {
-			       updateActorAngle(lactor->angle, tempAngle, lactor->field_64,
+			       updateActorAngle(lactor->angle, tempAngle, lactor->hitBy,
 						&lactor->time);
 			   }
 		       break;
@@ -1231,6 +1207,7 @@ void LBA_engine::processActor(int actorNum)
 					{
 					    dx = -1;
 					}
+				}
 
 				    processActorSub1(dx, 0, lactor->field_78);
 
@@ -1243,18 +1220,14 @@ void LBA_engine::processActor(int actorNum)
 
 				    setActorAngle(0, lactor->field_34, 50, &lactor->time);
 
-				    if (lactor->field_62 & 0x40)	// can rotate ?
+				    if (lactor->field_62 & 0x40)
 					{
 					    if (lactor->field_72)
 						{
 						    var_10 = lactor->field_72;
-						    if (var_10 >=
-							getDistanceToward(processActorX,
-									  processActorY,
-									  lactor->lastX,
-									  lactor->lastY))
+						    if (var_10 <= getDistanceToward(processActorX,processActorY,lactor->lastX,lactor->lastY))
 							{
-							    if (lactor->angle == 0)
+								if (lactor->angle == 0)
 								{
 								    processActorY =
 									lactor->lastY +
@@ -1318,7 +1291,6 @@ void LBA_engine::processActor(int actorNum)
 							    lactor->field_34 = 0;
 							}
 						}
-					}
 				}
 			}
 
@@ -1330,8 +1302,8 @@ void LBA_engine::processActor(int actorNum)
 
 			    if (lactor->field_60 & 0x8000)
 				{
-				    processActorX = abs(processActorX);
-				    processActorY = abs(processActorY);
+				    processActorX = processActorX /128 *128 +128;
+				    processActorY = processActorY /128 *128 +128;
 				}
 
 			    lactor->lastX = 0;
@@ -1347,30 +1319,10 @@ void LBA_engine::processActor(int actorNum)
 	    if (lactor->currentAnim != -1)
 		{
 		    animPtr = (char *) getHqrdataPtr(HQRanims, lactor->currentAnim);
-		   // animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
+		    //animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
 
 		   // get the current frame anim data (for step length ?)
-		    animData = applyAnim(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // the 
-		   // current 
-		   // frame 
-		   // anim 
-		   // data 
-		   // (for 
-		   // step 
-		   // length 
-		   // ?)
+		    animData = applyAnim(lactor->animPosition, animPtr, (char *) bodyPtrTab[lactor->costumeIndex]);	// get the current frame anim data (for step length ?)
 
 		    if (processActorVar5)
 			{
@@ -1419,14 +1371,14 @@ void LBA_engine::processActor(int actorNum)
 				    else
 					{
 					    var_C = actorNum;
-					    lactor->costume = lactor->field_2;
+					    lactor->anim = lactor->field_2;
 					    lactor->currentAnim =
-						initCostume(lactor->costume, actorNum);
+						getAnimIndexForBody(lactor->anim, actorNum);
 
 					    if (lactor->currentAnim == -1)
 						{
-						    lactor->currentAnim = initCostume(0, var_C);
-						    lactor->costume = 0;
+						    lactor->currentAnim = getAnimIndexForBody(0, var_C);
+						    lactor->anim = 0;
 						}
 
 					    lactor->field_4 = loadTwinsenCostumesVar1;
@@ -1467,14 +1419,14 @@ void LBA_engine::processActor(int actorNum)
 		lactor->standOn = -1;	// actor fall from the object
 	}
 
-    if (lactor->field_62 & 0x100)	// movement freeze
+    if (lactor->field_62 & 0x100)	// if falling, then no modification...
 	{
 	    processActorX = processActorVar2;
-	    processActorZ = processActorVar3 + mainLoopVar17;	// ??!? mainLoopVar17 isn't related to angle ?!
+	    processActorZ = processActorVar3 + mainLoopVar17;	// apply fall speed
 	    processActorY = processActorVar4;
 	}
 
-    if (lactor->field_60 & 0x2) // if gravity affect actor
+    if (lactor->field_60 & 0x2) // if wall collision
 	{
 	    int position;
 
@@ -1485,7 +1437,6 @@ void LBA_engine::processActor(int actorNum)
 		{
 		    if (position == 1)
 			{
-			    printf("currentpos dans col 1 ?\n");
 			    lactor->Z = processActorZ = processActorZ / 256 * 256 + 256;
 			}
 		    else
@@ -1494,11 +1445,11 @@ void LBA_engine::processActor(int actorNum)
 			}
 		}
 
-	    if (lactor->field_60 & 1)	// actor fall 
-		processActorSub6(actorNum);
+	    if (lactor->field_60 & 1) // if we check collision with other objects
+		processActorSub6(actorNum); //check collision and see if actor fall on an object
 
-	    if ((lactor->standOn != -1) && (lactor->field_62 & 0x100))	// if actor standing on another actor and falling
-		processActorSub7();
+	    if ((lactor->standOn != -1) && (lactor->field_62 & 0x100))	// if actor felt on another an object
+		processActorSub7(); // stop falling
 
 	    fieldCauseDamage = 0;
 
@@ -1506,24 +1457,24 @@ void LBA_engine::processActor(int actorNum)
 	    processActorVar12 = processActorZ;
 	    processActorVar13 = processActorY;
 
-	    if (!actorNum && !(lactor->field_60 & 0x20))	// all this check if field around the actor can hurt
+	    if (!actorNum && !(lactor->field_60 & 0x20))	// check for wall collision
 		{
-		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_2E, 1);
+		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_2E, 1); // twinsen wall collision code
 		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_2E, 2);
 		    processActorSub8(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
 		    processActorSub8(lactor->field_26, lactor->field_2A, lactor->field_30, 8);
 		}
 	    else
 		{
-		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_2E, 1);
+		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_2E, 1); // other objects wall collision code
 		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_2E, 2);
 		    processActorSub9(lactor->field_28, lactor->field_2A, lactor->field_30, 4);
 		    processActorSub9(lactor->field_26, lactor->field_2A, lactor->field_30, 8);
 		}
 
-	    if (fieldCauseDamage && !(lactor->field_62 & 0x100) && currentlyProcessedActorNum && (comportement != 1) && (lactor->costume != 1))	// field cause damage
-		{
-		    processActorSub1(lactor->field_26, lactor->field_2E, lactor->angle + 0x580);
+	    if (fieldCauseDamage && !(lactor->field_62 & 0x100) && !currentlyProcessedActorNum && (comportementHero == 1) && (lactor->anim == 1))	// wall hit while running
+		{		 
+			processActorSub1(lactor->field_26, lactor->field_2E, lactor->angle + 0x580);
 
 		    destX += processActorX;
 		    destZ += processActorY;
@@ -1545,13 +1496,16 @@ void LBA_engine::processActor(int actorNum)
 			}
 		}
 
+		// here, the next position is probably validated...
+		// now we see if the actor should start to fall...
+
 	    position = getCurPos(processActorX, processActorZ, processActorY);
 	    var_4 = position;
 	    lactor->field_3 = position;
 
 	    if (position)	// if standing on floor 
 		{
-		    if (position == 1)	// if standing on floor ==1
+		    if (position == 1)	// if flat floor
 			{
 			    if ((lactor->field_62 >> 8) != position)
 				{
@@ -1560,7 +1514,7 @@ void LBA_engine::processActor(int actorNum)
 				}
 			    else
 				{
-				    if (!actorNum && comportement == 1 && lactor->costume == var_4)
+				    if (!actorNum && comportementHero == 1 && lactor->anim == var_4)
 					{
 					    processActorSub10(lactor->X, lactor->Z + 0x1000,
 							      lactor->Y, 0);
@@ -1590,7 +1544,7 @@ void LBA_engine::processActor(int actorNum)
 					}
 				}
 			}
-		    else
+		    else // not standing on flat floor
 			{
 			    if (lactor->field_62 & 0x100)
 				processActorSub7();
@@ -1600,13 +1554,13 @@ void LBA_engine::processActor(int actorNum)
 
 		    lactor->field_62 &= 0xFEFF;
 		}
-	    else		// standing on floor !=1
+	    else		// not standing on floor
 		{
 		    if (lactor->field_60 & 0x800 && lactor->standOn == -1)	// if ? and actor standing on another actor
 			{
 			    var_8 = getCurPos(processActorX, processActorZ - 1, processActorY);	// what is 1 step under ?
 
-			    if (var_8)	// on on floor
+			    if (var_8)	// under is the floor
 				{
 				    if (lactor->field_62 & 0x100)	// if was falling...
 					{
@@ -1615,7 +1569,7 @@ void LBA_engine::processActor(int actorNum)
 
 				    processActorSub5(var_8);
 				}
-			    else	// continue falling
+			    else	// start falling
 				{
 				    if (!(lactor->field_62 & 0x80))
 					{
@@ -1638,9 +1592,9 @@ void LBA_engine::processActor(int actorNum)
 		    lactor->life = 0;	// die...
 		}
 	}
-    else			// if falling
+    else			// no wall collision
 	{
-	    if (lactor->field_60 & 0x1)	//actor fall
+	    if (lactor->field_60 & 0x1)	//if actor collision
 		processActorSub6(actorNum);
 	}
 
@@ -1668,7 +1622,7 @@ void LBA_engine::processActor(int actorNum)
 
 }
 
-void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3)
+void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3) // twinsen wall colision
 {
     int pos;
 
@@ -1678,15 +1632,14 @@ void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3)
     processActorZ = var1;
     processActorY = var2;
 
-    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
-	&& processActorY <= 0x7E00)
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00 && processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
 	    pos = getCurPos(processActorX, processActorZ, processActorY);
 
 	    if (pos != 0 && pos == 1)
 		{
-		    fieldCauseDamage |= var3;
+			fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
 		    if (pos == 1)
 			{
@@ -1719,13 +1672,12 @@ void LBA_engine::processActorSub9(int var0, int var1, int var2, int var3)
     processActorZ = var1;
     processActorY = var2;
 
-    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
-	&& processActorY <= 0x7E00)
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00 && processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
 	    pos = getCurPos(processActorX, processActorZ, processActorY);
 
-	    if (pos != 0 && pos == 1)
+	    if (pos != 0 && pos == 1) // next position is a wall
 		{
 		    fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
@@ -1756,6 +1708,107 @@ void LBA_engine::processActorSub10(int var0, int var1, int var2, int var3)
 
 void LBA_engine::processActorSub5(int param)
 {
+	int localGetPosVar1;
+	int localGetPosVar2;
+	int localGetPosVar3;
+
+	if(!param)
+		return;
+
+	localGetPosVar1=(getPosVar1<<9)-0x100;
+	localGetPosVar2=(getPosVar2<<8);
+	localGetPosVar3=(getPosVar3<<9)-0x100;
+
+	//****************** special collisions ******************//
+	if(param>=6 && param<=13)
+	{
+		switch(param)
+		{
+		case 10:
+			{
+				if((processActorX-getPosVar1)<(processActorY-getPosVar3))
+				{
+					param=2;
+				}
+				else
+				{
+					param=3;
+				}
+				break;
+			}
+		case 11:
+			{
+				if((processActorY-getPosVar3)>(processActorX-getPosVar1))
+				{
+					param=4;
+				}
+				else
+				{
+					param=5;
+				}
+				break;
+			}
+		case 12:
+			{
+				if((0x200-processActorX-getPosVar1)>(processActorY-getPosVar3))
+				{
+					param=2;
+				}
+				else
+				{
+					param=3;
+				}
+				break;
+			}
+		default:
+			{
+				printf("collision %d\n",param);
+				exit(1);
+			}
+		}
+	}
+
+	if(param>=2 && param<=5)
+	{
+	switch(param)
+	{
+		//****************** slope collisions *****************//
+		case 2:
+			{
+				processActorZ=localGetPosVar2+addRoomData2Entry(0,0x100,0x200,processActorX-localGetPosVar1);
+				break;
+			}
+		case 3:
+			{
+				processActorZ=localGetPosVar2+addRoomData2Entry(0,0x100,0x200,processActorY-localGetPosVar3);
+				break;
+			}
+		case 4:
+			{
+				processActorZ=localGetPosVar2+addRoomData2Entry(0x100,0,0x200,processActorY-localGetPosVar3);
+				break;
+			}
+		case 5:
+			{
+				processActorZ=localGetPosVar2+addRoomData2Entry(0x100,0,0x200,processActorX-localGetPosVar1);
+				return;
+			}
+		}
+	}
+
+}
+
+// fait la moyenne pour la hauteur.
+// min max ? var
+int LBA_engine::addRoomData2Entry(int var0,int var1,int var2,int var3)
+{
+	if(!var3)
+		return(var0);
+
+	if(var3>=var2)
+		return(var1);
+
+	return((((var1-var0)*var3)/var2)+var0);
 }
 
 void LBA_engine::processActorSub6(int param)
@@ -1784,7 +1837,7 @@ void LBA_engine::processActorSub7(void)	// stop falling
 		    processActorVar1->life--;
 		    playAnim(9, 2, 0, currentlyProcessedActorNum);
 		}
-	    else if (fall > 1)
+	    else if (fall > 10)
 		{
 		    playAnim(8, 2, 0, currentlyProcessedActorNum);
 		}
@@ -1961,8 +2014,7 @@ int LBA_engine::processActorSub2(int position, char *anim, char *body)
     return (0);
 }
 
-int LBA_engine::processActorSub4(int var0, int var1)	// is actor still standing on
-       // object ?
+int LBA_engine::processActorSub4(int var0, int var1)	// is actor still standing on object ?
 {
     actor *lactor1;
     actor *lactor2;
@@ -2047,10 +2099,10 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 
     for (i = 0; i < reinitAll2Var4; i++)
 	{
-	    if (currentX > *(short int *) localPtr && currentX < *(short int *) (localPtr + 6))
-		if (currentZ > *(short int *) (localPtr + 2)
-		    && currentZ < *(short int *) (localPtr + 8))
-		    if (currentY > *(short int *) (localPtr + 4) && currentY < *(short int *) (localPtr + 10))	// if actor in zone
+	    if (currentX >= *(short int *) localPtr && currentX <= *(short int *) (localPtr + 6))
+		if (currentZ >= *(short int *) (localPtr + 2)
+		    && currentZ <= *(short int *) (localPtr + 8))
+		    if (currentY >= *(short int *) (localPtr + 4) && currentY <= *(short int *) (localPtr + 10))	// if actor in zone
 			{
 			    opcode = *(short int *) (localPtr + 12);
 			    switch (opcode)
@@ -2099,7 +2151,7 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 				   }
 				case 2:	// set zone
 				   {
-				       lactor->field_5A = *(short int *) (localPtr + 14);
+				       lactor->zone = *(short int *) (localPtr + 14);
 				       break;
 				   }
 				case 3: // cube clip
@@ -2114,7 +2166,7 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 					{
 						if(!actorNumber)
 						{
-							if(updateActorScript!=0)
+							if(action!=0)
 							{
 								playAnim(11,1,0,0);
 							}
@@ -2123,7 +2175,7 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 					}
 				case 5: // display text
 					{
-						if(!actorNumber && updateActorScript)
+						if(!actorNumber && action)
 						{
 							freezeTime();
 							mainLoop2(1);

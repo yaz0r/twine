@@ -144,7 +144,7 @@ void LBA_engine::newGame(void)
     stopMusic();
     if (needChangeRoom)
 	return;
-    if (newGameVar2)
+    if (chapter)
 	return;
 
     flagDisplayTextSave = flagDisplayText;

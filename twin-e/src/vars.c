@@ -69,7 +69,7 @@ void LBA_engine::initVars(void)
     palReseted = 0;
 
     needChangeRoom = -1;
-    newGameVar2 = 0;
+    chapter = 0;
     newGameVar4 = 1;
     newGameVar5 = 0;
 
@@ -132,7 +132,7 @@ void LBA_engine::initVars(void)
 
     buttonDrawVar1 = 550;
 
-    language = 0;		// langue ecrite
+    language = 1;		// langue ecrite
 
     languageCD1 = 0;
 
@@ -432,7 +432,7 @@ void LBA_engine::initVars(void)
 
     renderTab3 = &renderTab2[9];
 
-    updateActorScript = 0;
+    action = 0;
 
    /*
     * setSomething2Var1; setSomething2Var2; setSomething2Var3; setSomething3Var12;

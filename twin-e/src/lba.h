@@ -29,8 +29,9 @@ struct actorBoxStruct {
     int bottom;
 };
 
-#include"osystem.h"
-#include"angle.h"
-#include"costume.h"
-#include"debug.h"
-#include"vars.h"
+//#include "opcodes.h"
+#include "osystem.h"
+#include "angle.h"
+#include "costume.h"
+#include "debug.h"
+#include "vars.h"

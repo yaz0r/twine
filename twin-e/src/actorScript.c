@@ -296,7 +296,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       temp1 = *(actorScriptPtr++);
 			       temp2 = *(actorScriptPtr++);
 
-			       roomData1[temp1] = temp2;
+			       cubeFlags[temp1] = temp2;
 			       break;
 			   }
 
@@ -351,7 +351,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       actors[temp].field_62 |= 0x20;
 			       actors[temp].costumeIndex = -1;
-			       actors[temp].field_5A = -1;
+			       actors[temp].zone = -1;
 			       actors[temp].life = 0;
 
 			       break;
@@ -362,7 +362,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 //			       removeActorFromRoom(actorNumber);
 			       lactor->field_62 |= 0x20;
 			       lactor->costumeIndex = -1;
-			       lactor->field_5A = -1;
+			       lactor->zone = -1;
 			       lactor->life = 0;
 			       break;
 			   }
@@ -475,7 +475,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			case 45:
 				{
-			    newGameVar2++;
+			    chapter++;
 			    break;
 				}
 			case 46:
@@ -556,7 +556,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				{
 			    if (*(actorScriptPtr++) != 0)
 				{
-				    lactor->field_60 |= 1;
+				    lactor->field_60 |= 1; // toggle actor collision
 				}
 			    else
 				{
@@ -564,7 +564,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				}
 			    break;
 				}
-			case 54:
+			case 54: // toggle wall collision
 				{
 			    char temp;
 
@@ -597,7 +597,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				}
 			    break;
 				}
-			case 56:
+			case 56: // invisible
 				{
 			    if (*(actorScriptPtr++) != 0)
 				{
@@ -656,15 +656,15 @@ void LBA_engine::runActorScript(short int actorNumber)
 				}
 			case 59:
 				{
-					GV6=*(actorScriptPtr++);
-					GV7=GV6*20;
+					magicLevel=*(actorScriptPtr++);
+					magicPoint=magicLevel*20;
 					break;
 				}
 			case 60:
 				{
-					GV7=*(actorScriptPtr++);
-					if(GV7<0)
-						GV7=0;
+					magicPoint=*(actorScriptPtr++);
+					if(magicPoint<0)
+						magicPoint=0;
 
 					break;
 				}
@@ -679,16 +679,38 @@ void LBA_engine::runActorScript(short int actorNumber)
 					actors[temp1].life = temp2;
 					break;
 				}
-			case 63:
-			    printf("Ignoring actorScript opcode 63\n");
-			    actorScriptPtr += 2;
-			    break;
+			case 62: // LM_SUB_LIFE_POINT_OBJ
+				{
+					char localActorNumber;
+					char subLife;
+
+					localActorNumber=*(actorScriptPtr++);
+					subLife=*(actorScriptPtr++);
+
+					actors[localActorNumber].life-=subLife;
+
+					if(actors[localActorNumber].life<0)
+						actors[localActorNumber].life=0;
+
+				}
+			case 63: //LM_HIT_OBJ
+				{
+					printf("Ignoring actorScript opcode 63\n");
+				    actorScriptPtr += 2;
+				    break;
+				}
+			case 64: //LM_PLAY_FLA
+				{
+					printf("Play FLA: %s\n",actorScriptPtr);
+					actorScriptPtr+=strlen((char*)actorScriptPtr)+1;
+					break;
+				}
 			case 67:
 			    int entryTemp;
 
 			    entryTemp = *(actorScriptPtr++);
 			    if (entryTemp < 24)
-				GV16[entryTemp] = 1;
+				itemUsed[entryTemp] = 1;
 
 			    break;
 			case 68:
@@ -735,9 +757,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 			    byte newActor;
 			    newActor = *(actorScriptPtr++);
 			    actors[newActor].field_62 |= 0x20;
-			    reinitVar4 = newActor;
+			    currentPingouin = newActor;
 			    actors[newActor].costumeIndex = -1;
-			    actors[newActor].field_5A = -1;
+			    actors[newActor].zone = -1;
 			    break;
 
 			case 72:
@@ -772,7 +794,13 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       printf("Ignoring opcode 88 in runActorScript\n");
 			       break;
 			   }
-
+			case 95:
+				{
+					lactor->anim=-1;
+					lactor->currentAnim=-1;
+					playAnim(*(actorScriptPtr++),0,0,actorNumber);
+					break;
+				}
 			case 99:
 			   {
 			       printf("Stop music!\n");
@@ -787,7 +815,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       break;
 			   }
 
-			case 102:
+			case 102: //LM_PROJ_3D
 			    resetVideoBuffer1();
 			    copyToBuffer(videoBuffer1, videoBuffer2);
 			    osystem->drawBufferToScreen(videoBuffer1);
@@ -880,7 +908,7 @@ void LBA_engine::manipActor(actor * lactor)
 	    if (lactor->life <= 0)
 		manipActorResult = -1;
 	    else
-		manipActorResult = lactor->field_56;
+		manipActorResult = lactor->collision;
 	    break;
 	case 1:
 	    lactor2 = &actors[*(actorScriptPtr++)];
@@ -890,7 +918,7 @@ void LBA_engine::manipActor(actor * lactor)
 		}
 	    else
 		{
-		    manipActorResult = lactor2->field_56;
+		    manipActorResult = lactor2->collision;
 		}
 	    break;
 	case 2:
@@ -916,22 +944,22 @@ void LBA_engine::manipActor(actor * lactor)
 		}
 	    break;
 	case 3:
-	    manipActorResult = lactor->field_5A;
+	    manipActorResult = lactor->zone;
 	    break;
 	case 4:
-	    manipActorResult = actors[*(actorScriptPtr++)].field_5A;
+	    manipActorResult = actors[*(actorScriptPtr++)].zone;
 	    break;
 	case 5:
-	    manipActorResult = lactor->field_0;
+	    manipActorResult = lactor->body;
 	    break;
 	case 6:
-	    manipActorResult = actors[*(actorScriptPtr++)].field_0;
+	    manipActorResult = actors[*(actorScriptPtr++)].body;
 	    break;
 	case 7:
-	    manipActorResult = lactor->costume;
+	    manipActorResult = lactor->anim;
 	    break;
 	case 8:
-	    manipActorResult = actors[*(actorScriptPtr++)].costume;
+	    manipActorResult = actors[*(actorScriptPtr++)].anim;
 	    break;
 	case 9:
 	    manipActorResult = lactor->label;
@@ -940,7 +968,7 @@ void LBA_engine::manipActor(actor * lactor)
 	    manipActorResult = actors[*(actorScriptPtr++)].label;
 	    break;
 	case 11:
-	    manipActorResult = roomData1[*(actorScriptPtr++)];
+	    manipActorResult = cubeFlags[*(actorScriptPtr++)];
 	    break;
 	case 12:
 	    short int angle;
@@ -988,10 +1016,10 @@ void LBA_engine::manipActor(actor * lactor)
 		}
 	    break;
 	case 13:
-	    manipActorResult = lactor->field_64;
+	    manipActorResult = lactor->hitBy;
 	    break;
 	case 14:
-	    manipActorResult = updateActorScript;
+	    manipActorResult = action;
 	    break;
 	case 15:		// VAR_GAME
 	    temp = *(actorScriptPtr++);
@@ -1021,10 +1049,10 @@ void LBA_engine::manipActor(actor * lactor)
 	    manipActorResult = numCoin;
 	    break;
 	case 20:
-	    manipActorResult = comportement;
+	    manipActorResult = comportementHero;
 	    break;
 	case 21:
-	    manipActorResult = newGameVar2;
+	    manipActorResult = chapter;
 	    break;
 	case 22:
 	    lactor2 = &actors[*actorScriptPtr];
@@ -1058,7 +1086,7 @@ void LBA_engine::manipActor(actor * lactor)
 			   }
 		       else
 			   {
-			       if (GV16[temp] == 1 && vars[temp] == 1)
+			       if (itemUsed[temp] == 1 && vars[temp] == 1)
 				   {
 				       manipActorResult = 1;
 				   }

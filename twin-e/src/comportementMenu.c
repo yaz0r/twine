@@ -38,7 +38,7 @@ void LBA_engine::drawComportementEntry(int lcomportement, int arg, int arg2)
     saveTextWindow();
     maximizeTextWindow();
 
-    if (lcomportement != comportement)
+    if (lcomportement != comportementHero)
 	{
 	    drawBlackBox(box_left, box_top, box_right, box_bottom, 0);	// color of unselected
 	}
@@ -51,39 +51,21 @@ void LBA_engine::drawComportementEntry(int lcomportement, int arg, int arg2)
 
 	    setTextColor(15);
 
-	    if (comportement == 2 && agressivity == 1)
+	    if (comportementHero == 2 && agressivity == 1)
 		{
 		    printString(4, dataString);	// pour afficher le "auto" ou non
 		}
 	    else
 		{
-		    printString(comportement, dataString);
+		    printString(comportementHero, dataString);
 		}
 
-	    printStringSimple((650 - getStringLength(dataString)) / 2, 240, dataString);	// ecrit le 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // nom du
-	   // comportement 
-	   // dans
-	   // lequel
-	   // on se
-	   // trouve
+	    printStringSimple((650 - getStringLength(dataString)) / 2, 240, dataString);	// ecrit le nom du comportement dans lequel on se trouve
 	}
 
     var_10 = box_top;
 
-    draw3D4(box_left, box_top, box_right, box_bottom, -600, arg, menuCostumeIndex);	// dessine
-   // le model
+    draw3D4(box_left, box_top, box_right, box_bottom, -600, arg, menuCostumeIndex);	// dessine le model
 
     osystem->refresh(videoBuffer1, box_left, var_10, box_right, box_bottom);
     osystem->refresh(videoBuffer1, 110, 239, 540, 279);
@@ -186,7 +168,7 @@ void LBA_engine::processComportementMenu(void)
 
     freezeTime();
 
-    if (comportement == 4)
+    if (comportementHero == 4)
 	{
 	    mainMenu2();
 	    changeTwinsenComp(0);
@@ -212,10 +194,9 @@ void LBA_engine::processComportementMenu(void)
 
     drawMenuWin(twinsen->angle);
 
-    savedComportement = comportement;
+    savedComportement = comportementHero;
 
-    setAnimAtKeyFrame(winTab[comportement], getHqrdataPtr(HQRanims, TCOS[comportement]),
-		      menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[comportementHero], getHqrdataPtr(HQRanims, TCOS[comportementHero]),menuCostumeIndex);
 
     readKeyboard();
 
@@ -226,37 +207,37 @@ void LBA_engine::processComportementMenu(void)
 	    key = printTextVar12;
 
 	    if (key & 8)
-		comportement++;
+		comportementHero++;
 
 	    if (key & 4)
-		comportement--;
+		comportementHero--;
 
-	    if (comportement < 0)	// J'ai reecrit ca à ma sauce
-		comportement = 3;
+	    if (comportementHero < 0)	// J'ai reecrit ca à ma sauce
+		comportementHero = 3;
 
-	    if (comportement >= 4)
-		comportement = 0;
+	    if (comportementHero >= 4)
+		comportementHero = 0;
 
-	    if (savedComportement != comportement)
+	    if (savedComportement != comportementHero)
 		{
 		    drawComportementEntry(savedComportement, twinsen->angle, 1);
-		    savedComportement = comportement;
+		    savedComportement = comportementHero;
 		    setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);	// rotate
 		   // twinsen
-		    setAnimAtKeyFrame(winTab[comportement],
-				      getHqrdataPtr(HQRanims, TCOS[comportement]),
+		    setAnimAtKeyFrame(winTab[comportementHero],
+				      getHqrdataPtr(HQRanims, TCOS[comportementHero]),
 				      menuCostumeIndex);
 
 		    while (printTextVar12)
 			{
 			    readKeyboard();
-			    drawComportementEntry(comportement, -1, 1);
+			    drawComportementEntry(comportementHero, -1, 1);
 			}
 		}
-	    drawComportementEntry(comportement, -1, 1);
+	    drawComportementEntry(comportementHero, -1, 1);
 	}
 
-    changeTwinsenComp(comportement);
+    changeTwinsenComp(comportementHero);
 
     reinitAll1();
 

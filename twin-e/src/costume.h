@@ -17,8 +17,8 @@
 
 struct actor {
     byte *bodyPtr;
-    char field_0;
-    char costume;
+    char body;
+    char anim;
     byte field_2;
     byte field_3;
     unsigned char *field_4;
@@ -51,14 +51,14 @@ struct actor {
     short int field_50;
     short int field_52;
     short int field_54;
-    short int field_56;
+    short int collision;
     short int standOn;
-    short int field_5A;
+    short int zone;
     short int label;
     short int field_5E;
     unsigned short int field_60;	// flags
     short int field_62;		// flags2
-    short int field_64;
+    short int hitBy;
     short int field_66;
     short int life;
     short int field_6A;

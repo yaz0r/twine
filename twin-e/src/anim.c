@@ -447,10 +447,10 @@ int LBA_engine::draw3D1(int animState, char *animData, char *body)
     return (0);
 }
 
-int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, short int actorNum)
+int LBA_engine::playAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actorNum)
 {
     actor *lactor;
-    int var_4;
+    int animIndex;
 
     lactor = &actors[actorNum];
 
@@ -460,20 +460,20 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
     if (lactor->field_60 & 0x400)	// si c'est un sprite
 	return (0);
 
-    if (costume == lactor->costume && lactor->currentAnim != -1)	// le costume est deja loadé
+    if (newAnim == lactor->anim && lactor->currentAnim != -1)	// le costume est deja loadé
 	return (1);
 
     if (arg_8 == 255 && lactor->field_78 != 2)
-	arg_8 = lactor->costume;
+	arg_8 = lactor->anim;
 
-    var_4 = initCostume(costume, actorNum);
+    animIndex = getAnimIndexForBody(newAnim, actorNum);
 
-    if (var_4 == -1)
-	var_4 = initCostume(0, actorNum);
+    if (animIndex == -1)
+	animIndex = getAnimIndexForBody(0, actorNum);
 
     if (arg_4 != 4 && lactor->field_78 == 2)
 	{
-	    lactor->field_2 = costume;
+	    lactor->field_2 = newAnim;
 	    return (0);
 	}
 
@@ -481,7 +481,7 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
 	{
 	    arg_4 = 2;
 
-	    arg_8 = lactor->costume;
+	    arg_8 = lactor->anim;
 
 	    if (arg_8 == 15 || arg_8 == 7 || arg_8 == 8 || arg_8 == 9)
 		{
@@ -495,9 +495,7 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
 
     if (lactor->currentAnim == -1)	// if no previous animation
 	{
-	    setAnimAtKeyFrame(0, getHqrdataPtr(HQRanims, var_4),	// set animation directly to first
-			     // keyFrame
-			      bodyPtrTab[lactor->costumeIndex]);
+	    setAnimAtKeyFrame(0, getHqrdataPtr(HQRanims, animIndex),bodyPtrTab[lactor->costumeIndex]);	// set animation directly to first keyFrame
 	}
     else
 	{
@@ -506,14 +504,14 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
 		bufAni2 = bufAni1;
 	}
 
-    lactor->currentAnim = var_4;
-    lactor->costume = costume;
+    lactor->currentAnim = animIndex;
+    lactor->anim = newAnim;
     lactor->field_2 = arg_8;
     lactor->field_4 = loadTwinsenCostumesVar1;
     lactor->field_78 = arg_4;
     lactor->animPosition = 0;
-    *(unsigned char *) &lactor->field_62 &= 0xF9;
-    *(unsigned char *) &lactor->field_62 |= 8;
+    lactor->field_62 &= 0xFFF9;
+    lactor->field_62 |= 8;
 
     if (lactor->field_4 != 0)
 	{

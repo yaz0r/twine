@@ -17,7 +17,7 @@
 
 #include "lba.h"
 
-int LBA_engine::loadBody(int costumeNum, int actorNum)	// should be something like initBody
+int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like initBody
 {
     actor *lactor;
     unsigned char *bodyPtr;
@@ -47,27 +47,21 @@ int LBA_engine::loadBody(int costumeNum, int actorNum)	// should be something li
 		{
 		    var2 = *(bodyPtr);
 
-		    if (var2 == costumeNum)
+		    if (var2 == bodyNum)
 			{
 			    bodyPtr3 = bodyPtr2 + 1;
 			    flag = *(short int *) bodyPtr3;
 
 			    if (!(flag & 0x8000))	// if it's not an sprite object
 				{
-				    loadDataFileToPtr("body.hqr", flag & 0xFFFF,
-						      &bodyPtrTab[reinitAll2Var3]);
-				   // loadDataFileToPtr("body.hqr",1,&bodyPtrTab[reinitAll2Var3]);
-
-				   // loadDataFileToPtr("invobj.hqr",5,&bodyPtrTab[reinitAll2Var3]);
+				    loadDataFileToPtr("body.hqr", flag & 0xFFFF,&bodyPtrTab[reinitAll2Var3]);
 				    if (!bodyPtrTab[reinitAll2Var3])
 					{
 					    printf("Body.HQR in HQ_Mem\n");
 					    exit(1);
 					}
 				    loadGfxSub(bodyPtrTab[reinitAll2Var3]);
-				    *(short int *) bodyPtr3 = reinitAll2Var3 + 0x8000;	// maintenant, on
-				   // dit que
-				   // c'est en memoire HQR
+				    *(short int *) bodyPtr3 = reinitAll2Var3 + 0x8000;	// maintenant, on dit que c'est en memoire HQR
 				    index = reinitAll2Var3;
 				    reinitAll2Var3++;
 				}

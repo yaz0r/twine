@@ -20,11 +20,14 @@
 void LBA_engine::changeRoom(void)
 {
     int i;
+	int oldRoom;
 
     if (needChangeRoom == 4 && needChangeRoomVar1[0] != 0)
 	needChangeRoom = 118;
 
     printf("Loading room %d\n", needChangeRoom);
+
+	oldRoom=currentRoom;
 
     currentRoom = needChangeRoom;
     mainMenu2();
@@ -43,7 +46,7 @@ void LBA_engine::changeRoom(void)
     loadTwinsenCostumes();
 
     twinsen->field_40 = 1;
-    twinsen->field_5A = -1;
+    twinsen->zone = -1;
     twinsen->positionInActorScript = 0;
     twinsen->positionInMoveScript = -1;
     twinsen->label = -1;
@@ -94,9 +97,9 @@ void LBA_engine::changeRoom(void)
 
     setSomething4(reinitVar1, reinitVar2, 0);
 
-    if (currentRoom != needChangeRoom)
+    if (oldRoom != needChangeRoom)
 	{
-	    reinitVar10 = comportement;
+	    reinitVar10 = comportementHero;
 	    reinitVar9 = twinsen->angle;
 	    saveGame();
 	}
@@ -142,7 +145,7 @@ void LBA_engine::changeRoom1(void)
     reinitData();
 
     for (i = 0; i < 80; i++)
-	roomData1[i] = 0;
+	cubeFlags[i] = 0;
 
     for (i = 0; i < 10; i++)
 	roomData2[i].field_0 = -1;
@@ -228,7 +231,6 @@ void LBA_engine::loadRoomScene(int sceneNumber)
     temp2 = (unsigned short int *) (temp + temp3);
 
     numActorInRoom = *(temp2++);
-   // numActorInRoom=roomMusic;
 
     while (currentActor < numActorInRoom)
 	{
@@ -239,13 +241,13 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	    modelNumber = *(temp2++);
 	    localScenePtr = (unsigned char *) temp2;
 
-	    if (!(actors[currentActor].field_60 & 0x400))
+	    if (!(actors[currentActor].field_60 & 0x400)) // if not sprite actor
 		{
 		    loadDataFileToPtr("file3d.hqr", modelNumber, &actors[currentActor].bodyPtr);
 		}
 
-	    actors[currentActor].field_0 = *(localScenePtr++);
-	    actors[currentActor].costume = *(localScenePtr++);
+	    actors[currentActor].body = *(localScenePtr++);
+	    actors[currentActor].anim = *(localScenePtr++);
 
 	    temp2 = (unsigned short int *) localScenePtr;
 
@@ -540,7 +542,7 @@ void LBA_engine::reinitTwinsen(void)
     twinsen->positionInMoveScript = -1;
     twinsen->label = -1;
     twinsen->positionInActorScript = 0;
-    twinsen->field_5A = -1;
+    twinsen->zone = -1;
     twinsen->angle = reinitVar9;
     setActorAngleSafe(twinsen->angle, twinsen->angle, 0, &twinsen->time);
     changeTwinsenComp(reinitVar10);
@@ -554,35 +556,35 @@ void LBA_engine::changeTwinsenComp(int newComportement)
     switch (newComportement)
 	{
 	case 0:
-	    comportement = 0;
+	    comportementHero = 0;
 	    twinsen->bodyPtr = file3D0;
 	    break;
 	case 1:
-	    comportement = 1;
+	    comportementHero = 1;
 	    twinsen->bodyPtr = file3D1;
 	    break;
 	case 2:
-	    comportement = 2;
+	    comportementHero = 2;
 	    twinsen->bodyPtr = file3D2;
 	    break;
 	case 3:
-	    comportement = 3;
+	    comportementHero = 3;
 	    twinsen->bodyPtr = file3D3;
 	    break;
 	case 4:
-	    comportement = 4;
+	    comportementHero = 4;
 	    twinsen->bodyPtr = file3D4;
 	    break;
 	};
 
-    temp = twinsen->field_0;
+    temp = twinsen->body;
 
     twinsen->costumeIndex = -1;
-    twinsen->field_0 = -1;
+    twinsen->body = -1;
 
     loadActorCostume(temp, 0);
 
-    twinsen->costume = -1;
+    twinsen->anim = -1;
     twinsen->field_78 = 0;
 
     playAnim(0, 0, 255, 0);

@@ -48,14 +48,14 @@ void LBA_engine::loadRoomActors(short int arg_0)
 	{
 	    lactor->costumeIndex = -1;
 
-	    loadActorCostume(lactor->field_0, arg_0);
+	    loadActorCostume(lactor->body, arg_0);
 
 	    lactor->currentAnim = -1;
 	    lactor->field_78 = 0;
 
 	    if (lactor->costumeIndex != -1)
 		{
-		    playAnim(lactor->costume, 0, 255, arg_0);
+		    playAnim(lactor->anim, 0, 255, arg_0);
 		}
 
 	    setActorAngleSafe(lactor->angle, lactor->angle, 0, &lactor->time);
@@ -72,8 +72,8 @@ void LBA_engine::resetActor(int actorNumber)
 
     localActor = &actors[actorNumber];
 
-    localActor->field_0 = 0;
-    localActor->costume = 0;
+    localActor->body = 0;
+    localActor->anim = 0;
     localActor->X = 0;
     localActor->Z = -1;
     localActor->Y = 0;
@@ -91,14 +91,14 @@ void LBA_engine::resetActor(int actorNumber)
     localActor->field_52 = 0;
     localActor->field_54 = 0;
     localActor->field_3 = 0;
-    localActor->field_56 = -1;
+    localActor->collision = -1;
     localActor->standOn = -1;
-    localActor->field_5A = -1;
+    localActor->zone = -1;
     localActor->field_60 = 0;
     localActor->field_62 = 0;
     localActor->life = 50;
     localActor->field_14 = 1;
-    localActor->field_64 = -1;
+    localActor->hitBy = -1;
     localActor->field_6A = 0;
     localActor->lastX = 0;
     localActor->lastZ = 0;

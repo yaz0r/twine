@@ -430,7 +430,7 @@ class LBA_engine {
     short int subMenuData[14];
 
     short int needChangeRoom;
-    short int newGameVar2;
+    short int chapter;
     short int newGameVar4;
 
     int newGameVar5;
@@ -444,12 +444,12 @@ class LBA_engine {
     short int GV9;
     short int GV10;
     short int GV11;
-    short int reinitVar3;
+    short int brutalExit;
     short int numClover;
     short int numCloverBox;
-    short int reinitVar4;
-    short int GV6;
-    short int GV7;
+    short int currentPingouin;
+    short int magicLevel;
+    short int magicPoint;
     short int numCoin;
     short int numKey;
     short int GV18;
@@ -460,7 +460,7 @@ class LBA_engine {
     short int reinitVar8;
     short int reinitVar9;
 
-    short int comportement;
+    short int comportementHero;
 
     short int reinitVar10;
 
@@ -617,9 +617,9 @@ class LBA_engine {
 
     reinitAll2DataVar1Struct reinitAll2SubVar1[50];
 
-    byte roomData1[80];
+    byte cubeFlags[80];
     roomData2Struct roomData2[10];
-    byte GV16[28];
+    byte itemUsed[28];
 
     int reinitAll2Var3;
     short int reinitAll2Var4;
@@ -787,7 +787,7 @@ class LBA_engine {
 
     int renderLoop;
 
-    int updateActorScript;
+    int action;
 
     int shadowX;
     int shadowZ;
@@ -895,6 +895,7 @@ class LBA_engine {
 
    // ----------------------------------------------------------------------------------------
 
+	int addRoomData2Entry(int var0,int var1,int var2,int var3);
 	void checkZones(actor* lactor, int actorNumber);
     void setSomething4(int a, int b, int c);
 
@@ -1097,7 +1098,7 @@ class LBA_engine {
 
     int loadDataFileToPtr(char *fileName, short int arg_4, byte ** ptr);
 
-    int initCostume(byte arg_0, short int actorNumber);
+    int getAnimIndexForBody(byte arg_0, short int actorNumber);
 
     void changeRoom1Sub1(hqr_entry * ptr);
 
