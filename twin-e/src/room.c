@@ -118,9 +118,9 @@ void LBA_engine::changeRoom(void)
 
     newCameraX = actors[reinitVar8].X >> 9;
     newCameraZ = actors[reinitVar8].Z >> 8;
-    changeRoomVar6 = actors[reinitVar8].Y >> 9;
+    newCameraY = actors[reinitVar8].Y >> 9;
 
-    newCameraY = -1;
+    changeRoomVar7 = -1;
     changeRoomVar8 = 1;
     changeRoomVar9 = -1;
     currentGrid2 = -1;
@@ -266,10 +266,10 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	    actors[currentActor].angle = *(temp2++);
 	    actors[currentActor].field_34 = *(temp2++);
 	    actors[currentActor].field_40 = *(temp2++);
-	    actors[currentActor].field_4E = *(temp2++);
-	    actors[currentActor].field_50 = *(temp2++);
-	    actors[currentActor].field_52 = *(temp2++);
-	    actors[currentActor].field_54 = *(temp2++);
+	    actors[currentActor].cropLeft = *(temp2++);
+	    actors[currentActor].cropTop = *(temp2++);
+	    actors[currentActor].cropRight = *(temp2++);
+	    actors[currentActor].cropBottom = *(temp2++);
 
 	    localScenePtr = (unsigned char *) temp2;
 

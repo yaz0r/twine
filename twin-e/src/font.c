@@ -91,7 +91,7 @@ void LBA_engine::printStringSimple(int X, int Y, char *string)
 
     do
 	{
-	    character = (unsigned char) *(string++);	// read the next char from the string
+		character = (unsigned char) *(string++);	// read the next char from the string
 
 	    if (character == 0)	// if the char is 0x0, -> end of string
 		break;

@@ -136,7 +136,7 @@ int LBA_engine::mainLoop(void)
 				{
 				    newCameraX = actors[reinitVar8].X >> 9;
 				    newCameraZ = actors[reinitVar8].Z >> 8;
-				    changeRoomVar6 = actors[reinitVar8].Y >> 9;
+				    newCameraY = actors[reinitVar8].Y >> 9;
 				    mainLoopVar2 = 1;
 				   //needChangeRoom = 119;
 				   //needChangeRoom=currentRoom+1;
@@ -175,13 +175,13 @@ int LBA_engine::mainLoop(void)
 			   /*
 			      if (printTextVar12 & 2)      // x-- -> bas
 			      {
-			      changeRoomVar6++;
+			      newCameraY++;
 			      mainLoopVar2 = 1;
 			      }
 
 			      if (printTextVar12 & 1)      // x++ -> haut
 			      {
-			      changeRoomVar6--;
+			      newCameraY--;
 			      mainLoopVar2 = 1;
 			      }
 
@@ -240,7 +240,7 @@ int LBA_engine::mainLoop(void)
 				    while (!skipIntro && !printTextVar12 && key1);
 				    if (!drawInGameTransBox)
 					{
-					    drawBoxTrans(5, 446, 100, 479, (char *) videoBuffer2, 5,
+					    blitRectangle(5, 446, 100, 479, (char *) videoBuffer2, 5,
 							 446, (char *) videoBuffer1);
 					    osystem->refresh(videoBuffer1, 5, 446, 100, 479);
 					}
@@ -662,7 +662,7 @@ void LBA_engine::reinitVars(void)
 void LBA_engine::reinitAll3(void)
 {
     resetActor(0);
-    newCameraY = -1;
+    changeRoomVar7 = -1;
     numCloverBox = 2;
     numClover = 2;
     numCoin = 0;
@@ -996,13 +996,11 @@ void LBA_engine::updateActors(int actorNum)
 
 			}
 		    break;
-		case 2:
+		case 2: //comp_lookAtFollowedActor
 		   {
 		       int tempAngle;
 
-		       tempAngle =
-			   calcAngleToward(lactor->X, lactor->Y, actors[lactor->field_54].X,
-					   actors[lactor->field_54].Y);
+		       tempAngle = calcAngleToward(lactor->X, lactor->Y, actors[lactor->followedActor].X,actors[lactor->followedActor].Y);
 
 		       if (lactor->field_60 & 0x400)
 			   {
@@ -1010,8 +1008,7 @@ void LBA_engine::updateActors(int actorNum)
 			   }
 		       else
 			   {
-			       updateActorAngle(lactor->angle, tempAngle, lactor->hitBy,
-						&lactor->time);
+			       updateActorAngle(lactor->angle, tempAngle, lactor->hitBy,&lactor->time);
 			   }
 		       break;
 		   }
@@ -1028,10 +1025,10 @@ void LBA_engine::updateActors(int actorNum)
 		    break;
 		case 5:
 		    break;
-		case 6:
+		case 6: // warp to followed actor
 		   {
-		       lactor->X = actors[lactor->field_54].X;
-		       lactor->Y = actors[lactor->field_54].Y;
+		       lactor->X = actors[lactor->followedActor].X;
+		       lactor->Y = actors[lactor->followedActor].Y;
 		   }
 		    break;
 		default:
@@ -1300,7 +1297,7 @@ void LBA_engine::processActor(int actorNum)
 	    processActorZ += actors[lactor->standOn].Z;
 	    processActorY += actors[lactor->standOn].Y;
 
-	    if (processActorSub4(actorNum, lactor->standOn))	// is actor still standing on another actor ?
+	    if (!processActorSub4(actorNum, lactor->standOn))	// is actor still standing on another actor ?
 		lactor->standOn = -1;	// actor fall from the object
 	}
 
@@ -1332,7 +1329,7 @@ void LBA_engine::processActor(int actorNum)
 		}
 
 	    if (lactor->field_60 & 1)	// if we check collision with other objects
-		processActorSub6(actorNum);	//check collision and see if actor fall on an object
+		handleActorCollisions(actorNum);	//check collision and see if actor fall on an object
 
 	    if ((lactor->standOn != -1) && (lactor->field_62 & 0x100))	// if actor felt on another an object
 		processActorSub7();	// stop falling
@@ -1483,7 +1480,7 @@ void LBA_engine::processActor(int actorNum)
     else			// no wall collision
 	{
 	    if (lactor->field_60 & 0x1)	//if actor collision
-		processActorSub6(actorNum);
+		handleActorCollisions(actorNum);
 	}
 
     if (fieldCauseDamage)
@@ -1709,7 +1706,7 @@ int LBA_engine::addRoomData2Entry(int var0, int var1, int var2, int var3)
     return ((((var1 - var0) * var3) / var2) + var0);
 }
 
-void LBA_engine::processActorSub6(int actorNum)
+int LBA_engine::handleActorCollisions(int actorNum)
 {
     int X1;
     int X2;
@@ -1717,6 +1714,169 @@ void LBA_engine::processActorSub6(int actorNum)
     int Z2;
     int Y1;
     int Y2;
+	int currentlyTestedActor=0;
+	int var_60;
+
+	actor* lactor;
+	lactor=&actors[actorNum];
+
+	X1=processActorX+lactor->field_26;
+	X2=processActorX+lactor->field_28;
+
+	Z1=processActorZ+lactor->field_2A;
+	Z2=processActorZ+lactor->field_2C;
+
+	Y1=processActorY+lactor->field_2E;
+	Y2=processActorY+lactor->field_30;
+
+	while(currentlyTestedActor<numActorInRoom)
+	{
+		if(currentlyTestedActor != actorNum && actors[currentlyTestedActor].costumeIndex!=-1 && !(lactor->field_60&0x20) && actors[currentlyTestedActor].standOn!=actorNum) // is actor valid (not self and defined)
+		{
+			actor* lactor2;
+
+			int X1_2;
+			int X2_2;
+			int Z1_2;
+			int Z2_2;
+			int Y1_2;
+			int Y2_2;
+
+			lactor2=&actors[currentlyTestedActor];
+
+			X1_2=lactor2->X+lactor2->field_26;
+			X2_2=lactor2->X+lactor2->field_28;
+
+			Z1_2=lactor2->Z+lactor2->field_2A;
+			Z2_2=lactor2->Z+lactor2->field_2C;
+
+			Y1_2=lactor2->Y+lactor2->field_2E;
+			Y2_2=lactor2->Y+lactor2->field_30;
+
+			if(X1<X2_2 && X2>X1_2 && Z1<Z2_2 && Z2>Z1_2 && Y1<Y2_2 && Y2>Y1_2)
+			{
+
+				lactor->collision=currentlyTestedActor;
+
+				if(lactor2->field_60&0x4000)
+				{
+					if(lactor->field_62&0x100) // if can stand on object
+					{
+						processActorZ=Z2_2-lactor->field_2A+1; // new Z
+
+						lactor->standOn=currentlyTestedActor;
+
+						printf("Actor %d fall on %d\n",actorNum,currentlyTestedActor);
+					}
+					else
+					{
+						if(processActorSub4(actorNum,currentlyTestedActor))
+						{
+							processActorZ=Z2_2-lactor->field_2A+1; // new Z
+
+							lactor->standOn=currentlyTestedActor;
+						}
+						else
+						{
+							goto lab12AC5;
+						}
+					}
+				}
+				else
+				{
+					var_60=actorNum;
+					if(processActorSub4(actorNum,currentlyTestedActor))
+					{
+						printf("HitObj!\n");
+//						hitObj(var_60,currentlyTestedActor,1,-1);
+					}
+
+lab12AC5:			int newAngle=calcAngleToward(processActorX,processActorY,lactor2->X,lactor2->Y);
+
+					if(lactor2->field_60&0x10 && !(lactor->field_60&0x10))
+					{
+						printf("Special...\n");
+					}
+
+					if(((lactor2->field_28-lactor2->field_26)==(lactor2->field_30-lactor2->field_2E)) && ((lactor->field_28-lactor->field_26)==(lactor->field_30-lactor->field_2E)))
+					{
+						if(newAngle<0x180)
+							processActorX=X1_2-lactor->field_28;
+
+						if(newAngle>=0x180 && newAngle<0x280)
+							processActorY=Y2_2-lactor->field_2E;
+
+						if(newAngle>=0x280 && newAngle<0x380)
+							processActorX=X2_2-lactor->field_26;
+
+						if(newAngle>=0x380 || (newAngle<0x380 && newAngle<0x80))
+							processActorY=Y1_2-lactor->field_30;
+					}
+					else
+					{
+						if(!(lactor->field_62&0x10))
+						{
+							processActorX=processActorVar2;
+							processActorZ=processActorVar3;
+							processActorY=processActorVar4;
+						}
+					}
+				}
+			}
+		}
+
+		currentlyTestedActor++;
+	}
+
+	if(lactor->field_62 & 0x2)
+	{
+		int i;
+
+		processActorSub1(0,20,lactor->angle);
+
+		X1=destX+processActorX+lactor->field_26;
+		X2=destX+processActorX+lactor->field_28;
+
+		Z1=processActorZ+lactor->field_2A;
+		Z2=processActorZ+lactor->field_2C;
+
+		Y1=destZ+processActorY+lactor->field_2E;
+		Y2=destZ+processActorY+lactor->field_30;
+
+		for(i=0;i<numActorInRoom;i++)
+		{
+			if(i != actorNum && actors[i].costumeIndex!=-1 && !(actors[i].field_60&0x20) && actors[i].standOn!=actorNum) // is actor valid (not self and defined)
+			{
+				actor* lactor2;
+
+				int X1_2;
+				int X2_2;
+				int Z1_2;
+				int Z2_2;
+				int Y1_2;
+				int Y2_2;
+
+				lactor2=&actors[currentlyTestedActor];
+
+				X1_2=lactor2->X+lactor2->field_26;
+				X2_2=lactor2->X+lactor2->field_28;
+
+				Z1_2=lactor2->Z+lactor2->field_2A;
+				Z2_2=lactor2->Z+lactor2->field_2C;
+
+				Y1_2=lactor2->Y+lactor2->field_2E;
+				Y2_2=lactor2->Y+lactor2->field_30;
+
+				if(X1<X2_2 && X2>X1_2 && Z1<Z2_2 && Z2>Z1_2 && Y1<Y2_2 && Y2>Y1_2)
+				{
+					printf("Futur hit\n");
+					//hitObj(actorNum,i,lactor->field_66,lactor->angle+0x200);
+				}
+			}
+		}
+	}
+
+	return(lactor->collision);
 
 }
 
@@ -1730,8 +1890,7 @@ void LBA_engine::processActorSub7(void)	// stop falling
 
 	    if (fall >= 0x1000)
 		{
-		    processActorSub10(processActorVar1->X, processActorVar1->Z + 1000,
-				      processActorVar1->Y, 0);
+		    processActorSub10(processActorVar1->X, processActorVar1->Z + 1000,processActorVar1->Y, 0);
 		    processActorVar1->life = 0;
 		    playAnim(ANIM_landHit, 2, 0, currentlyProcessedActorNum);
 		}
@@ -2005,8 +2164,7 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
     for (i = 0; i < reinitAll2Var4; i++)
 	{
 	    if (currentX >= *(short int *) localPtr && currentX <= *(short int *) (localPtr + 6))
-		if (currentZ >= *(short int *) (localPtr + 2)
-		    && currentZ <= *(short int *) (localPtr + 8))
+		if (currentZ >= *(short int *) (localPtr + 2)&& currentZ <= *(short int *) (localPtr + 8))
 		    if (currentY >= *(short int *) (localPtr + 4) && currentY <= *(short int *) (localPtr + 10))	// if actor in zone
 			{
 			    opcode = *(short int *) (localPtr + 12);
@@ -2018,19 +2176,10 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 					   {
 					       if (lactor->life > 0)	// if not dead
 						   {
-						       needChangeRoom =
-							   *(short int *) (localPtr + 14);
-						       GV9dup =
-							   lactor->X - *(short int *) (localPtr) +
-							   *(short int *) (localPtr + 16);
-						       GV10dup =
-							   lactor->Z - *(short int *) (localPtr +
-										       2) +
-							   *(short int *) (localPtr + 18);
-						       GV11dup =
-							   lactor->Y - *(short int *) (localPtr +
-										       4) +
-							   *(short int *) (localPtr + 20);
+						       needChangeRoom = *(short int *) (localPtr + 14);
+						       GV9dup = lactor->X - *(short int *) (localPtr) + *(short int *) (localPtr + 16);
+						       GV10dup = lactor->Z - *(short int *) (localPtr + 2) + *(short int *) (localPtr + 18);
+						       GV11dup = lactor->Y - *(short int *) (localPtr + 4) + *(short int *) (localPtr + 20);
 						       reinitVar11 = 1;
 						   }
 					   }
@@ -2112,10 +2261,7 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 						       if (getCurPos(destX, lactor->Z + 1, destZ))
 							   {
 							       currentActorInZoneProcess = 1;
-							       if (lactor->Z >=
-								   abs(*(short int *) (localPtr + 2)
-								       + *(short int *) (localPtr +
-											 8)) / 2)
+							       if (lactor->Z >=abs(*(short int *) (localPtr + 2)+ *(short int *) (localPtr + 8)) / 2)
 								   {
 								       playAnim(ANIM_climbDownLadder, 2, 0, actorNumber);	//go down ladder
 								   }

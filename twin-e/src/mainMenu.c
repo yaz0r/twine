@@ -348,7 +348,7 @@ void LBA_engine::drawSelectableLetter(int x, int y, int arg)
 	}
     else
 	{
-	    drawBoxTrans(left, top, right, bottom, (char *) videoBuffer2, left, top,
+	    blitRectangle(left, top, right, bottom, (char *) videoBuffer2, left, top,
 			 (char *) videoBuffer1);
 	    right2 = right;
 	    drawBoxInsideTrans(left, top, right2, bottom, 4);
@@ -562,7 +562,7 @@ void LBA_engine::drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 	}
     else
 	{
-	    drawBoxTrans(left, top, right, bottom, (char *) videoBuffer2, left, top,
+	    blitRectangle(left, top, right, bottom, (char *) videoBuffer2, left, top,
 			 (char *) videoBuffer1);
 
 	    drawBoxInsideTrans(left, top, right, bottom2, 4);
@@ -580,7 +580,7 @@ void LBA_engine::drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 
 }
 
-void LBA_engine::drawBoxTrans(int left, int top, int right, int bottom, char *source, int leftDest, int topDest, char *dest)	// pout 
+void LBA_engine::blitRectangle(int left, int top, int right, int bottom, char *source, int leftDest, int topDest, char *dest)	// pout 
 																// 
 																// 
 																// 

@@ -261,7 +261,7 @@ struct refreshBoxListStruct
 
 struct fullRedrawVar6Struct
     {
-	unsigned short int field_0;
+	short int field_0;
 	unsigned short int field_2;
 	unsigned short int X;
 	unsigned short int Z;
@@ -621,11 +621,10 @@ class LBA_engine
     int changeRoomVar3;
     int newCameraX;
     int newCameraZ;
-    int changeRoomVar6;
+    int newCameraY;
 
-    short int newCameraY;
+	short int changeRoomVar7;
     short int changeRoomVar8;
-
     short int changeRoomVar9;
 
     short int currentGrid2;
@@ -933,7 +932,7 @@ class LBA_engine
     void processActorSub9(int var0, int var1, int var2, int var3);
     void processActorSub10(int var0, int var1, int var2, int var3);
     void processActorSub5(int param);
-    void processActorSub6(int param);
+    int handleActorCollisions(int param);
     void processActorSub7(void);
     int getCurPos(int var0, int var1, int var2);
     void processActorSub1(int var0, int var1, int var2);
@@ -963,7 +962,7 @@ class LBA_engine
 
     void fullRedrawSub11(void);
 
-    void sortRenderList(fullRedrawVar6Struct list, int listSize, int param);
+    void sortRenderList(fullRedrawVar6Struct *list, int listSize, int param);
 
     void redrawBrick(int spriteNum, int x, int y, byte * bufferBrick, byte * buffer);
 
@@ -1252,7 +1251,7 @@ class LBA_engine
 
     void readKeyboard(void);
 
-    void drawBoxTrans(int right, int top, int left, int bottom, char *dest, int right2, int top2,
+    void blitRectangle(int right, int top, int left, int bottom, char *dest, int right2, int top2,
 		      char *source);
 
     void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode);

@@ -86,10 +86,10 @@ void LBA_engine::resetActor(int actorNumber)
     localActor->angle = 0;
     localActor->field_34 = 40;
     localActor->field_40 = 0;
-    localActor->field_4E = 0;
-    localActor->field_50 = 0;
-    localActor->field_52 = 0;
-    localActor->field_54 = 0;
+    localActor->cropLeft = 0;
+    localActor->cropTop = 0;
+    localActor->cropRight = 0;
+    localActor->cropBottom = 0;
     localActor->field_3 = 0;
     localActor->collision = -1;
     localActor->standOn = -1;

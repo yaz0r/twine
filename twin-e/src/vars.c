@@ -287,8 +287,9 @@ void LBA_engine::initVars(void)
     changeRoomVar3 = 0;
     newCameraX = 0;
     newCameraZ = 0;
-    changeRoomVar6 = 0;
-    newCameraY = -1;
+    newCameraY = 0;
+
+    changeRoomVar7= -1;
     changeRoomVar8 = 0;
     changeRoomVar9 = -1;
     currentGrid2 = -1;

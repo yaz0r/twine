@@ -242,7 +242,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       lactor->field_40 = temp;
 			       if (temp == 2)
 				   {
-				       lactor->field_54 = *(actorScriptPtr++);
+				       lactor->cropBottom = *(actorScriptPtr++);
 				   }
 			       break;
 			   }
@@ -257,7 +257,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       if (temp == 2)
 				   {
-				       tempActor->field_54 = *(actorScriptPtr++);
+				       tempActor->followedActor = *(actorScriptPtr++);
 				   }
 
 			       break;
@@ -271,9 +271,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       if (reinitVar8 != newActorToFollow)
 				   {
-				       newCameraX = (actors[newActorToFollow].X + 256) / 512;
-				       newCameraZ = (actors[newActorToFollow].Z + 256) / 256;
-				       newCameraY = (actors[newActorToFollow].Y + 256) / 512;
+				       newCameraX = (actors[newActorToFollow].X >> 9);
+				       newCameraZ = (actors[newActorToFollow].Z >> 8);
+				       newCameraY = (actors[newActorToFollow].Y >> 9);
 
 				       reinitVar8 = newActorToFollow;
 				       mainLoopVar2 = 1;

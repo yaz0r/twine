@@ -48,10 +48,16 @@ struct actor
 	short int field_40;
 	short int positionInMoveScript;
 	short int positionInActorScript;
-	short int field_4E;
-	short int field_50;
-	short int field_52;
-	short int field_54;
+
+	short int cropLeft; 
+	short int cropTop;
+	short int cropRight;
+
+	union{
+		short int cropBottom; 
+		short int followedActor;
+	};
+
 	short int collision;
 	short int standOn;
 	short int zone;

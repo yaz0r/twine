@@ -282,7 +282,7 @@ int LBA_engine::printText8(int var)
 
 void LBA_engine::drawTextBox(void)
 {
-    drawBoxTrans(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
+    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
 		 (char *) videoBuffer2, dialogueBoxLeft, dialogueBoxTop, (char *) videoBuffer1);
     if (newGameVar4 != 0)
 	{
@@ -296,7 +296,7 @@ void LBA_engine::drawTextBox(void)
 
     printText8Var3 = 0;
 
-    drawBoxTrans(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
+    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
 		 (char *) videoBuffer1, dialogueBoxLeft, dialogueBoxTop, (char *) videoBuffer2);
 }
 
@@ -320,7 +320,7 @@ int LBA_engine::printText10(void)
 		}
 	    if (printText8Var6 != 0)
 		{
-		    drawBoxTrans(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
+		    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
 				 dialogueBoxBottom, (char *) videoBuffer2, dialogueBoxLeft,
 				 dialogueBoxTop, (char *) videoBuffer1);
 		    osystem->refresh(videoBuffer1, dialogueBoxLeft, dialogueBoxTop,
