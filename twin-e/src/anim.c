@@ -561,7 +561,7 @@ int LBA_engine::playAnim(char newAnim, short int arg_4, unsigned char arg_8, sho
     else
 	{
 	    bufAni2 += increaseAnim((char *) bufAni2, (char *) bodyPtrTab[lactor->costumeIndex]);
-	    if (bufAni1 + 4488 < bufAni2)
+	    if (bufAni1 + 4488 > bufAni2)
 		bufAni2 = bufAni1;
 	}
 
@@ -581,6 +581,7 @@ int LBA_engine::playAnim(char newAnim, short int arg_4, unsigned char arg_8, sho
 
     lactor->field_6A = 0;
     lactor->lastX = 0;
+	lactor->lastY = 0;
     lactor->lastZ = 0;
 
     return (1);

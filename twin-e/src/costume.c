@@ -162,5 +162,42 @@ void LBA_engine::loadActorCostume(char bodyNum, short int actorNumber)
 
 void LBA_engine::loadActorCostumeSub(unsigned char *arg_0, unsigned char *arg_4)
 {
-   // allé hop ! à implementer plus tard....
+	short int cx;
+	short int ax;
+	int i;
+
+	if(!(*(short int*)arg_0&2))
+		return;
+
+	if(!(*(short int*)arg_4&2))
+		return;
+
+	arg_0+=16;
+	arg_4+=16;
+
+	*(int*)arg_4=*(int*)arg_0;
+	*(int*)(arg_4+4)=*(int*)(arg_0+4);
+
+	arg_0=arg_0+*(short int*)(arg_0-2);
+	arg_0=arg_0+(*(short int*)(arg_0))*6+2;
+	cx=*(short int*)arg_0;
+
+	arg_4=arg_4+*(short int*)(arg_4-2);
+	arg_4=arg_4+(*(short int*)(arg_4))*6+2;
+	ax=*(short int*)arg_4;
+
+	if(cx>ax)
+		cx=ax;
+
+	arg_0+=10;
+	arg_4+=10;
+
+	for(i=0;i<cx;i++)
+	{
+		*(int*)arg_4=*(int*)arg_0;
+		*(int*)(arg_4+4)=*(int*)(arg_0+4);
+
+		arg_4+=30;
+		arg_0+=30;
+	}
 }

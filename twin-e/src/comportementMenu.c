@@ -223,11 +223,8 @@ void LBA_engine::processComportementMenu(void)
 		{
 		    drawComportementEntry(savedComportement, twinsen->angle, 1);
 		    savedComportement = comportementHero;
-		    setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);	// rotate
-		   // twinsen
-		    setAnimAtKeyFrame(winTab[comportementHero],
-				      getHqrdataPtr(HQRanims, TCOS[comportementHero]),
-				      menuCostumeIndex);
+		    setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);	// rotate twinsen
+		    setAnimAtKeyFrame(winTab[comportementHero],getHqrdataPtr(HQRanims, TCOS[comportementHero]),menuCostumeIndex);
 
 		    while (printTextVar12)
 			{
