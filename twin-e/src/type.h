@@ -23,7 +23,9 @@ typedef unsigned char byte;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned long uint32;
+#ifndef __linux__
 typedef unsigned int uint;
+#endif
 typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
@@ -67,7 +69,7 @@ typedef unsigned char boolean;
   #define SCUMM_LITTLE_ENDIAN
   #define SCUMM_NEED_ALIGNMENT
   
-  #define FORCEINLINE inline
+  #define FORCEINLINE static __inline__
   #define NORETURN __attribute__((__noreturn__))
   #define GCC_PACK __attribute__((packed))
   #define CDECL
