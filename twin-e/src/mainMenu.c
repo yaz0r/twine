@@ -302,11 +302,6 @@ int	LBA_engine::processMenu(short int* menuData)
 	
 	readKeyboard();
 
-	while((key1&2) || (key1&1))
-	{
-		readKeyboard();
-	}
-
 	return(currentButton);
 }
 

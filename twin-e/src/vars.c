@@ -361,7 +361,7 @@ void LBA_engine::initVars(void)
 	sceneVar17=0;
 	sceneVar18=0;
 	sceneVarPtr=0;
-	sceneVar20=0;
+	flagData=0;
 
 	mainLoopVar4=0;
 	agressivity=1;

@@ -600,7 +600,7 @@ int LBA_engine::prepareRender(void)
     if(vright<textWindowLeft)
       return(0);
 //  pRenderSub();
-    printf("3Dcropping...\n");
+    //printf("3Dcropping...\n");
 //    exit(1);
 //    if(vright==textWindowLeft)
       return(2);
@@ -611,7 +611,7 @@ int LBA_engine::prepareRender(void)
     if(vleft>textWindowRight)
       return(0);
 //    pRenderSub2();
-    printf("3Dcropping...\n");
+    //printf("3Dcropping...\n");
 //    exit(1);
  //   if(vleft==textWindowRight)
       return(2);
@@ -622,7 +622,7 @@ int LBA_engine::prepareRender(void)
     if(vbottom<textWindowTop)
       return(0);
 //    pRenderSub3();
-    printf("3Dcropping...\n");
+    //printf("3Dcropping...\n");
 //    exit(1);
  //   if(vbottom==textWindowBottom)
       return(2);
@@ -633,7 +633,7 @@ int LBA_engine::prepareRender(void)
   if(vtop>textWindowBottom)
   	return(0);
 //		pRenderSub4();
-		printf("3Dcropping...\n");
+	//printf("3Dcropping...\n");
 //  exit(1);
 //  if(vtop==textWindowBottom)
   	return(2);

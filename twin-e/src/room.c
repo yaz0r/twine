@@ -169,8 +169,9 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 //	short int ptr1;
 //	unsigned char* ptr2;
 	int modelNumber;
+	int size;
 
-	loadDataFileToPtr("scene.hqr",sceneNumber,&scenePtr);
+	size=loadDataFileToPtr("scene.hqr",sceneNumber,&scenePtr);
 	localScenePtr=scenePtr;
  
 	// todo:faire la gestion d'erreur de chargement
@@ -300,10 +301,12 @@ void LBA_engine::loadRoomScene(int sceneNumber)
 	localScenePtr=(unsigned char*)temp2 + 2*(reinitAll2Var4*12);
 	temp2=(unsigned short int*)localScenePtr;
 
-/*	reinitAll2Var5=*(temp2++);
+	reinitAll2Var5=*(temp2++);
 
 	localScenePtr=(unsigned char*)temp2;
-	sceneVar20=(unsigned char*)temp2;*/
+	flagData=(flagDataStruct*)temp2;
+
+	numFlags=(scenePtr+size-(unsigned char*)temp2)/6;
 
 	
 

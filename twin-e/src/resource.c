@@ -18,7 +18,7 @@
 
 #include "lba.h"
 
-void LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr) //recheck
+int LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr) //recheck
 {
 	FILE* resourceFile;
 	int headerSize;
@@ -31,14 +31,14 @@ void LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr) 
 	resourceFile=openResource(fileName);
 
 	if(!resourceFile)
-		return;
+		return(-1);
 
 	readResourceData(resourceFile,(char*)&headerSize,4);
 
 	if(arg_4>=headerSize/4)
 	{
 		closeResource(resourceFile);
-		return;
+		return(-1);
 	}
 
 	fseek(resourceFile,arg_4*4,SEEK_SET);
@@ -50,7 +50,7 @@ void LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr) 
 	readResourceData(resourceFile,(char*)&mode,2);
 
 	if(!allocHQRMemory(dataSize,ptr))
-		return;
+		return(-1);
 
 	if(mode<=0) // uncompressed
 	{
@@ -73,6 +73,7 @@ void LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr) 
 	}
 
 	fclose(resourceFile);
+	return(dataSize);
 }
 
 

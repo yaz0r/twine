@@ -3,6 +3,13 @@ class LBA_engine;
 int threadTimer(void);
 void startThreadTimer(LBA_engine*);
 
+struct flagDataStruct
+{
+	short int x;
+	short int y;
+	short int z;
+};
+
 struct pointTab
 {
   short int x;
@@ -532,7 +539,7 @@ class LBA_engine
 	short int sceneVar16;
 	short int sceneVar17;
 	short int sceneVar18;
-	unsigned char *sceneVar20;
+	flagDataStruct *flagData;
 	unsigned char *sceneVarPtr;
 
 
@@ -704,6 +711,9 @@ class LBA_engine
  int shadowVar2;
  int shadowVar3;
 
+ int numFlags;
+ unsigned char* flagModelPtr;
+
 //----------------------------------------------------------------------------------------
 
  void loadImageCrossFade(int imageNumber);
@@ -850,7 +860,7 @@ class LBA_engine
 
 	int allocHQRMemory(int dataSize, byte** ptr);
 
-	void loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr);
+	int loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr);
 
 
 	int initCostume(byte arg_0,short int actorNumber);

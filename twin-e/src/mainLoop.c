@@ -244,7 +244,7 @@ int LBA_engine::mainLoop(void)
 
         if(actors[i].field_46 != -1)
         {
-//        printf("Unsuported actor field 46\n");
+		//	printf("actor %d is moving...\n",i);
         }
 
 //      processActor(i);

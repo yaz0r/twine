@@ -160,6 +160,8 @@ void OSystem::crossFade(char* buffer,char* palette)
 	SDL_Surface *tempSurface;
 	Uint32 rmask, gmask, bmask, amask;
 
+	return;
+
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     rmask = 0xff000000;
     gmask = 0x00ff0000;

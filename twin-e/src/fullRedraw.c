@@ -265,7 +265,7 @@ void LBA_engine::fullRedraw(int param)
 		else
 		if(flags==0xC00)
 		{	
-			printf("Draw actor %d\n",fullRedrawVar6[arg_1E].field_2&0x3FF);
+		//	printf("Draw actor %d\n",fullRedrawVar6[arg_1E].field_2&0x3FF);
 			startRenderer(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis,0,lactor->field_32,0,bodyPtrTab[lactor->costumeIndex]);
 
 		}
@@ -290,6 +290,11 @@ void LBA_engine::fullRedraw(int param)
   //unknownLoop
 
    // loop5
+  }
+
+  for(arg_1A=0;arg_1A<numFlags;arg_1A++) //affichage des flags
+  {
+	  startRenderer(flagData[arg_1A].x-changeRoomVar4Bis,flagData[arg_1A].y-changeRoomVar5Bis,flagData[arg_1A].z-changeRoomVar6Bis,0,0,0,flagModelPtr);
   }
 
   counter2=0;

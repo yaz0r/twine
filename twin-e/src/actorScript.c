@@ -27,8 +27,6 @@ void LBA_engine::runActorScript(short int actorNumber)
  unsigned char *opcodePtr;
  int temp;
 
-return;
-
  lactor=&actors[actorNumber];
  
  OPbreak=0;
@@ -49,6 +47,14 @@ return;
     	OPbreak=-1;
      lactor->positionInActorScript=-1;
      break;
+	case 2:
+		manipActor(lactor);
+		if(!doCalc())
+		{
+			*opcodePtr=13;
+		}
+		actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
+		break;
     case 3:
     	actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
      break;
@@ -97,6 +103,21 @@ return;
     case 15:
     	actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr;
      break;
+	case 17:
+		loadActorCostume(*(actorScriptPtr++),actorNumber);
+		break;
+	case 18:
+		int param1;
+		int param2;
+
+		param1=*(actorScriptPtr++);
+		param2=*(actorScriptPtr++);
+
+		loadActorCostume(param2,param1);
+	break;
+	case 19:
+		initNewCostume(*(actorScriptPtr++),0,0,actorNumber);
+		break;
     case 20:
     	initNewCostume(*(actorScriptPtr+1),0,0,*actorScriptPtr);
      actorScriptPtr+=2;
@@ -105,6 +126,12 @@ return;
     	lactor->field_46=*(unsigned short int*)actorScriptPtr;
      actorScriptPtr+=2;
      break;
+	case 24:
+		int actorNumTemp;
+		actorNumTemp=*(actorScriptPtr++);
+		actors[actorNumTemp].field_46=*((short int*)actorScriptPtr);
+		actorScriptPtr+=2;
+		break;
     case 27:
     	temp=*(actorScriptPtr++);
      lactor->field_40=temp;
@@ -120,26 +147,138 @@ return;
     	lactor->positionInActorScript=*(unsigned short int*)actorScriptPtr;
      actorScriptPtr+=2;
      break;
+	case 34:
+		int tempActorNum;
+		tempActorNum=*(actorScriptPtr++);
+		actors[tempActorNum].positionInActorScript=*((short int*)actorScriptPtr);
+		actorScriptPtr+=2;
+		break;
     case 35:
     	OPbreak=-1;
      break;
     case 36:
     	vars[*(actorScriptPtr++)]=*(actorScriptPtr++);
      break;
+	case 38:
+		//removeActorFromRoom(actorNumber); //todo: implement
+		lactor->field_62|=0x20;
+		lactor->costumeIndex=-1;
+		lactor->field_5A=-1;
+		lactor->life=0;
+		break;
+	case 41:
+		OPbreak=-1;
+		lactor->positionInActorScript=-1;
+		break;
+	case 42:
+		lactor->field_5E=lactor->field_A;
+		lactor->field_46=-1;
+		break;
+	case 43:
+		lactor->field_46=lactor->field_5E;
+		break;
+	case 45:
+		newGameVar2++;
+		break;
+	case 47:
+		lactor->field_32=0x300;
+		lactor->field_1A=lactor->field_6C-*((short int*)actorScriptPtr);
+		lactor->field_62&=0xFFBF;
+		lactor->field_34=0;
+		actorScriptPtr+=2;
+		break;
+	case 48:
+		lactor->field_32=0x100;
+		lactor->field_1A=lactor->field_6C+*((short int*)actorScriptPtr);
+		lactor->field_62&=0xFFBF;
+		lactor->field_34=0;
+		actorScriptPtr+=2;
+		break;
+	case 49:
+		lactor->field_32=0x200;
+		lactor->field_1E=lactor->field_70+*((short int*)actorScriptPtr);
+		lactor->field_62&=0xFFBF;
+		lactor->field_34=0;
+		actorScriptPtr+=2;
+		break;
+	case 50:
+		lactor->field_32=0;
+		lactor->field_1E=lactor->field_70+*((short int*)actorScriptPtr);
+		lactor->field_62&=0xFFBF;
+		lactor->field_34=0;
+		actorScriptPtr+=2;
+		break;
+	case 53:
+		if(*(actorScriptPtr++)!=0)
+		{
+			lactor->field_60|=1;
+		}
+		else
+		{
+			lactor->field_60&=0xFFFE;
+		}
+		break;
     case 55:
     	manipActor(lactor);
-     if(doCalc())
-     {
-     	actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr; 
-     }
-     else
-     {
-      actorScriptPtr+=2;
-     }
+		if(doCalc())
+		{
+			actorScriptPtr=lactor->scenePtr2+*(short int*)actorScriptPtr; 
+		}
+		else
+		{
+			actorScriptPtr+=2;
+		}
     	break;
+	case 56:
+		if(*(actorScriptPtr++)!=0)
+		{
+			lactor->field_60|=0x200;
+		}
+		else
+		{
+			lactor->field_60&=0xFDFF;
+		}
+		break;
+ 
+	case 57:
+		actorScriptPtr++;
+		printf("Warning: ignoring opcode 57.\n");
+		break;
+	case 58:
+		manipActorResult=*actorScriptPtr++; // position flag number
+
+		mainTab[18]=flagData[manipActorResult].x;
+		mainTab[19]=flagData[manipActorResult].y;
+		mainTab[20]=flagData[manipActorResult].z;
+
+		lactor->field_1A=mainTab[18];
+		lactor->field_1C=mainTab[19];
+		lactor->field_1E=mainTab[20];
+		break;
+
     case 61:
     	actors[*(actorScriptPtr++)].life=*(actorScriptPtr++);
      break;
+	case 67:
+		int entryTemp;
+
+		entryTemp=*(actorScriptPtr++);
+		if(entryTemp<24)
+			GV16[entryTemp]=-1;
+
+		break;
+	case 71:
+		byte newActor;
+		newActor=*(actorScriptPtr++);
+		actors[newActor].field_62|=0x20;
+		reinitVar4=newActor;
+		actors[newActor].costumeIndex=-1;
+		actors[newActor].field_5A=-1;
+		break;
+	case 80:
+		actorScriptPtr+=2;
+		printf("Ignoring opcode 80 in runActorScript\n");
+		break;
     default:
     	printf("Unhandled actorscript opcode %d\n",opcode);
      exit(1);
@@ -207,9 +346,18 @@ void LBA_engine::manipActor(actor* lactor)
   case 4:
   	manipActorResult=actors[*(actorScriptPtr++)].field_5A;
    break;
+  case 5:
+	  manipActorResult=lactor->field_0;
+		  break;
   case 6:
  		manipActorResult=actors[*(actorScriptPtr++)].field_0;
    break;
+  case 7:
+	  manipActorResult=lactor->costume;
+	  break;
+  case 8:
+	  manipActorResult=actors[*(actorScriptPtr++)].costume;
+	  break;
   case 9:
   	manipActorResult=lactor->field_5C;
   	break;
@@ -252,6 +400,19 @@ void LBA_engine::manipActor(actor* lactor)
     	manipActorResult=0;
    }
    break;
+  case 16:
+	  manipActorResult=lactor->life;
+	  break;
+  case 17:
+	  manipActorResult=actors[*(actorScriptPtr++)].life;
+	  break;
+  case 18:
+	  manipActorResult=numKey;
+	  break;
+  case 19:
+	  manipActorVar1=1;
+	  manipActorResult=numCoin;
+	  break;
   case 20:
   	manipActorResult=comportement;
    break;
@@ -270,6 +431,11 @@ void LBA_engine::manipActor(actor* lactor)
     {
     	manipActorResult=32000;
     }
+	break;
+  case 25:
+	  actorScriptPtr=localScriptPtr;
+	  printf("Ignoring manipActor opcode 25..\n");
+	  break;
   default:
 			printf("Unhandled manipActor opcode %d\n",opcode);
    exit(1);
@@ -308,9 +474,11 @@ int LBA_engine::doCalc(void)
     case 3:
       if(localManipActorResult>=opcode2)
         result=1;
+	  break;
     case 4:
       if(localManipActorResult<=opcode2)
         result=1;
+	  break;
     case 5:
     	if(localManipActorResult!=opcode2)
      	result=1;
@@ -346,6 +514,10 @@ int LBA_engine::doCalc(void)
     	if(localManipActorResult<opcode2)
      	result=1;
      break;
+	case 4:
+      if(localManipActorResult<=opcode2)
+        result=1;
+	  break;
     case 5:
     	if(localManipActorResult!=opcode2)
      	result=1;

@@ -23,6 +23,7 @@ struct actor {
  byte field_3;
 	unsigned char * field_4;
 	short int field_8;
+	short int field_A;
 	byte field_10;
 	short int field_12;
 	short int field_14;
@@ -54,6 +55,7 @@ struct actor {
  short int field_58;
 	short int field_5A;
 	short int field_5C;
+	short int field_5E;
 	unsigned short int field_60; //flags
  short int field_62;          //flags2
 	short int field_64;
