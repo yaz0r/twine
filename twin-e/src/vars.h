@@ -854,6 +854,9 @@ class LBA_engine {
 
 	int currentActorInZoneProcess;
 
+	short int twinsenKey;
+	short int twinsenKey2;
+
    // order important !
 
     int setSomething2Var1;

@@ -1,7 +1,6 @@
 #include "lba.h"
 
-void
-  LBA_engine::fontInit(byte * font, int param2, int param1)
+void LBA_engine::fontInit(byte * font, int param2, int param1)
 {
     fntFont = font;
     interCharSpace = param2;
@@ -46,32 +45,38 @@ void LBA_engine::drawCharacter(int X, int Y, unsigned char caractere)
 
     toNextLine = largeurEcran - sizeX;
 
-    do {
-	index = *(data++);
-	do {
-	    jump = *(data++);
-	    screen += jump;
-	    if (--index == 0) {
-		screen += toNextLine;
-		sizeY--;
-		if (sizeY <= 0)
-		    return;
-		break;
-	    } else {
-		number = *(data++);
-		for (i = 0; i < number; i++)
-		    *(screen++) = usedColor;
-		if (--index == 0) {
-		    screen += toNextLine;
-		    sizeY--;
-		    if (sizeY <= 0)
-			return;
-		    break;
+    do
+	{
+	    index = *(data++);
+	    do
+		{
+		    jump = *(data++);
+		    screen += jump;
+		    if (--index == 0)
+			{
+			    screen += toNextLine;
+			    sizeY--;
+			    if (sizeY <= 0)
+				return;
+			    break;
+			}
+		    else
+			{
+			    number = *(data++);
+			    for (i = 0; i < number; i++)
+				*(screen++) = usedColor;
+			    if (--index == 0)
+				{
+				    screen += toNextLine;
+				    sizeY--;
+				    if (sizeY <= 0)
+					return;
+				    break;
+				}
+			}
 		}
-	    }
+	    while (1);
 	}
-	while (1);
-    }
     while (1);
 
 }
@@ -84,23 +89,25 @@ void LBA_engine::printStringSimple(int X, int Y, char *string)
     if (fntFont == 0)		// if the font is defined
 	return;
 
-    do {
-	character = (unsigned char) *(string++);	// read the next char from the string
+    do
+	{
+	    character = (unsigned char) *(string++);	// read the next char from the string
 
-	if (character == 0)	// if the char is 0x0, -> end of string
-	    break;
+	    if (character == 0)	// if the char is 0x0, -> end of string
+		break;
 
-	if (character == 0x20)	// if it's a space char
-	    X += spaceLenght;
-	else {
-	    stringLenght = *(fntFont + *((short int *) (fntFont + character * 4)));	// get the
-	   // length
-	   // of the
-	   // character
-	    drawCharacter(X, Y, character);	// draw the character on screen
-	    X += interCharSpace;	// add the length of the space between 2 characters
-	    X += stringLenght;	// add the length of the current character
+	    if (character == 0x20)	// if it's a space char
+		X += spaceLenght;
+	    else
+		{
+		    stringLenght = *(fntFont + *((short int *) (fntFont + character * 4)));	// get the
+		   // length
+		   // of the
+		   // character
+		    drawCharacter(X, Y, character);	// draw the character on screen
+		    X += interCharSpace;	// add the length of the space between 2 characters
+		    X += stringLenght;	// add the length of the current character
+		}
 	}
-    }
     while (1);
 }

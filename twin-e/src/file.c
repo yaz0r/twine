@@ -9,10 +9,11 @@ FILE *LBA_engine::fileOpen(char *fileName)
 
     fileHandle = fopen(fileName, "rb");
 
-    if (!fileHandle) {
-	printf("%s can't be found !\n", fileName);
-	exit(1);
-    }
+    if (!fileHandle)
+	{
+	    printf("%s can't be found !\n", fileName);
+	    exit(1);
+	}
 
     return (fileHandle);
 }
@@ -26,10 +27,11 @@ FILE *LBA_engine::openResource(char *fileName)
 
     fileHandle = fopen(fileName, "rb");
 
-    if (!fileHandle) {
-	printf("%s can't be found !\n", fileName);
-	exit(1);
-    }
+    if (!fileHandle)
+	{
+	    printf("%s can't be found !\n", fileName);
+	    exit(1);
+	}
 
     return (fileHandle);
 }

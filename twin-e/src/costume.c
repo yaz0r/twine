@@ -17,8 +17,7 @@
 
 #include "lba.h"
 
-void
-  LBA_engine::loadTwinsenCostumes(void)
+void LBA_engine::loadTwinsenCostumes(void)
 {
     loadDataFileToPtr("file3d.hqr", 1, &file3D1);
     twinsen->bodyPtr = file3D1;
@@ -58,35 +57,40 @@ int LBA_engine::initCostume(byte arg_0, short int actorNumber)
     act = &actors[actorNumber];
     bodyPtr = act->bodyPtr;
 
-    do {
+    do
+	{
 
-	type = *(bodyPtr++);
+	    type = *(bodyPtr++);
 
-	if (type == -1) {
-	    loadTwinsenCostumesVar1 = costumePtr;
-	    return (-1);
-	}
-
-	ptr = (bodyPtr + 1);
-
-	if (type == 3) {
-	    if (arg_0 == *bodyPtr) {
-		ptr++;
-		var1 = *(unsigned short int *) ptr;
-		ptr += 2;
-		ptr2 = ptr;
-		ptr++;
-		if (*ptr2 != 0) {
-		    costumePtr = ptr - 1;
+	    if (type == -1)
+		{
+		    loadTwinsenCostumesVar1 = costumePtr;
+		    return (-1);
 		}
-		loadTwinsenCostumesVar1 = costumePtr;
-		return (var1);
-	    }
+
+	    ptr = (bodyPtr + 1);
+
+	    if (type == 3)
+		{
+		    if (arg_0 == *bodyPtr)
+			{
+			    ptr++;
+			    var1 = *(unsigned short int *) ptr;
+			    ptr += 2;
+			    ptr2 = ptr;
+			    ptr++;
+			    if (*ptr2 != 0)
+				{
+				    costumePtr = ptr - 1;
+				}
+			    loadTwinsenCostumesVar1 = costumePtr;
+			    return (var1);
+			}
+		}
+
+	    bodyPtr = *ptr + ptr;
+
 	}
-
-	bodyPtr = *ptr + ptr;
-
-    }
     while (1);
 
     return (0);
@@ -112,83 +116,102 @@ void LBA_engine::loadActorCostume(char arg_0, short int arg_4)
 	return;
 
     if (arg_4 == 0 && comportement == 4 && lactor->field_14 != 0 && lactor->field_14 != 1)	// Si 
-												// 
+       // 
+       // 
+       // 
+       // 
+       // 
+       // 
+       // 
+       // 
+       // 
+       // 
        // 
        // c'est 
        // twinsen 
        // qu'on 
        // load
-    {
-	changeTwinsenComp(0);
-    }
-
-    if (arg_0 != -1) {
-	temp = loadBody(arg_0, arg_4);
-    } else {
-	temp = -1;
-    }
-
-    if (temp != -1) {
-	if (lactor->costumeIndex == temp)
-	    return;
-
-	temp2 = lactor->costumeIndex;
-	lactor->costumeIndex = temp;
-	lactor->field_0 = (char) lactor->field_14;
-	currentIndex = lactor->costumeIndex;
-
-	if (loadCostumeVar == -32000) {
-	    ptr = (unsigned short int *) bodyPtrTab[lactor->costumeIndex];
-	    ptr++;
-
-	    var1 = *(ptr++);
-	    var2 = *(ptr++);
-	    lactor->field_2A = *(ptr++);
-	    lactor->field_2C = *(ptr++);
-	    var3 = *(ptr++);
-	    var4 = *ptr;
-
-	    if (lactor->field_60 & 0x8000) {
-		result1 = var2 - var1;
-		result2 = var4 - var3;
-		if (result1 >= result2)
-		    result = result1;
-
-		result -= result1;
-		result = result >> 1;
-	    } else {
-		result1 = var2 - var1;
-		result2 = var4 - var2;
-
-		result = result2 + result1;
-		result2 = result2 << 2;
-		result -= result2;
-		result = result >> 2;
-	    }
-
-	    lactor->field_26 = -result;
-	    lactor->field_28 = result;
-	    lactor->field_2E = -result;
-	    lactor->field_30 = result;
-	} else {
-	    lactor->field_26 = loadCostumeVar;
-	    lactor->field_28 = loadCostumeVar4;
-	    lactor->field_2A = loadCostumeVar2;
-	    lactor->field_2C = loadCostumeVar5;
-	    lactor->field_2E = loadCostumeVar3;
-	    lactor->field_30 = loadCostumeVar6;
+	{
+	    changeTwinsenComp(0);
 	}
 
-	if (currentIndex == -1)
+    if (arg_0 != -1)
+	{
+	    temp = loadBody(arg_0, arg_4);
+	}
+    else
+	{
+	    temp = -1;
+	}
+
+    if (temp != -1)
+	{
+	    if (lactor->costumeIndex == temp)
+		return;
+
+	    temp2 = lactor->costumeIndex;
+	    lactor->costumeIndex = temp;
+	    lactor->field_0 = (char) lactor->field_14;
+	    currentIndex = lactor->costumeIndex;
+
+	    if (loadCostumeVar == -32000)
+		{
+		    ptr = (unsigned short int *) bodyPtrTab[lactor->costumeIndex];
+		    ptr++;
+
+		    var1 = *(ptr++);
+		    var2 = *(ptr++);
+		    lactor->field_2A = *(ptr++);
+		    lactor->field_2C = *(ptr++);
+		    var3 = *(ptr++);
+		    var4 = *ptr;
+
+		    if (lactor->field_60 & 0x8000)
+			{
+			    result1 = var2 - var1;
+			    result2 = var4 - var3;
+			    if (result1 >= result2)
+				result = result1;
+
+			    result -= result1;
+			    result = result >> 1;
+			}
+		    else
+			{
+			    result1 = var2 - var1;
+			    result2 = var4 - var2;
+
+			    result = result2 + result1;
+			    result2 = result2 << 2;
+			    result -= result2;
+			    result = result >> 2;
+			}
+
+		    lactor->field_26 = -result;
+		    lactor->field_28 = result;
+		    lactor->field_2E = -result;
+		    lactor->field_30 = result;
+		}
+	    else
+		{
+		    lactor->field_26 = loadCostumeVar;
+		    lactor->field_28 = loadCostumeVar4;
+		    lactor->field_2A = loadCostumeVar2;
+		    lactor->field_2C = loadCostumeVar5;
+		    lactor->field_2E = loadCostumeVar3;
+		    lactor->field_30 = loadCostumeVar6;
+		}
+
+	    if (currentIndex == -1)
+		return;
+
+	    if (lactor->currentAnim == -1)
+		return;
+
+	    loadActorCostumeSub(bodyPtrTab[currentIndex], bodyPtrTab[lactor->costumeIndex]);
+
 	    return;
-
-	if (lactor->currentAnim == -1)
-	    return;
-
-	loadActorCostumeSub(bodyPtrTab[currentIndex], bodyPtrTab[lactor->costumeIndex]);
-
-	return;
-    }
+	}
 
     lactor->field_0 = -1;
     lactor->costumeIndex = -1;

@@ -17,44 +17,49 @@
 
 #include "lba.h"
 
-void
-  LBA_engine::loadRoomActors(short int arg_0)
+void LBA_engine::loadRoomActors(short int arg_0)
 {
     actor *lactor;
 
     lactor = &actors[arg_0];
 
-    if (lactor->field_60 & 0x400) {
-	if (lactor->field_66 != 0) {
-	    *(byte *) & lactor->field_62 |= 2;
+    if (lactor->field_60 & 0x400)
+	{
+	    if (lactor->field_66 != 0)
+		{
+		    *(byte *) & lactor->field_62 |= 2;
+		}
+
+	    lactor->costumeIndex = -1;
+
+	    loadActorSub(lactor->field_8, arg_0);
+
+	    setActorAngleSafe(0, 0, 0, &lactor->time);
+
+	    if (lactor->field_60 & 8)
+		{
+		    lactor->lastX = lactor->X;
+		    lactor->lastZ = lactor->Z;
+		    lactor->lastY = lactor->Y;
+		}
+
 	}
+    else
+	{
+	    lactor->costumeIndex = -1;
 
-	lactor->costumeIndex = -1;
+	    loadActorCostume(lactor->field_0, arg_0);
 
-	loadActorSub(lactor->field_8, arg_0);
+	    lactor->currentAnim = -1;
+	    lactor->field_78 = 0;
 
-	setActorAngleSafe(0, 0, 0, &lactor->time);
+	    if (lactor->costumeIndex != -1)
+		{
+		    playAnim(lactor->costume, 0, 255, arg_0);
+		}
 
-	if (lactor->field_60 & 8) {
-	    lactor->lastX = lactor->X;
-	    lactor->lastZ = lactor->Z;
-	    lactor->lastY = lactor->Y;
+	    setActorAngleSafe(lactor->angle, lactor->angle, 0, &lactor->time);
 	}
-
-    } else {
-	lactor->costumeIndex = -1;
-
-	loadActorCostume(lactor->field_0, arg_0);
-
-	lactor->currentAnim = -1;
-	lactor->field_78 = 0;
-
-	if (lactor->costumeIndex != -1) {
-	    playAnim(lactor->costume, 0, 255, arg_0);
-	}
-
-	setActorAngleSafe(lactor->angle, lactor->angle, 0, &lactor->time);
-    }
 
     lactor->positionInMoveScript = -1;
     lactor->label = -1;
@@ -113,18 +118,19 @@ void LBA_engine::loadActorSub(int imageNumber, int actorNumber)
 {
     actor *lactor = &actors[actorNumber];
 
-    if (lactor->field_60 & 0x400 && imageNumber != -1 && lactor->costumeIndex != imageNumber) {
-	short int *ptr;
+    if (lactor->field_60 & 0x400 && imageNumber != -1 && lactor->costumeIndex != imageNumber)
+	{
+	    short int *ptr;
 
-	lactor->costumeIndex = imageNumber;
+	    lactor->costumeIndex = imageNumber;
 
-	ptr = (short int *) (HQRess3 + imageNumber * 16 + 4);
+	    ptr = (short int *) (HQRess3 + imageNumber * 16 + 4);
 
-	lactor->field_26 = *(ptr++);
-	lactor->field_28 = *(ptr++);
-	lactor->field_2A = *(ptr++);
-	lactor->field_2C = *(ptr++);
-	lactor->field_2E = *(ptr++);
-	lactor->field_30 = *(ptr++);
-    }
+	    lactor->field_26 = *(ptr++);
+	    lactor->field_28 = *(ptr++);
+	    lactor->field_2A = *(ptr++);
+	    lactor->field_2C = *(ptr++);
+	    lactor->field_2E = *(ptr++);
+	    lactor->field_30 = *(ptr++);
+	}
 }

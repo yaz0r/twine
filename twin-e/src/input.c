@@ -18,8 +18,7 @@
 #include "lba.h"
 #include <SDL.h>
 
-void
-  LBA_engine::readKeyboard(void)
+void LBA_engine::readKeyboard(void)
 {
     SDL_Event event;
     int localKey;
@@ -39,24 +38,29 @@ void
 
     unsigned char *keyboard;
 
-    while (SDL_PollEvent(&event)) {
-	switch (event.type) {
-	case SDL_QUIT:
-	    exit(0);
-	    break;
+    while (SDL_PollEvent(&event))
+	{
+	    switch (event.type)
+		{
+		case SDL_QUIT:
+		    exit(0);
+		    break;
 
-	case SDL_MOUSEBUTTONDOWN:
-	    if (event.button.button == 0) {
-		osystem->mouseRight = 1;
-	    } else {
-		osystem->mouseLeft = 1;
-	    }
-	    break;
+		case SDL_MOUSEBUTTONDOWN:
+		    if (event.button.button == 0)
+			{
+			    osystem->mouseRight = 1;
+			}
+		    else
+			{
+			    osystem->mouseLeft = 1;
+			}
+		    break;
 
-	default:
-	    break;
+		default:
+		    break;
+		}
 	}
-    }
 
    // case SDL_KEYDOWN:
    /*
@@ -68,97 +72,115 @@ void
 
     keyboard = SDL_GetKeyState(&size);
 
-    for (j = 0; j < size; j++) {
-	if (keyboard[j]) {
-	    if (j == SDLK_ESCAPE)
-		localKey = 0x1;
-	    if (j == SDLK_RETURN)
-		localKey = 0x1C;
-	    if (j == SDLK_LCTRL)
-		localKey = 0x1D;
-	    if (j == SDLK_LSHIFT)
-		localKey = 0x2A;
-	    if (j == SDLK_RSHIFT)
-		localKey = 0x36;
-	    if (j == SDLK_SPACE)
-		localKey = 0x39;
-	    if (j == SDLK_UP)
-		localKey = 0x48;
-	    if (j == SDLK_LEFT)
-		localKey = 0x4B;
-	    if (j == SDLK_RIGHT)
-		localKey = 0x4D;
-	    if (j == SDLK_DOWN)
-		localKey = 0x50;
+    for (j = 0; j < size; j++)
+	{
+	    if (keyboard[j])
+		{
+		    if (j == SDLK_ESCAPE)
+			localKey = 0x1;
+		    if (j == SDLK_RETURN)
+			localKey = 0x1C;
+		    if (j == SDLK_LCTRL)
+			localKey = 0x1D;
+		    if (j == SDLK_LSHIFT)
+			localKey = 0x2A;
+		    if (j == SDLK_RSHIFT)
+			localKey = 0x36;
+		    if (j == SDLK_SPACE)
+			localKey = 0x39;
+		    if (j == SDLK_UP)
+			localKey = 0x48;
+		    if (j == SDLK_LEFT)
+			localKey = 0x4B;
+		    if (j == SDLK_RIGHT)
+			localKey = 0x4D;
+		    if (j == SDLK_DOWN)
+			localKey = 0x50;
+		    if (j == SDLK_SPACE)
+			localKey = 0x39;
 
-	    if (j == SDLK_p)
-		localKey = 'p';
-	    if (j == SDLK_h)
-		localKey = 'h';
-	}
-
-	if (event.key.keysym.sym == SDLK_ESCAPE)
-	    localKey = 0x1;
-	if (event.key.keysym.sym == SDLK_RETURN)
-	    localKey = 0x1C;
-	if (event.key.keysym.sym == SDLK_LSHIFT)
-	    localKey = 0x2A;
-	if (event.key.keysym.sym == SDLK_RSHIFT)
-	    localKey = 0x36;
-	if (event.key.keysym.sym == SDLK_SPACE)
-	    localKey = 0x39;
-	if (event.key.keysym.sym == SDLK_UP)
-	    localKey = 0x48;
-	if (event.key.keysym.sym == SDLK_DOWN)
-	    localKey = 0x50;
-	if (event.key.keysym.sym == SDLK_LEFT)
-	    localKey = 0x4B;
-	if (event.key.keysym.sym == SDLK_RIGHT)
-	    localKey = 0x4D;
-	if (event.key.keysym.sym == SDLK_LALT)
-	    localKey = 0x1D;
-
-	if (event.key.keysym.sym == SDLK_p)
-	    localKey = 'p';
-
-	for (i = 0; i < 28; i++) {
-	    if (scanCodeTab1[i] == localKey) {
-		find = i;
-		found = 1;
-	    }
-	}
-
-	if (found != 0) {
-	    temp = scanCodeTab2[find];
-	    temp2 = temp & 0x00FF;
-
-	    if (temp2 == 0) {
-		if (!(localKey & 0x80)) {
-		    printTextVar12 |= (temp & 0xFF00) >> 8;
-		} else {
-		    printTextVar12 &= -((temp & 0xFF00) >> 8);
+		    if (j == SDLK_p)
+			localKey = 'p';
+		    if (j == SDLK_h)
+			localKey = 'h';
 		}
-	    } else {
-	       // mode non géré ici
-		key1 |= (temp & 0xFF00) >> 8;
-	    }
-	} else {
-	   // no géré ici aussi
-	    skipIntro = localKey;
+
+	    if (event.key.keysym.sym == SDLK_ESCAPE)
+		localKey = 0x1;
+	    if (event.key.keysym.sym == SDLK_RETURN)
+		localKey = 0x1C;
+	    if (event.key.keysym.sym == SDLK_LSHIFT)
+		localKey = 0x2A;
+	    if (event.key.keysym.sym == SDLK_RSHIFT)
+		localKey = 0x36;
+	    if (event.key.keysym.sym == SDLK_SPACE)
+		localKey = 0x39;
+	    if (event.key.keysym.sym == SDLK_UP)
+		localKey = 0x48;
+	    if (event.key.keysym.sym == SDLK_DOWN)
+		localKey = 0x50;
+	    if (event.key.keysym.sym == SDLK_LEFT)
+		localKey = 0x4B;
+	    if (event.key.keysym.sym == SDLK_RIGHT)
+		localKey = 0x4D;
+	    if (event.key.keysym.sym == SDLK_LALT)
+		localKey = 0x1D;
+	    if (event.key.keysym.sym == SDLK_SPACE)
+		localKey = 0x39;
+
+	    if (event.key.keysym.sym == SDLK_p)
+		localKey = 'p';
+
+	    for (i = 0; i < 28; i++)
+		{
+		    if (scanCodeTab1[i] == localKey)
+			{
+			    find = i;
+			    found = 1;
+			}
+		}
+
+	    if (found != 0)
+		{
+		    temp = scanCodeTab2[find];
+		    temp2 = temp & 0x00FF;
+
+		    if (temp2 == 0)
+			{
+			    if (!(localKey & 0x80))
+				{
+				    printTextVar12 |= (temp & 0xFF00) >> 8;
+				}
+			    else
+				{
+				    printTextVar12 &= -((temp & 0xFF00) >> 8);
+				}
+			}
+		    else
+			{
+			   // mode non géré ici
+			    key1 |= (temp & 0xFF00) >> 8;
+			}
+		}
+	    else
+		{
+		   // no géré ici aussi
+		    skipIntro = localKey;
+		}
+
+	    currentKey = event.key.keysym.scancode;
+
+	   // printf("unicode= %X\n",event.key.keysym.unicode);
+	   // printf("scancode= %X\n",skipIntro);
 	}
-
-	currentKey = event.key.keysym.scancode;
-
-       // printf("unicode= %X\n",event.key.keysym.unicode);
-       // printf("scancode= %X\n",skipIntro);
-    }
 }
 
 short int LBA_engine::getKeyboardChar(void)
 {
-    do {
-	readKeyboard();
-    }
+    do
+	{
+	    readKeyboard();
+	}
     while (currentKey == 36);
     return (currentKey);
 }

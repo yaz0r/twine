@@ -1,8 +1,7 @@
 #include "lba.h"
 #include "tab.h"
 
-void
-  LBA_engine::initVars(void)
+void LBA_engine::initVars(void)
 {
     useSound = 0;
     useSB = 1;
@@ -367,9 +366,9 @@ void
     scanCodeTab1[3] = 0x4D;
     scanCodeTab1[4] = 0x47;
     scanCodeTab1[5] = 0x49;
-
     scanCodeTab1[6] = 0x51;
     scanCodeTab1[7] = 0x4F;
+
     scanCodeTab1[8] = 0x39;
     scanCodeTab1[9] = 0x1C;
     scanCodeTab1[10] = 0x1D;
@@ -396,30 +395,33 @@ void
     scanCodeTab2[1] = 0x0200;	// down
     scanCodeTab2[2] = 0x0400;	// left
     scanCodeTab2[3] = 0x0800;	// right
-    scanCodeTab2[4] = 0x0500;
-    scanCodeTab2[5] = 0x0900;
-    scanCodeTab2[6] = 0x0A00;
-    scanCodeTab2[7] = 0x0600;
-    scanCodeTab2[8] = 0x0101;
-    scanCodeTab2[9] = 0x0201;
-    scanCodeTab2[10] = 0x0401;
-    scanCodeTab2[11] = 0x0801;
-    scanCodeTab2[12] = 0x1001;
-    scanCodeTab2[13] = 0x2001;
-    scanCodeTab2[14] = 0x2001;
-    scanCodeTab2[15] = 0x0102;
-    scanCodeTab2[16] = 0x0202;
-    scanCodeTab2[17] = 0x0402;
-    scanCodeTab2[18] = 0x0802;
-    scanCodeTab2[19] = 0x1002;
-    scanCodeTab2[20] = 0x2002;
-    scanCodeTab2[21] = 0x4002;
-    scanCodeTab2[22] = 0x8002;
-    scanCodeTab2[23] = 0x0103;
-    scanCodeTab2[24] = 0x0203;
-    scanCodeTab2[25] = 0x0403;
-    scanCodeTab2[26] = 0x0803;
-    scanCodeTab2[27] = 0x00FF;
+    scanCodeTab2[4] = 0x0500;	// home
+    scanCodeTab2[5] = 0x0900;	// pageup
+    scanCodeTab2[6] = 0x0A00;	// pagedown
+    scanCodeTab2[7] = 0x0600;	// end
+
+    scanCodeTab2[8] = 0x0101;	// space bar
+    scanCodeTab2[9] = 0x0201;	// enter
+    scanCodeTab2[10] = 0x0401;	// ctrl
+    scanCodeTab2[11] = 0x0801;	// alt
+    scanCodeTab2[12] = 0x1001;	// del
+    scanCodeTab2[13] = 0x2001;	// left shift
+    scanCodeTab2[14] = 0x2001;	// right shift
+
+    scanCodeTab2[15] = 0x0102;	// F1
+    scanCodeTab2[16] = 0x0202;	// F2
+    scanCodeTab2[17] = 0x0402;	// F3
+    scanCodeTab2[18] = 0x0802;	// F4
+    scanCodeTab2[19] = 0x1002;	// F5
+    scanCodeTab2[20] = 0x2002;	// F6
+    scanCodeTab2[21] = 0x4002;	// F7
+    scanCodeTab2[22] = 0x8002;	// F8
+
+    scanCodeTab2[23] = 0x0103;	// F9
+    scanCodeTab2[24] = 0x0203;	// F10
+    scanCodeTab2[25] = 0x0403;	// ?
+    scanCodeTab2[26] = 0x0803;	// ?
+    scanCodeTab2[27] = 0x00FF;	// left shift
     scanCodeTab2[28] = 0x00FF;
     scanCodeTab2[29] = 0x0;
     scanCodeTab2[30] = 0x0;

@@ -18,8 +18,7 @@
 
 #include "lba.h"
 
-int
-  LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte ** ptr)	// recheck
+int LBA_engine::loadDataFileToPtr(char *fileName, short int arg_4, byte ** ptr)	// recheck
 {
     FILE *resourceFile;
     int headerSize;
@@ -36,10 +35,11 @@ int
 
     readResourceData(resourceFile, (char *) &headerSize, 4);
 
-    if (arg_4 >= headerSize / 4) {
-	closeResource(resourceFile);
-	return (-1);
-    }
+    if (arg_4 >= headerSize / 4)
+	{
+	    closeResource(resourceFile);
+	    return (-1);
+	}
 
     fseek(resourceFile, arg_4 * 4, SEEK_SET);
     readResourceData(resourceFile, (char *) &offToData, 4);
@@ -53,20 +53,24 @@ int
 	return (-1);
 
     if (mode <= 0)		// uncompressed
-    {
-	readResourceData(resourceFile, (char *) *ptr, dataSize);
-    } else {
-	if (mode == 1)		// compressed
 	{
-	    temp = (unsigned char *) malloc(compressedSize);
-
-	    readResourceData(resourceFile, (char *) temp, compressedSize);
-	    decompress(dataSize, *ptr, temp);
-	    free(temp);
-	} else {
-	   // implementer qq chose de manquant là...
+	    readResourceData(resourceFile, (char *) *ptr, dataSize);
 	}
-    }
+    else
+	{
+	    if (mode == 1)	// compressed
+		{
+		    temp = (unsigned char *) malloc(compressedSize);
+
+		    readResourceData(resourceFile, (char *) temp, compressedSize);
+		    decompress(dataSize, *ptr, temp);
+		    free(temp);
+		}
+	    else
+		{
+		   // implementer qq chose de manquant là...
+		}
+	}
 
     fclose(resourceFile);
     return (dataSize);
@@ -89,10 +93,11 @@ int LBA_engine::prepareResource(char *fileName, int index)
 
     readResourceData(file, (char *) &headerSize, 4);
 
-    if (index >= headerSize / 4) {
-	closeResource(file);
-	return (0);
-    }
+    if (index >= headerSize / 4)
+	{
+	    closeResource(file);
+	    return (0);
+	}
 
     fseek(file, index * 4, SEEK_SET);
     readResourceData(file, (char *) &offToData, 4);

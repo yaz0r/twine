@@ -13,24 +13,26 @@ int main(int argc, char *argv[])
     engine = (LBA_engine *) malloc(sizeof(LBA_engine));	// creation of the LBA_engine
 
     if (!engine)		// if the allocation failed
-    {
-	printf("Failed to create the LBA_engine object !!!\n");
-	printf("Please check your free memory !\n");
-	exit(1);
-    } else {
-	printf("LBA_engine creation succeed !\n");
+	{
+	    printf("Failed to create the LBA_engine object !!!\n");
+	    printf("Please check your free memory !\n");
+	    exit(1);
+	}
+    else
+	{
+	    printf("LBA_engine creation succeed !\n");
 
-	memset(engine, 0, sizeof(LBA_engine));
+	    memset(engine, 0, sizeof(LBA_engine));
 
-	engine->osystem = osystem;
-	engine->_debugger.osystem = osystem;
-	engine->_debugger.engine = engine;
-	engine->initVars();	// init the vars (move to the object creator ?)
+	    engine->osystem = osystem;
+	    engine->_debugger.osystem = osystem;
+	    engine->_debugger.engine = engine;
+	    engine->initVars();	// init the vars (move to the object creator ?)
 
-	startThreadTimer(engine);
+	    startThreadTimer(engine);
 
-	engine->init();		// startup the game engine !
-    }
+	    engine->init();	// startup the game engine !
+	}
 
     delete(osystem);
 
@@ -168,31 +170,13 @@ void LBA_engine::newGame(void)
     printTextFullScreen(150);
     readKeyboard();
 
-    if (skipIntro != 1) {
-       // resetPalette();
-	loadImageToPtr("ress.hqr", videoBuffer2, 17);	// Ecran de la citadelle (ecran 2 de
-       // l'intro)
-	copyToBuffer(videoBuffer2, videoBuffer1);
-	loadImageToPtr("ress.hqr", palette, 18);
-	convertPalToRGBA(palette, paletteRGBA);
-
-	osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
-	osystem->setPalette(paletteRGBA);
-
-       // osystem->drawBufferToScreen(videoBuffer1);
-       // osystem->setPalette(paletteRGBA);
-	printTextFullScreen(151);
-
-	readKeyboard();
-	if (skipIntro != 1) {
+    if (skipIntro != 1)
+	{
 	   // resetPalette();
-	    loadImageToPtr("ress.hqr", videoBuffer2, 19);	// Ecran du reve de Twisen (ecran 3 
-								// 
-	   // 
-	   // de l'intro)
+	    loadImageToPtr("ress.hqr", videoBuffer2, 17);	// Ecran de la citadelle (ecran 2 de
+	   // l'intro)
 	    copyToBuffer(videoBuffer2, videoBuffer1);
-	    loadImageToPtr("ress.hqr", palette, 20);
-
+	    loadImageToPtr("ress.hqr", palette, 18);
 	    convertPalToRGBA(palette, paletteRGBA);
 
 	    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
@@ -200,10 +184,38 @@ void LBA_engine::newGame(void)
 
 	   // osystem->drawBufferToScreen(videoBuffer1);
 	   // osystem->setPalette(paletteRGBA);
+	    printTextFullScreen(151);
 
-	    printTextFullScreen(152);
+	    readKeyboard();
+	    if (skipIntro != 1)
+		{
+		   // resetPalette();
+		    loadImageToPtr("ress.hqr", videoBuffer2, 19);	// Ecran du reve de Twisen (ecran 3 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // 
+		   // de l'intro)
+		    copyToBuffer(videoBuffer2, videoBuffer1);
+		    loadImageToPtr("ress.hqr", palette, 20);
+
+		    convertPalToRGBA(palette, paletteRGBA);
+
+		    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
+		    osystem->setPalette(paletteRGBA);
+
+		   // osystem->drawBufferToScreen(videoBuffer1);
+		   // osystem->setPalette(paletteRGBA);
+
+		    printTextFullScreen(152);
+		}
 	}
-    }
 
     newGameVar5 = 0;
     newGame4();

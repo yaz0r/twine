@@ -27,8 +27,7 @@ SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 TTF_Font *font;
 
-void
-  OSystem::getMouseStatus(mouseStatusStruct * mouseData)
+void OSystem::getMouseStatus(mouseStatusStruct * mouseData)
 {
     SDL_GetMouseState(&mouseData->X, &mouseData->Y);
 
@@ -60,17 +59,19 @@ OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dep
     amask = 0xff000000;
 #endif
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-	fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-	exit(1);
-    }
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+	{
+	    fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+	    exit(1);
+	}
 
     atexit(SDL_Quit);
 
-    if (TTF_Init() < 0) {
-	fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
-	exit(1);
-    }
+    if (TTF_Init() < 0)
+	{
+	    fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
+	    exit(1);
+	}
     atexit(TTF_Quit);
 
     int rendersolid = 0;
@@ -81,11 +82,12 @@ OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dep
 
     font = TTF_OpenFont("verdana.ttf", ptsize);
 
-    if (font == NULL) {
-	fprintf(stderr, "Couldn't load %d pt font from %s: %s\n", ptsize,
-		"verdana.ttf", SDL_GetError());
-	exit(2);
-    }
+    if (font == NULL)
+	{
+	    fprintf(stderr, "Couldn't load %d pt font from %s: %s\n", ptsize, "verdana.ttf",
+		    SDL_GetError());
+	    exit(2);
+	}
 
     TTF_SetFontStyle(font, renderstyle);
 
@@ -103,19 +105,21 @@ OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dep
 
     sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
 
-    if (sdl_screen == NULL) {
-	fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
-	exit(1);
-    }
+    if (sdl_screen == NULL)
+	{
+	    fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
+	    exit(1);
+	}
 
-    for (i = 0; i < 16; i++) {
-	surfaceTable[i] = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
-    }
+    for (i = 0; i < 16; i++)
+	{
+	    surfaceTable[i] =
+		SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
+	}
 
 }
 
-void
-  OSystem::putpixel(int x, int y, int pixel)
+void OSystem::putpixel(int x, int y, int pixel)
 {
     int bpp = sdl_screen->format->BytesPerPixel;
 
@@ -157,10 +161,11 @@ void OSystem::fadeBlackToWhite()
 
     SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 
-    for (i = 0; i < 256; i += 3) {
-	memset(colorPtr, i, 1024);
-	SDL_SetPalette(sdl_screen, SDL_PHYSPAL, colorPtr, 0, 256);
-    }
+    for (i = 0; i < 256; i += 3)
+	{
+	    memset(colorPtr, i, 1024);
+	    SDL_SetPalette(sdl_screen, SDL_PHYSPAL, colorPtr, 0, 256);
+	}
 }
 
 void OSystem::drawBufferToScreen(unsigned char *videoBuffer)
@@ -221,16 +226,18 @@ void OSystem::crossFade(char *buffer, char *palette)
 #ifndef FASTDEBUG
     int i;
 
-    for (i = 0; i < 16; i++) {
-	SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
-	SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 16);
-	SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
-    }
+    for (i = 0; i < 16; i++)
+	{
+	    SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
+	    SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 16);
+	    SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
+	}
 
-    for (i = 0; i < 16; i++) {
-	SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
-	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
-    }
+    for (i = 0; i < 16; i++)
+	{
+	    SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
+	    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+	}
 
 #endif
 

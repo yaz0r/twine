@@ -1,7 +1,6 @@
 #include "lba.h"
 
-void
-  LBA_engine::displayAdelineLogo(void)
+void LBA_engine::displayAdelineLogo(void)
 {
     playMidi(31);
     loadImageToPtr("ress.hqr", videoBuffer2, 27);
@@ -16,6 +15,15 @@ void
 
 int LBA_engine::loadImageToPtr(char *resourceName, byte * ptr, int imageNumber)	// en fait, c'est
 										// pas vraiment une 
+										// 
+										// 
+										// 
+										// 
+										// 
+										// 
+										// 
+										// 
+										// 
 										// 
 										// 
 										// image, ca peut
@@ -36,10 +44,11 @@ int LBA_engine::loadImageToPtr(char *resourceName, byte * ptr, int imageNumber)	
 
     readResourceData(resourceFile, (char *) &headerSize, 4);
 
-    if (imageNumber >= headerSize / 4) {
-	closeResource(resourceFile);
-	return (0);
-    }
+    if (imageNumber >= headerSize / 4)
+	{
+	    closeResource(resourceFile);
+	    return (0);
+	}
 
     fseek(resourceFile, imageNumber * 4, SEEK_SET);
     readResourceData(resourceFile, (char *) &offToImage, 4);
@@ -50,18 +59,22 @@ int LBA_engine::loadImageToPtr(char *resourceName, byte * ptr, int imageNumber)	
     readResourceData(resourceFile, (char *) &mode, 2);
 
     if (mode <= 0)		// uncompressed Image
-    {
-	readResourceData(resourceFile, (char *) ptr, dataSize);
-    } else {
-	if (mode == 1)		// compressed Image
 	{
-	    readResourceData(resourceFile,
-			     (char *) (ptr + dataSize - compressedSize + 500), compressedSize);
-	    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
-	} else {
-	    return (0);
+	    readResourceData(resourceFile, (char *) ptr, dataSize);
 	}
-    }
+    else
+	{
+	    if (mode == 1)	// compressed Image
+		{
+		    readResourceData(resourceFile, (char *) (ptr + dataSize - compressedSize + 500),
+				     compressedSize);
+		    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
+		}
+	    else
+		{
+		    return (0);
+		}
+	}
 
     return (dataSize);
 
@@ -77,10 +90,11 @@ void LBA_engine::fadeIn(byte * palette)
 {
     int i;
 
-    for (i = 0; i < 100; i += 3) {
-	adjustPalette(255, 255, 255, palette, i);
-	readKeyboard();
-    }
+    for (i = 0; i < 100; i += 3)
+	{
+	    adjustPalette(255, 255, 255, palette, i);
+	    readKeyboard();
+	}
 }
 
 void LBA_engine::adjustPalette(byte R, byte G, byte B, byte * palette, int intensity)
@@ -102,19 +116,20 @@ void LBA_engine::adjustPalette(byte R, byte G, byte B, byte * palette, int inten
     newB = &localPalette[2];
     newA = &localPalette[3];
 
-    for (i = 0; i < 256; i++) {
-	*newR = remapComposante(R, palette[counter], 100, local);
-	*newG = remapComposante(G, palette[counter + 1], 100, local);
-	*newB = remapComposante(B, palette[counter + 2], 100, local);
-	*newA = 0;
+    for (i = 0; i < 256; i++)
+	{
+	    *newR = remapComposante(R, palette[counter], 100, local);
+	    *newG = remapComposante(G, palette[counter + 1], 100, local);
+	    *newB = remapComposante(B, palette[counter + 2], 100, local);
+	    *newA = 0;
 
-	newR += 4;
-	newG += 4;
-	newB += 4;
-	newA += 4;
+	    newR += 4;
+	    newG += 4;
+	    newB += 4;
+	    newA += 4;
 
-	counter += 4;
-    }
+	    counter += 4;
+	}
 
     osystem->setPalette(localPalette);
 }
@@ -143,10 +158,11 @@ byte *LBA_engine::loadImageToMemory(char *fileName, short int imageNumber)
 
     readResourceData(resourceFile, (char *) &headerSize, 4);
 
-    if (imageNumber >= headerSize / 4) {
-	closeResource(resourceFile);
-	return (0);
-    }
+    if (imageNumber >= headerSize / 4)
+	{
+	    closeResource(resourceFile);
+	    return (0);
+	}
 
     fseek(resourceFile, imageNumber * 4, SEEK_SET);
     readResourceData(resourceFile, (char *) &offToImage, 4);
@@ -158,20 +174,24 @@ byte *LBA_engine::loadImageToMemory(char *fileName, short int imageNumber)
 
     ptr = (byte *) malloc(dataSize + 500);
     if (mode <= 0)		// uncompressed Image
-    {
-	readResourceData(resourceFile, (char *) ptr, dataSize);
-    } else {
-	if (mode == 1)		// compressed Image
 	{
-	    readResourceData(resourceFile,
-			     (char *) (ptr + dataSize - compressedSize + 500), compressedSize);
-	    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
-	} else {
-	    free(ptr);
-	    closeResource(resourceFile);
-	    return (0);
+	    readResourceData(resourceFile, (char *) ptr, dataSize);
 	}
-    }
+    else
+	{
+	    if (mode == 1)	// compressed Image
+		{
+		    readResourceData(resourceFile, (char *) (ptr + dataSize - compressedSize + 500),
+				     compressedSize);
+		    decompress(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
+		}
+	    else
+		{
+		    free(ptr);
+		    closeResource(resourceFile);
+		    return (0);
+		}
+	}
 
     closeResource(resourceFile);
 
@@ -203,12 +223,14 @@ void LBA_engine::fadeOut(char *palette)
 {
     int i;
 
-    if (palReseted == 0) {
-	for (i = 100; i >= 0; i -= 3) {
-	    adjustPalette(0, 0, 0, (byte *) palette, i);
-	    readKeyboard();
+    if (palReseted == 0)
+	{
+	    for (i = 100; i >= 0; i -= 3)
+		{
+		    adjustPalette(0, 0, 0, (byte *) palette, i);
+		    readKeyboard();
+		}
 	}
-    }
 
     palReseted = 1;
 }
@@ -217,10 +239,11 @@ void LBA_engine::fadeIn2(char *palette)
 {
     int i;
 
-    for (i = 0; i <= 100; i += 3) {
-	adjustPalette(0, 0, 0, (byte *) palette, i);
-	readKeyboard();
-    }
+    for (i = 0; i <= 100; i += 3)
+	{
+	    adjustPalette(0, 0, 0, (byte *) palette, i);
+	    readKeyboard();
+	}
 
     palReseted = 0;
 
@@ -231,12 +254,13 @@ void LBA_engine::blackToWhite(void)
     byte palette[1024];
     int i;
 
-    for (i = 0; i < 256; i += 3) {
-	memset(palette, i, 1024);
+    for (i = 0; i < 256; i += 3)
+	{
+	    memset(palette, i, 1024);
 
-	osystem->setPalette(palette);
-	readKeyboard();
-    }
+	    osystem->setPalette(palette);
+	    readKeyboard();
+	}
 }
 
 void LBA_engine::resetPalette(void)
@@ -272,9 +296,10 @@ void LBA_engine::convertPalToRGBA(byte * palSource, byte * palDest)
 
     int *colorDest = (int *) palDest;
 
-    for (i = 0; i < 256; i++) {
-	*(colorDest++) = (*(int *) palSource);	// little optimisation trick
-	palSource += 3;
-    }
+    for (i = 0; i < 256; i++)
+	{
+	    *(colorDest++) = (*(int *) palSource);	// little optimisation trick
+	    palSource += 3;
+	}
 
 }

@@ -17,7 +17,6 @@
 
 #include "lba.h"
 
-void
-  LBA_engine::saveGame(void)
+void LBA_engine::saveGame(void)
 {
 }

@@ -6,11 +6,12 @@ LBA_engine *tempEngine;
 
 int threadTimer(void *test)
 {
-    while (1) {
-	SDL_Delay(15);
-	tempEngine->musicPosition++;
-	tempEngine->time++;
-    }
+    while (1)
+	{
+	    SDL_Delay(15);
+	    tempEngine->musicPosition++;
+	    tempEngine->time++;
+	}
     return (0);
 }
 

@@ -1,7 +1,6 @@
 #include "lba.h"
 
-void
-  LBA_engine::loadCFG(void)
+void LBA_engine::loadCFG(void)
 {
     initAll("LBA.CFG", 15);
    // processVOXfile
@@ -27,48 +26,59 @@ void LBA_engine::initAll(char *fileName, int a)
     environment = getenv("Adeline");
     usedCFG = &environment;
 
-    if (a != -50) {
-	if (a & 1) {
-	    if (!fileName) {
-		printf
-		    ("Error: Empty configuration filename. Go kill the programmer! (Tell him to talk to Serge as well...)\n");
-		exit(1);
-	    }
+    if (a != -50)
+	{
+	    if (a & 1)
+		{
+		    if (!fileName)
+			{
+			    printf
+				("Error: Empty configuration filename. Go kill the programmer! (Tell him to talk to Serge as well...)\n");
+			    exit(1);
+			}
 
-	    cfg_file = fileOpen(environment);
+		    cfg_file = fileOpen(environment);
 
-	    if (!cfg_file) {
-		if (environment) {
-		    printf
-			("Warning: Cannot find configuration file %s as defined in the environment.\n",
-			 environment);
-		    printf("         Using local configuration file %s.\n", fileName);
+		    if (!cfg_file)
+			{
+			    if (environment)
+				{
+				    printf
+					("Warning: Cannot find configuration file %s as defined in the environment.\n",
+					 environment);
+				    printf("         Using local configuration file %s.\n",
+					   fileName);
+				}
+			    cfg_file = fileOpen(fileName);
+			    if (!cfg_file)
+				{
+				    printf("Error: Cannot find configuration file %s.\n", fileName);
+				    exit(1);
+				}
+			    usedCFG = &fileName;
+			}
+
+		    printf("Please wait, loading drivers using %s...\n", *usedCFG);
 		}
-		cfg_file = fileOpen(fileName);
-		if (!cfg_file) {
-		    printf("Error: Cannot find configuration file %s.\n", fileName);
-		    exit(1);
+	    else
+		{
+		    cfg_file = fileOpen(environment);
+		    if (environment)
+			usedCFG = &environment;
 		}
-		usedCFG = &fileName;
-	    }
-
-	    printf("Please wait, loading drivers using %s...\n", *usedCFG);
-	} else {
-	    cfg_file = fileOpen(environment);
-	    if (environment)
-		usedCFG = &environment;
 	}
-    }
 
-    if (a & 4) {
-	printf("Initialising Midi device. Please wait...\n");
-    }
+    if (a & 4)
+	{
+	    printf("Initialising Midi device. Please wait...\n");
+	}
 
     initVideoStuff();
 
-    if (a & 1) {
-	printf("Initialising SVGA device. Please wait...\n");
-    }
+    if (a & 1)
+	{
+	    printf("Initialising SVGA device. Please wait...\n");
+	}
 
    /*
     * init stuff for sdl version... 
@@ -89,11 +99,12 @@ void LBA_engine::initVideoStuff(void)
 
     j = 0;
     k = 0;
-    for (i = hauteurEcran; i > 0; i--) {
-	screenLockupTable[j] = k;
-	j++;
-	k += largeurEcran;
-    }
+    for (i = hauteurEcran; i > 0; i--)
+	{
+	    screenLockupTable[j] = k;
+	    j++;
+	    k += largeurEcran;
+	}
 
     initVideoVar1 = -1;
 

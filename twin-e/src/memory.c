@@ -1,7 +1,6 @@
 #include "lba.h"
 
-void
-  LBA_engine::allocBufCube(void)
+void LBA_engine::allocBufCube(void)
 {
    // todo: mettre les codes d'erreur
 
@@ -18,10 +17,11 @@ byte *LBA_engine::allocateBuf(int size)
 
     ptr = (byte *) malloc(size);
 
-    if (!ptr) {
-	printf("Can't alloc %d!\n", size);
-	exit(1);
-    }
+    if (!ptr)
+	{
+	    printf("Can't alloc %d!\n", size);
+	    exit(1);
+	}
 
     return (ptr);
 }

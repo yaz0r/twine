@@ -1,15 +1,15 @@
 #include "lba.h"
 
-void
-  LBA_engine::playMusic(int musicNum)
+void LBA_engine::playMusic(int musicNum)
 {
-    if (musicNum == -1) {	/* stop music */
-	fullStopMusic();
-	currentlyPlayingMusic = -1;
-       // playMusic2();
-	playMusciVar1 = -1;
-	return;
-    }
+    if (musicNum == -1)
+	{			/* stop music */
+	    fullStopMusic();
+	    currentlyPlayingMusic = -1;
+	   // playMusic2();
+	    playMusciVar1 = -1;
+	    return;
+	}
 
     if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
 	playCDtrack(musicNum);
