@@ -436,7 +436,7 @@ void LBA_engine::setSomething4(int a, int b, int c)
   renderV3=c;
 
 
-  renderS1S1(&rmv1,&setSomething3Var2);
+  renderS1S1(bufRotate0,&setSomething3Var2);
   renderS2S2(0,0,59);
 
   renderV22=destX;
@@ -456,24 +456,24 @@ void LBA_engine::renderS2S2(short int ax, short int bx, short int cx)
   ebx=bx;
   ecx=cx;
 
-  edi=rmv1;
-  eax=rmv2;
+  edi=bufRotate0[0];
+  eax=bufRotate0[1];
   edi*=ebp;
   eax*=ebx;
   edi+=eax;
-  eax=rmv3;
+  eax=bufRotate0[2];
   eax*=ecx;
   eax+=edi;
   eax>>=14;
 
   destX=eax;
 
-  edi=rmv4;
-  eax=rmv5;
+  edi=bufRotate0[3];
+  eax=bufRotate0[4];
   edi*=ebp;
   eax*=ebx;
   edi+=eax;
-  eax=rmv6;
+  eax=bufRotate0[5];
   eax*=ecx;
   eax+=edi;
   eax>>=14;
@@ -481,9 +481,9 @@ void LBA_engine::renderS2S2(short int ax, short int bx, short int cx)
 
 
 
-  ebp*=rmv7;
-  ebx*=rmv8;
-  ecx*=rmv9;
+  ebp*=bufRotate0[6];
+  ebx*=bufRotate0[7];
+  ecx*=bufRotate0[8];
   ebx+=ebp;
   ebx+=ecx;
   ebx>>=14;
@@ -693,79 +693,6 @@ int LBA_engine::getAnimMaxIndex(char* ptr)
 int LBA_engine::getAnimStartIndex(char* ptr)
 {
 	return(*(short int*)(ptr+4));
-}
-
-int LBA_engine::drawMenuWin1(int index, unsigned char * anim, unsigned char * body)
-{
-	short int numOfIndexInAnim;
-	short int numOfPointInAnim;
-	char* ptrToData;
-	char* ptrToDataBackup;
-	char* ptrToBodyData;
-	short int bodyHeader;
-	short int numOfElementInBody;
-	short int numOfPointInBody;
-	int i;
-
-	numOfIndexInAnim=*(short int*)anim;
-
-	if(index>=numOfIndexInAnim)
-		return(numOfIndexInAnim);
-
-	numOfPointInAnim=*(short int*)(anim+2);
-
-	ptrToData=(char*)((numOfPointInAnim*8+8)*index+anim+8);
-
-	bodyHeader=*(short int*)body;
-
-	if(!(bodyHeader&2))
-		return(0);
-
-	ptrToBodyData=(char*)(body+14);
-
-	*(char**)(ptrToBodyData+2)=ptrToData;
-	*(int*)(ptrToBodyData+6)=time;
-
-	ptrToBodyData=ptrToBodyData+*(short int*)ptrToBodyData+2;
-
-	numOfElementInBody=*(short int*)ptrToBodyData;
-
-	ptrToBodyData=ptrToBodyData+numOfElementInBody*6+12;
-
-	numOfPointInBody=*(short int*)(ptrToBodyData-10);
-
-	if(numOfPointInAnim>numOfPointInBody)
-	{
-		numOfPointInAnim=numOfPointInBody;
-	}
-
-	ptrToDataBackup=ptrToData;
-
-	ptrToData+=8;
-
-	do
-	{
-		for(i=0;i<8;i++)
-		{
-			*(ptrToBodyData++)=*(ptrToData++);
-		}
-
-		ptrToBodyData+=30;
-
-	}while(--numOfPointInAnim);
-
-	ptrToData=ptrToDataBackup+2;
-
-	currentX=*(short int*)ptrToData;
-	currentZ=*(short int*)(ptrToData+2);
-	currentY=*(short int*)(ptrToData+4);
-
-	processActorVar5=*(short int*)(ptrToData+6);
-	processActorSub2Var0=*(short int*)(ptrToData+8);
-	processActorVar6=*(short int*)(ptrToData+10);
-	processActorSub2Var1=*(short int*)(ptrToData+12);
-
-	return(1);
 }
 
 void LBA_engine::drawBlackBox(int left,int top,int right,int bottom, unsigned char e)
@@ -1082,7 +1009,6 @@ void LBA_engine::updateActors(int actorNum)
 
 void LBA_engine::processActor(int actorNum)
 {
-	return;
 	actor* lactor;
 	char* animPtr;
 	int animData;
@@ -1105,7 +1031,7 @@ void LBA_engine::processActor(int actorNum)
 
 	if(lactor->field_60&0x400) // is sprite actor
 	{
-		if(lactor->field_66)
+	/*	if(lactor->field_66)
 		{
 			lactor->field_62|=2;
 		}
@@ -1234,7 +1160,7 @@ void LBA_engine::processActor(int actorNum)
 				lactor->lastY=0;
 
 			}
-		}
+		}*/
 
 	}
 	else //not sprite actor
@@ -1242,7 +1168,8 @@ void LBA_engine::processActor(int actorNum)
 		if(lactor->currentAnim!=-1)
 		{
 			animPtr=(char*)getHqrdataPtr(HQRanims,lactor->currentAnim);
-			animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); // get the current frame anim data (for step length ?)
+			//animData=processActorSub2(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); // get the current frame anim data (for step length ?)
+			animData=applyAnim(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); // get the current frame anim data (for step length ?)
 
 			if(processActorVar5)
 			{
@@ -1283,11 +1210,11 @@ void LBA_engine::processActor(int actorNum)
 				if(var_10==getAnimMaxIndex(animPtr))
 				{
 					lactor->field_62&=0xFFFD;
-					if(lactor->field_78==0)
+				//	if(lactor->field_78==0)
 					{
 						lactor->animPosition=getAnimStartIndex(animPtr);
 					}
-					else
+				/*	else
 					{
 						var_C=actorNum;
 						lactor->costume=lactor->field_2;
@@ -1304,7 +1231,7 @@ void LBA_engine::processActor(int actorNum)
 						lactor->field_78=0;
 						lactor->animPosition=0;
 						lactor->field_66=0;
-					}
+					}*/
 
 					if(lactor->field_4)
 					{
@@ -1345,7 +1272,7 @@ void LBA_engine::processActor(int actorNum)
 		processActorY=processActorVar4;
 	}
 
-	if(lactor->field_60&0x2)
+	/*if(lactor->field_60&0x2)
 	{
 		int position;
 
@@ -1507,7 +1434,7 @@ void LBA_engine::processActor(int actorNum)
 	{
 		if(lactor->field_60&0x1) //actor fall
 			processActorSub6(actorNum);
-	}
+	}*/
 
 	if(fieldCauseDamage)
 		lactor->field_3|=0x80;
@@ -1527,9 +1454,9 @@ void LBA_engine::processActor(int actorNum)
 	if(processActorY>0x7E00)
 		processActorY=0x7E00;
 
-	lactor->X=processActorX;
+/*	lactor->X=processActorX;
 	lactor->Z=processActorZ;
-	lactor->Y=processActorY;
+	lactor->Y=processActorY;*/
 
 }
 
@@ -1631,88 +1558,85 @@ void LBA_engine::processActorSub1(int var0,int var1,int angle)
 
 int LBA_engine::processActorSub2(int position,char* anim,char* body)
 {
-	short int animOffset;
 	short int bodyFlags;
-	char* oldAnimDataPtr;
+	char* edi;
+	char* ebx;
 	int ebp;
-	char* eax;
-	int edx;
+	int eax;
+	int keyFrameLength;
+	int numOfPointInBody;
+	int numOfPointInAnim;
+	char* keyFramePtrOld;
 
-	animOffset=*(short int*)(anim+2);
+	numOfPointInAnim=*(short int*)(anim+2);
 
-	keyFramePtr=(animOffset*8+8)*position+anim+8;
+	keyFramePtr=(numOfPointInAnim*8+8)*position+anim+8;
 
-	edx=*(short int*)keyFramePtr;
+	keyFrameLength=*(short int*)keyFramePtr;
 
 	bodyFlags=*(short int*)body;
 
 	if(bodyFlags&2)
 	{
-		animVar1=body+0x10;
+		edi=body+16;
 
-		eax=*(char**)animVar1;
-		ebp=*(int*)(animVar1+4); //time
+		animVar1=edi;
 
-		if(!eax) // start of anim
+		ebx=*(char**)edi;
+		ebp=*(int*)(edi+4);
+
+		if(!ebx)
 		{
-			eax=keyFramePtr;
-			ebp=edx;
+			ebx=keyFramePtr;
+			ebp=keyFrameLength;
 		}
 
-		animVar2=eax;
+		lastKeyFramePtr=ebx;
 
-		ebp=-ebp;
-		ebp+=time;
+		eax=time-ebp;
 
-		if(!(ebp<edx))
+		printf("delta=%d / %d  -> time=%d -> ebp=%d\n",eax,keyFrameLength,time,ebp);
+
+		if(eax>=keyFrameLength)
 		{
-			char* esi; //new keyframe
-
 			*(char**)animVar1=keyFramePtr;
 			*(int*)(animVar1+4)=time;
 
-			esi=keyFramePtr;
-			esi+=2;
+			currentX=*(short int*)(keyFramePtr+2);
+			currentZ=*(short int*)(keyFramePtr+4);
+			currentY=*(short int*)(keyFramePtr+6);
 
-			currentX=*(short int*)esi;
-			currentZ=*(short int*)(esi+2);
-			currentY=*(short int*)(esi+4);
-
-			processActorVar5=*(short int*)(esi+6);
-			processActorSub2Var0=*(short int*)(esi+8);
-			processActorVar6=*(short int*)(esi+10);
-			processActorSub2Var1=*(short int*)(esi+12);
-
+			processActorVar5=*(short int*)(keyFramePtr+8);
+			processActorSub2Var0=*(short int*)(keyFramePtr+10);
+			processActorVar6=*(short int*)(keyFramePtr+12);
+			processActorSub2Var1=*(short int*)(keyFramePtr+14);
 
 			return(1);
 		}
+		else
+		{
+			keyFramePtrOld=keyFramePtr;
 
-		oldAnimDataPtr=keyFramePtr;
+			lastKeyFramePtr+=8;
+			keyFramePtr+=8;
 
-		animVar2+=8;
-		keyFramePtr+=8;
+			processActorVar5=*(short int*)keyFramePtr;
+			processActorSub2Var0=(*(short int*)(keyFramePtr+2)*eax)/keyFrameLength;
+			processActorVar6=(*(short int*)(keyFramePtr+4)*eax)/keyFrameLength;
+			processActorSub2Var1=(*(short int*)(keyFramePtr+6)*eax)/keyFrameLength;
 
-		processActorVar5=*(short int*)(keyFramePtr);
+			lastKeyFramePtr+=8;
+			keyFramePtr+=8;
 
-		processActorSub2Var0=((*(short int*)(keyFramePtr+2))*ebp)/edx;
-		processActorVar6=((*(short int*)(keyFramePtr+4))*ebp)/edx;
-		processActorSub2Var1=((*(short int*)(keyFramePtr+6))*ebp)/edx;
+			currentX=(*(short int*)(keyFramePtrOld+2)*eax)/keyFrameLength;
+			currentZ=(*(short int*)(keyFramePtrOld+4)*eax)/keyFrameLength;
+			currentY=(*(short int*)(keyFramePtrOld+6)*eax)/keyFrameLength;
 
-		keyFramePtr+=8;
-		animVar2+=8;
-
-		currentX=((*(short int*)(oldAnimDataPtr+2))*ebp)/edx;
-		currentZ=((*(short int*)(oldAnimDataPtr+4))*ebp)/edx;
-		currentY=((*(short int*)(oldAnimDataPtr+6))*ebp)/edx;
-
-		return(0);
-
+			return(0);
+		}
 	}
-	else
-	{
-		return(0);
-	}
-
+	
+	return(0);
 }
 
 int LBA_engine::processActorSub4(int var0,int var1) // is actor still standing on object ?

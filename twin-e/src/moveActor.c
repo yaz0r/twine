@@ -43,7 +43,7 @@ void LBA_engine::moveActor(int actorNumber)
 			lactor->positionInMoveScript++;
 			manipActorResult=*scriptPtr;
 
-			printf("Actor %d go to flag %d\n",actorNumber,manipActorResult);
+		//	printf("Actor %d go to flag %d\n",actorNumber,manipActorResult);
 
 			destX=flagData[manipActorResult].x;
 			destZ=flagData[manipActorResult].z;
@@ -231,6 +231,9 @@ void LBA_engine::moveActor(int actorNumber)
 					}
 				}
 			}
+			break;
+		case 19:
+			loadActorCostume(-1,actorNumber);
 			break;
 		case 18:
 			printf("skipping actor move opcode 18\n");

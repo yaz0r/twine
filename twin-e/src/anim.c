@@ -1,58 +1,79 @@
 #include "lba.h"
 
-int LBA_engine::applyAnim(int animState,char* animData,char* body)
+int LBA_engine::setAnimAtKeyFrame(int index, unsigned char * anim, unsigned char * body)
 {
-	short int animOpcode;
+	short int numOfIndexInAnim;
+	short int numOfPointInAnim;
+	char* ptrToData;
+	char* ptrToDataBackup;
+	char* ptrToBodyData;
+	short int bodyHeader;
+	short int numOfElementInBody;
+	short int numOfPointInBody;
+	int i;
 
-	short int var0;
-	short int var1;
+	numOfIndexInAnim=*(short int*)anim;
 
-	var1=*(short int*)(animData+2);
+	if(index>=numOfIndexInAnim)
+		return(numOfIndexInAnim);
 
-	keyFramePtr=(var1*8)*animState+animData+8;
+	numOfPointInAnim=*(short int*)(anim+2);
 
-	var0=*(short int*)body;
+	ptrToData=(char*)((numOfPointInAnim*8+8)*index+anim+8);
 
-	if(!(var0&2))
-	{
+	bodyHeader=*(short int*)body;
+
+	if(!(bodyHeader&2))
 		return(0);
+
+	ptrToBodyData=(char*)(body+14);
+
+	*(char**)(ptrToBodyData+2)=ptrToData;
+	*(int*)(ptrToBodyData+6)=time;
+
+	ptrToBodyData=ptrToBodyData+*(short int*)ptrToBodyData+2;
+
+	numOfElementInBody=*(short int*)ptrToBodyData;
+
+	ptrToBodyData=ptrToBodyData+numOfElementInBody*6+12;
+
+	numOfPointInBody=*(short int*)(ptrToBodyData-10);
+
+	if(numOfPointInAnim>numOfPointInBody)
+	{
+		numOfPointInAnim=numOfPointInBody;
 	}
 
-	animVar1=body+16;
+	ptrToDataBackup=ptrToData;
 
-	printf("applyAnim ok\n");
-	exit(1);
+	ptrToData+=8;
 
-
-/*	while(--animVar4)
+	do
 	{
-		animOpcode=getAnimOpcode();
-		if(animOpcode==0)
+		for(i=0;i<8;i++)
 		{
-			applyAnimMode0();
-			applyAnimMode0();
-			applyAnimMode0();
+			*(ptrToBodyData++)=*(ptrToData++);
 		}
-		else
-		if(animOpcode==1)
-		{
-			applyAnimMode1();
-			applyAnimMode1();
-			applyAnimMode1();
-		}
-		else
-		if(animOpcode==2)
-		{
-			applyAnimMode2();
-			applyAnimMode2();
-			applyAnimMode2();
-		}
-		edi+=30;
-	}*/
-	return(0);
+
+		ptrToBodyData+=30;
+
+	}while(--numOfPointInAnim);
+
+	ptrToData=ptrToDataBackup+2;
+
+	currentX=*(short int*)ptrToData;
+	currentZ=*(short int*)(ptrToData+2);
+	currentY=*(short int*)(ptrToData+4);
+
+	processActorVar5=*(short int*)(ptrToData+6);
+	processActorSub2Var0=*(short int*)(ptrToData+8);
+	processActorVar6=*(short int*)(ptrToData+10);
+	processActorSub2Var1=*(short int*)(ptrToData+12);
+
+	return(1);
 }
 
-int LBA_engine::draw3D1(int animState,char* animData,char* body)
+int LBA_engine::applyAnim(int animState,char* animData,char* body)
 {
 	short int animOpcode;
 
@@ -65,6 +86,7 @@ int LBA_engine::draw3D1(int animState,char* animData,char* body)
 	int keyFrameLength;
 	int numOfPointInBody;
 	int numOfPointInAnim;
+	char* keyFramePtrOld;
 
 	numOfPointInAnim=*(short int*)(animData+2);
 
@@ -92,7 +114,7 @@ int LBA_engine::draw3D1(int animState,char* animData,char* body)
 		ebp=keyFrameLength;
 	}
 
-	animVar2=ebx;
+	lastKeyFramePtr=ebx;
 
 	eax=*(short int*)(edi-2);
 	edi+=eax;
@@ -143,7 +165,225 @@ int LBA_engine::draw3D1(int animState,char* animData,char* body)
 	}
 	else
 	{
-		printf("Interpole animation\n");
+		keyFramePtrOld=keyFramePtr;
+
+		lastKeyFramePtr+=8;
+		keyFramePtr+=8;
+
+		processActorVar5=*(short int*)keyFramePtr;
+		processActorSub2Var0=(*(short int*)(keyFramePtr+2)*eax)/keyFrameLength;
+		processActorVar6=(*(short int*)(keyFramePtr+4)*eax)/keyFrameLength;
+		processActorSub2Var1=(*(short int*)(keyFramePtr+6)*eax)/keyFrameLength;
+
+		lastKeyFramePtr+=8;
+		keyFramePtr+=8;
+
+		edi+=38;
+
+		if(--numOfPointInAnim)
+		{
+			animVar4=numOfPointInAnim;
+
+			do
+			{
+				animOpcode=getAnimOpcode(&edi);
+
+				switch(animOpcode)
+				{
+				case 0: //allow global rotate
+					{
+						applyAnimMode0(&edi,eax,keyFrameLength);
+						applyAnimMode0(&edi,eax,keyFrameLength);
+						applyAnimMode0(&edi,eax,keyFrameLength);
+						break;
+					}
+				case 1: //dissallow global rotate
+					{
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						break;
+					}
+				case 2: //dissallow global rotate + hide
+					{
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						break;
+					}
+				default:
+					{
+						printf("Unsupported rotaton mode %d in draw3D1!\n",animOpcode);
+						exit(1);
+					}
+				}
+
+				edi+=30;
+			}while(--animVar4);
+		}
+
+		currentX=(*(short int*)(keyFramePtrOld+2)*eax)/keyFrameLength;
+		currentZ=(*(short int*)(keyFramePtrOld+4)*eax)/keyFrameLength;
+		currentY=(*(short int*)(keyFramePtrOld+6)*eax)/keyFrameLength;
+	}
+
+	return(0);
+}
+
+int LBA_engine::draw3D1(int animState,char* animData,char* body)
+{
+	short int animOpcode;
+
+	short int var0;
+
+	char* edi;
+	char* ebx;
+	int ebp;
+	int eax;
+	int keyFrameLength;
+	int numOfPointInBody;
+	int numOfPointInAnim;
+	char* keyFramePtrOld;
+
+	//return(0);
+
+	numOfPointInAnim=*(short int*)(animData+2);
+
+	keyFramePtr=((numOfPointInAnim*8+8)*animState)+animData+8;
+
+	keyFrameLength=*(short int*)keyFramePtr;
+
+	var0=*(short int*)body;
+
+	if(!(var0&2))
+	{
+		return(0);
+	}
+
+	edi=body+16;
+
+	animVar1=edi;
+
+	ebx=*(char**)edi;
+	ebp=*(int*)(edi+4);
+
+	if(!ebx)
+	{
+		ebx=keyFramePtr;
+		ebp=keyFrameLength;
+	}
+
+	lastKeyFramePtr=ebx;
+
+	eax=*(short int*)(edi-2);
+	edi+=eax;
+
+	eax=*(short int*)(edi);
+	eax=eax+eax*2;
+	edi=edi+eax*2+12;
+
+	numOfPointInBody=*(short int*)(edi-10);
+
+	if(numOfPointInAnim>numOfPointInBody)
+	{
+		numOfPointInAnim=numOfPointInBody;
+	}
+
+	eax=time-ebp;
+
+	if(eax>=keyFrameLength)
+	{
+		int* destPtr; //keyFrame
+		int* sourcePtr;
+
+		sourcePtr=(int*)(keyFramePtr+8);
+		destPtr=(int*)edi;
+
+		do
+		{
+			*(destPtr++)=*(sourcePtr++);
+			*(destPtr++)=*(sourcePtr++);
+			
+			destPtr=(int*)(((char*)destPtr)+30);
+
+		}while(--numOfPointInAnim);
+
+		*(char**)animVar1=keyFramePtr;
+		*(int*)(animVar1+4)=time;
+
+		currentX=*(short int*)(keyFramePtr+2);
+		currentZ=*(short int*)(keyFramePtr+4);
+		currentY=*(short int*)(keyFramePtr+6);
+
+		processActorVar5=*(short int*)(keyFramePtr+8);
+		processActorSub2Var0=*(short int*)(keyFramePtr+10);
+		processActorVar6=*(short int*)(keyFramePtr+12);
+		processActorSub2Var1=*(short int*)(keyFramePtr+14);
+	
+		return(1);
+	}
+	else
+	{
+		keyFramePtrOld=keyFramePtr;
+
+		lastKeyFramePtr+=8;
+		keyFramePtr+=8;
+
+		processActorVar5=*(short int*)keyFramePtr;
+		processActorSub2Var0=(*(short int*)(keyFramePtr+2)*eax)/keyFrameLength;
+		processActorVar6=(*(short int*)(keyFramePtr+4)*eax)/keyFrameLength;
+		processActorSub2Var1=(*(short int*)(keyFramePtr+6)*eax)/keyFrameLength;
+
+		lastKeyFramePtr+=8;
+		keyFramePtr+=8;
+
+		edi+=38;
+
+		if(--numOfPointInAnim)
+		{
+			animVar4=numOfPointInAnim;
+
+			do
+			{
+				animOpcode=getAnimOpcode(&edi);
+
+				switch(animOpcode)
+				{
+				case 0: //allow global rotate
+					{
+						applyAnimMode0(&edi,eax,keyFrameLength);
+						applyAnimMode0(&edi,eax,keyFrameLength);
+						applyAnimMode0(&edi,eax,keyFrameLength);
+						break;
+					}
+				case 1: //dissallow global rotate
+					{
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						break;
+					}
+				case 2: //dissallow global rotate + hide
+					{
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						applyAnimMode1(&edi,eax,keyFrameLength);
+						break;
+					}
+				default:
+					{
+						printf("Unsupported rotaton mode %d in draw3D1!\n",animOpcode);
+						exit(1);
+					}
+				}
+
+				edi+=30;
+			}while(--animVar4);
+		}
+
+		currentX=(*(short int*)(keyFramePtrOld+2)*eax)/keyFrameLength;
+		currentZ=(*(short int*)(keyFramePtrOld+4)*eax)/keyFrameLength;
+		currentY=(*(short int*)(keyFramePtrOld+6)*eax)/keyFrameLength;
 	}
 
 	return(0);
@@ -197,7 +437,7 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
  
  if(lactor->currentAnim == -1)
  {
-	drawMenuWin1(0,getHqrdataPtr(HQRanims,var_4),bodyPtrTab[lactor->costumeIndex]);
+	setAnimAtKeyFrame(0,getHqrdataPtr(HQRanims,var_4),bodyPtrTab[lactor->costumeIndex]);
  }
  else
  {
@@ -402,4 +642,98 @@ void LBA_engine::initNewCSub(actor* lactor,int actorNum)
 		var_4++;
 	}
 
+}
+
+int LBA_engine::getAnimOpcode(char** ptr)
+{
+	short int* lptr;
+	short int opcode;
+
+	lptr=(short int*)*ptr;
+
+	*lptr=opcode=*(short int*)keyFramePtr;
+
+	keyFramePtr+=2;
+	*(ptr)=*(ptr)+2;
+	lastKeyFramePtr+=2;
+
+	return(opcode);
+}
+
+void LBA_engine::applyAnimMode0(char** ptr,int bp,int bx)
+{
+	short int* dest;
+	short int lastAngle;
+	short int newAngle;
+	short int angleDif;
+	short int computedAngle;
+
+	lastAngle=*(short int*)lastKeyFramePtr;
+	lastKeyFramePtr+=2;
+
+	newAngle=*(short int*)keyFramePtr;
+	keyFramePtr+=2;
+
+	lastAngle&=0x3FF;
+	newAngle&=0x3FF;
+
+	angleDif=newAngle-lastAngle;
+
+	if(angleDif)
+	{
+		if(angleDif<-0x200)
+		{
+			angleDif+=0x400;
+		}
+		else
+		if(angleDif>0x200)
+		{
+			angleDif-=0x400;
+		}
+
+		computedAngle=lastAngle+(angleDif*bp)/bx;
+	}
+	else
+	{
+		computedAngle=lastAngle;
+	}
+
+
+	dest=(short int*)*(ptr);
+
+	*dest=computedAngle&0x3FF;
+
+	*(ptr)=*(ptr)+2;
+}
+
+void LBA_engine::applyAnimMode1(char** ptr,int bp,int bx)
+{
+	short int* dest;
+	short int lastAngle;
+	short int newAngle;
+	short int angleDif;
+	short int computedAngle;
+
+	lastAngle=*(short int*)lastKeyFramePtr;
+	lastKeyFramePtr+=2;
+
+	newAngle=*(short int*)keyFramePtr;
+	keyFramePtr+=2;
+
+	angleDif=newAngle-lastAngle;
+
+	if(angleDif)
+	{
+		computedAngle=lastAngle+(angleDif*bp)/bx;
+	}
+	else
+	{
+		computedAngle=lastAngle;
+	}
+
+	dest=(short int*)*(ptr);
+
+	*dest=computedAngle;
+
+	*(ptr)=*(ptr)+2;
 }

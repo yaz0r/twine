@@ -285,7 +285,7 @@ void LBA_engine::fullRedraw(int param)
 
 				//printf("Draw poly actor %d\n",actorNumber);
 
-				//applyAnim(lactor->field_76,(char*)getHqrdataPtr(HQRanims,lactor->field_74),(char*)bodyPtrTab[lactor->costumeIndex]);
+				//applyAnim(lactor->animPosition,(char*)getHqrdataPtr(HQRanims,lactor->currentAnim),(char*)bodyPtrTab[lactor->costumeIndex]);
 
 				if(!startRenderer(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY,0,lactor->angle,0,bodyPtrTab[lactor->costumeIndex]))
 				{

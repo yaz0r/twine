@@ -132,8 +132,10 @@ struct pointEntry
   short int data2;
   short int data3;
   short int param;
-  int flag1;
-  int flag2;
+  short int flag;
+  short int rotate1;
+  short int rotate2;
+  short int rotate3;
   int field_10;
   int field_14;
   int field_18;
@@ -598,7 +600,7 @@ class LBA_engine
  
  fullRedrawVar6Struct fullRedrawVar6[150];
  
- unsigned char* currentCostume;
+ unsigned char* menuCostumeIndex;
  short int TCOS[4];
  
  timeStruct timeVar;
@@ -687,7 +689,7 @@ class LBA_engine
 
  char* keyFramePtr;
  char* animVar1;
- char* animVar2;
+ char* lastKeyFramePtr;
 
  short int processActorSub2Var0;
  short int processActorSub2Var1;
@@ -722,6 +724,7 @@ class LBA_engine
  short int processActorVar12;
  short int processActorVar13;
 
+ short int animVar4;
 
 // order important !
 
@@ -747,25 +750,10 @@ class LBA_engine
 	int destX;
 	int destZ;
 	int destY;
-	int rmv0;
-	int rmv1;
-	int rmv2;
-	int rmv3;
-	int rmv4;
-	int rmv5;
-	int rmv6;
-	int rmv7;
-	int rmv8;
-	int rmv9;
-	int rmv10;
-	int m2v0;
-	int m2v1;
-	int m2v2;
-	int m2v3;
-	int m2v4;
-	int m2v5;
-	int m2v6;
-	int m2v7;
+
+	int bufRotate0[9];
+	int bufRotate1[9];
+
 	int setSomething3Var2;
 	int setSomething3Var3;
 	int setSomething3Var18;
@@ -778,8 +766,12 @@ class LBA_engine
 	
 //----------------------------------------------------------------------------------------
 
+void LBA_engine::applyAnimMode0(char** ptr,int bp,int bx);
+void LBA_engine::applyAnimMode1(char** ptr,int bp,int bx);
+
 void renderS2Sub(unsigned char * esi, int ecx, pointTab *dest,int* eax);
 
+int getAnimOpcode(char** ptr);
 
 void processActorSub8(int var0,int var1,int var2,int var3);
 void processActorSub9(int var0,int var1,int var2,int var3);
@@ -880,7 +872,7 @@ void moveActor(int actorNumber);
 
 	void drawMenuWin2(short int arg_0, short int arg_4);
 
-	int drawMenuWin1(int arg_0, unsigned char * ptr, unsigned char* arg_8);
+	int setAnimAtKeyFrame(int arg_0, unsigned char * ptr, unsigned char* arg_8);
 
 
 	int drawInventory2(hqr_entry *hqrPtr, int var);

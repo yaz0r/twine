@@ -23,8 +23,6 @@ int LBA_engine::startRenderer(int arg_0,int arg_4,int arg_8,int arg_C,int arg_10
 {
 	unsigned char *ptr;
 
-	arg_10=0;
-
 	renderV1=arg_C;
 	renderV2=arg_10;
 	renderV3=arg_14;
@@ -126,25 +124,17 @@ int LBA_engine::renderM1(unsigned char * costumePtr)
 
 		do   // That's the loop that load and convert all the points in the model
 		{
-			ebx=ptEntryPtr->flag1;  // actualy, there should be 4 flags in that order = ebx,flag,edx,ecx. So this part may be buggy. at the momment
-			flag=ebx;
-			ebx>>=16;
-
-			edx=ptEntryPtr->flag2;
-			ecx=(short int)edx;
-			edx>>=16;
-
-		//	if(flag == 0)
+			if(ptEntryPtr->flag == 0)
 			{
-				renderS1(edx,ecx,ebx,ptEntryPtr); // renderS1 load the points, rotate them and store them in renderTab5 (it may do other things too..)
+				renderS1(ptEntryPtr->rotate3,ptEntryPtr->rotate2,ptEntryPtr->rotate1,ptEntryPtr); // renderS1 load the points, rotate them and store them in renderTab5 (it may do other things too..)
 			}
-		/*	else
+			else
 			{
-				if(flag == 1)
+				if(ptEntryPtr->flag == 1)
 				{
-					renderS2(edx,ecx,ebx,ptEntryPtr);
+					renderS2(ptEntryPtr->rotate3,ptEntryPtr->rotate2,ptEntryPtr->rotate1,ptEntryPtr);
 				}
-			}*/
+			}
 
 			renderV19+=36; // next entry in renderTab3
 
@@ -237,17 +227,17 @@ int LBA_engine::renderM1(unsigned char * costumePtr)
 				renderV23=40;
 				renderV24=40;
 
-				rmv1=(*renderV21)*renderV22;
-				rmv2=(*(renderV21+1))*renderV22;
-				rmv3=(*(renderV21+2))*renderV22;
+				bufRotate0[0]=(*renderV21)*renderV22;
+				bufRotate0[1]=(*(renderV21+1))*renderV22;
+				bufRotate0[2]=(*(renderV21+2))*renderV22;
 
-				rmv4=(*(renderV21+3))*renderV23;
-				rmv5=(*(renderV21+4))*renderV23;
-				rmv6=(*(renderV21+5))*renderV23;
+				bufRotate0[3]=(*(renderV21+3))*renderV23;
+				bufRotate0[4]=(*(renderV21+4))*renderV23;
+				bufRotate0[5]=(*(renderV21+5))*renderV23;
 
-				rmv7=(*(renderV21+6))*renderV24;
-				rmv8=(*(renderV21+7))*renderV24;
-				rmv9=(*(renderV21+8))*renderV24;
+				bufRotate0[6]=(*(renderV21+6))*renderV24;
+				bufRotate0[7]=(*(renderV21+7))*renderV24;
+				bufRotate0[8]=(*(renderV21+8))*renderV24;
 
 				do    // pour chaque vertex ?
 				{
@@ -263,9 +253,9 @@ int LBA_engine::renderM1(unsigned char * costumePtr)
 					col2=*(colPtr++);
 					col3=*(colPtr++);
 
-					eax=rmv1*col1+rmv2*col2+rmv3*col3;
-					eax+=rmv4*col1+rmv5*col2+rmv6*col3;
-					eax+=rmv7*col1+rmv8*col2+rmv9*col3;
+					eax=bufRotate0[0]*col1+bufRotate0[1]*col2+bufRotate0[2]*col3;
+					eax+=bufRotate0[3]*col1+bufRotate0[4]*col2+bufRotate0[5]*col3;
+					eax+=bufRotate0[6]*col1+bufRotate0[7]*col2+bufRotate0[8]*col3;
 
 					edi=0;
 
@@ -741,7 +731,7 @@ void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry* ptr)
  renderS1S1((int*)renderV19,ebp); // copie dans renderTab2 + application de la rotation
 
  // ? , numOfPoint , destination, rotation data
- renderS1S2(pri1Ptr+rs1v1,rs1v2,&renderTab5[rs1v1/6],(int*)renderV19);
+ renderS1S2(pri1Ptr+rs1v1,rs1v2,&renderTab5[rs1v1/6],(int*)renderV19); //rotation des elements du model
 }
 
 void LBA_engine::renderS1S2(unsigned char * esi, int ecx, pointTab *dest,int* eax)
@@ -774,104 +764,110 @@ void LBA_engine::renderS1S2(unsigned char * esi, int ecx, pointTab *dest,int* ea
 
 void LBA_engine::renderS1S1(int* eax, int* ebp)
 {
-  int i;
-//  int edx;
-//  int esi;
-//  int ecx;
-//  int edi;
-//  int *ptr;
+	int angle;
+	int angleVar1; //esi
+	int angleVar2; //ecx
 
-  int angle;
-  int angleVar1; //esi
-  int angleVar2; //ecx
+	int matrix1[9];
+	int matrix2[9];
 
-  if(renderV1) // rotation par vers l'avant
- {
-	angle=renderV1&0x3FF;
-	angleVar2=tab1[angle];
-	angle+=0x100;
-	angle&=0x3FF;
-	angleVar1=tab1[angle];
+	if(renderV1) // rotation par vers l'avant
+	{
+		angle=renderV1;
+		angleVar2=tab1[angle&0x3FF];
+		angle+=0x100;
+		angleVar1=tab1[angle&0x3FF];
 
-	eax[0]=ebp[0];
-	eax[3]=ebp[3];
-	eax[6]=ebp[6];
+		matrix1[0]=ebp[0];
+		matrix1[3]=ebp[3];
+		matrix1[6]=ebp[6];
 
-	eax[1]=(ebp[2]*angleVar2+ebp[1]*angleVar1)>>14;
-	eax[2]=(ebp[2]*angleVar1-ebp[1]*angleVar2)>>14;
-	eax[4]=(ebp[5]*angleVar2+ebp[4]*angleVar1)>>14;
-	eax[5]=(ebp[5]*angleVar1-ebp[4]*angleVar2)>>14;
-	eax[7]=(ebp[8]*angleVar2+ebp[7]*angleVar1)>>14;
-	eax[8]=(ebp[8]*angleVar1-ebp[7]*angleVar2)>>14;
+		matrix1[1]=(ebp[2]*angleVar2+ebp[1]*angleVar1)>>14;
+		matrix1[2]=(ebp[2]*angleVar1-ebp[1]*angleVar2)>>14;
+		matrix1[4]=(ebp[5]*angleVar2+ebp[4]*angleVar1)>>14;
+		matrix1[5]=(ebp[5]*angleVar1-ebp[4]*angleVar2)>>14;
+		matrix1[7]=(ebp[8]*angleVar2+ebp[7]*angleVar1)>>14;
+		matrix1[8]=(ebp[8]*angleVar1-ebp[7]*angleVar2)>>14;
 
-	ebp=eax;
+	}
+	else
+	{
+		matrix1[0]=ebp[0];
+		matrix1[1]=ebp[1];
+		matrix1[2]=ebp[2];
+		matrix1[3]=ebp[3];
+		matrix1[4]=ebp[4];
+		matrix1[5]=ebp[5];
+		matrix1[6]=ebp[6];
+		matrix1[7]=ebp[7];
+		matrix1[8]=ebp[8];
+	}
 
- }
- if(renderV3)
- {
-	angle=renderV3&0x3FF;
-	angleVar2=tab1[angle];
-	angle+=0x100;
-	angle&=0x3FF;
-	angleVar1=tab1[angle];
+	if(renderV3)
+	{
+		angle=renderV3;
+		angleVar2=tab1[angle&0x3FF];
+		angle+=0x100;
+		angleVar1=tab1[angle&0x3FF];
 
-	 m2v1=ebp[2];
-	 m2v4=ebp[5];
-	 m2v7=ebp[8];
+		matrix2[2]=matrix1[2];
+		matrix2[5]=matrix1[5];
+		matrix2[8]=matrix1[8];
 
-	 rmv10=(ebp[0]*angleVar1+ebp[1]*angleVar2)>>14;
-	 m2v0=(ebp[1]*angleVar1-ebp[0]*angleVar2)>>14;
-	 m2v2=(ebp[3]*angleVar1+ebp[4]*angleVar2)>>14;
-	 m2v3=(ebp[4]*angleVar1-ebp[3]*angleVar2)>>14;
-	 m2v5=(ebp[6]*angleVar1+ebp[7]*angleVar2)>>14;
-	 m2v6=(ebp[7]*angleVar1-ebp[6]*angleVar2)>>14;
+		matrix2[0]=(matrix1[1]*angleVar2+matrix1[0]*angleVar1)>>14;
+		matrix2[1]=(matrix1[1]*angleVar1-matrix1[0]*angleVar2)>>14;
+		matrix2[3]=(matrix1[4]*angleVar2+matrix1[3]*angleVar1)>>14;
+		matrix2[4]=(matrix1[4]*angleVar1-matrix1[3]*angleVar2)>>14;
+		matrix2[6]=(matrix1[7]*angleVar2+matrix1[6]*angleVar1)>>14;
+		matrix2[7]=(matrix1[7]*angleVar1-matrix1[6]*angleVar2)>>14;
 
-	 ebp=&rmv10;
- }
- if(renderV2) // rotation de coté (la plus courante)
- {
+	}
+	else
+	{
+		matrix2[0]=matrix1[0];
+		matrix2[1]=matrix1[1];
+		matrix2[2]=matrix1[2];
+		matrix2[3]=matrix1[3];
+		matrix2[4]=matrix1[4];
+		matrix2[5]=matrix1[5];
+		matrix2[6]=matrix1[6];
+		matrix2[7]=matrix1[7];
+		matrix2[8]=matrix1[8];
 
-  if(ebp==eax)
-  {
-	rmv10=*(eax++);
-	m2v0=*(eax++);
-	m2v1=*(eax++);
-	m2v2=*(eax++);
-	m2v3=*(eax++);
-	m2v4=*(eax++);
-	m2v5=*(eax++);
-	m2v6=*(eax++);
-	m2v7=*(eax++);
-  }
+	}
 
-  angle=renderV2&0x3FF;
-  angleVar2=tab1[angle]; //esi
-  angle+=0x100;
-  angle&=0x3FF;
-  angleVar1=tab1[angle]; //ecx
+	if(renderV2) // rotation de coté (la plus courante)
+	{
 
+		angle=renderV2;
+		angleVar2=tab1[angle&0x3FF]; //esi
+		angle+=0x100;
+		angleVar1=tab1[angle&0x3FF]; //ecx
 
-  eax[1]=ebp[1];
-  eax[4]=ebp[4];
-  eax[7]=ebp[7];
+		eax[1]=matrix2[1];
+		eax[4]=matrix2[4];
+		eax[7]=matrix2[7];
 
-  eax[0]=(ebp[0]*angleVar1-ebp[2]*angleVar2)>>14;
-  eax[2]=(ebp[0]*angleVar2+ebp[2]*angleVar1)>>14;
-  eax[3]=(ebp[3]*angleVar2-ebp[5]*angleVar1)>>14;
-  eax[5]=(ebp[5]*angleVar2+ebp[3]*angleVar1)>>14;
-  eax[6]=(ebp[6]*angleVar1-ebp[8]*angleVar2)>>14;
-  eax[8]=(ebp[6]*angleVar2+ebp[8]*angleVar1)>>14;
+		eax[0]=(matrix2[0]*angleVar1-matrix2[2]*angleVar2)>>14;
+		eax[2]=(matrix2[0]*angleVar2+matrix2[2]*angleVar1)>>14;
+		eax[3]=(matrix2[3]*angleVar1-matrix2[5]*angleVar2)>>14;
+		eax[5]=(matrix2[3]*angleVar2+matrix2[5]*angleVar1)>>14;
 
-  return;
- }
- else
- {
-  if(ebp!=eax)
-    for(i=0;i<9;i++)
-     *(eax++)=*(ebp++);
-
-  return;
- }
+		eax[6]=(matrix2[6]*angleVar1-matrix2[8]*angleVar2)>>14;
+		eax[8]=(matrix2[6]*angleVar2+matrix2[8]*angleVar1)>>14;
+	}
+	else
+	{
+		eax[0]=matrix2[0];
+		eax[1]=matrix2[1];
+		eax[2]=matrix2[2];
+		eax[3]=matrix2[3];
+		eax[4]=matrix2[4];
+		eax[5]=matrix2[5];
+		eax[6]=matrix2[6];
+		eax[7]=matrix2[7];
+		eax[8]=matrix2[8];
+	}
 
 }
 
@@ -919,20 +915,18 @@ void LBA_engine::renderS2(int edx, int ecx, int ebx, pointEntry* esi)
 		source=(int*)(renderTab2+esi->param);
 		dest=(int*)renderV19;
 
-		dest[0]=dest[0];
-		dest[1]=dest[1];
-		dest[2]=dest[2];
-		dest[3]=dest[3];
-		dest[4]=dest[4];
-		dest[5]=dest[5];
-		dest[6]=dest[6];
-		dest[7]=dest[7];
-		dest[8]=dest[8];
+		dest[0]=source[0];
+		dest[1]=source[1];
+		dest[2]=source[2];
+		dest[3]=source[3];
+		dest[4]=source[4];
+		dest[5]=source[5];
+		dest[6]=source[6];
+		dest[7]=source[7];
+		dest[8]=source[8];
 	}
 
 	renderS2Sub(pri1Ptr+esi->data1,esi->data2,&renderTab5[esi->data1/6],(int*)renderV19);
-
-
 }
 
 void LBA_engine::renderS2Sub(unsigned char * esi, int ecx, pointTab *dest,int* eax)

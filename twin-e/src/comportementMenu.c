@@ -2,8 +2,8 @@
 
 void LBA_engine::drawComportementEntry(int lcomportement, int arg, int arg2)
 { 
-	unsigned char * temp2;
-	int temp3;
+	unsigned char * currentAnim;
+	int	currentAnimSate;
 
 	int box_left;
 	int box_right;
@@ -16,18 +16,18 @@ void LBA_engine::drawComportementEntry(int lcomportement, int arg, int arg2)
 	box_top=110;
 	box_bottom=229;
 
-	temp2=getHqrdataPtr(HQRanims,TCOS[lcomportement]);
+	currentAnim=getHqrdataPtr(HQRanims,TCOS[lcomportement]);
 
-	temp3=winTab[lcomportement];
+	currentAnimSate=winTab[lcomportement];
 
-	if(draw3D1(temp3,(char*)temp2,(char*)currentCostume))
+	if(draw3D1(currentAnimSate,(char*)currentAnim,(char*)menuCostumeIndex))
 	{
-		temp3++; //keyFrame
-		if(temp3==getAnimMaxIndex((char*)temp2)) //max for anim
+		currentAnimSate++; //keyFrame
+		if(currentAnimSate==getAnimMaxIndex((char*)currentAnim)) //max for anim
 		{
-			temp3=getAnimStartIndex((char*)temp2); //start of anim
+			currentAnimSate=getAnimStartIndex((char*)currentAnim); //start of anim
 		}
-		winTab[lcomportement]=temp3;
+		winTab[lcomportement]=currentAnimSate;
 	}
 
 	if(arg2==0)
@@ -65,7 +65,7 @@ void LBA_engine::drawComportementEntry(int lcomportement, int arg, int arg2)
 
 	var_10=box_top;
 
-	draw3D4(box_left,box_top,box_right,box_bottom,-600,arg,currentCostume);   // dessine le model
+	draw3D4(box_left,box_top,box_right,box_bottom,-600,arg,menuCostumeIndex);   // dessine le model
 
 	osystem->refresh(videoBuffer1,box_left,var_10,box_right,box_bottom);
 	osystem->refresh(videoBuffer1,110,239,540,279);
@@ -141,16 +141,16 @@ void LBA_engine::drawMenuWin(short int var)
 	drawBoxOutLine(100,100,550,290);
 	drawBoxInsideTrans(101,101,549,289,2);
 
-	drawMenuWin1(winTab[0],getHqrdataPtr(HQRanims,TCOS[0]),currentCostume);
+	setAnimAtKeyFrame(winTab[0],getHqrdataPtr(HQRanims,TCOS[0]),menuCostumeIndex);
 	drawComportementEntry(0,var,0);
 
-	drawMenuWin1(winTab[1],getHqrdataPtr(HQRanims,TCOS[1]),currentCostume);
+	setAnimAtKeyFrame(winTab[1],getHqrdataPtr(HQRanims,TCOS[1]),menuCostumeIndex);
 	drawComportementEntry(1,var,0);
 
-	drawMenuWin1(winTab[2],getHqrdataPtr(HQRanims,TCOS[2]),currentCostume);
+	setAnimAtKeyFrame(winTab[2],getHqrdataPtr(HQRanims,TCOS[2]),menuCostumeIndex);
 	drawComportementEntry(2,var,0);
 
-	drawMenuWin1(winTab[3],getHqrdataPtr(HQRanims,TCOS[3]),currentCostume);
+	setAnimAtKeyFrame(winTab[3],getHqrdataPtr(HQRanims,TCOS[3]),menuCostumeIndex);
 	drawComportementEntry(3,var,0);
 
 	drawMenuWin2(100,300);
@@ -163,7 +163,7 @@ void LBA_engine::processComportementMenu(void)
 
 	int languageCD1temp;
 	int var_4;
-	int savedLevel;
+	int savedComportement;
 
 	freezeTime();
 
@@ -173,7 +173,7 @@ void LBA_engine::processComportementMenu(void)
 		changeTwinsenComp(0);
 	}
 
-	currentCostume=bodyPtrTab[twinsen->costumeIndex];
+	menuCostumeIndex=bodyPtrTab[twinsen->costumeIndex];
 
 	TCOS[0]=TCos0Init;
 	TCOS[1]=TCos1Init;
@@ -194,9 +194,9 @@ void LBA_engine::processComportementMenu(void)
 
 	drawMenuWin(twinsen->angle);
 
-	savedLevel=comportement;
+	savedComportement=comportement;
 
-	drawMenuWin1(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),currentCostume);
+	setAnimAtKeyFrame(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),menuCostumeIndex);
 
 	readKeyboard();
 
@@ -218,12 +218,12 @@ void LBA_engine::processComportementMenu(void)
 		if(comportement>=4)
 			comportement=0;
 
-		if(savedLevel!=comportement)
+		if(savedComportement!=comportement)
 		{
-			drawComportementEntry(comportement,twinsen->angle,1);
-			savedLevel=comportement;
+			drawComportementEntry(savedComportement,twinsen->angle,1);
+			savedComportement=comportement;
 			setActorAngleSafe(twinsen->angle,twinsen->angle-256,50,&timeVar); // rotate twinsen
-			drawMenuWin1(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),currentCostume);
+			setAnimAtKeyFrame(winTab[comportement],getHqrdataPtr(HQRanims,TCOS[comportement]),menuCostumeIndex);
 
 			while(printTextVar12)
 			{
