@@ -566,8 +566,6 @@ int StockInterAnim(char *lBufAnim, char *lBody, animTimerDataStruct* animTimerDa
   {
     ptr = (lBody + 0x10);
 
-    todo("remove hack to prevent time warp in anim");
-
     animTimerDataPtr->time = lba_time;
     animTimerDataPtr->ptr = lBufAnim;
 

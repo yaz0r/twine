@@ -304,22 +304,29 @@ void fullRedraw(int param)
 
           SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
+#ifdef _DEBUG
 #ifdef PCLIKE
           if(bShowBoundingBoxes)
 #endif
             MDL_DrawBoundingBoxHiddenPart(lactor);
+#endif
 
 #ifdef _DEBUG
           pCurrentActorRender = lactor;
 #endif
           if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ,lactor->Z - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
           {
+#ifdef _DEBUG
 #ifdef PCLIKE
             if(bShowBoundingBoxes)  
 #endif
             MDL_DrawBoundingBoxShownPart(lactor);
+#endif
 
             SetClip(renderLeft, renderTop, renderRight,renderBottom);
+
+            textWindowRight++;
+            textWindowBottom++;
 
             if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
             {
@@ -333,7 +340,7 @@ void fullRedraw(int param)
               tempZ = lactor->Y >> 8;
 
               if (lactor->field_3 & 0x7F)
-              tempZ++;
+                tempZ++;
 
               tempY = (lactor->Z + 0x100) >> 9;
 
@@ -378,7 +385,7 @@ void fullRedraw(int param)
       }
       else if (flags == 0xC00)  // shadows
       {
-        if(!(drawList[arg_1E].field_2&0x3FF))
+      /*  if(!(drawList[arg_1E].field_2&0x3FF))
         {
         //  arg_0E=1;
         }
@@ -401,7 +408,7 @@ void fullRedraw(int param)
 
         DrawOverBrick(drawList[arg_1E].X, drawList[arg_1E].Z, drawList[arg_1E].Y);
 
-        AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);         
+        AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);    */     
       }
       else if (flags < 0x1000)
       {
@@ -589,7 +596,7 @@ void fullRedraw(int param)
     for(i=0;i<debugger_numOfActorOnScreen;i++)
     {
   #define actorBoxColor 120
-    //  draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
+      draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
     }
   }
 #endif
@@ -1540,6 +1547,133 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
   int i;
   int j;
 
+  int absX;
+  int absY;
+
+  int vSize;
+
+  assert( textWindowLeft >= 0 );
+  assert( textWindowRight <= 639 );
+  assert( textWindowTop >= 0 );
+  assert( textWindowBottom <= 479 );
+
+  ptr = localBufferBrick + *(unsigned int *) (localBufferBrick + spriteNum * 4);
+
+  left = x + *(ptr + 2);
+  top = y + *(ptr + 3);
+  right = *ptr + left - 1;
+  bottom = *(ptr + 1) + top - 1;
+
+  if(left > textWindowRight || right < textWindowLeft || bottom < textWindowTop || top > textWindowBottom)
+    return;
+
+  ptr += 4;
+
+  absX = left;
+  absY = top;
+
+  vSize = (bottom - top)+1;
+
+  if(vSize <= 0)
+    return;
+
+  right++;
+  bottom++;
+
+  offset = -((right - left) - largeurEcran);
+
+  // if line on top aren't in the blitting area...
+  if(absY < textWindowTop)
+  {
+    int numOfLineToRemove;
+
+    numOfLineToRemove = textWindowTop - absY;
+
+    vSize-=numOfLineToRemove;
+    if(vSize <= 0)
+      return;
+
+    absY += numOfLineToRemove;
+
+    do
+    {
+      int lineDataSize;
+
+      lineDataSize = *(ptr++);
+      ptr+=lineDataSize;
+    }while(--numOfLineToRemove);
+  }
+
+  // reduce the vSize to remove lines on bottom
+  if(absY + vSize > textWindowBottom)
+  {
+    vSize = textWindowBottom - absY;
+    if(vSize <= 0)
+      return;
+  }
+
+  outPtr = frontVideoBuffer + screenLockupTable[absY] + left;
+  inPtr = buffer + screenLockupTable[absY] + left;
+
+  do
+  {
+    vc3 = *(ptr++);
+
+    do
+    {
+      temp = *(ptr++); // skip size
+      outPtr += temp;
+      inPtr += temp;
+
+      absX += temp;
+
+      vc3--;
+      if(!vc3)
+        break;
+      
+      temp = *(ptr++); // copy size
+
+      for(j=0;j<temp;j++)
+      {
+        if(absX>=textWindowLeft && absX<textWindowRight)
+          *outPtr = *inPtr;
+
+        absX++;
+        outPtr++;
+        inPtr++;
+      }
+    }while(--vc3);
+
+    absX = left;
+
+    outPtr += offset;
+    inPtr += offset;
+  }while(--vSize);
+}
+
+
+/*
+void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
+{
+  unsigned char *ptr;
+  int top;
+  int bottom;
+  int left;
+  int right;
+  unsigned char *outPtr;
+  unsigned char *inPtr;
+  unsigned char *outPtr2;
+  int offset;
+  int c1;
+  int c2;
+  int vc3;
+
+  int temp;
+  int iteration;
+  int i;
+  int j;
+
+  return;
 
   UnSetClip();
 
@@ -1665,7 +1799,7 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
     }
   }
 
-}
+}*/
 
 void AddPhysBox(int left, int top, int right, int bottom)
 {

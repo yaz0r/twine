@@ -367,10 +367,11 @@ int mainLoopInteration(void)
 
       }
     }
-
+#ifdef _DEBUG
 #ifdef PCLIKE
       if (debugger_processDebug())
     requestBackgroundRedraw = 1;
+#endif
 #endif
 
       if ( !disableScreenRecenter)

@@ -310,7 +310,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
   _shadePtr = (int *) (((unsigned char *) _shadePtr) + 2);
 
-  if (temp)     // process shading table
+  if (temp)     // process normal data
   {
     int eax;
     int edi;
@@ -342,7 +342,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
         _shadeMatrix[7] = (*(renderV21 + 7)) * _lightZ;
         _shadeMatrix[8] = (*(renderV21 + 8)) * _lightZ;
 
-        do  // pour chaque vertex ?
+        do  // for each normal
         {
           short int col1;
           short int col2;
@@ -1469,7 +1469,9 @@ void FillVertic_A(int ecx, int edi)
     }
     default:
     {
+#ifdef _DEBUG
       printf("Unsuported render type %d\n",FillVertic_AType);
+#endif
       break;
     }
   };

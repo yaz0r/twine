@@ -236,6 +236,7 @@ Z        X
 
 */
 
+#ifdef _DEBUG
 void MDL_DrawBoundingBox_ProjectPoints(pointTab* pPoint3d, point3dStruct* pPoint3dProjected)
 {
   projectPositionOnScreen(pPoint3d->x,pPoint3d->y,pPoint3d->z);
@@ -472,3 +473,5 @@ void MDL_DrawBoundingBoxShownPart(actor* pActor)
   drawLine(frontTopRightPoint2D.x,frontTopRightPoint2D.y,frontTopLeftPoint2D.x,frontTopLeftPoint2D.y,255);
 #endif
 }
+
+#endif

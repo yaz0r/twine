@@ -218,6 +218,7 @@ void ZoneGiveExtraBonus(ZONE_Box* pZone)
   }
 }
 
+#ifdef _DEBUG
 void ZONE_DrawZones(void)
 {
   int currentZone;
@@ -405,3 +406,5 @@ void ZONE_DrawZones(void)
 #endif
   }
 }
+
+#endif

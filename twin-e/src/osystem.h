@@ -39,8 +39,10 @@ class OSystem
   void osystem_Flip(unsigned char *videoBuffer);
   void osystem_draw320x200BufferToScreen(unsigned char *videoBuffer);
   void osystem_CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom);
+#ifdef _DEBUG
   void osystem_drawText(int X, int Y, char *text);
   void osystem_drawTextColor(int X, int Y, char *string, unsigned char R, unsigned char G, unsigned char B);
+#endif
   void osystem_drawLine(int X1,int X2,int Y1,int Y2,unsigned char color, unsigned char* palette);
   void osystem_getMouseStatus(mouseStatusStruct * mouseData);
 

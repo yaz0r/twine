@@ -21,7 +21,11 @@ void studioTick(void);
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "lba.h"
+
+#ifdef _DEBUG
 #include "SDL_ttf.h"
+#endif
+
 //#include "SDL_rotozoom.h"
 //#include "SDL_gfxPrimitives.h"
 
@@ -80,12 +84,26 @@ SDL_Surface *sdl_bufferRGBA;
 SDL_Surface *sdl_screen;  // that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
+
+#ifdef _DEBUG
 TTF_Font *font;
+#endif
 
 void osystem_mainLoop(void)
 {
+#define SPEED 15              /* Ticks per Frame */
+#define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
+#define SLEEP_GRAN 1         /* Granularity of sleep */
+
+int frames=0;                   /* Number of frames displayed */
+long int t_start,t_left;
+long int t_end;
+long int q=0;                     /* Dummy */
+
   while(1)
   {
+    t_start=SDL_GetTicks();
+    /*
 #ifdef WTIME
     if (diff_time(origin) < WTIME)
     {
@@ -98,11 +116,30 @@ void osystem_mainLoop(void)
 #endif
   }
     origin = fetch_time();
-#endif
-
-    lba_time++;
+#endif*/
 
     mainLoopInteration();
+
+    t_end=t_start+SPEED;
+    t_left=t_start-SDL_GetTicks()+SPEED;
+
+    if(t_left>0)
+    {
+        if(t_left>SLEEP_MIN)
+        {
+            SDL_Delay(t_left-SLEEP_GRAN);
+        }
+        while(SDL_GetTicks()<t_end)
+        {
+          q++;
+        };
+    }
+    else
+    {
+       // printf("CPU to slow by %d ticks/round\n",-t_left);
+    };
+
+    lba_time++;
   }
 }
 
@@ -161,6 +198,8 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
 
     atexit(SDL_Quit);
 
+#ifdef _DEBUG
+
     if (TTF_Init() < 0)
   {
       fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
@@ -178,6 +217,8 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
   }
 
     TTF_SetFontStyle(font, renderstyle);
+
+#endif
 
     SDL_WM_SetCaption("Little Big Adventure", "LBA");
 
@@ -403,6 +444,7 @@ void osystem_crossFade(char *buffer, char *palette)
     SDL_FreeSurface(tempSurface);
 }
 
+#ifdef _DEBUG
 void osystem_drawText(int X, int Y, char *string)
 {
     SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
@@ -445,6 +487,7 @@ void osystem_drawTextColor(int X, int Y, char *string, unsigned char r, unsigned
   SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
   //SDL_FreeSurface(text);
 }
+#endif
 
 void osystem_drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsigned char* palette)
 {

@@ -307,15 +307,21 @@ void GereAnimAction(actor * lactor, int actorNum)
       case 10:
         {
           ebx = edi;
+#ifdef _DEBUG
           printf("Skipping GereAnimAction opcode 10 (sound)\n");
+#endif
           break;
         }
       case 11:
         {
           ebx = edi;
+#ifdef _DEBUG
           printf("Skipping GereAnimAction opcode 11 (sound)\n");
+#endif
           break;
-          case 12: // twinsen attacking
+        }
+       case 12: // twinsen attacking
+         {
           temp = *(ebx++);
           temp--;
           ebx = edi;
@@ -369,12 +375,16 @@ void GereAnimAction(actor * lactor, int actorNum)
       case 15:
         {
           ebx = edx;
+#ifdef _DEBUG
           printf("Skipping GereAnimAction opcode 15 (Send projectile)\n");
+#endif
           break;
         }
       default:
         {
+#ifdef _DEBUG
           printf("Unsupported opcode %d in GereAnimAction\n", var_54);
+#endif
           exit(1);
         }
       }
