@@ -3,7 +3,7 @@ cfg.o comportementMenu.o costume.o decomp.o debug.o file.o fireEffect.o flaplaye
 font.o fullRedraw.o hqr.o images.o init.o input.o main.o mainLoop.o \
 mainMenu.o mainSDL.o memory.o moveActor.o music.o object.o polyRender.o \
 renderer.o resource.o room.o save.o sdl.o sys.o text.o threadCode.o time.o vars.o \
-video.o vox.o walk.o 
+video.o vox.o 
 
 CC = gcc
 
