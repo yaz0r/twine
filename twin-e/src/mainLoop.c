@@ -1205,17 +1205,17 @@ void DoAnim(int actorNum)
         }
       }
 
-            if (lactor->staticFlagsBF.bIsPushable)
+      if (lactor->staticFlagsBF.bIsPushable)
       {
           processActorX += lactor->lastX;
           processActorZ += lactor->lastZ;
           processActorY += lactor->lastY;
 
-          /*      if (lactor->staticFlagsBF.bIsUsingMiniZv)
-        {
-            processActorX = processActorX / 128 * 128 + 128;
-            processActorY = processActorY / 128 * 128 + 128;
-        }*/
+          if (lactor->staticFlagsBF.bIsUsingMiniZv)
+          {
+              processActorX = ((processActorX / 128) * 128);
+              processActorY = ((processActorY / 128) * 128);
+          }
 
           lactor->lastX = 0;
           lactor->lastZ = 0;
@@ -1812,7 +1812,7 @@ int CheckObjCol(int actorNum)
 
   while(currentlyTestedActor<numActorInRoom)
   {
-        if(currentlyTestedActor != actorNum && actors[currentlyTestedActor].costumeIndex!=-1 && !(lactor->staticFlagsBF.bIsDead) && actors[currentlyTestedActor].standOn!=actorNum) // is actor valid (not self and defined)
+    if(currentlyTestedActor != actorNum && actors[currentlyTestedActor].costumeIndex!=-1 && !(lactor->staticFlagsBF.bIsDead) && actors[currentlyTestedActor].standOn!=actorNum) // is actor valid (not self and defined)
     {
       actor* lactor2;
 
@@ -1839,7 +1839,7 @@ int CheckObjCol(int actorNum)
 
         lactor->collision=currentlyTestedActor;
 
-                if(lactor2->staticFlagsBF.bIsCarrier) // if carrier
+        if(lactor2->staticFlagsBF.bIsCarrier) // if carrier
         {
           if(lactor->dynamicFlagsBF.bUnk0100) // if can stand on object
           {
@@ -1874,9 +1874,30 @@ int CheckObjCol(int actorNum)
 
 lab12AC5:     newAngle=GetAngle(processActorX,processActorY,lactor2->X,lactor2->Z);
 
-                    if(lactor2->staticFlagsBF.bIsPushable && !(lactor->staticFlagsBF.bIsPushable))
+          if(lactor2->staticFlagsBF.bIsPushable && !(lactor->staticFlagsBF.bIsPushable)) // should be pushed ?
           {
-            printf("Special...\n");
+            lactor2->lastZ = 0;
+
+            if(lactor2->staticFlagsBF.bIsUsingMiniZv)
+            {
+              if(newAngle>=0x80 && newAngle<0x180 && lactor->angle>0x80 && lactor->angle<0x180)
+                lactor2->lastX = 192;
+
+              if(newAngle>=0x180 && newAngle<0x280 && lactor->angle>0x180 && lactor->angle<0x280)
+                lactor2->lastY = -64;
+
+              if(newAngle>=0x280 && newAngle<0x380 && lactor->angle>0x280 && lactor->angle<0x380)
+                lactor2->lastX = -64;
+
+              if((newAngle>=0x380 || newAngle<0x80) && (lactor->angle>=0x380 || lactor->angle<0x80))
+                lactor2->lastY = 192;
+
+            }
+            else
+            {
+              lactor2->lastX = processActorX - lactor->field_20;
+              lactor2->lastY = processActorY - lactor->field_24;
+            }
           }
 
           if(((lactor2->boudingBox.X.topRight-lactor2->boudingBox.X.bottomLeft)==(lactor2->boudingBox.Z.topRight-lactor2->boudingBox.Z.bottomLeft)) && ((lactor->boudingBox.X.topRight-lactor->boudingBox.X.bottomLeft)==(lactor->boudingBox.Z.topRight-lactor->boudingBox.Z.bottomLeft)))

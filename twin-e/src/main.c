@@ -162,6 +162,27 @@ void init(void)
   loadGfxSub(flagModelPtr);
 #endif
 
+#ifdef _DEBUG
+  flagActor = &actors[99];
+
+  flagActor->staticFlagsBF.bCanDrown = 0;
+  flagActor->staticFlagsBF.bComputeCollisionWithBricks = 0;
+  flagActor->staticFlagsBF.bComputeCollisionWithObj = 0;
+  flagActor->staticFlagsBF.bDoesntCastShadow = 0;
+  flagActor->staticFlagsBF.bIsCarrier = 0;
+  flagActor->staticFlagsBF.bIsDead = 0;
+  flagActor->staticFlagsBF.bIsFallable = 0;
+  flagActor->staticFlagsBF.bIsPushable = 0;
+  flagActor->staticFlagsBF.bIsSpriteActor = 0;
+  flagActor->staticFlagsBF.bIsUsingClipping = 0;
+  flagActor->staticFlagsBF.bIsUsingMiniZv = 0;
+  flagActor->staticFlagsBF.bIsZonable = 0;
+  flagActor->staticFlagsBF.bNoDisplay = 0;
+
+  HQRM_Load("file3d.hqr", 0, &flagActor->entityDataPtr);
+ // InitBody(99,121);
+#endif
+
   samplesLoaded = 1;
 
 #ifdef LBASTUDIO

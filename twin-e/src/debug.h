@@ -147,6 +147,8 @@ typedef struct winStruct winStruct;
 
 	extern boolean bShowFlags;
 
+  extern actor* flagActor;
+
     //LBA_engine * engine;
     //OSystem *osystem;
 

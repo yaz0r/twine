@@ -26,6 +26,8 @@ int debugger_cubeClipY;
 int debugger_cubeClipZ;
 //
 
+actor* flagActor;
+
 boolean bShowBoundingBoxes;
 
 boolean bShowSpriteClip;

@@ -156,7 +156,8 @@ void fullRedraw(int param)
 
               temp3--;
               drawList[a12].field_0 = temp3;  // save the shadow entry in the drawList
-              drawList[a12].field_2 = arg_42; // 0xC00
+              //drawList[a12].field_2 = arg_42; // 0xC00
+              drawList[a12].field_2 = 0xC00; // 0xC00
               drawList[a12].X = shadowX;
               drawList[a12].Z = shadowZ;
               drawList[a12].Y = shadowY;
@@ -179,6 +180,43 @@ void fullRedraw(int param)
     }
   }
 
+#ifdef _DEBUG
+  if(bShowFlags)
+  {
+    int i;
+    for(i=0;i<numFlags;i++)
+    {
+      flagDataStruct* pCurrentFlagData = &flagData[i];
+
+      projectPositionOnScreen(pCurrentFlagData->x - cameraX, pCurrentFlagData->y - cameraZ, pCurrentFlagData->z - cameraY);
+
+      if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
+      {
+        temp3 = pCurrentFlagData->z + pCurrentFlagData->x - cameraX - cameraY;
+
+        drawList[a12].field_0 = pCurrentFlagData->z + pCurrentFlagData->x - cameraX - cameraY;
+        drawList[a12].field_2 = 0x2000;
+
+        drawList[a12].X = pCurrentFlagData->x;
+        drawList[a12].Y = pCurrentFlagData->y;
+        drawList[a12].Z = pCurrentFlagData->z;
+
+        a12++;
+
+        GetShadow(pCurrentFlagData->x,pCurrentFlagData->y,pCurrentFlagData->z);
+        drawList[a12].field_0 = pCurrentFlagData->x - cameraX + pCurrentFlagData->z - cameraY - 1;
+        drawList[a12].field_2 = 0xC00;
+        drawList[a12].X = shadowX;
+        drawList[a12].Z = shadowZ;
+        drawList[a12].Y = shadowY;
+
+        a12++;
+
+      }
+    }
+  }
+#endif
+
   arg_1A = 0;
   counter = arg_1A + 0x1800;
   counter2 = 0;
@@ -186,7 +224,7 @@ void fullRedraw(int param)
    // loop2
 
   
-  do        // process extras (like key, hearts,...)
+  do  // process extras (like key, hearts,...)
   {
     if (extraList[counter2].field_0 != -1)
     {
@@ -305,28 +343,19 @@ void fullRedraw(int param)
           SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
 #ifdef _DEBUG
-#ifdef PCLIKE
           if(bShowBoundingBoxes)
-#endif
             MDL_DrawBoundingBoxHiddenPart(lactor);
-#endif
 
-#ifdef _DEBUG
           pCurrentActorRender = lactor;
 #endif
           if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ,lactor->Z - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
           {
 #ifdef _DEBUG
-#ifdef PCLIKE
             if(bShowBoundingBoxes)  
-#endif
-            MDL_DrawBoundingBoxShownPart(lactor);
+              MDL_DrawBoundingBoxShownPart(lactor);
 #endif
 
             SetClip(renderLeft, renderTop, renderRight,renderBottom);
-
-            textWindowRight++;
-            textWindowBottom++;
 
             if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
             {
@@ -385,7 +414,7 @@ void fullRedraw(int param)
       }
       else if (flags == 0xC00)  // shadows
       {
-      /*  if(!(drawList[arg_1E].field_2&0x3FF))
+        if(!(drawList[arg_1E].field_2&0x3FF))
         {
         //  arg_0E=1;
         }
@@ -406,9 +435,9 @@ void fullRedraw(int param)
          AffGraph(drawList[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
         }
 
-        DrawOverBrick(drawList[arg_1E].X, drawList[arg_1E].Z, drawList[arg_1E].Y);
+        DrawOverBrick((drawList[arg_1E].X + 0x100 )>> 9, drawList[arg_1E].Z >> 8 , (drawList[arg_1E].Y + 0x100) >>9);
 
-        AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);    */     
+        AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
       }
       else if (flags < 0x1000)
       {
@@ -456,9 +485,7 @@ void fullRedraw(int param)
 
           if (lactor->staticFlagsBF.bIsUsingClipping)
           {
-#ifndef USE_GL
             DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
-#endif
           }
           else
           {
@@ -471,10 +498,8 @@ void fullRedraw(int param)
             if (lactor->field_3 & 0x7F)
               tempZ++;
             tempY = (lactor->Z + lactor->boudingBox.Z.topRight +0x100) >> 9;
-#ifndef USE_GL
-            DrawOverBrick3(tempX, tempZ, tempY);
-#endif
 
+            DrawOverBrick3(tempX, tempZ, tempY);
           }
 
 #ifndef USE_GL
@@ -548,6 +573,44 @@ void fullRedraw(int param)
           AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
         }
       }
+#ifdef _DEBUG
+      else if (flags == 0x2000) // flag
+      {
+        AffObjetIso(drawList[arg_1E].X - cameraX, drawList[arg_1E].Y - cameraZ, drawList[arg_1E].Z - cameraY, 0, 0, 0, flagModelPtr);
+
+        SetClip(renderLeft, renderTop, renderRight,renderBottom);
+
+        if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
+        {
+          int tempX;
+          int tempZ;
+          int tempY;
+
+          lactor->dynamicFlagsBF.wasDrawn;
+
+          tempX = (drawList[arg_1E].X + 0x100 )>> 9;
+          tempZ = drawList[arg_1E].Y >> 8;
+          tempY = (drawList[arg_1E].Z + 0x100) >> 9;
+
+          DrawOverBrick(tempX, tempZ, tempY);
+
+          AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+
+          if ((lactor->staticFlagsBF.bIsBackgrounded) && param == 1) // the actor is in background. Copy it to the back buffer
+          {
+          //  blitRectangle(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (char *) frontVideoBuffer, textWindowLeft, textWindowTop, (char *) workVideoBuffer);
+          }
+        }
+
+    /*    sprintf(stringTemp, "%d", arg_1A);
+        CoulFont(255);
+
+        projectPositionOnScreen(flagData[arg_1A].x - cameraX, flagData[arg_1A].y - cameraZ, flagData[arg_1A].z - cameraY);
+
+        if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
+          Font(projectedPositionX, projectedPositionY, stringTemp); */
+      }
+#endif
 
       arg_1A++;
       UnSetClip();
@@ -603,24 +666,6 @@ void fullRedraw(int param)
 
 #ifdef _DEBUG
   ZONE_DrawZones();
-
-  if(bShowFlags)
-  {
-    for(arg_1A = 0; arg_1A < numFlags; arg_1A++)  // affichage des flags 
-    {
-      char stringTemp[256];
-
-      AffObjetIso(flagData[arg_1A].x - cameraX, flagData[arg_1A].y - cameraZ, flagData[arg_1A].z - cameraY, 0, 0, 0, flagModelPtr);
-
-      sprintf(stringTemp, "%d", arg_1A);
-      CoulFont(255);
-
-      projectPositionOnScreen(flagData[arg_1A].x - cameraX, flagData[arg_1A].y - cameraZ, flagData[arg_1A].z - cameraY);
-
-      if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
-        Font(projectedPositionX, projectedPositionY, stringTemp);
-    }
-  }
 #endif
 
   counter2 = 0;
@@ -1468,23 +1513,20 @@ void DrawOverBrick3(int X, int Z, int Y)
 
       if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
       {
-        if (currentZbufferData->x == Y && currentZbufferData->y == X)
+        if ((currentZbufferData->x == X) && (currentZbufferData->y == Y))
         {
           CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
         }
 
-      /*  if (currentZbufferData->x >= Y || currentZbufferData->y >= X)
+        if ((currentZbufferData->x > X) || (currentZbufferData->y > Y))
         {
           CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
-        } */
-        if (currentZbufferData->x + currentZbufferData->y > Y + X)
-        {
-          CopyMask(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,workVideoBuffer);
         }
       }
     }
   }
 }
+
 
 /*
 void DrawOverBrick3(int X, int Y, int Z)
@@ -1512,9 +1554,9 @@ void DrawOverBrick3(int X, int Y, int Z)
 
     while(zbufferTab[CopyBlockPhysLeft] < edi)
     {
-      if((currentZbufferData->drawY + 38 > textWindowTop) && (currentZbufferData->drawY <= textWindowBottom) && (currentZbufferData->z >= Y))
+    //  if((currentZbufferData->drawY + 38 > textWindowTop) && (currentZbufferData->drawY <= textWindowBottom) && (currentZbufferData->z >= Y))
       {
-        if((currentZbufferData->x == Z) && (currentZbufferData->y == X))
+      //  if((currentZbufferData->x == Z) && (currentZbufferData->y == X))
         {
           CopyMask(currentZbufferData->spriteNum, (CopyBlockPhysLeft*24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
         }
@@ -1525,8 +1567,8 @@ void DrawOverBrick3(int X, int Y, int Z)
     }
 
   }while(++CopyBlockPhysLeft <= CopyBlockPhysRight);
-}*/
-
+}
+*/
 void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
 {
   unsigned char *ptr;
@@ -1577,10 +1619,10 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
   if(vSize <= 0)
     return;
 
+  offset = -((right - left) - largeurEcran)-1;
+
   right++;
   bottom++;
-
-  offset = -((right - left) - largeurEcran);
 
   // if line on top aren't in the blitting area...
   if(absY < textWindowTop)
@@ -1605,9 +1647,9 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
   }
 
   // reduce the vSize to remove lines on bottom
-  if(absY + vSize > textWindowBottom)
+  if(absY + vSize - 1> textWindowBottom)
   {
-    vSize = textWindowBottom - absY;
+    vSize = textWindowBottom - absY + 1;
     if(vSize <= 0)
       return;
   }
@@ -1635,7 +1677,7 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
 
       for(j=0;j<temp;j++)
       {
-        if(absX>=textWindowLeft && absX<textWindowRight)
+        if(absX>=textWindowLeft && absX<=textWindowRight)
           *outPtr = *inPtr;
 
         absX++;
