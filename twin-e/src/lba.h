@@ -177,5 +177,6 @@ int lbaMain(int argc, char *argv[]);
 #include "zones.h"
 #include "vars.h"
 #include "angleTable.h"
+#include "overlay.h"
 
 #endif

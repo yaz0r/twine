@@ -1060,7 +1060,7 @@ void runActorScript(short int actorNumber)
         if (numKey < 0)
           numKey = 0;
 
-        //showUsedItem2D(0,6,0,0,0,1,1);
+        addOverlayObject(0,6,0,0,0,1,1);
         break;
       }
     case 40: // GIVE_GOLD_PIECES
@@ -1078,7 +1078,7 @@ void runActorScript(short int actorNumber)
         if (numCoin < 0)
           numCoin = 0;
 
-        //showUsedItem2D(0,3,10,15,0,0,3);
+        addOverlayObject(0,3,10,15,0,0,3);
 
         eax = 0;
         ecx = 0;
@@ -1088,7 +1088,7 @@ void runActorScript(short int actorNumber)
         {
           if (edi->field_0 != -1 && edi->field_6 == 2)
           {
-            //edi->field_0=BoundRegleTrois(edi->field_8,edi->field_0,100,edi->field_C-time-50);
+            edi->field_0=BoundRegleTrois(edi->field_8,edi->field_0,100,edi->field_C-time-50);
             edi->field_8 = numGoldPieces;
             edi->field_C = lba_time + 150;
             ecx = 1;
@@ -1100,7 +1100,7 @@ void runActorScript(short int actorNumber)
 
         if (!ecx)
         {
-        //showUsedItem2D(2,oldNumCoin,30,20,numCoin,ecx,3);
+          addOverlayObject(2,oldNumCoin,30,20,numCoin,ecx,3);
         }
         break;
       }
@@ -1257,7 +1257,7 @@ void runActorScript(short int actorNumber)
 
       assert(sscanf(tempPtr,"SAY_MESSAGE %d", &messageNumber) == 1);
 
-      //addOverlayObject(4,messageNumber,0,0,actorNumber,1,2);
+      addOverlayObject(4,messageNumber,0,0,actorNumber,1,2);
 
       freezeTime();
       setVoxFileAtDigit(messageNumber);

@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 actor* pCurrentActorRender;
 #endif
 
+short int overlay3dObect = 0;
+
 #ifdef GAME_DEBUG
 void draw2dBox(int x1, int y1, int x2, int y2, int color)
 {
@@ -41,7 +43,7 @@ void fullRedraw(int param)
   int counter;
   int counter2;
 
-  // int i;
+  int i;
 
   int arg_1A;
   int a12;
@@ -654,14 +656,10 @@ void fullRedraw(int param)
 
 #ifdef GAME_DEBUG
  //if(bShowSpriteClip)
+  for(i=0;i<debugger_numOfActorOnScreen;i++)
   {
-    int i;
-
-    for(i=0;i<debugger_numOfActorOnScreen;i++)
-    {
-  #define actorBoxColor 120
-      draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
-    }
+#define actorBoxColor 120
+    draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
   }
 #endif
 
@@ -671,16 +669,177 @@ void fullRedraw(int param)
 
   counter2 = 0;
 
-   // loop7
-  do
+  for(i=0;i<10;i++)
   {
-    if (overlayObjectList[counter2].field_0 != -1)
+    if(overlayObjectList[i].field_0 != -1)
     {
-       // another process
+      switch(overlayObjectList[i].positionType)
+      {
+      case 0: // normal
+        {
+          if(lba_time >= overlayObjectList[i].timeToDie)
+          {
+            overlayObjectList[i].field_0 = -1;
+            continue;
+          }
+          break;
+        }
+      case 1: // follow actor
+        {
+          projectPositionOnScreen(actors[overlayObjectList[i].followedActor].X - cameraX, actors[overlayObjectList[i].followedActor].boudingBox.Y.topRight - cameraZ, actors[overlayObjectList[i].followedActor].Z - cameraY);
+
+          overlayObjectList[i].X = projectedPositionX;
+          overlayObjectList[i].Y = projectedPositionY;
+
+          if(lba_time >= overlayObjectList[i].timeToDie)
+          {
+            overlayObjectList[i].field_0 = -1;
+            continue;
+          }
+
+          break;
+        }
+      }
+
+      switch(overlayObjectList[i].type)
+      {
+      case 0: // sprite
+        {
+          char* pSprite;
+
+          pSprite = HQR_Get(HQR_Sprites, overlayObjectList[i].field_0);
+
+          GetDxDyGraph(0,&spriteWidth,&spriteHeight,pSprite);
+
+          renderLeft = (*(short int*)(((overlayObjectList[i].field_0*8)*2)+spriteActorData))+overlayObjectList[i].X;
+          renderTop = (*(short int*)(((overlayObjectList[i].field_0*8)*2)+spriteActorData)+2)+overlayObjectList[i].Y;
+
+          renderRight = renderLeft + spriteWidth;
+          renderBottom = renderTop + spriteHeight;
+
+          AffGraph(0,renderLeft,renderTop,pSprite);
+
+          if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
+            AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+
+          break;
+        }
+      case 1: // number
+        {
+          char tempString[10];
+
+          sprintf(tempString,"%d",overlayObjectList[i].field_0);
+
+          spriteWidth = SizeFont(tempString);
+          spriteHeight = 48;
+
+          renderLeft = overlayObjectList[i].X - (spriteWidth/2);
+          renderRight = overlayObjectList[i].X + (spriteWidth/2);
+          renderTop = overlayObjectList[i].Y - 24;
+          renderBottom = overlayObjectList[i].Y + spriteHeight;
+
+          SetClip(renderLeft, renderTop, renderRight, renderBottom);
+
+          CoulFont(overlayObjectList[i].followedActor);
+
+          Font(renderLeft, renderTop, tempString);
+
+          if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
+            AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+
+          break;
+        }
+      case 2: // number range
+        {
+          char tempString[10];
+
+          sprintf(tempString,"%d",BoundRegleTrois(overlayObjectList[i].followedActor, overlayObjectList[i].field_0, 100, (overlayObjectList[i].timeToDie - lba_time - 50)));
+
+          spriteWidth = SizeFont(tempString);
+          spriteHeight = 48;
+
+          renderLeft = overlayObjectList[i].X - (spriteWidth/2);
+          renderRight = overlayObjectList[i].X + (spriteWidth/2);
+          renderTop = overlayObjectList[i].Y - 24;
+          renderBottom = overlayObjectList[i].Y + spriteHeight;
+
+          SetClip(renderLeft, renderTop, renderRight, renderBottom);
+
+          CoulFont(155);
+
+          Font(renderLeft, renderTop, tempString);
+
+          if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
+            AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+
+          break;
+        }
+      case 3: // 3d object
+        {
+          char* pObject;
+
+          Box(10,10,69,69,0);
+          SetClip(10,10,69,69);
+
+          pObject = HQR_Get(HQR_Inventory, overlayObjectList[i].field_0);
+
+          if(HQR_Flag)
+          {
+            loadGfxSub(pObject);
+          }
+
+          setCameraPosition(40,40,128,200,200);
+          setCameraAngle(0,0,0,60,0,0,16000);
+
+          overlay3dObect+=8;
+
+          AffObjetIso(0,0,0,0,overlay3dObect,0,pObject);
+
+          DrawCadre(10,10,69,69);
+          AddPhysBox(10,10,69,69);
+
+          reinitAll1();
+          break;
+        }
+      case 4: // text
+        {
+          char tempString[256];
+          GetMultiText(overlayObjectList[i].field_0, tempString);
+
+          spriteWidth = SizeFont(tempString);
+          spriteHeight = 48;
+
+          renderLeft = overlayObjectList[i].X - (spriteWidth/2);
+          renderRight = overlayObjectList[i].X + (spriteWidth/2);
+          renderTop = overlayObjectList[i].Y - 24;
+          renderBottom = overlayObjectList[i].Y + spriteHeight;
+
+          if(renderLeft < 0)
+            renderLeft = 0;
+
+          if(renderTop < 0)
+            renderTop = 0;
+
+          if(renderRight > 639)
+            renderRight = 639;
+
+          if(renderBottom > 479)
+            renderBottom = 479;
+
+          SetClip(renderLeft, renderTop, renderRight, renderBottom);
+
+          CoulFont(actors[overlayObjectList[i].followedActor].talkColor);
+
+          Font(renderLeft, renderTop, tempString);
+
+          if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
+            AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+
+          break;
+        }
+      }
     }
-    arg_1A++;
-    counter2++;
-  }while (arg_1A < 10);
+  }
 
   UnSetClip();
 
@@ -743,25 +902,6 @@ void fullRedraw(int param)
   osystem_updateImage();
 
   return;
-}
-
-void updateOverlayObjectsPosition(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
-{
-  int i;
-  short int var1;
-  short int var2;
-
-  var1 = arg_8 - arg_0;
-  var2 = arg_C - arg_4;
-
-  for (i = 0; i < 10; i++)
-  {
-    if (overlayObjectList[i].field_6 == 1)
-    {
-      overlayObjectList[i].field_2 = var1;
-      overlayObjectList[i].field_4 = var2;
-    }
-  }
 }
 
 void blitBackgroundOnDirtyBoxes(void)

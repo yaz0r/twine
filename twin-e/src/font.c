@@ -45,7 +45,8 @@ void drawCharacter(int X, int Y, unsigned char caractere)
 
   int i;
 
- // todo: gerer le cas du cropping...
+  int tempX;
+  int tempY;
 
   data = fntFont + *((short int *) (fntFont + caractere * 4));
 
@@ -61,6 +62,9 @@ void drawCharacter(int X, int Y, unsigned char caractere)
 
   screen = frontVideoBuffer + screenLockupTable[Y] + X;
 
+  tempX = X;
+  tempY = Y;
+
   toNextLine = largeurEcran - sizeX;
 
   do
@@ -70,9 +74,12 @@ void drawCharacter(int X, int Y, unsigned char caractere)
     {
       jump = *(data++);
       screen += jump;
+      tempX += jump;
       if (--index == 0)
       {
         screen += toNextLine;
+        tempY++;
+        tempX = X;
         sizeY--;
         if (sizeY <= 0)
           return;
@@ -82,10 +89,20 @@ void drawCharacter(int X, int Y, unsigned char caractere)
       {
         number = *(data++);
         for (i = 0; i < number; i++)
-          *(screen++) = usedColor;
+        {
+          if(tempX >= textWindowLeft && tempX < textWindowRight && tempY >= textWindowTop && tempY < textWindowBottom)
+            *(screen) = usedColor;
+
+          screen++;
+          tempX++;
+        }
+
         if (--index == 0)
         {
           screen += toNextLine;
+          tempY++;
+          tempX = X;
+
           sizeY--;
           if (sizeY <= 0)
             return;

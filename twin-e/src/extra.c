@@ -606,10 +606,10 @@ void GereExtras(void)
           if(extraList[i].field_20 > 1)
           {
             projectPositionOnScreen(extraList[i].X - cameraX, extraList[i].Z - cameraZ, extraList[i].Y - cameraY);
-            //addOverlayObject(1, extraList[i].field_20, projectedPositionX, projectedPositionY, 158, 0, 2);
+            addOverlayObject(1, extraList[i].field_20, projectedPositionX, projectedPositionY, 158, 0, 2);
           }
 
-          //addOverlayObject( 0, extraList[i].field_0, 10, 30, 0, 0, 2);
+          addOverlayObject( 0, extraList[i].field_0, 10, 30, 0, 0, 2);
 
           if( extraList[i].field_0 == 3)
           {

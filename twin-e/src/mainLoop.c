@@ -120,16 +120,102 @@ int mainLoopInteration(void)
             unfreezeTime();
             fullRedraw(1);
         }
-          mainLoopVar9 = -1;
-          if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->comportement == 1)  // inventory menu
+        mainLoopVar9 = -1;
+        if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->comportement == 1)  // inventory menu
         {
             freezeTime();
             TestRestoreModeSVGA(1);
             Inventory();
 
-                    // process object usage !
+            // process object usage
+            switch(mainLoopVar9)
+            {
+            case 0: // use holomap
+              {
+                //processHolomap();
+                lockPalette = 1;
+                break;
+              }
+            case 1: // use magical ball
+              {
+                if(usingSword == 1)
+                {
+                  InitBody(0,0);
+                }
 
-                    unfreezeTime();
+                usingSword = 0;
+
+                break;
+              }
+            case 2: // use sword
+              {
+                if(twinsen->body == 2)
+                {
+                  if(comportementHero == 4)
+                  {
+                    SetComportement(0);
+                  }
+
+                  InitBody(2,0);
+                  InitAnim(24,1,0,0);
+
+                  usingSword = 1;
+                }
+                break;
+              }
+            case 5: // Bù book
+              {
+                // todo: implement
+                break;
+              }
+            case 12: // protopak
+              {
+                if(vars[6])
+                {
+                  twinsen->body = 0;
+                }
+                else
+                {
+                  twinsen->body = 1;
+                }
+
+                if(comportementHero == 4)
+                {
+                  SetComportement(0);
+                }
+                else
+                {
+                  SetComportement(4);
+                }
+                break;
+              }
+            case 14: // pingoin
+              {
+                break;
+              }
+            case 26: // text
+              {
+                break;
+              }
+            case 27: // clover
+              {
+                if(twinsen->life < 50)
+                {
+                  if(numClover>0)
+                  {
+                    twinsen->life = 50;
+                    magicPoint = magicLevel*20;
+
+                    numClover--;
+
+                    addOverlayObject(3,27,0,0,0,0,3);
+                  }
+                }
+                break;
+              }
+            }
+
+            unfreezeTime();
             fullRedraw(1);
         }
           if ((byte) mainLoopVar5 & 4 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) // comportement menu
@@ -159,6 +245,7 @@ int mainLoopInteration(void)
            //needChangeRoom=currentRoom+1;
         }
 
+#ifdef GAME_DEBUG
           if (mainLoopVar7 == 'u')
         {
             needChangeRoom = currentRoom + 1;
@@ -182,6 +269,7 @@ int mainLoopInteration(void)
         {
             printf("StoryState: %d\n", --chapter);
         }
+#endif
 
 /***********************************************/
          /*
@@ -349,18 +437,47 @@ int mainLoopInteration(void)
            // implementer
         }
 
-          if (actors[i].life <= 0)  // if actor dead...
+        if (actors[i].life <= 0)  // if actor dead...
         {
-            if (!i)
+          if (!i)
           {
-                        printf("Twinsen dead..\n");
+            if(actors[i].dynamicFlagsBF.bUnk0004)
+            {
+              if(numClover > 0) // auto use clover
+              {
+                twinsen->X = newTwinsenX;
+                twinsen->Y = newTwinsenZ;
+                twinsen->Z = newTwinsenY;
+
+                needChangeRoom = currentRoom;
+                magicPoint = magicLevel * 20;
+
+                newCameraX = (twinsen->X >> 9);
+                newCameraZ = (twinsen->Y >> 8);
+                newCameraY = (twinsen->Z >> 9);
+
+                twinsenPositionModeInNewCube = 3;
+
+                twinsen->life = 50;
+                requestBackgroundRedraw = 1;
+                lockPalette = 1;
+
+                numClover--;
+
+                cropBottomScreen = i; // !!!???
+              }
+              else // game over ...
+              {
+                printf("Game over...\n");
+              }
+            }
           }
-            else
+          else
           {
-                        CheckCarrier(i);
+            CheckCarrier(i);
             actors[i].dynamicFlagsBF.bUnk0020 = 1;
-                        actors[i].costumeIndex = -1;
-                        actors[i].zone = -1;
+            actors[i].costumeIndex = -1;
+            actors[i].zone = -1;
           }
         }
 
@@ -609,58 +726,57 @@ void reinitVars(void)
 
    // reinitExtraObjectList();
 
-    for (i = 0; i < 10; i++)
-  overlayObjectList[i].field_0 = -1;
+  for (i = 0; i < 10; i++)
+    overlayObjectList[i].field_0 = -1;
 
-    for (i = 0; i < 80; i++)
-  cubeFlags[i] = 0;
+  for (i = 0; i < 80; i++)
+    cubeFlags[i] = 0;
 
-    for (i = 0; i < 255; i++)
-  vars[i] = 0;
+  for (i = 0; i < 255; i++)
+    vars[i] = 0;
 
-    for (i = 0; i < 28; i++)
-  itemUsed[i] = 0;
+  for (i = 0; i < 28; i++)
+    itemUsed[i] = 0;
 
-    sceneVar2.field_0 = -1;
-    sceneVar2.field_2 = -1;
-    sceneVar2.field_4 = -1;
-    sceneVar2.field_6 = -1;
+  sceneVar2.field_0 = -1;
+  sceneVar2.field_2 = -1;
+  sceneVar2.field_4 = -1;
+  sceneVar2.field_6 = -1;
 
-    sceneVar3.field_0 = 1;
-    sceneVar3.field_2 = 1;
-    sceneVar3.field_4 = 1;
-    sceneVar3.field_6 = 1;
+  sceneVar3.field_0 = 1;
+  sceneVar3.field_2 = 1;
+  sceneVar3.field_4 = 1;
+  sceneVar3.field_6 = 1;
 
-    sceneVar4.field_0 = 1;
-    sceneVar4.field_2 = 1;
-    sceneVar4.field_4 = 1;
-    sceneVar4.field_6 = 1;
+  sceneVar4.field_0 = 1;
+  sceneVar4.field_2 = 1;
+  sceneVar4.field_4 = 1;
+  sceneVar4.field_6 = 1;
 
-    for (i = 0; i < 150; i++)
-  GV14[i] = 0;
+  for (i = 0; i < 150; i++)
+    GV14[i] = 0;
 
-    numActorInRoom = 0;
-    currentPositionInBodyPtrTab = 0;
-    numOfZones = 0;
+  numActorInRoom = 0;
+  currentPositionInBodyPtrTab = 0;
+  numOfZones = 0;
 
-    numFlags = 0;
-
+  numFlags = 0;
 }
 
 void reinitAll3(void)
 {
-    resetActor(0);
-    magicBallIdx = -1;
-    numCloverBox = 2;
-    numClover = 2;
-    numCoin = 0;
-    numKey = 0;
-    magicPoint = 0;
-    usingSword = 0;
-    twinsen->body = 0;
-    twinsen->life = 50;
-    twinsen->talkColor = 4;
+  resetActor(0);
 
+  magicBallIdx = -1;
+  numCloverBox = 2;
+  numClover = 2;
+  numCoin = 0;
+  numKey = 0;
+  magicPoint = 0;
+  usingSword = 0;
+  twinsen->body = 0;
+  twinsen->life = 50;
+  twinsen->talkColor = 4;
 }
 
 void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_C,

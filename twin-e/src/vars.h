@@ -325,19 +325,6 @@ struct sceneStruct
 
 typedef struct sceneStruct sceneStruct;
 
-struct overlayObjectListStruct
-{
-  short int field_0;
-  short int field_2;
-  short int field_4;
-  short int field_6;
-  short int field_8;
-  short int field_A;
-  int field_C;
-};
-
-typedef struct overlayObjectListStruct overlayObjectListStruct;
-
 struct extraListStruct
 {
   short int field_0;
@@ -790,7 +777,6 @@ extern int numActorInRoom;
 extern extraListStruct extraList[50];
 
 extern byte cubeFlags[80];
-extern overlayObjectListStruct overlayObjectList[10];
 extern byte itemUsed[28];
 
 extern int currentPositionInBodyPtrTab;
@@ -1278,8 +1264,6 @@ void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int
 void fullRedrawSub5(void);
 
 void blitBackgroundOnDirtyBoxes(void);
-
-void updateOverlayObjectsPosition(short int arg_0, short int arg_4, short int arg_8, short int arg_C);
 
 void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8, timeStruct * timePtr);
 

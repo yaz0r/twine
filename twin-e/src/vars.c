@@ -553,7 +553,6 @@ int numActorInRoom;
 extraListStruct extraList[50];
 
 byte cubeFlags[80];
-overlayObjectListStruct overlayObjectList[10];
 byte itemUsed[28];
 
 int currentPositionInBodyPtrTab;
@@ -905,7 +904,7 @@ void initVars(void)
   buttonDrawVar1 = 550;
 
 #ifdef ENGLISH_LANG
-  language = 1;
+  language = 0;
 #else
   language = 1;   // langue ecrite
 #endif

@@ -152,6 +152,7 @@ void readKeyboard(void)
           localKey = 'h';
           break;
         }
+#ifdef GAME_DEBUG
       case SDLK_u:  // next room
         {
           localKey = 'u';
@@ -172,6 +173,7 @@ void readKeyboard(void)
           localKey = 'g';
           break;
         }
+#endif
       }
 
       for (i = 0; i < 28; i++)
