@@ -157,8 +157,34 @@ int LBA_engine::mainLoop(void)
 				    newCameraZ = actors[reinitVar8].Z >> 8;
 				    changeRoomVar6 = actors[reinitVar8].Y >> 9;
 				    mainLoopVar2 = 1;
-				    needChangeRoom = currentRoom + 1;
+				    //needChangeRoom = 119;
+					//needChangeRoom=currentRoom+1;
 				}
+
+				if(mainLoopVar7 == 'u')
+				{
+					needChangeRoom=currentRoom+1;
+				}
+				if(mainLoopVar7 == 'j')
+				{
+					needChangeRoom=currentRoom-1;
+				}
+
+				if(mainLoopVar7 == 'h')
+				{
+					actors[0].life=50;
+					playAnim(0,0,255,0);
+				}
+
+				if(mainLoopVar7 == 't')
+				{
+					printf("StoryState: %d\n",++newGameVar2);
+				}
+				if(mainLoopVar7 == 'g')
+				{
+					printf("StoryState: %d\n",--newGameVar2);
+				}
+
 
 /***********************************************/
 			   /*
@@ -166,8 +192,8 @@ int LBA_engine::mainLoop(void)
 			    */
 /***********************************************/
 
-			   /*
-			      if (printTextVar12 & 2)      // x-- -> bas
+			   
+			  /*    if (printTextVar12 & 2)      // x-- -> bas
 			      {
 			      changeRoomVar6++;
 			      mainLoopVar2 = 1;
@@ -189,8 +215,8 @@ int LBA_engine::mainLoop(void)
 			      {
 			      newCameraX++;
 			      mainLoopVar2 = 1;
-			      }
-			    */
+			      }*/
+			    
 
 /**********************************************/
 			   // angle debug
@@ -539,7 +565,6 @@ void LBA_engine::waitRetrace(void)
 void LBA_engine::freezeTime(void)
 {
     if (!time1)
-
 	time3 = time;
 
     time1++;
@@ -548,8 +573,9 @@ void LBA_engine::freezeTime(void)
 
 void LBA_engine::unfreezeTime(void)
 {
+	--time1;
 
-    if (--time <= 0)
+	if(time1==0)
 	time = time3;
 }
 
@@ -1215,7 +1241,7 @@ void LBA_engine::processActor(int actorNum)
 				    processActorX = lactor->X + destX;
 				    processActorY = lactor->Y + destZ;
 
-				    setActorAngle(0, lactor->field_34, 0, &lactor->time);
+				    setActorAngle(0, lactor->field_34, 50, &lactor->time);
 
 				    if (lactor->field_62 & 0x40)	// can rotate ?
 					{
@@ -1448,7 +1474,7 @@ void LBA_engine::processActor(int actorNum)
 	    processActorY = processActorVar4;
 	}
 
-    if (lactor->field_60 & 0x2)
+    if (lactor->field_60 & 0x2) // if gravity affect actor
 	{
 	    int position;
 
@@ -1460,7 +1486,7 @@ void LBA_engine::processActor(int actorNum)
 		    if (position == 1)
 			{
 			    printf("currentpos dans col 1 ?\n");
-			    lactor->Z = processActorZ = abs(processActorZ) + 0x100;
+			    lactor->Z = processActorZ = processActorZ / 256 * 256 + 256;
 			}
 		    else
 			{
@@ -1471,7 +1497,7 @@ void LBA_engine::processActor(int actorNum)
 	    if (lactor->field_60 & 1)	// actor fall 
 		processActorSub6(actorNum);
 
-	    if ((lactor->standOn != -1) && (lactor->field_62 & 0x100))	// if actor standing on another actor and ? 
+	    if ((lactor->standOn != -1) && (lactor->field_62 & 0x100))	// if actor standing on another actor and falling
 		processActorSub7();
 
 	    fieldCauseDamage = 0;
@@ -1644,6 +1670,43 @@ void LBA_engine::processActor(int actorNum)
 
 void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3)
 {
+    int pos;
+
+    pos = getCurPos(processActorX, processActorZ, processActorY);
+
+    processActorX = var0;
+    processActorZ = var1;
+    processActorY = var2;
+
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
+	&& processActorY <= 0x7E00)
+	{
+	    processActorSub5(pos);
+	    pos = getCurPos(processActorX, processActorZ, processActorY);
+
+	    if (pos != 0 && pos == 1)
+		{
+		    fieldCauseDamage |= var3;
+		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
+		    if (pos == 1)
+			{
+			    pos = getCurPos(var0 + processActorVar2, processActorZ, processActorY);
+
+			    if (pos != 1)
+				{
+				    processActorVar11 = processActorVar2;
+				}
+			}
+		    else
+			{
+			    processActorVar13 = processActorVar4;
+			}
+		}
+	}
+
+    processActorX = processActorVar11;
+    processActorZ = processActorVar12;
+    processActorY = processActorVar13;
 }
 
 void LBA_engine::processActorSub9(int var0, int var1, int var2, int var3)
@@ -1666,7 +1729,7 @@ void LBA_engine::processActorSub9(int var0, int var1, int var2, int var3)
 		{
 		    fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
-		    if (pos = 1)
+		    if (pos == 1)
 			{
 			    pos = getCurPos(var0 + processActorVar2, processActorZ, processActorY);
 
@@ -2039,6 +2102,40 @@ void LBA_engine::checkZones(actor * lactor, int actorNumber)
 				       lactor->field_5A = *(short int *) (localPtr + 14);
 				       break;
 				   }
+				case 3: // cube clip
+					{
+						if(reinitVar8==actorNumber)
+						{
+						//	var_C=1;
+
+						}
+					}
+				case 4: // find object
+					{
+						if(!actorNumber)
+						{
+							if(updateActorScript!=0)
+							{
+								playAnim(11,1,0,0);
+							}
+						}
+						break;
+					}
+				case 5: // display text
+					{
+						if(!actorNumber && updateActorScript)
+						{
+							freezeTime();
+							mainLoop2(1);
+							setNewTextColor(*(short int*)(localPtr+0x10));
+							//talkingActor=actorNumber;
+							printTextFullScreen(*(short int*)(localPtr+0xE));
+							unfreezeTime();
+							fullRedraw(1);
+							//waitForKey();
+						}
+						break;
+					}
 				default:
 				   {
 				       printf("Unsupported checkZones opcode %d for actor %d!\n",

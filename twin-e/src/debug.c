@@ -416,7 +416,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		   }
 		case 15:
 		   {
-		       sprintf(buffer, "look at flag %d", *(scriptPtr++));
+		       sprintf(buffer, "translate to flag %d", *(scriptPtr++));
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -439,16 +439,19 @@ scriptData *debugger::getActorTrackScript(int num)
 		   }
 		case 18:
 		   {
-		       int temp1;
-		       int temp2;
+		       short int temp1;
+		       short int temp2;
+			   char temp3;
+
+				temp3 =*(scriptPtr++);
 
 		       temp1 = *(int *) (scriptPtr);
+			   scriptPtr += 2;
+
 		       temp2 = *(int *) (scriptPtr);
+			   scriptPtr+=2;
 
-		       scriptPtr += 4;
-		       scriptPtr += 4;
-
-		       sprintf(buffer, "wait %d %d", temp1, temp2);
+		       sprintf(buffer, "wait %d %d %d", temp1, temp2,temp3);
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -559,10 +562,25 @@ scriptData *debugger::getActorTrackScript(int num)
 		       scriptPtr += 2;
 		       sprintf(buffer, "opcode 29 (sample): %d", temp);
 		       addLine(buffer, script);
+			   break;
 		   }
+		case 31:
+			{
+				short int temp;
+
+				temp= *(short int*)scriptPtr;
+				scriptPtr+=2;
+				sprintf(buffer,"moveVar1=%d",temp);
+				addLine(buffer,script);
+				break;
+			}
 		case 33:
 		   {
-		       sprintf(buffer, "angle toward %d %d", *(scriptPtr++), *(scriptPtr++));
+			   short int temp;
+
+			   temp = *(short int*) scriptPtr;
+			   scriptPtr+=2;
+		       sprintf(buffer, "angle toward %d ?", temp);
 		       addLine(buffer, script);
 		       break;
 		   }

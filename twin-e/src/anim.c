@@ -460,8 +460,7 @@ int LBA_engine::playAnim(char costume, short int arg_4, unsigned char arg_8, sho
     if (lactor->field_60 & 0x400)	// si c'est un sprite
 	return (0);
 
-    if (costume == lactor->costume && lactor->currentAnim != -1)	// le costume est deja
-       // loadé
+    if (costume == lactor->costume && lactor->currentAnim != -1)	// le costume est deja loadé
 	return (1);
 
     if (arg_8 == 255 && lactor->field_78 != 2)

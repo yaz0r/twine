@@ -174,6 +174,21 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       actorScriptPtr += 2;
 			       break;
 			   }
+			case 21:
+				{
+					lactor->positionInActorScript=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+					break;
+				}
+			case 22:
+				{
+					actor* tempActor;
+					tempActor=&actors[*(actorScriptPtr++)];
+
+					tempActor->positionInActorScript=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+					break;
+				}
 
 			case 23:	// SET_TRACK
 			   {
@@ -198,15 +213,15 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   {
 			       freezeTime();
 			       mainLoop2(1);
-			      // if(showTalkIcon)
-			      // drawTalkIcon(actorNumber);
+//			       if(showTalkIcon)
+//			       drawTalkIcon(actorNumber);
 			       setNewTextColor(lactor->talkColor);	// setTextColor
-			      // talkingActor=actorNumber;
+//			       talkingActor=actorNumber;
 			       printTextFullScreen(*(short int *) actorScriptPtr);
 			       actorScriptPtr += 2;
 			       unfreezeTime();
 			       fullRedraw(1);
-			      // waitForKey();
+//			       waitForKey();
 			       break;
 			   }
 
@@ -253,24 +268,22 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       newActorToFollow = *(actorScriptPtr++);
 
-			       if (reinitVar8 == newActorToFollow)
+			       if (reinitVar8 != newActorToFollow)
 				   {
-				       break;
+						newCameraX = (actors[newActorToFollow].X+256)/512;
+						newCameraZ = (actors[newActorToFollow].Z+256)/256;
+						newCameraY = (actors[newActorToFollow].Y+256)/512;
+
+						reinitVar8 = newActorToFollow;
+						mainLoopVar2 = 1;
 				   }
-
-			       newCameraX = actors[newActorToFollow].X >> 9;
-			       newCameraZ = actors[newActorToFollow].Z >> 8;
-			       newCameraY = actors[newActorToFollow].Y >> 8;
-
-			       reinitVar8 = newActorToFollow;
-			       mainLoopVar2 = 1;
 
 			       break;
 			   }
 
 			case 30:
 			   {
-			       playAnim(0, 0, -1, 0);
+			       playAnim(0, 0, 255, 0);
 			       changeTwinsenComp(*(actorScriptPtr++));
 			       break;
 			   }
@@ -334,7 +347,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       temp = *(actorScriptPtr++);
 
-			      // removeActorFromRoom(temp);
+//			       removeActorFromRoom(temp);
 
 			       actors[temp].field_62 |= 0x20;
 			       actors[temp].costumeIndex = -1;
@@ -346,7 +359,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			case 38:
 			   {
-			      // removeActorFromRoom(actorNumber); //todo: implement
+//			       removeActorFromRoom(actorNumber);
 			       lactor->field_62 |= 0x20;
 			       lactor->costumeIndex = -1;
 			       lactor->field_5A = -1;
@@ -354,17 +367,78 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       break;
 			   }
 
+			case 39:
+				{
+					numKey--;
+
+					if(numKey<0)
+						numKey=0;
+
+//					showUsedItem2D(0,6,0,0,0,1,1);
+					break;
+				}
+			case 40:
+				{
+					int eax;
+					int ecx;
+					roomData2Struct* edi;
+					int oldNumCoin;
+
+					short int cost;
+					cost=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+
+					oldNumCoin=numCoin;
+					numCoin-=cost;
+					if(numCoin<0)
+						numCoin=0;
+					
+//					showUsedItem2D(0,3,10,15,0,0,3);
+
+					eax=0;
+					ecx=0;
+					edi=roomData2;
+					
+
+					while(eax<10)
+					{
+						if(edi->field_0!=-1 && edi->field_6==2)
+						{
+//							edi->field_0=addRoomData2Entry(edi->field_8,edi->field_0,100,edi->field_C-time-50);
+							edi->field_8=numCoin;
+							edi->field_C=time+150;
+							ecx=1;
+							break;
+						}
+						edi++;
+						eax++;
+					}
+
+					if(!ecx)
+					{
+//						showUsedItem2D(2,oldNumCoin,30,20,numCoin,ecx,3);
+					}
+
+					break;
+
+				}
 			case 41:
+				{
 			    OPbreak = -1;
 			    lactor->positionInActorScript = -1;
 			    break;
+				}
 			case 42:	// stopTrack
+				{
 			    lactor->field_5E = lactor->currentLabelPtr;
 			    lactor->positionInMoveScript = -1;
 			    break;
+				}
 			case 43:	// resumeTrack
+				{
 			    lactor->positionInMoveScript = lactor->field_5E;
 			    break;
+				}
 			case 44:
 			   {
 			       int temp;
@@ -375,12 +449,14 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       temp = *(actorScriptPtr++);
 
-			      /*
-			       * if(showTalkVar) { drawTalkIcon(temp); } 
-			       */
+			      
+/*			       if(showTalkVar) 
+				   {
+					   drawTalkIcon(temp);
+				   } */
 
 			       setNewTextColor(actors[temp].talkColor);
-			      // talkingActor=temp;
+//			       talkingActor=temp;
 
 			       textNum = *(short int *) actorScriptPtr;
 
@@ -392,42 +468,67 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       fullRedraw(1);
 
-			      // waitForKey();
+//			       waitForKey();
 
 			       break;
 			   }
 
 			case 45:
+				{
 			    newGameVar2++;
 			    break;
+				}
+			case 46:
+				{
+					int temp;
+
+					freezeTime();
+					mainLoop2(1);
+
+					temp=*(actorScriptPtr++);
+
+//					actorTalk(temp);
+
+					unfreezeTime();
+					fullRedraw(1);
+					break;
+				}
 			case 47:
+				{
 			    lactor->angle = 0x300;
 			    lactor->X = lactor->lastX - *((short int *) actorScriptPtr);
 			    lactor->field_62 &= 0xFFBF;
 			    lactor->field_34 = 0;
 			    actorScriptPtr += 2;
 			    break;
+				}
 			case 48:
+				{
 			    lactor->angle = 0x100;
 			    lactor->X = lactor->lastX + *((short int *) actorScriptPtr);
 			    lactor->field_62 &= 0xFFBF;
 			    lactor->field_34 = 0;
 			    actorScriptPtr += 2;
 			    break;
+				}
 			case 49:
+				{
 			    lactor->angle = 0x200;
 			    lactor->Y = lactor->lastY - *((short int *) actorScriptPtr);
 			    lactor->field_62 &= 0xFFBF;
 			    lactor->field_34 = 0;
 			    actorScriptPtr += 2;
 			    break;
+				}
 			case 50:
+				{
 			    lactor->angle = 0;
 			    lactor->Y = lactor->lastY + *((short int *) actorScriptPtr);
 			    lactor->field_62 &= 0xFFBF;
 			    lactor->field_34 = 0;
 			    actorScriptPtr += 2;
 			    break;
+				}
 			case 51:
 			   {
 			       char temp;
@@ -437,9 +538,8 @@ void LBA_engine::runActorScript(short int actorNumber)
 				       addObject(lactor);
 				   }
 
-			       temp = *actorScriptPtr;
+			       temp = *(actorScriptPtr++);
 
-			       actorScriptPtr++;
 			       if (temp != 0)
 				   {
 				       lactor->field_10 |= 1;
@@ -453,6 +553,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       break;
 			   }
 			case 53:
+				{
 			    if (*(actorScriptPtr++) != 0)
 				{
 				    lactor->field_60 |= 1;
@@ -462,7 +563,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 				    lactor->field_60 &= 0xFFFE;
 				}
 			    break;
+				}
 			case 54:
+				{
 			    char temp;
 
 			    temp = *(actorScriptPtr++);
@@ -479,7 +582,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 				    lactor->field_60 |= 0x22;
 				}
 			    break;
+				}
 			case 55:
+				{
 			    manipActor(lactor);
 			    if (doCalc())
 				{
@@ -491,7 +596,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 				    actorScriptPtr += 2;
 				}
 			    break;
+				}
 			case 56:
+				{
 			    if (*(actorScriptPtr++) != 0)
 				{
 				    lactor->field_60 |= 0x200;
@@ -501,13 +608,42 @@ void LBA_engine::runActorScript(short int actorNumber)
 				    lactor->field_60 &= 0xFDFF;
 				}
 			    break;
-
+				}
 			case 57:
-			    actorScriptPtr++;
-			    printf("Warning: ignoring opcode 57.\n");
-			    break;
+				{
+					char temp;
+
+					temp=*(actorScriptPtr++);
+
+					if(temp!=0)
+					{
+						if(drawInGameTransBox==0)
+						{
+/*							if(zoomMode!=0)
+							{
+								fadeOut(menuPal);
+//								enterZoom();
+								resetPalette();
+								mainLoopVar3=1;
+							}*/
+						}
+					}
+					else
+					{
+						if(drawInGameTransBox!=0)
+						{
+//							fadeOut(menuPal);
+//							exitZoom();
+							resetPalette();
+							mainLoopVar3=1;
+							mainLoopVar2=1;
+						}
+					}
+					break;
+				}
 			case 58:
-			    manipActorResult = *actorScriptPtr++;	// position flag number
+				{
+			    manipActorResult = *(actorScriptPtr++);	// position flag number
 
 			    destX = flagData[manipActorResult].x;
 			    destZ = flagData[manipActorResult].z;
@@ -517,10 +653,32 @@ void LBA_engine::runActorScript(short int actorNumber)
 			    lactor->Z = destZ;
 			    lactor->Y = destY;
 			    break;
+				}
+			case 59:
+				{
+					GV6=*(actorScriptPtr++);
+					GV7=GV6*20;
+					break;
+				}
+			case 60:
+				{
+					GV7=*(actorScriptPtr++);
+					if(GV7<0)
+						GV7=0;
 
+					break;
+				}
 			case 61:
-			    actors[*(actorScriptPtr++)].life = *(actorScriptPtr++);
-			    break;
+				{
+					char temp1;
+					char temp2;
+
+					temp1=*(actorScriptPtr++);
+					temp2=*(actorScriptPtr++);
+
+					actors[temp1].life = temp2;
+					break;
+				}
 			case 63:
 			    printf("Ignoring actorScript opcode 63\n");
 			    actorScriptPtr += 2;
@@ -532,6 +690,14 @@ void LBA_engine::runActorScript(short int actorNumber)
 			    if (entryTemp < 24)
 				GV16[entryTemp] = 1;
 
+			    break;
+			case 68:
+			    printf("Ignoring actorScript opcode 68\n");
+			    actorScriptPtr += 2;
+			    break;
+			case 69:
+			    printf("Ignoring actorScript opcode 69\n");
+			    actorScriptPtr += 2;
 			    break;
 			case 70:
 			   {

@@ -215,7 +215,7 @@ struct roomData2Struct {
     short int field_6;
     short int field_8;
     short int field_A;
-    short int field_C;
+    int field_C;
 };
 
 struct reinitAll2DataVar1Struct {
@@ -856,6 +856,8 @@ class LBA_engine {
 
 	short int twinsenKey;
 	short int twinsenKey2;
+
+	short int moveVar1;
 
    // order important !
 

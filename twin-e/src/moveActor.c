@@ -215,12 +215,12 @@ void LBA_engine::moveActor(int actorNumber)
 			    lactor->angle = calcAngleToward(lactor->X, lactor->Y, destX, destY);
 			    lactor->field_78 = calcAngleToward(lactor->Z, 0, destZ, moveActorVar1);
 
-			    if (moveActorVar1 > 100)
+			/*    if (moveActorVar1 > 100)
 				{
 				    continueMove = 0;
 				    lactor->positionInMoveScript -= 2;
 				}
-			    else
+			    else*/
 				{
 				    lactor->X = destX;
 				    lactor->Z = destZ;
@@ -343,18 +343,51 @@ void LBA_engine::moveActor(int actorNumber)
 		   }
 
 		case 28:
-		    fullRedrawS3(*(short int *) scriptPtr, 0x1000, 0, lactor->X, lactor->Z,
-				 lactor->Y);
+		    fullRedrawS3(*(short int *) scriptPtr, 0x1000, 0, lactor->X, lactor->Z,lactor->Y);
 		    lactor->positionInMoveScript += 2;
 		    break;
 		case 29:
 		    printf("skipping actor move opcode 29 (playSound)\n");
 		    lactor->positionInMoveScript += 2;
 		    break;
-		case 33:
-		    printf("skipping actor move opcode 33\n");
+		case 31:
+			{
+				moveVar1=*(short int*)scriptPtr;
 		    lactor->positionInMoveScript += 2;
 		    break;
+			}
+		case 32:
+			{
+			    printf("skipping actor move opcode 31 (playSound at moveVar1)\n");
+			    lactor->positionInMoveScript += 2;
+			    break;
+			}
+		case 33: // look at twinsen
+			{
+				lactor->positionInMoveScript += 2;
+				if(!(lactor->field_60&0x400))
+				{
+					manipActorResult=*(short int*)scriptPtr;
+					if(manipActorResult==-1 && lactor->time.numOfStep==0)
+					{
+						manipActorResult=calcAngleToward(lactor->X,lactor->Y,twinsen->X,twinsen->Y);
+						updateActorAngle(lactor->angle,manipActorResult,lactor->field_34,&lactor->time);
+						*(short int*)scriptPtr=manipActorResult;
+					}
+
+					if(lactor->angle!=manipActorResult)
+					{
+						continueMove=0;
+						lactor->positionInMoveScript-=3;
+					}
+					else
+					{
+						changeActorAngle(lactor);
+						*(short int*)scriptPtr=-1;
+					}
+				}
+				break;
+			}
 		default:
 		    printf("Unsupported move opcode %d\n", currentOpcode);
 		    exit(1);

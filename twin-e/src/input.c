@@ -127,9 +127,25 @@ void LBA_engine::readKeyboard(void)
 		localKey = 0x1D;
 	    if (event.key.keysym.sym == SDLK_SPACE)
 		localKey = 0x39;
+		if (event.key.keysym.sym == SDLK_PAGEUP)
+		localKey = 0x49;
 
-	    if (event.key.keysym.sym == SDLK_p)
+	    if (event.key.keysym.sym == SDLK_p) // pause
 		localKey = 'p';
+		if (event.key.keysym.sym == SDLK_h) // holomap
+		localKey = 'h';
+
+		if (event.key.keysym.sym == SDLK_u) // next room
+			localKey ='u';
+		if (event.key.keysym.sym == SDLK_j) // previous room
+			localKey ='j';
+		if (event.key.keysym.sym == SDLK_h) // revive twinsen
+			localKey ='h';
+		if (event.key.keysym.sym == SDLK_t) // increase story state
+			localKey ='t';
+		if (event.key.keysym.sym == SDLK_g) // decrease story state
+			localKey ='g';
+
 
 	    for (i = 0; i < 28; i++)
 		{
