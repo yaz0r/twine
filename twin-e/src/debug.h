@@ -8,6 +8,8 @@ enum buttonType {
     BUTTON_OK,
     BUTTON_TRACK_UP,
     BUTTON_TRACK_DOWN,
+	BUTTON_COMP_UP,
+	BUTTON_COMP_DOWN,
 };
 
 struct buttonStruct {

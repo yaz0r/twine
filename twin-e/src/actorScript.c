@@ -29,9 +29,6 @@ void
     unsigned char *opcodePtr;
     int temp;
 
-    if (currentRoom == 41)
-	return;
-
     lactor = &actors[actorNumber];
 
     OPbreak = 0;
@@ -223,8 +220,10 @@ void
 
 	    case 26:
 		{
-		    actorScriptPtr++;
-		    printf("Ignoring actor opcode 26\n");
+			int ltemp=*(actorScriptPtr++);
+			ltemp<<=11;
+			lactor->field_60&0xF7FF;
+			lactor->field_60|=ltemp;
 		    break;
 		}
 
@@ -294,7 +293,7 @@ void
 
 	    case 33:
 		{
-		    lactor->positionInActorScript = *(unsigned short int *) actorScriptPtr;
+		    lactor->positionInActorScript = *(short int *) actorScriptPtr;
 		    actorScriptPtr += 2;
 		    break;
 		}
@@ -309,7 +308,7 @@ void
 		    break;
 		}
 
-	    case 35:		// END
+	    case 35:		
 		{
 		    OPbreak = -1;
 		    break;
@@ -408,14 +407,14 @@ void
 		break;
 	    case 49:
 		lactor->angle = 0x200;
-		lactor->Z = lactor->lastY + *((short int *) actorScriptPtr);
+		lactor->Y = lactor->lastY - *((short int *) actorScriptPtr);
 		lactor->field_62 &= 0xFFBF;
 		lactor->field_34 = 0;
 		actorScriptPtr += 2;
 		break;
 	    case 50:
 		lactor->angle = 0;
-		lactor->Z = lactor->lastY + *((short int *) actorScriptPtr);
+		lactor->Y = lactor->lastY + *((short int *) actorScriptPtr);
 		lactor->field_62 &= 0xFFBF;
 		lactor->field_34 = 0;
 		actorScriptPtr += 2;
@@ -560,9 +559,14 @@ void
 		actorScriptPtr += 2;
 		break;
 	    case 80:
-		actorScriptPtr += 2;
-		printf("Ignoring opcode 80 in runActorScript\n");
-		break;
+			{
+				short int newAngle;
+				newAngle=*(short int*)actorScriptPtr;
+			actorScriptPtr += 2;
+			lactor->angle=newAngle;
+			changeActorAngle(lactor);
+			break;
+			}
 	    case 88:
 		{
 		    printf("Ignoring opcode 88 in runActorScript\n");

@@ -264,11 +264,28 @@ void
 	    }
 	    break;
 	case 25:
-	    printf("skipping actor move opcode 25\n");
-	    break;
+		{
+			if(lactor->field_60&0x408 == 0x408)
+			{
+				lactor->field_62|=0x40;
+				lactor->field_72=0;
+				lactor->field_34=-1000;
+				setActorAngle(0,-1000,50,timePtr);
+			}
+			break;
+		}
 	case 26:
-	    printf("skipping actor move opcode 26\n");
-	    break;
+		{
+			if(lactor->field_60&0x408 == 0x408)
+			{
+				if(lactor->field_34)
+				{
+					continueMove=0;
+					lactor->positionInMoveScript--;
+				}
+			}
+			break;
+		}
 	case 27:
 	    {
 		printf("skipping actor move opcode 27\n");

@@ -440,19 +440,21 @@ void
        // loop5
     }
 
-   /*
-    * for (arg_1A = 0; arg_1A < numFlags; arg_1A++) //affichage des flags { char stringTemp[256];
-    * startRenderer (flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y 
-    * - cameraY, 0, 0, 0, flagModelPtr);
-    * 
-    * sprintf (stringTemp, "%d", arg_1A); setTextColor (255);
-    * 
-    * fullRedrawS2S1 (flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ,
-    * flagData[arg_1A].y - cameraY);
-    * 
-    * if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 && fullRedrawVar4 <
-    * 440) printStringSimple (fullRedrawVar3, fullRedrawVar4, stringTemp); } 
-    */
+   
+     for (arg_1A = 0; arg_1A < numFlags; arg_1A++) //affichage des flags { char stringTemp[256];
+	 {
+		 char stringTemp[256];
+     startRenderer (flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y 
+     - cameraY, 0, 0, 0, flagModelPtr);
+     
+     sprintf (stringTemp, "%d", arg_1A); setTextColor (255);
+     
+     fullRedrawS2S1 (flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ,
+     flagData[arg_1A].y - cameraY);
+     
+     if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 && fullRedrawVar4 <
+     440) printStringSimple (fullRedrawVar3, fullRedrawVar4, stringTemp); } 
+    
 
     counter2 = 0;
 
