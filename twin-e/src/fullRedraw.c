@@ -1290,7 +1290,7 @@ LBA_engine::addToRedrawBoxMain (int left, int top, int right, int bottom)
   if (left > right || top > bottom)
     return;
 
-  drawBoxOutLine (left, top, right, bottom);
+ // drawBoxOutLine (left, top, right, bottom);
 
   refreshBoxList2[fullRedrawVar8].field_0 = left;
   refreshBoxList2[fullRedrawVar8].field_2 = top;

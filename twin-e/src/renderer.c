@@ -172,7 +172,7 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
 	}
 
 
-  _numOfPrimitives = _numOfPoints;
+  /*_numOfPrimitives = _numOfPoints;
   pointPtr = _flattenPointTable;
   do
     {
@@ -190,7 +190,7 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
       pointPtr++;
 
     }
-  while (--_numOfPrimitives);
+  while (--_numOfPrimitives);*/
 
   int temp = *(short int *) _shadePtr;
   _shadePtr = (int *) (((unsigned char *) _shadePtr) + 2);
@@ -935,7 +935,7 @@ LBA_renderer::finishRender (unsigned char *esi)
 		eax = *(int *) esi;
 		esi += 4;
 
-		int polyRenderType = eax & 0xFF;
+		polyRenderType = eax & 0xFF;
 		numOfVertex = (eax & 0xFF00) >> 8;
 		color = (eax & 0xFF0000) >> 16;
 

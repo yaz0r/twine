@@ -133,7 +133,7 @@ LBA_engine::initVars (void)
 
   buttonDrawVar1 = 550;
 
-  language = 1;			// langue ecrite
+  language = 0;			// langue ecrite
 
   languageCD1 = 0;
 

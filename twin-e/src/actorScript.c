@@ -30,6 +30,9 @@ LBA_engine::runActorScript (short int actorNumber)
   unsigned char *opcodePtr;
   int temp;
 
+  if(currentRoom ==41)
+	  return;
+
   lactor = &actors[actorNumber];
 
   OPbreak = 0;
