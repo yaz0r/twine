@@ -594,7 +594,7 @@ extern short int buttonDrawVar1;
 
 extern char saveGameFileName[143];
 
-extern short int currentRoom;
+extern char currentRoom;
 extern char mainMenuVar3;
 extern int gameStaffIsDisplayed;
 extern short int shadowMode;
@@ -606,7 +606,7 @@ extern short int subMenu2Data[8];
 extern short int soundMenuData[12];
 extern short int subMenuData[14];
 
-extern short int needChangeRoom;
+extern char needChangeRoom;
 extern short int chapter;
 extern short int newGameVar4;
 
@@ -1090,7 +1090,7 @@ void MDL_DrawBoundingBoxShownPart(actor* pActor);
 
 int ExtraCheckObjCol(extraListStruct* extra, int param);
 void ThrowMagicBall(int X, int Z, int Y, int param1, int angle, int param2, int param4);
-int ExtraSearch(int actorNum, int X, int Z, int Y, int param1, int param2, int param3, int param4);
+int ExtraSearch(int actorNum, int X, int Z, int Y, int spriteIdx, int targetActor, int maxSpeed, int param4);
 int ExtraBonus(int X, int Y, int Z, int param, int angle, int type, int param2);
 
 void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int param1);
@@ -1137,7 +1137,7 @@ int WorldColBrick(int var0, int var1, int var2);
 void Rotate(int initialX, int initialY, int angle);
 int SetInterDepObjet(int position, char *anim, char *body, animTimerDataStruct* animTimerDataPtr);
 int CheckZvOnZv(int var0, int var1);
-int ThrowExtra(int actorNum, int X, int Y, int Z, int var1, int var2, int var3, int var4, int var5, int var6);
+int ThrowExtra(int actorNum, int X, int Y, int Z, int sprite, int var2, int var3, int var4, int var5, int strength);
 void HitObj(int actorAttacking, int actorAttacked, int param, int angle);
 void GereExtras(void);
 int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int oldZ, int oldY);

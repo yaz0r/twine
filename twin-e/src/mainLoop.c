@@ -461,7 +461,7 @@ void LoadGame(void)
     unsigned char data;
     char* namePtr;
 
-    fileHandle = OpenRead("S2336.LBA");
+    fileHandle = OpenRead("SAVE.LBA");
 
     namePtr= playerName;
 

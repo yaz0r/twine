@@ -338,33 +338,51 @@ void GereAnimAction(actor * lactor, int actorNum)
           printf("Skipping GereAnimAction opcode 13 (Send projectile)\n");
           break;
         }
-      case 14: // shoot at twinsen
-        // TODO: broken, fix !
+      case 14: 
         {
           if(*ebx == lactor->animPosition)
           {
             int newAngle;
-            int var20;
-            int varC;
-            int var10;
-            int var24;
-            int var14;
-            int di;
+
+            int throwX;
+            int throwY;
+            int throwZ;
+
+            int distanceX;
+            int distanceY;
+            int distanceZ;
+
+            int spriteIdx;
+
+            int param1;
+            int param2;
+            int param3;
+            int param4;
+
+            int strength;
 
             newAngle = GetAngle(lactor->Y, 0, twinsen->Y, Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z));
-            var20 = READ_LE_S16(edi);
-            di = READ_LE_S16(var_48);
-            Rotate(var20,READ_LE_S16(var_50),lactor->angle);
 
-            var20 = destX + lactor->X;
+            distanceX = READ_LE_S16(edi);
+            distanceY = READ_LE_S16(edi+2);
+            distanceZ = READ_LE_S16(edi+4);
 
-            varC = *var_44;
-            var10 = READ_LE_S16(var_40) + newAngle;
+            Rotate( distanceX, distanceZ, lactor->angle);
 
-            var24=READ_LE_S16(var_4C);
-            var14=*var_38;
+            throwX = destX + lactor->X;
+            throwY = distanceY + lactor->Y;
+            throwZ = destZ + lactor->Z;
 
-            ThrowExtra(actorNum, var20, di + lactor->Y, destZ + lactor->Z, varC, var10, lactor->angle + *(short int*)var_3C, var24, var14, *var_34);
+            spriteIdx = *(edi+6);
+
+            param1 = READ_LE_S16(edi+7) + newAngle;
+            param2 = READ_LE_S16(edi+9) + lactor->angle;
+            param3 = READ_LE_S16(edi+11);
+            param4 = *(edi+13);
+
+            strength = *(edi+14);
+
+            ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
             ebx = edx;
           }
           else
@@ -375,6 +393,43 @@ void GereAnimAction(actor * lactor, int actorNum)
         }
       case 15: // shoot slightly aiming
         {
+          if(*ebx == lactor->animPosition)
+          {
+            int newAngle;
+
+            int throwX;
+            int throwY;
+            int throwZ;
+
+            int distanceX;
+            int distanceY;
+            int distanceZ;
+
+            int spriteIdx;
+
+            int param1;
+            int targetActor;
+            int param3;
+            int param4;
+
+            int strength;
+
+            distanceX = READ_LE_S16(edi);
+            distanceY = READ_LE_S16(edi+2);
+            distanceZ = READ_LE_S16(edi+4);
+
+            Rotate( distanceX, distanceZ, lactor->angle);
+
+            spriteIdx = *(edi+6);
+            targetActor = *(edi+7);
+            param3 = READ_LE_S16(edi+8);
+            param4 = *(edi+10);
+
+            ExtraSearch( actorNum, lactor->X + destX, lactor->Y + distanceY, lactor->Z + distanceZ, spriteIdx, targetActor, param3, param4);
+
+            ebx = edx;
+          }
+          else
           {
             ebx = edx;
           }

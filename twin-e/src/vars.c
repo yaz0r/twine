@@ -296,7 +296,7 @@ short int buttonDrawVar1;
 
 char saveGameFileName[143];
 
-short int currentRoom;
+char currentRoom;
 char mainMenuVar3;
 int gameStaffIsDisplayed;
 short int shadowMode;
@@ -367,7 +367,7 @@ short int subMenuData[]={
 
 /////////////////////////////////////////////
 
-short int needChangeRoom;
+char needChangeRoom;
 short int chapter;
 short int newGameVar4;
 

@@ -340,7 +340,8 @@ void fullRedraw(int param)
           {
           }
 
-          SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
+          if(lactor->previousAnimIndex != -1) // TODO: this shouldn't be required but crash when drawing the soldier getting out of the yellow moto. To investigate...
+            SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
 #ifdef _DEBUG
           if(bShowBoundingBoxes)

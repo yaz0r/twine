@@ -30,7 +30,7 @@ void reinitExtraObjectList(void)
   }
 }
 
-int ThrowExtra(int actorNum, int X, int Y, int Z, int var1, int var2, int var3, int var4, int var5, int var6)
+int ThrowExtra(int actorNum, int X, int Y, int Z, int sprite, int var2, int var3, int var4, int var5, int strength)
 {
   int i;
   
@@ -38,7 +38,7 @@ int ThrowExtra(int actorNum, int X, int Y, int Z, int var1, int var2, int var3, 
   {
     if(extraList[i].field_0==-1)
     {
-      extraList[i].field_0 = var1;
+      extraList[i].field_0 = sprite;
       extraList[i].field_14 = 0x210C;
       extraList[i].X = X;
       extraList[i].Z = Y;
@@ -46,7 +46,7 @@ int ThrowExtra(int actorNum, int X, int Y, int Z, int var1, int var2, int var3, 
       
       InitFly(&extraList[i], var2, var3, var4, var5);
 
-      extraList[i].field_1E = var6;
+      extraList[i].field_1E = strength;
       extraList[i].field_1C = actorNum;
       extraList[i].time = lba_time;
       extraList[i].field_20 = 0;
@@ -711,7 +711,7 @@ int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int ol
   return(0);
 }
 
-int ExtraSearch(int actorNum, int X, int Y, int Z, int param1, int param2, int param3, int param4)
+int ExtraSearch(int actorNum, int X, int Y, int Z, int spriteIdx, int targetActor, int maxSpeed, int param4)
 {
   int i;
 
@@ -719,18 +719,18 @@ int ExtraSearch(int actorNum, int X, int Y, int Z, int param1, int param2, int p
   {
     if(extraList[i].field_0 == -1)
     {
-      extraList[i].field_0 = param1;
+      extraList[i].field_0 = spriteIdx;
       extraList[i].field_14 = 0x80;
       extraList[i].field_20 = 0;
       extraList[i].X = X;
       extraList[i].Z = Y;
       extraList[i].Y = Z;
       extraList[i].field_1C = actorNum;
-      extraList[i].time = param2;
-      extraList[i].field_12 = param3;
+      extraList[i].time = targetActor;
+      extraList[i].field_12 = maxSpeed;
       extraList[i].field_1E = param4;
-      setActorAngle(0,param3,50,&extraList[i].rotationSpeed);
-      extraList[i].field_16 = GetAngle(X,Z,actors[param2].X,actors[param2].Z);
+      setActorAngle(0,maxSpeed,50,&extraList[i].rotationSpeed);
+      extraList[i].field_16 = GetAngle(X,Z,actors[targetActor].X,actors[targetActor].Z);
       return(i);
     }
   }
