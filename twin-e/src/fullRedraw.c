@@ -323,7 +323,7 @@ void LBA_engine::fullRedraw(int param)
 		else
 		if(flags==0xC00) // shadows
 		{
-			if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
+	/*		if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
 			{
 //				arg_0E=1;	
 			}
@@ -342,7 +342,7 @@ void LBA_engine::fullRedraw(int param)
 			if(textWindowLeft<=textWindowRight && textWindowTop<=textWindowBottom)
 			{
 				drawSprite(fullRedrawVar6[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
-			}
+			}*/
 		}
 		else
 		if(flags<0x1000)

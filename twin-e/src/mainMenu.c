@@ -583,6 +583,7 @@ void LBA_engine::drawBoxTrans(int left, int top,int right, int bottom, char* sou
 {
 //	int localBottom=bottom;
 
+		
 	int largeur;
 	int hauteur;
 
@@ -603,34 +604,19 @@ void LBA_engine::drawBoxTrans(int left, int top,int right, int bottom, char* sou
 	interligne=largeurEcran-largeur;
 	temp3=left;
 
-	hauteur++;
-
 	left>>=2;
 	temp3&=3;
 
-	hauteur/=2;
-
-	do
+	while(--hauteur)
 	{
-    for(i=0;i<largeur;i++)
+    		for(i=0;i<largeur;i++)
 		{
 			*(d++)=*(s++);
 		}
 	
 		d+=interligne;
 		s+=interligne;
-
-    for(i=0;i<largeur;i++)
-		{
-			*(d++)=*(s++);
-		}
-	
-		d+=interligne;
-		s+=interligne;
-		
-		hauteur--;
 	}
-	while(hauteur>0);
 }
 
 void LBA_engine::drawBoxInsideTrans(int left,int top, int right, int bottom, int mode)
