@@ -179,8 +179,8 @@ int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerDataS
 		}
 	    while (--numOfPointInAnim);
 
-		WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-	    WRITE_LE_U32(animVar1 + 4, lba_time);
+		animTimerDataPtr->ptr = keyFramePtr;
+		animTimerDataPtr->time = lba_time;
 
 	    currentX = READ_LE_S16(keyFramePtr + 2);
 	    currentZ = READ_LE_S16(keyFramePtr + 4);
@@ -375,8 +375,8 @@ int SetInterAnimObjet(int animState, char *animData, char *body, animTimerDataSt
 		}
 	    while (--numOfPointInAnim);
 
-	    WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-	    WRITE_LE_S32(animVar1 + 4, lba_time);
+		animTimerDataPtr->ptr = keyFramePtr;
+		animTimerDataPtr->time = lba_time;
 
 	    currentX = READ_LE_S16(keyFramePtr + 2);
 	    currentZ = READ_LE_S16(keyFramePtr + 4);
@@ -728,8 +728,8 @@ int SetInterDepObjet(int position, char *anim, char *body, animTimerDataStruct* 
 
 	    if (eax >= keyFrameLength)
 		{
-		    WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-		    WRITE_LE_S32(animVar1 + 4, lba_time);
+			animTimerDataPtr->ptr = keyFramePtr;
+			animTimerDataPtr->time = lba_time;
 
 		    currentX = READ_LE_S16(keyFramePtr + 2);
 		    currentZ = READ_LE_S16(keyFramePtr + 4);
