@@ -1827,7 +1827,7 @@ void foundObject(int objectNumber)
 
     twinsenAnim = HQR_Get(HQR_Anims,getAnimIndexForBody( ANIM_findObject, 0));
 
-    bufAni2+=StockInterAnim((char*)bufAni2,(char*)bodyPtrTab[twinsen->costumeIndex]);
+    bufAni2+=StockInterAnim((char*)bufAni2,(char*)bodyPtrTab[twinsen->costumeIndex], &twinsen->animTimerData);
     if(bufAni1+4488 > bufAni2)
         bufAni2 = bufAni1;
 
@@ -1858,7 +1858,7 @@ void foundObject(int objectNumber)
         UnSetClip();
         reinitAll1();
 
-        if(SetInterAnimObjet(twinsenAnimKeyframe, (char*)twinsenAnim, (char*)bodyPtrTab[twinsen->costumeIndex]))
+		if(SetInterAnimObjet(twinsenAnimKeyframe, (char*)twinsenAnim, (char*)bodyPtrTab[twinsen->costumeIndex], &twinsen->animTimerData))
         {
             twinsenAnimKeyframe++;
             if(twinsenAnimKeyframe == GetNbFramesAnim((char*)twinsenAnim))

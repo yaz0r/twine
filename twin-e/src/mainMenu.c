@@ -222,14 +222,14 @@ int processMenu(short int *menuData)
 
     numEntry = localData[1];
     currentButton = localData[0];
-    localTime = time;
+    localTime = lba_time;
     maxButton = numEntry - 1;
 
     do
 	{
 	    if (localData == mainMenuData)	// si on est dans le menu principal
 		{
-		    if (time - localTime <= 11650)
+		    if (lba_time - localTime <= 11650)
 			{
 			    if (skipIntro == 46)
 				if (key1 != 32)

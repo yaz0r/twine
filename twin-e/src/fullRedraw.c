@@ -177,16 +177,16 @@ void fullRedraw(int param)
 		{
 		    if (extraList[counter2].field_14 & 0x400)
 			{
-			    if (time - extraList[counter2].time > 35)
+			    if (lba_time - extraList[counter2].time > 35)
 				{
-				    extraList[counter2].time = time;
+				    extraList[counter2].time = lba_time;
 				    extraList[counter2].field_14 &= 0xFBFF;
 				    HQ_3D_MixSample(11, 0x1000, 1, extraList[counter2].X, extraList[counter2].Z, extraList[counter2].Y);
 				}
 			}
 		    else
 			{
-			    if ((extraList[counter2].field_14 & 1) || (extraList[counter2].field_14 & 0x40) || (extraList[counter2].field_1C + extraList[counter2].time - 150 < time) || (!((time + extraList[counter2].time) & 8)))
+			    if ((extraList[counter2].field_14 & 1) || (extraList[counter2].field_14 & 0x40) || (extraList[counter2].field_1C + extraList[counter2].time - 150 < lba_time) || (!((lba_time + extraList[counter2].time) & 8)))
 				{
 				    projectPositionOnScreen(extraList[counter2].X - cameraX, extraList[counter2].Z - cameraZ, extraList[counter2].Y - cameraY);
 
@@ -288,7 +288,7 @@ void fullRedraw(int param)
 					{
 					}
 
-					SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex]);
+					SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
 #ifdef PCLIKE
 					if(_debugger.bShowBoundingBoxes)

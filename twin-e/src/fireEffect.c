@@ -15,7 +15,7 @@ void makeFireEffect(int top, int param)
         osystem->delay(5);
 	};*/
 
-	lastFireTime=time;
+	lastFireTime=lba_time;
 
     makeFireEffectInit();
 

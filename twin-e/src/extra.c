@@ -30,7 +30,7 @@ int ThrowExtra(int actorNum, int X, int Y, int Z, int var1, int var2, int var3, 
 
             extraList[i].field_1E = var6;
             extraList[i].field_1C = actorNum;
-            extraList[i].time = time;
+            extraList[i].time = lba_time;
             extraList[i].field_20 = 0;
 
             return(i);
@@ -65,7 +65,7 @@ void InitSpecial(int var0, int var1, int var2, int var3)
 				InitFly(&extraList[i],(rand()%0x100)+0x80,rand()%0x400,50,20);
 
 				extraList[i].field_1E = 0;
-				extraList[i].time = time;
+				extraList[i].time = lba_time;
 				extraList[i].field_1C = 100;
 
 				return;
@@ -80,7 +80,7 @@ void InitSpecial(int var0, int var1, int var2, int var3)
 				extraList[i].Y = var2;
 
 				extraList[i].field_1E = 0;
-				extraList[i].time = time;
+				extraList[i].time = lba_time;
 				extraList[i].field_1C = 5;
 
 				return;
@@ -107,7 +107,7 @@ void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4
 	extraEntry->field_12 = destZ;
 
 	extraEntry->field_16 = var4;
-	extraEntry->time = time;
+	extraEntry->time = lba_time;
 }
 
 void AffSpecial(int extraNum, int X, int Y) //line object only
@@ -118,13 +118,13 @@ void AffSpecial(int extraNum, int X, int Y) //line object only
 
 	if(!extraType) // damage star
 	{
-		Aff2DShape(extraDataTable1, X, Y, 15, (time<<5) & 0x300, 4);
+		Aff2DShape(extraDataTable1, X, Y, 15, (lba_time<<5) & 0x300, 4);
 		return;
 	}
 
 	if(extraType == 1) // little cloud
 	{
-        int cloudTime = 1 + time - extraEntry->time;
+        int cloudTime = 1 + lba_time - extraEntry->time;
 
         if(cloudTime > 32)
             cloudTime = 32;
@@ -158,7 +158,7 @@ int ExtraBonus(int X, int Y, int Z, int param, int angle, int type, int param2)
 
             extraList[i].field_1E = 0;
 
-            extraList[i].time = time;
+            extraList[i].time = lba_time;
 
             extraList[i].field_1C = 1000;
             extraList[i].field_20 = param2;
@@ -279,7 +279,7 @@ void GereExtras(void)
         {
             if( extraList[i].field_14 & 1) //remove after time
             {
-                if(extraList[i].field_1C + extraList[i].time <= time) // time passed
+                if(extraList[i].field_1C + extraList[i].time <= lba_time) // time passed
                 {
                     extraList[i].field_0 = -1;
                     continue;
@@ -294,7 +294,7 @@ void GereExtras(void)
 
             if( extraList[i].field_14 & 0x1000)
             {
-                extraList[i].field_0 = BoundRegleTrois(97, 100, 30, time - extraList[i].time);
+                extraList[i].field_0 = BoundRegleTrois(97, 100, 30, lba_time - extraList[i].time);
                 continue;
             }
 
@@ -304,14 +304,14 @@ void GereExtras(void)
                 currentExtraZ = extraList[i].Z;
                 currentExtraY = extraList[i].Y;
 
-                currentExtraSpeedX = extraList[i].field_E * (time - extraList[i].time);
+                currentExtraSpeedX = extraList[i].field_E * (lba_time - extraList[i].time);
                 extraList[i].X = currentExtraSpeedX + extraList[i].field_8;
 
-                currentExtraSpeedZ = extraList[i].field_10 * (time - extraList[i].time);
+                currentExtraSpeedZ = extraList[i].field_10 * (lba_time - extraList[i].time);
                 currentExtraSpeedZ += extraList[i].field_A;
-                extraList[i].Z = currentExtraSpeedZ - abs(((extraList[i].field_16 * (time - extraList[i].time))* (time - extraList[i].time))>>4);
+                extraList[i].Z = currentExtraSpeedZ - abs(((extraList[i].field_16 * (lba_time - extraList[i].time))* (lba_time - extraList[i].time))>>4);
 
-                extraList[i].Y = extraList[i].field_12 * (time - extraList[i].time) + extraList[i].field_C;
+                extraList[i].Y = extraList[i].field_12 * (lba_time - extraList[i].time) + extraList[i].field_C;
 
                 if(extraList[i].Z < 0 || extraList[i].X < 0 || extraList[i].X > 0x7E00 || extraList[i].Y < 0 || extraList[i].Y > 0x7E00) // extra is out of cube
                 {
@@ -342,7 +342,7 @@ void GereExtras(void)
 
             if(extraList[i].field_14 & 0x4000)
             {
-                if( time - extraList[i].time > 40 )
+                if( lba_time - extraList[i].time > 40 )
                 {
                     extraList[i].field_14 &= 0xBFFF;
                 }

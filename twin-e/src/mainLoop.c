@@ -34,7 +34,7 @@ int mainLoop(void)
 
     do
 	{
-	    currentTime = time;
+	    currentTime = lba_time;
 	  mainLoopStart:
 
 	    readKeyboard();
@@ -391,7 +391,7 @@ int mainLoop(void)
 	    requestBackgroundRedraw = 0;
 	    counter++;
 
-	    frameTime = time - currentTime;
+	    frameTime = lba_time - currentTime;
 
 #ifndef PCLIKE
 		time+=2;
@@ -551,7 +551,7 @@ void waitRetrace(void)
 void freezeTime(void)
 {
     if (!time1)
-	time3 = time;
+	time3 = lba_time;
 
     time1++;
 
@@ -562,7 +562,7 @@ void unfreezeTime(void)
     --time1;
 
    if(time1==0)
-     time = time3;
+     lba_time = time3;
 }
 
 int makeGiveUpMenu(void)	// process le menu "continuer ou abandonner"
@@ -1039,7 +1039,7 @@ void DoDir(int actorNum)
                    {
                        ManualRealAngle( lactor->angle, (rand()&0x100 + lactor->angle - 0x100)&0x3FF, lactor ->speed, &lactor->time );
                        
-                       lactor->cropLeft = rand()%300 + time + 300;
+                       lactor->cropLeft = rand()%300 + lba_time + 300;
 
                         InitAnim( 0, 0, 0xFF, actorNum );
                    }
@@ -1048,11 +1048,11 @@ void DoDir(int actorNum)
                    {
                         InitAnim( 1, 0, 0xFF, actorNum );
 
-                        if( time > lactor->cropLeft )
+                        if( lba_time > lactor->cropLeft )
                         {
                             ManualRealAngle( lactor->angle, (rand()&0x100 + lactor->angle - 0x100)&0x3FF, lactor->speed, &lactor->time );
 
-                            lactor->cropLeft = rand()%300 + time + 300;
+                            lactor->cropLeft = rand()%300 + lba_time + 300;
                         }
                    }
                }
@@ -1223,7 +1223,7 @@ void DoAnim(int actorNum)
 		{
 		    animPtr = (char *) HQR_Get(HQR_Anims, lactor->previousAnimIndex);
 			
-			int keyFramePassed=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex]); 
+			int keyFramePassed=SetInterDepObjet(lactor->animPosition,animPtr,(char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData); 
 
 		    if (processActorVar5)
 			{

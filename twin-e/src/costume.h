@@ -28,6 +28,12 @@ struct MDL_BoundingBox
 	MDL_BoundingBoxPoint Z;
 };
 
+struct animTimerDataStruct
+{
+	char* ptr;
+	int time;
+};
+
 struct actor
     {
 	char body;
@@ -128,4 +134,6 @@ struct actor
 
 	unsigned char *moveScript;
 	unsigned char *actorScript;
+
+	animTimerDataStruct animTimerData; // new
     };

@@ -2,7 +2,7 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 
-extern volatile int time;
+extern volatile int lba_time;
 
 int threadTimer(void *test)	// LBA time is 50 frames per seconds ie,  a frame every 20 miliseconds
 {
@@ -13,7 +13,7 @@ int threadTimer(void *test)	// LBA time is 50 frames per seconds ie,  a frame ev
         if(SDL_GetTicks() - temp >= 15)
         {
             musicPosition++;
-	        time++;
+	        lba_time++;
             temp = SDL_GetTicks();
         }
 	}

@@ -882,7 +882,7 @@ void initVars(void)
     mainMenuVar3 = 'S';
     gameStaffIsDisplayed = 0;
     shadowMode = 2;
-    time = 0;
+    lba_time = 0;
     key = 0;
 
     buttonDrawVar1 = 550;

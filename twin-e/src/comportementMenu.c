@@ -1,5 +1,7 @@
 #include "lba.h"
 
+animTimerDataStruct animDataTab[4];
+
 void DrawComportement(int lcomportement, int arg, int arg2)
 {
     unsigned char *currentAnim;
@@ -20,7 +22,7 @@ void DrawComportement(int lcomportement, int arg, int arg2)
 
     currentAnimSate = winTab[lcomportement];
 
-    if (SetInterAnimObjet(currentAnimSate, (char *) currentAnim, (char *) menuCostumeIndex))
+    if (SetInterAnimObjet(currentAnimSate, (char *) currentAnim, (char *) menuCostumeIndex, &animDataTab[lcomportement]))
 	{
 	    currentAnimSate++;	// keyFrame
 	    if (currentAnimSate == GetNbFramesAnim((char *) currentAnim))	// max for anim
@@ -141,16 +143,16 @@ void drawMenuWin(short int var)
     DrawCadre(100, 100, 550, 290);
     drawBoxInsideTrans(101, 101, 549, 289, 2);
 
-    setAnimAtKeyFrame(winTab[0], HQR_Get(HQR_Anims, TCOS[0]), menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[0], HQR_Get(HQR_Anims, TCOS[0]), menuCostumeIndex, &animDataTab[0]);
     DrawComportement(0, var, 0);
 
-    setAnimAtKeyFrame(winTab[1], HQR_Get(HQR_Anims, TCOS[1]), menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[1], HQR_Get(HQR_Anims, TCOS[1]), menuCostumeIndex, &animDataTab[1]);
     DrawComportement(1, var, 0);
 
-    setAnimAtKeyFrame(winTab[2], HQR_Get(HQR_Anims, TCOS[2]), menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[2], HQR_Get(HQR_Anims, TCOS[2]), menuCostumeIndex, &animDataTab[2]);
     DrawComportement(2, var, 0);
 
-    setAnimAtKeyFrame(winTab[3], HQR_Get(HQR_Anims, TCOS[3]), menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[3], HQR_Get(HQR_Anims, TCOS[3]), menuCostumeIndex, &animDataTab[3]);
     DrawComportement(3, var, 0);
 
     DrawInfoMenu(100, 300);
@@ -195,7 +197,7 @@ void processComportementMenu(void)
 
     savedComportement = comportementHero;
 
-    setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCOS[comportementHero]),menuCostumeIndex);
+    setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCOS[comportementHero]),menuCostumeIndex, &animDataTab[comportementHero]);
 
     readKeyboard();
 
@@ -222,7 +224,7 @@ void processComportementMenu(void)
 		    DrawComportement(savedComportement, twinsen->angle, 1);
 		    savedComportement = comportementHero;
 		    setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);	// rotate twinsen
-		    setAnimAtKeyFrame(winTab[comportementHero],HQR_Get(HQR_Anims, TCOS[comportementHero]),menuCostumeIndex);
+		    setAnimAtKeyFrame(winTab[comportementHero],HQR_Get(HQR_Anims, TCOS[comportementHero]),menuCostumeIndex, &animDataTab[comportementHero]);
 
 		    while (printTextVar12)
 			{

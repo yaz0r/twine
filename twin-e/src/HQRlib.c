@@ -448,7 +448,7 @@ unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
 
     if (hqrdataPtr)
 	{
-	    hqrdataPtr->lastAccessedTime = time;
+	    hqrdataPtr->lastAccessedTime = lba_time;
 	    HQR_Flag = 0;
 	    return (hqrdataPtr->offFromPtr + hqrPtr->ptr);
 	}
@@ -479,7 +479,7 @@ unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
 
    // ici, test sur la taille de dataSize
 
-    ltime = time;
+    ltime = lba_time;
 
     while (dataSize2 >= hqrPtr->remainingSize || hqrPtr->numCurrentlyUsedEntries >= hqrPtr->numEntriesMax)	// pour retirer les elements les plus vieux jusqu'a ce qu'on ai de la place
 	{
@@ -518,7 +518,7 @@ unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
 
     hqrdataPtr->index = arg_4;
     HQR_Flag = 1;
-    hqrdataPtr->lastAccessedTime = time;
+    hqrdataPtr->lastAccessedTime = lba_time;
     hqrdataPtr->offFromPtr = hqrPtr->size1 - hqrPtr->remainingSize;
     hqrdataPtr->size = dataSize2;
 

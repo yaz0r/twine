@@ -67,7 +67,7 @@ void PlayAnimFla(char *flaName)
 						if(skipIntro==1)
 							var66=1;
 
-						esi=time;
+						esi=lba_time;
 						DrawNextFrameFla();
 						Mcga_Flip();
 						GestionPalette();
@@ -110,7 +110,7 @@ void PlayAnimFla(char *flaName)
 						}
 
 						//TODO: time sync code
-						synchTime=time;
+						synchTime=lba_time;
 
 						currentFrame++;
 

@@ -1,2 +1,2 @@
 short int HQR_Flag;
-volatile int time;
+volatile int lba_time;

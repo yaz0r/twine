@@ -14,7 +14,7 @@ struct bodyHeaderStruct
 	int keyFrameTime;
 };
 
-int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body)
+int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr)
 {
     short int numOfKeyframeInAnim;
     short int numOfBonesInAnim;
@@ -42,8 +42,8 @@ int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body)
 
     ptrToBodyData = (char *) (body + 14);
 
-	WRITE_LE_U32(ptrToBodyData + 2, (uint32)ptrToData); // ptr to current keyframe
-    WRITE_LE_S32(ptrToBodyData + 6, lba_time ); // start of keyframe time
+	animTimerDataPtr->ptr = ptrToData;
+	animTimerDataPtr->time = lba_time;
 
     ptrToBodyData = ptrToBodyData + READ_LE_S16(ptrToBodyData) + 2; // Skip ?
 
@@ -98,7 +98,7 @@ int GetBouclageAnim(char *ptr)
     return (READ_LE_S16(ptr + 4));
 }
 
-int SetInterAnimObjet2(int animState, char *animData, char *body)
+int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr)
 {
     short int animOpcode;
 
@@ -130,8 +130,8 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 
     animVar1 = edi;
 
-    ebx = (char*)READ_LE_U32(edi);
-    ebp = READ_LE_U32(edi + 4);
+	ebx = animTimerDataPtr->ptr;
+	ebp = animTimerDataPtr->time;
 
     if (!ebx)
 	{
@@ -298,7 +298,7 @@ void loadGfxSub(unsigned char *bodyPtr)
 	}
 }
 
-int SetInterAnimObjet(int animState, char *animData, char *body)
+int SetInterAnimObjet(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr)
 {
     short int animOpcode;
 
@@ -330,8 +330,8 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 
     animVar1 = edi;
 
-    ebx = (char*)READ_LE_U32(edi);
-    ebp = READ_LE_U32(edi + 4);
+	ebx = animTimerDataPtr->ptr;
+	ebp = animTimerDataPtr->time;
 
     if (!ebx)
 	{
@@ -502,11 +502,11 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
 
     if (lactor->previousAnimIndex == -1)	// if no previous animation
 	{
-	    setAnimAtKeyFrame(0, HQR_Get(HQR_Anims, animIndex), bodyPtrTab[lactor->costumeIndex]);	// set animation directly to first keyFrame
+		setAnimAtKeyFrame(0, HQR_Get(HQR_Anims, animIndex), bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);	// set animation directly to first keyFrame
 	}
     else // interpolation between animations
 	{
-	    bufAni2 += StockInterAnim((char *) bufAni2, (char *) bodyPtrTab[lactor->costumeIndex]);
+		bufAni2 += StockInterAnim((char *) bufAni2, (char *) bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 	    if (bufAni1 + 4488 > bufAni2)
 		    bufAni2 = bufAni1;
 	}
@@ -534,7 +534,7 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
     return (1);
 }
 
-int StockInterAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a different buffer
+int StockInterAnim(char *lBufAnim, char *lBody, animTimerDataStruct* animTimerDataPtr)	// copy the next keyFrame from a different buffer
 {
     int temp;
     char *ptr;
@@ -556,8 +556,8 @@ int StockInterAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a
 
         todo("remove hack to prevent time warp in anim");
 
-        WRITE_LE_S32(ptr + 4, lba_time);
-		WRITE_LE_U32(ptr,(uint32)lBufAnim);
+		animTimerDataPtr->time = lba_time;
+		animTimerDataPtr->ptr = lBufAnim;
 
 	    var0 = READ_LE_S16(ptr - 2);
 	    ptr = ptr + var0;
@@ -684,7 +684,7 @@ void PatchInterStep(char **ptr, int bp, int bx)
     *(ptr) = *(ptr) + 2;
 }
 
-int SetInterDepObjet(int position, char *anim, char *body)
+int SetInterDepObjet(int position, char *anim, char *body, animTimerDataStruct* animTimerDataPtr)
 {
     short int bodyFlags;
     char *edi;
@@ -711,8 +711,8 @@ int SetInterDepObjet(int position, char *anim, char *body)
 
 	    animVar1 = edi;
 
-	    ebx = (char*)READ_LE_U32(edi);
-	    ebp = READ_LE_S32(edi + 4);
+		ebx = animTimerDataPtr->ptr;
+		ebp = animTimerDataPtr->time;
 
 	    if (!ebx)
 		{

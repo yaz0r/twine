@@ -263,10 +263,10 @@ void DoTrack(int actorNumber)
 
 				if (READ_LE_S32(scriptPtr + 1) == 0)
 				{
-					WRITE_LE_S32(scriptPtr + 1, time + *(unsigned char *) scriptPtr *0x50);
+					WRITE_LE_S32(scriptPtr + 1, lba_time + *(unsigned char *) scriptPtr *0x50);
 				}
 
-				if (time < READ_LE_S32(scriptPtr + 1))
+				if (lba_time < READ_LE_S32(scriptPtr + 1))
 				{
 					continueMove = 0;
 					lactor->positionInMoveScript -= 6;
@@ -490,5 +490,5 @@ void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed,
     numOfStep >>= 8;
 
     angleStruct->numOfStep = numOfStep;
-    angleStruct->timeOfChange = time;
+    angleStruct->timeOfChange = lba_time;
 }

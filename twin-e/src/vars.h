@@ -1075,7 +1075,7 @@ extern int staticMemoryUsage;
     void ReceptionObj(void);
     int WorldColBrick(int var0, int var1, int var2);
     void Rotate(int initialX, int initialY, int angle);
-    int SetInterDepObjet(int position, char *anim, char *body);
+    int SetInterDepObjet(int position, char *anim, char *body, animTimerDataStruct* animTimerDataPtr);
     int CheckZvOnZv(int var0, int var1);
     int ThrowExtra(int actorNum, int X, int Y, int Z, int var1, int var2, int var3, int var4, int var5, int var6);
     void HitObj(int actorAttacking, int actorAttacked, int param, int angle);
@@ -1085,7 +1085,7 @@ extern int staticMemoryUsage;
 
     void GiveExtraBonus(actor * lactor);
     int Distance3D(int X1, int Z1, int Y1, int X2, int Z2, int Y2);
-    int StockInterAnim(char *lBufAnim, char *lBody);
+    int StockInterAnim(char *lBufAnim, char *lBody, animTimerDataStruct* animTimerDataPtr);
     void GereAnimAction(actor * lactor, int actorNum);
 
     int GetNbFramesAnim(char *ptr);
@@ -1101,8 +1101,8 @@ extern int staticMemoryUsage;
 
     void DoDir(int actorNum);
 
-    int SetInterAnimObjet2(int animState, char *animData, char *body);
-    int SetInterAnimObjet(int animState, char *animData, char *body);
+    int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr);
+    int SetInterAnimObjet(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr);
 
     void FlipBoxes(void);
 
@@ -1169,7 +1169,7 @@ extern int staticMemoryUsage;
 
     void DrawInfoMenu(short int arg_0, short int arg_4);
 
-    int setAnimAtKeyFrame(int arg_0, unsigned char *ptr, unsigned char *arg_8);
+	int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr);
 
     //int HQR_RemoveEntryFromHQR(hqr_entry * hqrPtr, int var);
 
