@@ -43,57 +43,6 @@ void LBA_engine::loadTwinsenCostumes(void)
 
 }
 
-int LBA_engine::getAnimIndexForBody(byte anim, short int actorNumber)
-{
-    actor *act;
-    char type;
-
-    unsigned char *bodyPtr;
-    unsigned char *ptr, *ptr2;
-    unsigned char *costumePtr = 0;
-    unsigned short int var1;
-
-    act = &actors[actorNumber];
-    bodyPtr = act->bodyPtr;
-
-    do
-	{
-	    type = *(bodyPtr++);
-
-	    if (type == -1)
-		{
-		    loadTwinsenCostumesVar1 = costumePtr;
-		    return (-1);
-		}
-
-	    ptr = (bodyPtr + 1);
-
-	    if (type == 3)
-		{
-		    if (anim == *bodyPtr)
-			{
-			    ptr++;
-			    var1 = *(unsigned short int *) ptr;
-			    ptr += 2;
-			    ptr2 = ptr;
-			    ptr++;
-			    if (*ptr2 != 0)
-				{
-				    costumePtr = ptr - 1;
-				}
-			    loadTwinsenCostumesVar1 = costumePtr;
-			    return (var1);
-			}
-		}
-
-	    bodyPtr = *ptr + ptr;
-
-	}
-    while (1);
-
-    return (0);
-}
-
 void LBA_engine::loadActorCostume(char bodyNum, short int actorNumber)
 {
     actor *lactor;
@@ -134,7 +83,7 @@ void LBA_engine::loadActorCostume(char bodyNum, short int actorNumber)
 
 	    temp2 = lactor->costumeIndex;
 	    lactor->costumeIndex = temp;
-	    lactor->body = (char) lactor->field_14;
+	    lactor->body = lactor->field_14;
 	    currentIndex = lactor->costumeIndex;
 
 	    if (loadCostumeVar == -32000)

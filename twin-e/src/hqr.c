@@ -26,6 +26,8 @@ hqr_entry *LBA_engine::load_hqr(char *fileName, int a, int b)
     hqr_ptr->unk = 0;
     hqr_ptr->ptr = dataPtr;
 
+	fclose(hqr_file);
+
     return (hqr_ptr);
 }
 

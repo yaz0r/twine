@@ -447,6 +447,57 @@ int LBA_engine::draw3D1(int animState, char *animData, char *body)
     return (0);
 }
 
+int LBA_engine::getAnimIndexForBody(byte anim, short int actorNumber)
+{
+    actor *act;
+    char type;
+
+    unsigned char *bodyPtr;
+    unsigned char *ptr, *ptr2;
+    unsigned char *costumePtr = 0;
+    unsigned short int var1;
+
+    act = &actors[actorNumber];
+    bodyPtr = act->bodyPtr;
+
+    do
+	{
+	    type = *(bodyPtr++);
+
+	    if (type == -1)
+		{
+		    loadTwinsenCostumesVar1 = costumePtr;
+		    return (-1);
+		}
+
+	    ptr = (bodyPtr + 1);
+
+	    if (type == 3)
+		{
+		    if (anim == *bodyPtr)
+			{
+			    ptr++;
+			    var1 = *(unsigned short int *) ptr;
+			    ptr += 2;
+			    ptr2 = ptr;
+			    ptr++;
+			    if (*ptr2 != 0)
+				{
+				    costumePtr = ptr - 1;
+				}
+			    loadTwinsenCostumesVar1 = costumePtr;
+			    return (var1);
+			}
+		}
+
+	    bodyPtr = *ptr + ptr;
+
+	}
+    while (1);
+
+    return (0);
+}
+
 int LBA_engine::playAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actorNum)
 {
     actor *lactor;
@@ -525,8 +576,7 @@ int LBA_engine::playAnim(char newAnim, short int arg_4, unsigned char arg_8, sho
     return (1);
 }
 
-int LBA_engine::increaseAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a
-								// different buffer
+int LBA_engine::increaseAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a different buffer
 {
     int temp;
     char *ptr;

@@ -76,21 +76,12 @@ void LBA_engine::fullRedraw(int param)
        // if aplicable)
 	{
 	    lactor = &actors[arg_1A];
-	    *(byte *) & lactor->field_62 &= 0xFFEF;	// recheck -> reinit the draw flags for the 
-	   // 
-	   // 
-	   // current 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // objects
+	    *(byte *) & lactor->field_62 &= 0xFFEF;	// recheck -> reinit the draw flags for the current objects
 
 	    if ((changeRoomVar9 == -1)
 		|| (lactor->Z <= *(short int *) ((currentGrid2) * 24 + sceneVarPtr + 8)))
 		{
-		    if (lactor->field_60 & 0x2000 && param == 0)
+		    if (lactor->field_60 & 0x2000 && param == 0) // background
 			{
 			   // calculate the actor position on screen
 			    fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ,
@@ -147,9 +138,7 @@ void LBA_engine::fullRedraw(int param)
 					    fullRedrawVar6[a12].field_0 = temp3;
 					    a12++;
 
-					    if (shadowMode != 0 && !(lactor->field_60 & 0x1000))	// 0x1000
-					       // -> no
-					       // shadow cast
+					    if (shadowMode != 0 && !(lactor->field_60 & 0x1000))	// 0x1000 -> no shadow cast
 						{
 						   // if(lactor->field_58!=-1) // quick shadow calc if on another
 						   // actor
@@ -164,18 +153,7 @@ void LBA_engine::fullRedraw(int param)
 						    }
 
 						    temp3--;
-						    fullRedrawVar6[a12].field_0 = temp3;	// save the shadow entry in 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // 
-						   // the fullRedrawVar6
+						    fullRedrawVar6[a12].field_0 = temp3;	// save the shadow entry in the fullRedrawVar6
 						    fullRedrawVar6[a12].field_2 = arg_42;	// 0xC00
 						    fullRedrawVar6[a12].X = shadowX;
 						    fullRedrawVar6[a12].Z = shadowZ;
@@ -242,18 +220,7 @@ void LBA_engine::fullRedraw(int param)
 					    fullRedrawVar6[a12].field_2 = counter;
 					    a12++;
 
-					    if (shadowMode == 2 && reinitAll2SubVar1[counter2].field_0 & 0x8000)	// cast 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // 
-					       // shadow
+					    if (shadowMode == 2 && reinitAll2SubVar1[counter2].field_0 & 0x8000)	// cast shadow
 						{
 						   // addShadowActorToCube(reinitAll2SubVar1[counter2].field_2,reinitAll2SubVar1[counter2].field_4,reinitAll2SubVar1[counter2].field_6);
 						    fullRedrawVar6[a12].field_0 =
@@ -431,19 +398,7 @@ void LBA_engine::fullRedraw(int param)
 					  (char *) getHqrdataPtr(HQRPtrSpriteExtra,
 								 lactor->costumeIndex));
 
-			    renderLeft = fullRedrawVar3 + *(short int *) (HQRess3 + lactor->costumeIndex * 16);	// calculate 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // 
-			   // center
+			    renderLeft = fullRedrawVar3 + *(short int *) (HQRess3 + lactor->costumeIndex * 16);	// calculate center
 			    renderTop =
 				fullRedrawVar4 + *(short int *) (HQRess3 +
 								 lactor->costumeIndex * 16 + 2);
@@ -525,6 +480,10 @@ void LBA_engine::fullRedraw(int param)
 			    if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40
 				&& fullRedrawVar4 < 440)
 				printStringSimple(fullRedrawVar3, fullRedrawVar4, stringTemp);
+
+				addToRedrawBoxMain(fullRedrawVar3, fullRedrawVar4,
+							fullRedrawVar3 + 50,
+							fullRedrawVar4 + 50);
 
 			}
 		    else if (flags == 0x1800)
