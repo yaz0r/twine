@@ -570,7 +570,7 @@ void fullRedraw(int param)
 
         if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
         {
-          DrawOverBrick(drawList[arg_1E].X, drawList[arg_1E].Z, drawList[arg_1E].Y);
+          DrawOverBrick((drawList[arg_1E].X + 0x100 )>> 9, drawList[arg_1E].Z >> 8 , (drawList[arg_1E].Y + 0x100) >>9);
           AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
         }
       }
