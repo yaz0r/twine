@@ -10,10 +10,20 @@ FILE* LBA_engine::fileOpen(char* fileName)
 
 FILE* LBA_engine::openResource(char* fileName)
 {
+	FILE* fileHandle;
+
 	if(!fileName)
 		return(NULL);
 
-	return(fopen(fileName,"rb"));
+	fileHandle=fopen(fileName,"rb");
+
+	if(!fileHandle)
+	{
+		printf("%s can't be found !\n",fileName);
+		exit(1);
+	}
+
+	return(fileHandle);
 }
 
 int LBA_engine::readResourceData(FILE* resourceFile,char* ptr, int length)

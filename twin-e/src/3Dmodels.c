@@ -324,9 +324,6 @@ int LBA_engine::finishRender(unsigned char *esi)
 	lineData* lineDataPtr;
 	lineCoordinates* lineCoordinatesPtr;
 
-	FILE* fileH;
-	fileH=fopen("modelPoly.dmp","wb+");
-
 	int point1;
 
 	int point2;
