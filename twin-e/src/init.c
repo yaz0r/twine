@@ -113,4 +113,8 @@ LBA_engine::initVideoStuff (void)
     }
 
   initVideoVar1 = -1;
+
+  renderer.videoBuffer1=videoBuffer1;
+  renderer.screenLockupTable=screenLockupTable;
+  renderer.osystem=osystem;
 }

@@ -112,34 +112,3 @@ LBA_engine::loadBody (int costumeNum, int actorNum)	// should be something like 
   while (1);
 
 }
-
-void
-LBA_engine::loadGfxSub (unsigned char *ptr)
-{
-  int var1;
-  int var2;
-  int bp;
-  int bx;
-
-  if (!((*(short int *) ptr) & 2))
-    return;
-
-  var1 = *(short int *) (ptr + 14);
-  ptr = ptr + var1 + 16;
-  var1 = *(short int *) ptr;
-  ptr += 2;
-  var1 = var1 + var1 * 2;
-  ptr = ptr + var1 * 2;
-
-  var2 = *(short int *) ptr;
-  ptr += 2;
-
-  bp = 36;
-  bx = 38;
-
-  while (--var2 >= 0)
-    {
-      ptr += 38;
-      *(short int *) (ptr + 6) = (*(short int *) (ptr + 6) * bp) / bx;
-    };
-}

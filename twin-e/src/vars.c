@@ -1,5 +1,5 @@
 #include "lba.h"
-#include"tab.h"
+#include "tab.h"
 
 void
 LBA_engine::initVars (void)
@@ -147,7 +147,8 @@ LBA_engine::initVars (void)
   setSomethingVar1 = 320;
   setSomethingVar2 = 200;
   setSomethingVar3 = 500;
-  setSomethingVar4 = 0;
+  renderer.setSomethingVar4 = 0;
+  setSomethingVar4=0;
 
   //      setSomething2Var1=0;
   //      setSomething2Var2=0;

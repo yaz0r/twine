@@ -1,5 +1,19 @@
 #include "lba.h"
 
+struct bodyHeaderStruct
+{
+	short int bodyFlag; // 2
+	short int unk0; //2
+	short int unk1; //2
+	short int unk2; //2
+	short int unk3; //2
+	short int unk4; //2
+	short int unk5; //2
+	short int offsetToData; //2
+	char* ptrToKeyFrame;
+	int keyFrameTime;
+};
+
 int
 LBA_engine::setAnimAtKeyFrame (int index, unsigned char *anim,
 			       unsigned char *body)
@@ -238,6 +252,44 @@ LBA_engine::applyAnim (int animState, char *animData, char *body)
     }
 
   return (0);
+}
+
+void
+LBA_engine::loadGfxSub (unsigned char *bodyPtr)
+{
+	bodyHeaderStruct *bodyHeader;
+	short int offsetToData;
+	unsigned char* bodyDataPtr;
+	short int numOfElement1;
+	short int numOfPoint;
+	unsigned char* ptrToKeyData;
+	int i;
+	int bp=36;
+	int bx=38;
+
+	bodyHeader=(bodyHeaderStruct*)bodyPtr;
+
+	if(!(bodyHeader->bodyFlag&2)) // no animation applicable
+	{
+		return;
+	}
+
+	offsetToData=bodyHeader->offsetToData;
+
+	bodyDataPtr= bodyPtr+offsetToData+16;
+
+	numOfElement1=*(short int*)bodyDataPtr;
+	unsigned char *ptr2=bodyDataPtr+2+numOfElement1*6;
+
+	numOfPoint=*(short int*)ptr2;
+
+	ptrToKeyData=ptr2+2;
+
+	for(i=0;i<numOfPoint;i++)
+	{
+		ptrToKeyData+=38;
+		*(short int*)(ptrToKeyData+6) = (*(short int*)(ptrToKeyData+6)*bp)/bx;
+	}
 }
 
 int

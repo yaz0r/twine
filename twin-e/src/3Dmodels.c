@@ -20,10 +20,22 @@
 /* That's the entry point of the 3D renderer */
 
 int
-LBA_engine::startRenderer (int arg_0, int arg_4, int arg_8, int arg_C,
-			   int arg_10, int arg_14, unsigned char *costumePtr)
+LBA_engine::startRenderer (int arg_0, int arg_4, int arg_8, int arg_C,int arg_10, int arg_14, unsigned char *costumePtr)
 {
   unsigned char *ptr;
+
+  renderer.textWindowBottom=textWindowBottom;
+  renderer.textWindowTop=textWindowTop;
+  renderer.textWindowLeft=textWindowLeft;
+  renderer.textWindowRight=textWindowRight;
+
+ int temp=renderer.startRenderer(arg_0,arg_4,arg_8,arg_C,arg_10,arg_14,costumePtr);
+ renderLeft=renderer._renderLeft;
+ renderRight=renderer._renderRight;
+ renderTop=renderer._renderTop;
+ renderBottom=renderer._renderBottom;
+
+return(temp);
 
   renderV1 = arg_C;
   renderV2 = arg_10;
@@ -59,17 +71,35 @@ LBA_engine::startRenderer (int arg_0, int arg_4, int arg_8, int arg_C,
 
   costumeHeader = *(short int *) costumePtr;	// costumeHeader seems to contains important flags for the rendering
 
-  // note: most of the LBA1 models are using renderM1
-  // renderM2 may be used for render in Bu temple (light from the bottom)
-
   ptr = costumePtr + 16 + *(short int *) (costumePtr + 14);	// we jump after the header
 
-  //if(costumeHeader&2)
-  return (renderM1 (ptr));	// That's the mostly used renderer code
-  //else
-  //      return(renderM2(ptr));  // probably render in Bù temple
+  if(costumeHeader&2) // if animated
+	return (renderM1 (ptr));	// That's the mostly used renderer code
+  else
+   return(renderM2(ptr));  // unanimated models
 
 }
+
+void
+LBA_engine::setSomething4 (int a, int b, int c)
+{
+  reinitVar1 = a;
+  renderV1 = a;
+  reinitVar2 = b;
+  renderV2 = b;
+  reinitVar12 = c;
+
+  renderV3 = c;
+
+
+  renderS1S1 (bufRotate0, &setSomething3Var2);
+  renderS2S2 (0, 0, 59);
+
+  renderV22 = destX;
+  renderV23 = destZ;
+  renderV24 = destY;
+}
+
 
 int
 LBA_engine::renderM1 (unsigned char *costumePtr)
@@ -128,7 +158,7 @@ LBA_engine::renderM1 (unsigned char *costumePtr)
 	    {
 	      if (ptEntryPtr->flag == 1)
 		{
-		  renderS2 (ptEntryPtr->rotate3, ptEntryPtr->rotate2,
+		  renderS2(ptEntryPtr->rotate3, ptEntryPtr->rotate2,
 			    ptEntryPtr->rotate1, ptEntryPtr);
 		}
 	    }
@@ -187,7 +217,7 @@ LBA_engine::renderM1 (unsigned char *costumePtr)
       exit (1);
     }
 
-#ifdef DRAWPOINTS
+//#ifdef DRAWPOINTS
   /* This part draw all the points of the model */
   primitiveCounter = numOfPri1;
   pointPtr = renderTab6;
@@ -209,8 +239,8 @@ LBA_engine::renderM1 (unsigned char *costumePtr)
     }
   while (--primitiveCounter);
 
-  osystem->drawBufferToScreen (videoBuffer1);
-#endif
+  //osystem->drawBufferToScreen (videoBuffer1);
+//#endif
 
   temp = *(short int *) ptr5;
 
@@ -291,11 +321,12 @@ LBA_engine::renderM1 (unsigned char *costumePtr)
 	  ptr3 = pri2Ptr2 = pri2Ptr2 + 38;
 	  ptr4 = renderV21 = renderV21 + 9;
 	}
+	
       while (--primitiveCounter);
 
-/*		FILE* fileHandle;
+	/*	FILE* fileHandle;
 
-		fileHandle=fopen("shade.dmp","wb+");
+		fileHandle=fopen("shade1.dmp","wb+");
 
 		int i;
 
@@ -306,7 +337,6 @@ LBA_engine::renderM1 (unsigned char *costumePtr)
 
 		fclose(fileHandle);*/
     }
-
 
 
   return (finishRender ((unsigned char *) ptr5));
@@ -749,7 +779,8 @@ LBA_engine::renderS1 (int edx, int ecx, int ebx, pointEntry * ptr)
     }
   else
     {
-      ebp = (int *) (((unsigned char *) renderTab2) + var);
+
+		ebp = (int *) (((unsigned char *) renderTab2) + var);
 
       destX = renderTab5[ptr->data3 / 6].x;
       destZ = renderTab5[ptr->data3 / 6].y;

@@ -1,24 +1,4 @@
-/***************************************************************************
-                          tab.h  -  description
-                             -------------------
-    begin                : Sat Mar 16 2002
-    copyright            : (C) 2002 by Yaz0r
-    email                : yaz0r@yaz0r.net
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-
-#ifndef _ANGLETAB_
-#define _ANGLETAB_
-
-short int tab[1024] = {
+short int rendererTab[1024] = {
   0,				//tab1
   101,
   201,
@@ -1044,5 +1024,3 @@ short int tab[1024] = {
   -201,
   -101,
 };
-
-#endif

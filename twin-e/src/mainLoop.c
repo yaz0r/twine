@@ -142,7 +142,7 @@ LBA_engine::mainLoop (void)
 /*             camera debugger                 */
 /***********************************************/
 
-	      if (printTextVar12 & 2)	// x--     -> bas
+	   if (printTextVar12 & 2)	// x--     -> bas
 		{
 		  changeRoomVar6++;
 		  mainLoopVar2 = 1;
@@ -362,6 +362,11 @@ LBA_engine::setSomething (int a, int b, int c)
   setSomethingVar2 = b;
   setSomethingVar3 = c;
   setSomethingVar4 = 1;
+
+  renderer.setSomethingVar1=a;
+  renderer.setSomethingVar2=b;
+  renderer.setSomethingVar3=c;
+  renderer.setSomethingVar4=1;
 }
 
 void
@@ -373,7 +378,7 @@ LBA_engine::setSomething2 (int a, int b, int c)
 }
 
 void
-LBA_engine::setSomething3 (int a, int b, int c)
+LBA_engine::setSomething3 (int a, int b, int c) // setupBaseMatrix
 {
 
   int var1;
@@ -393,17 +398,13 @@ LBA_engine::setSomething3 (int a, int b, int c)
   setSomething3Var17 = c & 0x3FF;
 
   var3 = tab1[setSomething3Var17];
+
   setSomething3Var2 = tab1[(setSomething3Var17 + 256) & 0x3FF];
-
   setSomething3Var3 = -var3;
-
-
   setSomething3Var4 = (var3 * var2) >> 14;
   setSomething3Var5 = (setSomething3Var2 * var2) >> 14;
   setSomething3Var6 = (var3 * var1) >> 14;
   setSomething3Var7 = (setSomething3Var2 * var1) >> 14;
-
-
   setSomething3Var8 = b & 0x3FF;
 
 
@@ -432,26 +433,16 @@ LBA_engine::setSomething3 (int a, int b, int c)
   setSomething3Var12 = destZ;
   setSomething3Var14 = destY;
 
-}
+  renderer._baseMatrix[0]=setSomething3Var2;
+  renderer._baseMatrix[1]=setSomething3Var3;
+  renderer._baseMatrix[2]=setSomething3Var18;
+  renderer._baseMatrix[3]=setSomething3Var4;
+  renderer._baseMatrix[4]=setSomething3Var5;
+  renderer._baseMatrix[5]=setSomething3Var9;
+  renderer._baseMatrix[6]=setSomething3Var6;
+  renderer._baseMatrix[7]=setSomething3Var7;
+  renderer._baseMatrix[8]=setSomething3Var10;
 
-void
-LBA_engine::setSomething4 (int a, int b, int c)
-{
-  reinitVar1 = a;
-  renderV1 = a;
-  reinitVar2 = b;
-  renderV2 = b;
-  reinitVar12 = c;
-
-  renderV3 = c;
-
-
-  renderS1S1 (bufRotate0, &setSomething3Var2);
-  renderS2S2 (0, 0, 59);
-
-  renderV22 = destX;
-  renderV23 = destZ;
-  renderV24 = destY;
 }
 
 void

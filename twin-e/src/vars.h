@@ -3,6 +3,168 @@ class LBA_engine;
 int threadTimer (void);
 void startThreadTimer (LBA_engine *);
 
+class LBA_renderer
+{
+struct pointTab
+{
+  short int x;
+  short int y;
+  short int z;
+};
+
+struct pointEntry
+{
+  short int data1;
+  short int data2;
+  short int data3;
+  short int param;
+  short int flag;
+  short int rotateZ;
+  short int rotateY;
+  short int rotateX;
+  int field_10;
+  int field_14;
+  int field_18;
+  int Y;
+  int field_20;
+  short int field_24;
+};
+
+struct renderTabEntry
+{
+  short int depth;
+  short int renderType;
+  unsigned char *dataPtr;
+};
+
+
+public:
+	short int *tab1;
+	short int *tab2;
+	short int *tab3;
+
+	int _angleX;
+	int _angleY;
+	int _angleZ;
+
+	int _cameraAngleX;
+	int _cameraAngleY;
+	int _cameraAngleZ;
+
+	int _renderLeft;
+	int _renderRight;
+	int _renderTop;
+	int _renderBottom;
+
+	int _X;
+	int _Y;
+	int _Z;
+
+	int _destX;
+	int _destY;
+	int _destZ;
+
+	short int polyTab[960];
+	short int polyTab2[960];
+
+	int _numOfPrimitives;
+
+	int setSomethingVar4;
+
+	pointTab _projectedPointTable[800];
+	pointTab _flattenPointTable[800];
+	short int shadeTable[500];
+
+	int setSomethingVar1;
+	int setSomethingVar2;
+	short int setSomethingVar3;
+
+	int* screenLockupTable;
+	unsigned char* videoBuffer1;
+	OSystem * osystem;
+
+	int _baseMatrix[3*3];
+
+	int _numOfPoints;
+	int _numOfParts;
+	unsigned char* _pointsPtr;
+	unsigned char* _partsPtr;
+
+	int _matrixTable[271]; //should be matrixes
+	unsigned char* _currentMatrixTableEntry;
+
+	int* _shadePtr;
+
+	int _shadeMatrix[9];
+	int _lightX;
+	int _lightY;
+	int _lightZ;
+
+	short int primitiveCounter;
+	renderTabEntry *renderTabEntryPtr;
+	renderTabEntry *renderTabEntryPtr2;
+	renderTabEntry *renderTabSortedPtr;
+
+	renderTabEntry renderTab[1000];
+	renderTabEntry renderTabSorted[1000];
+    unsigned char renderTab7[10000];
+
+	int renderBottom;
+	int renderLeft;
+	int renderLoop;
+	int renderRight;
+	int renderTop;
+
+  short int vertexCoordinates[193];
+
+  int numOfVertex;
+
+	unsigned char* renderV19;
+
+  short int polyRenderType;
+
+
+  short int pRenderV3[96];
+  short int *pRenderV1;
+  short int *pRenderV2;
+  short int numOfVertexRemaining;
+  short int polyCropped;
+
+  short int vleft;
+  short int vtop;
+  short int vright;
+  short int vbottom;
+
+  unsigned char oldVertexParam;
+  unsigned char vertexParam1;
+  unsigned char vertexParam2;
+
+
+  int textWindowTop;
+  int textWindowLeftSave;
+  int textWindowLeft;
+  int textWindowTopSave;
+  int textWindowRight;
+  int textWindowRightSave;
+  int textWindowBottom;
+  int textWindowBottomSave;
+
+	unsigned char* _partsPtr2;
+
+	void loadPart (int edx, int ecx, int ebx, pointEntry * ptr);
+	int startRenderer (int X, int Y, int Z, int angleX,int angleY, int angleZ, unsigned char *costumePtr);
+	void setSomething4 (int a, int b, int c);
+	int renderAnimatedModel(unsigned char *costumePtr);
+	void renderS1S2 (unsigned char *esi, int ecx, pointTab * dest,int *eax);
+	void renderS1S1 (int *eax, int *ebp);
+	void renderS2 (int edx, int ecx, int ebx, pointEntry * esi);
+	void renderS2Sub (unsigned char *esi, int ecx, pointTab * dest,int *eax);
+	int finishRender (unsigned char *esi);
+	void polyRender (int ecx, int edi);
+	int prepareRender (void);
+
+};
+
 struct zbufferDataStruct
 {
   short int y;
@@ -148,6 +310,9 @@ class LBA_engine
 {
 public:
   OSystem * osystem;
+  LBA_renderer renderer;
+
+
   int time;
   short int key;
   uint16 useSound;
@@ -292,9 +457,6 @@ public:
   short int newGameVar2;
   short int newGameVar4;
 
-
-
-
   int newGameVar5;
 
   int screenLockupTable[2000];	// valeur temporaire...
@@ -331,12 +493,6 @@ public:
   int currentTextLength;
   char *currentTextPtr;
 
-
-
-
-
-
-
   int stringLenght;
 
   char needChangeRoomVar1[40];
@@ -349,7 +505,7 @@ public:
   int setSomethingVar2;
 
   short int setSomethingVar3;
-  short int setSomethingVar4;
+  //short int setSomethingVar4;
 
 //      int setSomething2Var1;
 //      int setSomething2Var2;
@@ -484,10 +640,6 @@ public:
   short int changeRoomVar10;
   short int changeRoomVar11;
 
-
-
-
-
   int numActorInRoom;
 
   reinitAll2DataVar1Struct reinitAll2SubVar1[50];
@@ -613,15 +765,6 @@ public:
 
   short int stringProcessVar;
 
-// int renderV1;
-// int renderV2;
-// int renderV3;
-
-  short int renderLeft;
-  short int renderTop;
-  short int renderRight;
-  short int renderBottom;
-
   unsigned char *pri2Ptr2;
 
   int renderV9;
@@ -682,6 +825,10 @@ public:
   int shadowZ;
   int shadowY;
 
+  int renderV1;
+  int renderV2;
+  int renderV3;
+
   unsigned char *flagModelPtr;
 
   zbufferDataStruct zbufferData[28][150];
@@ -730,6 +877,13 @@ public:
 
   int drawVar1;
 
+	int renderLeft;
+	int renderRight;
+	int renderTop;
+	int renderBottom;
+
+	int setSomethingVar4;
+
 // order important !
 
 
@@ -745,9 +899,6 @@ public:
   int setSomething3Var1;
   int setSomething3Var8;
   int setSomething3Var17;
-  int renderV1;
-  int renderV2;
-  int renderV3;
   int renderV22;
   int renderV23;
   int renderV24;
@@ -769,6 +920,8 @@ public:
   int setSomething3Var10;
 
 //----------------------------------------------------------------------------------------
+
+  void setSomething4 (int a, int b, int c);
 
   void changeActorAngle (actor * ptr);
 
@@ -1034,8 +1187,6 @@ public:
 
 
   void printText8Sub4 (short int a, short int b, short int c);
-
-  void setSomething4 (int a, int b, int c);
 
   void printText10Sub2 (void);
 

@@ -40,7 +40,7 @@ LBA_engine::runActorScript (short int actorNumber)
     {
       opcodePtr = actorScriptPtr++;
       opcode = *(opcodePtr);
-  printf("Actor: %d Opcode= %2d\n",actorNumber,opcode);
+  //printf("Actor: %d Opcode= %2d\n",actorNumber,opcode);
       if (opcode <= 105)
 	{
 	  localScriptPtr = actorScriptPtr + 1;

@@ -51,7 +51,7 @@ LBA_engine::moveActor (int actorNumber)
 	  lactor->positionInMoveScript++;
 	  manipActorResult = *scriptPtr;
 
-	 printf ("Actor %d go to flag %d\n", actorNumber, manipActorResult);
+	// printf ("Actor %d go to flag %d\n", actorNumber, manipActorResult);
 
 	  destX = flagData[manipActorResult].x;
 	  destZ = flagData[manipActorResult].z;
