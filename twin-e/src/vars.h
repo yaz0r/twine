@@ -1177,7 +1177,7 @@ void DrawOverBrick(int X, int Z, int Y);
 
 void InitSprite(int imageNumber, int actorNumber);
 
-void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, char *ptr);
+void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, unsigned char *ptr);
 
 int Distance2D(int X1, int Y1, int X2, int Y2);
 

@@ -364,7 +364,7 @@ void fullRedraw(int param)
               int tempZ;
               int tempY;
 
-              lactor->dynamicFlagsBF.wasDrawn;
+              lactor->dynamicFlagsBF.wasDrawn = 1;
 
               tempX = (lactor->X + 0x100 )>> 9;
               tempZ = lactor->Y >> 8;
@@ -423,11 +423,11 @@ void fullRedraw(int param)
         projectPositionOnScreen(drawList[arg_1E].X-cameraX,drawList[arg_1E].Z-cameraZ,drawList[arg_1E].Y-cameraY);
         GetDxDyGraph(drawList[arg_1E].field_A,&spriteWidth,&spriteHeight,(char*)shadowSprite);
 
-        renderLeft=projectedPositionX-(spriteWidth - drawList[arg_1E].field_2&0x3FF)/2;           
-        renderTop=projectedPositionY-(spriteHeight - drawList[arg_1E].field_2&0x3FF)/2;
+        renderLeft=projectedPositionX-(spriteWidth - (drawList[arg_1E].field_2&0x3FF))/2;           
+        renderTop=projectedPositionY-(spriteHeight - (drawList[arg_1E].field_2&0x3FF))/2;
 
-        renderBottom=projectedPositionY+(spriteHeight - drawList[arg_1E].field_2&0x3FF)/2;
-        renderRight=projectedPositionX+(spriteWidth - drawList[arg_1E].field_2&0x3FF)/2;
+        renderBottom=projectedPositionY+(spriteHeight - (drawList[arg_1E].field_2&0x3FF))/2;
+        renderRight=projectedPositionX+(spriteWidth - (drawList[arg_1E].field_2&0x3FF))/2;
 
         SetClip(renderLeft,renderTop,renderRight,renderBottom);
          
