@@ -181,6 +181,12 @@ scriptData* debugger::getActorTrackScript(int num)
 				addLine(buffer,script);
 				break;
 			}
+		case 17:
+			{
+				sprintf(buffer,"flag op 17: %d",*(scriptPtr++));
+				addLine(buffer,script);
+				break;
+			}
 		case 18:
 			{
 				int temp1;
@@ -193,6 +199,24 @@ scriptData* debugger::getActorTrackScript(int num)
 				scriptPtr+=4;
 
 				sprintf(buffer,"wait %d %d",temp1,temp2);
+				addLine(buffer,script);
+				break;
+			}
+		case 19:
+			{
+				sprintf(buffer,"destroy body");
+				addLine(buffer,script);
+				break;
+			}
+		case 25:
+			{
+				sprintf(buffer,"Unsuported opcode 25");
+				addLine(buffer,script);
+				break;
+			}
+		case 26:
+			{
+				sprintf(buffer,"Unsuported opcode 26");
 				addLine(buffer,script);
 				break;
 			}

@@ -309,7 +309,7 @@ LBA_engine::moveActor (int actorNumber)
 		  exit (1);
 		}
 
-	      lactor->field_72 = *scriptPtr;
+	      lactor->field_72 = *(short int*)scriptPtr;
 	      lactor->field_62 |= 0x40;
 	      lactor->field_34 = 1000;
 	      setActorAngle (0, 1000, 50, timePtr);

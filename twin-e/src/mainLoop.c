@@ -791,7 +791,7 @@ LBA_engine::getHqrdataPtr (hqr_entry * hqrPtr, short int arg_4)
       return (hqrdataPtr->offFromPtr + hqrPtr->ptr);
     }
 
-  printf ("Need to load: %s-%d\n", hqrPtr->fileName, arg_4);
+  //printf ("Need to load: %s-%d\n", hqrPtr->fileName, arg_4);
 
   prepareResource (hqrPtr->fileName, arg_4);
 
