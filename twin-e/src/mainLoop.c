@@ -260,7 +260,7 @@ int
 		processActor(i);
 
 		if (actors[i].field_60 & 4) {
-		   // runSceneScript(&actors[i],i);
+		   checkZones(&actors[i],i);
 		}
 		if (actors[i].positionInActorScript != -1) {
 		    runActorScript(i);
@@ -1522,4 +1522,49 @@ int LBA_engine::processActorSub4(int var0, int var1)	// is actor still standing 
 	return (0);
 
     return (1);
+}
+
+void LBA_engine::checkZones(actor* lactor, int actorNumber)
+{
+	int currentX=lactor->X;
+	int currentY=lactor->Y;
+	int currentZ=lactor->Z;
+
+	int var_C=0;
+	int i;
+	unsigned char* localPtr=sceneVarPtr;
+	short int opcode;
+
+	if(actorNumber)
+	{
+		currentActorInZoneProcess=actorNumber;
+	}
+
+	for(i=0;i<reinitAll2Var4;i++)
+	{
+		if(currentX>*(short int*)localPtr && currentX<*(short int*)(localPtr+6))
+			if(currentZ>*(short int*)(localPtr+2) && currentZ<*(short int*)(localPtr+8))
+				if(currentY>*(short int*)(localPtr+4) && currentY<*(short int*)(localPtr+10)) // if actor in zone
+				{
+					opcode=*(short int*)(localPtr+12);
+					switch(opcode)
+					{
+					case 2:
+						{
+							lactor->field_5A=*(short int*)(localPtr+14);
+							break;
+						}
+					default:
+						{
+							printf("Unsupported checkZones opcode %d for actor %d!\n",opcode,actorNumber);
+							exit(1);
+						}
+					}
+				}
+		localPtr+=24;
+	}
+
+	//if(var_C
+
+
 }

@@ -92,7 +92,8 @@ void
 		    *(byte *) & lactor->field_62 |= 0x10;
 		}
 	    } else {
-		if (lactor->costumeIndex != -1 && !(lactor->field_60 & 0x200))	// 0x200 -> nulos
+		if (lactor->costumeIndex != -1 //&& !(lactor->field_60 & 0x200))	// 0x200 -> nulos
+			)
 		{
 		   // calculate the actor position on screen
 		    fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
@@ -312,16 +313,19 @@ void
 
 		    positionInDebugBox++;
 
-		   /*
-		    * sprintf (stringTemp, "%d", actorNumber); setTextColor (57);
-		    * 
-		    * fullRedrawS2S1 (lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y -
-		    * cameraY);
-		    * 
-		    * if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 &&
-		    * fullRedrawVar4 < 440) printStringSimple (fullRedrawVar3, fullRedrawVar4,
-		    * stringTemp);
-		    */
+			{
+				char stringTemp[256];
+
+		     sprintf (stringTemp, "%d", actorNumber); setTextColor (57);
+		     
+		     fullRedrawS2S1 (lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y -
+		     cameraY);
+		     
+		     if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 &&
+		     fullRedrawVar4 < 440) printStringSimple (fullRedrawVar3, fullRedrawVar4,
+		     stringTemp);
+			}
+		    
 
 		}
 	    } else if (flags == 0xC00)	// shadows

@@ -29,6 +29,8 @@ void
     unsigned char *opcodePtr;
     int temp;
 
+	//return;
+
     lactor = &actors[actorNumber];
 
     OPbreak = 0;
@@ -38,6 +40,7 @@ void
     while (OPbreak != -1) {
 	opcodePtr = actorScriptPtr++;
 	opcode = *(opcodePtr);
+	printf("(%d)opcode: %d\n",actorNumber,opcode);
 	if (opcode <= 105) {
 	    localScriptPtr = actorScriptPtr + 1;
 	    switch (opcode) {
@@ -45,11 +48,6 @@ void
 		{
 		    OPbreak = -1;
 		    lactor->positionInActorScript = -1;
-		    break;
-		}
-
-	    case 1:
-		{
 		    break;
 		}
 
@@ -74,30 +72,6 @@ void
 		    manipActor(lactor);
 		    doCalc();
 		    actorScriptPtr = lactor->actorScript + *(short int *) actorScriptPtr;
-		    break;
-		}
-
-	    case 5:
-		{
-		    break;
-		}
-	    case 6:
-		{
-		    break;
-		}
-
-	    case 7:
-		{
-		    break;
-		}
-
-	    case 8:
-		{
-		    break;
-		}
-
-	    case 9:
-		{
 		    break;
 		}
 	    case 10:
@@ -222,7 +196,7 @@ void
 		{
 			int ltemp=*(actorScriptPtr++);
 			ltemp<<=11;
-			lactor->field_60&0xF7FF;
+			lactor->field_60&=0xF7FF;
 			lactor->field_60|=ltemp;
 		    break;
 		}
@@ -499,7 +473,7 @@ void
 
 		entryTemp = *(actorScriptPtr++);
 		if (entryTemp < 24)
-		    GV16[entryTemp] = 0xFF;
+		    GV16[entryTemp] = 1;
 
 		break;
 	    case 70:
@@ -657,6 +631,8 @@ void LBA_engine::manipActor(actor * lactor)
 
     manipActorVar1 = 0;
     opcode = *(actorScriptPtr++);
+
+	printf("opcode:%d\n",opcode);
 
     if (opcode > 29) {
 	printf("Manip actor too big!\n");

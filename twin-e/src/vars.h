@@ -852,6 +852,8 @@ class LBA_engine {
 
     int setSomethingVar4;
 
+	int currentActorInZoneProcess;
+
    // order important !
 
     int setSomething2Var1;
@@ -888,6 +890,7 @@ class LBA_engine {
 
    // ----------------------------------------------------------------------------------------
 
+	void checkZones(actor* lactor, int actorNumber);
     void setSomething4(int a, int b, int c);
 
     void changeActorAngle(actor * ptr);

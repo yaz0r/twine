@@ -589,11 +589,6 @@ scriptData *debugger::getActorComScript(int num)
 			finish = 1;
 			break;
 	    }
-	case 1:
-		{
-			addLine("opcode1 (dummy?)",script);
-			break;
-		}
 	case 2:
 	    {
 		short int temp;
@@ -657,7 +652,7 @@ scriptData *debugger::getActorComScript(int num)
 		doCalc(&scriptPtr, buffer);
 		temp = *(short int *) scriptPtr;
 		scriptPtr += 2;
-		sprintf(buffer2, " goto %d", temp);
+		sprintf(buffer2, " else goto %d", temp);
 		strcat(buffer, buffer2);
 		addLine(buffer, script);
 		break;
@@ -671,7 +666,7 @@ scriptData *debugger::getActorComScript(int num)
 		doCalc(&scriptPtr, buffer);
 		temp = *(short int *) scriptPtr;
 		scriptPtr += 2;
-		sprintf(buffer2, " goto %d", temp);
+		sprintf(buffer2, " else goto %d", temp);
 		strcat(buffer, buffer2);
 		addLine(buffer, script);
 		break;
@@ -680,12 +675,12 @@ scriptData *debugger::getActorComScript(int num)
 	    {
 		short int temp;
 
-		sprintf(buffer, "if2 ");
+		sprintf(buffer, "if_once ");
 		manipActor(&scriptPtr, buffer);
 		doCalc(&scriptPtr, buffer);
 		temp = *(short int *) scriptPtr;
 		scriptPtr += 2;
-		sprintf(buffer2, " goto %d", temp);
+		sprintf(buffer2, " else goto %d", temp);
 		strcat(buffer, buffer2);
 		addLine(buffer, script);
 		break;
@@ -735,6 +730,30 @@ scriptData *debugger::getActorComScript(int num)
 		temp2 = *(scriptPtr++);
 
 		sprintf(buffer, "play anim %d for actor %d", temp2, temp1);
+		addLine(buffer, script);
+		break;
+	    }
+	case 21:
+		{
+			short int temp;
+
+			temp=*(short int*)scriptPtr;
+			scriptPtr+=2;
+
+			sprintf(buffer,"jump(21): %d",temp);
+			addLine(buffer,script);
+			break;
+		}
+	case 22:
+	    {
+		char temp1;
+		short int temp2;
+
+		temp1=*(scriptPtr++);
+		temp2 = *(short int *) scriptPtr;
+		scriptPtr += 2;
+
+		sprintf(buffer, "jump(21) actor %d at %d", temp1,temp2);
 		addLine(buffer, script);
 		break;
 	    }
@@ -847,6 +866,12 @@ scriptData *debugger::getActorComScript(int num)
 		addLine(buffer, script);
 		break;
 	    }
+	case 32:
+		{
+			scriptPtr++;
+			addLine("32: ignore byte",script);
+			break;
+		}
 	case 33:
 	    {
 		short int temp;
@@ -906,6 +931,17 @@ scriptData *debugger::getActorComScript(int num)
 			addLine("use key",script);
 			break;
 		}
+	case 40:
+		{
+			short int temp;
+
+			temp=*(short int*)scriptPtr;
+			scriptPtr+=2;
+
+			sprintf(buffer,"use %d coins",temp);
+			addLine(buffer,script);
+			break;
+		}
 	case 41:
 		{
 			addLine("end comportement2 ?",script);
@@ -932,6 +968,11 @@ scriptData *debugger::getActorComScript(int num)
 
 			sprintf(buffer,"actor %d say %d",temp1,temp2);
 			addLine(buffer,script);
+			break;
+		}
+	case 45:
+		{
+			addLine("increase newGameVar2",script);
 			break;
 		}
 	case 46:
@@ -984,9 +1025,21 @@ scriptData *debugger::getActorComScript(int num)
 			addLine(buffer,script);
 			break;
 		}
+	case 51:
+		{
+			sprintf(buffer,"add object %d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
 	case 52:
 		{
 			sprintf(buffer,"go to room %d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 53:
+		{
+			sprintf(buffer,"53:flag action %d",*(scriptPtr++));
 			addLine(buffer,script);
 			break;
 		}
@@ -1010,9 +1063,15 @@ scriptData *debugger::getActorComScript(int num)
 		addLine(buffer, script);
 		break;
 	    }
+	case 56:
+		{
+			sprintf(buffer,"56:flag action %d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
 	case 57:
 	    {
-		sprintf(buffer, "opcode 57: %d", *(scriptPtr++));
+		sprintf(buffer, "set zoom: %d", *(scriptPtr++));
 		addLine(buffer, script);
 		break;
 	    }
@@ -1022,6 +1081,18 @@ scriptData *debugger::getActorComScript(int num)
 		addLine(buffer, script);
 		break;
 	    }
+	case 59:
+		{
+			sprintf(buffer,"GV6=%d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 60:
+		{
+			sprintf(buffer,"GV7=%d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
 	case 61:
 		{
 			char temp1;
@@ -1034,12 +1105,53 @@ scriptData *debugger::getActorComScript(int num)
 			addLine(buffer,script);
 			break;
 		}
+	case 62:
+		{
+			char temp1;
+			char temp2;
+
+			temp1=*(scriptPtr++);
+			temp2=*(scriptPtr++);
+
+			sprintf(buffer,"decrease actor %d life of %d",temp1,temp2);
+			addLine(buffer,script);
+			break;
+		}
+	case 63:
+		{
+			char temp1;
+			char temp2;
+
+			temp1=*(scriptPtr++);
+			temp2=*(scriptPtr++);
+
+			sprintf(buffer,"63: actor %d - %d",temp1,temp2);
+			addLine(buffer,script);
+			break;
+		}
 	case 64:
 		{
 			int temp=strlen((char*)scriptPtr);
 			sprintf(buffer,"play video %s",(char*)scriptPtr);
 			addLine(buffer,script);
 			scriptPtr+=temp+1;
+			break;
+		}
+	case 65:
+		{
+			sprintf(buffer,"play music %d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 66:
+		{
+			addLine("increase numCloverBox",script);
+			break;
+		}
+	case 67:
+		{
+			sprintf(buffer,"GV16[%d]=1",*(scriptPtr++));
+			addLine(buffer,script);
 			break;
 		}
 	case 68:
@@ -1071,9 +1183,39 @@ scriptData *debugger::getActorComScript(int num)
 		addLine(buffer, script);
 		break;
 	    }
+	case 71:
+		{
+			sprintf(buffer,"actor %d stop follow",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
 	case 72:
 		{
 			sprintf(buffer,"opcode 72: %d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 73:
+		{
+			sprintf(buffer,"opcode 73: %d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 74:
+		{
+			sprintf(buffer,"GV15+=%d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 75:
+		{
+			sprintf(buffer,"GV15+=%d",*(scriptPtr++));
+			addLine(buffer,script);
+			break;
+		}
+	case 76:
+		{
+			sprintf(buffer,"load Grid %d",*(scriptPtr++));
 			addLine(buffer,script);
 			break;
 		}
@@ -1086,6 +1228,12 @@ scriptData *debugger::getActorComScript(int num)
 			scriptPtr+=2;
 
 			sprintf(buffer,"opcode 77: %d",temp);
+			addLine(buffer,script);
+			break;
+		}
+	case 78:
+		{
+			sprintf(buffer,"opcode78: %d",*(scriptPtr++));
 			addLine(buffer,script);
 			break;
 		}
@@ -1103,6 +1251,16 @@ scriptData *debugger::getActorComScript(int num)
 
 			sprintf(buffer,"changeAngle: %d",angle);
 			addLine(buffer,script);
+			break;
+		}
+	case 81:
+		{
+			addLine("createCube",script);
+			break;
+		}
+	case 82:
+		{
+			addLine("fade",script);
 			break;
 		}
 	case 89:
@@ -1161,14 +1319,16 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 	    break;
 	}
     case 1:
-	char temp;
+		{
+		char temp;
 
-	temp = **scriptPtr;
-	*(scriptPtr) = (*(scriptPtr)) + 1;
+		temp = **scriptPtr;
+		*(scriptPtr) = (*(scriptPtr)) + 1;
 
-	sprintf(buffer2, "actor[%d].field_56", temp);
-	strcat(buffer, buffer2);
-	break;
+		sprintf(buffer2, "actor[%d].field_56", temp);
+		strcat(buffer, buffer2);
+		break;
+		}
     case 2:
 	{
 	    char temp;
@@ -1183,7 +1343,7 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 	}
     case 3:
 	{
-	    strcat(buffer, "field_54");
+	    strcat(buffer, "zone");
 	    break;
 	}
     case 4:
@@ -1193,7 +1353,7 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 	    temp = **scriptPtr;
 	    *(scriptPtr) = (*(scriptPtr)) + 1;
 
-	    sprintf(buffer2, "actor[%d].field_5A", temp);
+	    sprintf(buffer2, "actor[%d].zone", temp);
 	    strcat(buffer, buffer2);
 	    break;
 	}
@@ -1269,12 +1429,7 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 	}
     case 13:
 	{
-	    char temp;
-
-	    temp = **scriptPtr;
-	    *(scriptPtr) = (*(scriptPtr)) + 1;
-
-	    sprintf(buffer2, "actor[%d].field_64", temp);
+	    sprintf(buffer2, "field_64");
 	    strcat(buffer, buffer2);
 	    break;
 	}
@@ -1358,6 +1513,11 @@ void debugger::manipActor(unsigned char **scriptPtr, char *buffer)
 		{
 			strcat(buffer,"inGameMenuAnswer");
 			manipActorVar1=1;
+			break;
+		}
+	case 27:
+		{
+			strcat(buffer,"GV15");
 			break;
 		}
     default:

@@ -265,7 +265,8 @@ void
 	    break;
 	case 25:
 		{
-			if(lactor->field_60&0x408 == 0x408)
+
+			if((lactor->field_60&0x408) == 0x408)
 			{
 				lactor->field_62|=0x40;
 				lactor->field_72=0;
@@ -276,7 +277,7 @@ void
 		}
 	case 26:
 		{
-			if(lactor->field_60&0x408 == 0x408)
+			if((lactor->field_60&0x408) == 0x408)
 			{
 				if(lactor->field_34)
 				{
