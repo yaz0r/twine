@@ -342,7 +342,7 @@ void GereExtras(void)
             if(extraList[i].field_0 == 43)
               eax = 110;
 
-            magicBallIdx = ExtraSearch(-1, extraList[i].X, extraList[i].Z, extraList[i].Y, eax, 0, 1000, 0);
+            magicBallIdx = ExtraSearch(-1, extraList[i].X, extraList[i].Z, extraList[i].Y, eax, 0, 10000, 0);
           }
 
           if(extraList[i].field_14 & 0x20)
@@ -386,9 +386,9 @@ void GereExtras(void)
 
         angleToActor = GetAngle(extraList[i].X, extraList[i].Y, currentExtraX, currentExtraY);
 
-        angleToActor2 = (angleToActor + extraList[i].field_16) & 0x3FF;
+        angleToActor2 = (angleToActor - extraList[i].field_16) & 0x3FF;
 
-        if( angleToActor2 < 600 && angleToActor2 > 400)
+        if( angleToActor2 > 400 && angleToActor2 < 600)
         {
           if( extraList[i].field_1E )
           {
@@ -407,7 +407,7 @@ void GereExtras(void)
           int dx;
 
           verticalAngle = GetAngle( extraList[i].Z, 0, currentExtraZ, DoTrackVar1 );
-          dx = GetRealValue( (timeStruct*)&extraList[i].field_8 );
+          dx = GetRealValue( &extraList[i].rotationSpeed );
 
           if( !dx )
           {
@@ -421,9 +421,9 @@ void GereExtras(void)
           Rotate( 0, destX, angleToActor );
 
           extraList[i].X += destX;
-          extraList[i].Y += destY;
+          extraList[i].Y += destZ;
 
-          setActorAngle( 0, extraList[i].field_12, 50, (timeStruct*)&extraList[i].field_8 );
+          setActorAngle( 0, extraList[i].field_12, 50, &extraList[i].rotationSpeed );
 
           if( targetedActor == ExtraCheckObjCol( &extraList[i], var_1C ) )
           {
@@ -711,7 +711,7 @@ int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int ol
   return(0);
 }
 
-int ExtraSearch(int actorNum, int X, int Z, int Y, int param1, int param2, int param3, int param4)
+int ExtraSearch(int actorNum, int X, int Y, int Z, int param1, int param2, int param3, int param4)
 {
   int i;
 
@@ -723,14 +723,14 @@ int ExtraSearch(int actorNum, int X, int Z, int Y, int param1, int param2, int p
       extraList[i].field_14 = 0x80;
       extraList[i].field_20 = 0;
       extraList[i].X = X;
-      extraList[i].Z = Z;
-      extraList[i].Y = Y;
+      extraList[i].Z = Y;
+      extraList[i].Y = Z;
       extraList[i].field_1C = actorNum;
       extraList[i].time = param2;
       extraList[i].field_12 = param3;
       extraList[i].field_1E = param4;
-      setActorAngle(0,param3,50,(timeStruct*)&extraList[i].field_8);
-      extraList[i].field_16 = GetAngle(X,Y,actors[param2].X,actors[param2].Z);
+      setActorAngle(0,param3,50,&extraList[i].rotationSpeed);
+      extraList[i].field_16 = GetAngle(X,Z,actors[param2].X,actors[param2].Z);
       return(i);
     }
   }

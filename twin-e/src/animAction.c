@@ -339,6 +339,7 @@ void GereAnimAction(actor * lactor, int actorNum)
           break;
         }
       case 14: // shoot at twinsen
+        // TODO: broken, fix !
         {
           if(*ebx == lactor->animPosition)
           {
@@ -372,12 +373,11 @@ void GereAnimAction(actor * lactor, int actorNum)
           }
           break;
         }
-      case 15:
+      case 15: // shoot slightly aiming
         {
-          ebx = edx;
-#ifdef _DEBUG
-          printf("Skipping GereAnimAction opcode 15 (Send projectile)\n");
-#endif
+          {
+            ebx = edx;
+          }
           break;
         }
       default:

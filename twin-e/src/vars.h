@@ -344,8 +344,14 @@ struct extraListStruct
   short int X;
   short int Y;
   short int Z;
-  short int field_8;
-  short int field_A;
+  union {
+    timeStruct rotationSpeed;
+    struct
+    {
+      short int field_8;
+      short int field_A;
+    };
+  };
   short int field_C;
   short int field_E;
   short int field_10;
