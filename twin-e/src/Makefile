@@ -11,7 +11,7 @@ CXX = g++
 
 CPPFLAGS = `sdl-config --cflags` -Wall -g -DFASTDEBUG 
 
-LDFLAGS = `sdl-config --libs`  
+LDFLAGS = `sdl-config --libs` -lSDL_ttf 
 
 EFENCEFLAGS = -lefence
 
