@@ -16,4 +16,3 @@ typedef signed long int32;
 #include"angle.h"
 #include"costume.h"
 #include"vars.h"
-

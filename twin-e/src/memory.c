@@ -1,31 +1,34 @@
 #include "lba.h"
 
-void LBA_engine::allocBufCube(void)
+void
+LBA_engine::allocBufCube (void)
 {
-	//todo: mettre les codes d'erreur
+  //todo: mettre les codes d'erreur
 
-	bufCube=(byte*)malloc(204800); //204800 = 64*3200
-	bufferBrick=(byte*)malloc(361472);
+  bufCube = (byte *) malloc (204800);	//204800 = 64*3200
+  bufferBrick = (byte *) malloc (361472);
 }
 
-byte* LBA_engine::allocateBuf(int size)
+byte *
+LBA_engine::allocateBuf (int size)
 {
-	byte* ptr;
-	// normalement, on a tout un code en fonction du DPMI pour la gestion des pages...
-	// C'est maintenant completement obsolete
+  byte *ptr;
+  // normalement, on a tout un code en fonction du DPMI pour la gestion des pages...
+  // C'est maintenant completement obsolete
 
-	ptr=(byte*)malloc(size);
+  ptr = (byte *) malloc (size);
 
-	if(!ptr)
-	{
-		printf("Can't alloc %d!\n",size);
-		exit(1);
-	}
+  if (!ptr)
+    {
+      printf ("Can't alloc %d!\n", size);
+      exit (1);
+    }
 
-	return(ptr);
+  return (ptr);
 }
 
-int LBA_engine::allocHQRMemory(int dataSize, byte** ptr)
+int
+LBA_engine::allocHQRMemory (int dataSize, byte ** ptr)
 {
 /*	byte *temp1;
 
@@ -55,7 +58,7 @@ int LBA_engine::allocHQRMemory(int dataSize, byte** ptr)
 
 	HQMemory2=HQMemory2+dataSize+12;*/
 
-	*ptr=(byte*)malloc(dataSize+5000);
+  *ptr = (byte *) malloc (dataSize + 5000);
 
-	return(1);
+  return (1);
 }

@@ -1,22 +1,22 @@
 class LBA_engine;
 
-int threadTimer(void);
-void startThreadTimer(LBA_engine*);
+int threadTimer (void);
+void startThreadTimer (LBA_engine *);
 
 struct zbufferDataStruct
 {
-	short int y;
-	short int z;
-	short int x;
-	short int drawY;
-	short int spriteNum;
+  short int y;
+  short int z;
+  short int x;
+  short int drawY;
+  short int spriteNum;
 };
 
 struct flagDataStruct
 {
-	short int x;
-	short int z;
-	short int y;
+  short int x;
+  short int z;
+  short int y;
 };
 
 struct pointTab
@@ -46,84 +46,84 @@ struct renderTabEntry
 {
   short int depth;
   short int renderType;
-  unsigned char* dataPtr;
+  unsigned char *dataPtr;
 };
 
 struct sceneStruct
 {
-	short int field_0;
- short int field_2;
- short int field_4;
- short int field_6;
+  short int field_0;
+  short int field_2;
+  short int field_4;
+  short int field_6;
 };
 
 struct roomData2Struct
 {
-	short int field_0;
- short int field_2;
- short int field_4;
- short int field_6;
- short int field_8;
- short int field_A;
- short int field_C;
+  short int field_0;
+  short int field_2;
+  short int field_4;
+  short int field_6;
+  short int field_8;
+  short int field_A;
+  short int field_C;
 };
 
 struct reinitAll2DataVar1Struct
 {
-	short int field_0;
- short int field_2;
- short int field_4;
- short int field_6;
- short int field_8;
- short int field_10;
- short int field_12;
- byte field_14;
- byte field_15;
- short int field_16;
- int field_18;
- short int field_1C;
- short int field_1E;
- short int field_20;
- 
+  short int field_0;
+  short int field_2;
+  short int field_4;
+  short int field_6;
+  short int field_8;
+  short int field_10;
+  short int field_12;
+  byte field_14;
+  byte field_15;
+  short int field_16;
+  int field_18;
+  short int field_1C;
+  short int field_1E;
+  short int field_20;
+
 };
 
 struct refreshBoxListStruct
 {
-	unsigned short int field_0;
- unsigned short int field_2;
- unsigned short int field_4;
- unsigned short int field_6; 
+  unsigned short int field_0;
+  unsigned short int field_2;
+  unsigned short int field_4;
+  unsigned short int field_6;
 };
 
 struct fullRedrawVar6Struct
 {
-	unsigned short int field_0;
- unsigned short int field_2;
- unsigned short int X;
- unsigned short int Z;
- unsigned short int Y;
- unsigned short int field_A;
- unsigned short int field_C;
- unsigned short int field_E;
- unsigned short int field_10;
+  unsigned short int field_0;
+  unsigned short int field_2;
+  unsigned short int X;
+  unsigned short int Z;
+  unsigned short int Y;
+  unsigned short int field_A;
+  unsigned short int field_C;
+  unsigned short int field_E;
+  unsigned short int field_10;
 };
 
 struct hqr_entry
 {
-	char fileName[128];
- int size1;
- int remainingSize;
- short int b;
- short int unk;
- unsigned char *ptr;
+  char fileName[128];
+  int size1;
+  int remainingSize;
+  short int b;
+  short int unk;
+  unsigned char *ptr;
 };
 
 struct subHqr
 {
-	unsigned char index;
- unsigned int offFromPtr; 
- unsigned int size;
- int lastAccessedTime;
+  short int index;
+  unsigned int offFromPtr;
+  unsigned int size;
+  int lastAccessedTime;
 };
 
 struct pointEntry
@@ -146,20 +146,20 @@ struct pointEntry
 
 class LBA_engine
 {
-  public:
-  OSystem* osystem;
+public:
+  OSystem * osystem;
   int time;
   short int key;
-  uint16	useSound;
-  byte	useSB;
-  uint32	loadMidiResult;
-  uint32	unkPtr;	//recheck
-  uint32	cfg_file;
+  uint16 useSound;
+  byte useSB;
+  uint32 loadMidiResult;
+  uint32 unkPtr;		//recheck
+  uint32 cfg_file;
 
-  byte	*videoBuffer2;
-  byte	*videoBuffer1;
-  byte	*videoBuffer1bis;
- 
+  byte *videoBuffer2;
+  byte *videoBuffer1;
+  byte *videoBuffer1bis;
+
   byte *videoPtr1;
   byte *videoPtr2;
   byte *videoPtr3;
@@ -173,198 +173,198 @@ class LBA_engine
   byte *videoPtr11;
   byte *videoPtr12;
   byte *videoPtr13;
- 
-  byte	palette[256*3]; // tempvalue
-  byte palette2[256*3]; // tempvalue
-  byte paletteRGBA[256*4];
+
+  byte palette[256 * 3];	// tempvalue
+  byte palette2[256 * 3];	// tempvalue
+  byte paletteRGBA[256 * 4];
 
 
 
   unsigned char outBuffer[512000];
- 
+
   int cropLeft;
 
-  byte	*bufSpeak;
-  byte	*bufMemoSeek;
-  char	*bufText;
-  char	*bufOrder;
-  byte	*bufAni1;
-  byte	*bufAni2;
-	hqr_entry	*HQRInventory;
-	byte	*menuPal;
-	byte	menuPalRGBA[1024];
-	byte	*shadowSprite;
-	byte	*HQRess3;
-	byte	*lbaFont;
-	hqr_entry	*HQRPtrSpriteExtra;
-	hqr_entry	*HQRSamples;
-	hqr_entry	*HQRanims;
+  byte *bufSpeak;
+  byte *bufMemoSeek;
+  char *bufText;
+  char *bufOrder;
+  byte *bufAni1;
+  byte *bufAni2;
+  hqr_entry *HQRInventory;
+  byte *menuPal;
+  byte menuPalRGBA[1024];
+  byte *shadowSprite;
+  byte *HQRess3;
+  byte *lbaFont;
+  hqr_entry *HQRPtrSpriteExtra;
+  hqr_entry *HQRSamples;
+  hqr_entry *HQRanims;
 
-	byte	*bufCube;
-	byte	*bufferBrick;
-	byte	*bufferBrick2;
+  byte *bufCube;
+  byte *bufferBrick;
+  byte *bufferBrick2;
 
-	byte	*HQMemory;
-	byte	*HQMemory2;
-	int		HQMemorySize;
-	int		HQMemorySize2;
+  byte *HQMemory;
+  byte *HQMemory2;
+  int HQMemorySize;
+  int HQMemorySize2;
 
-	byte	*fntFont;
+  byte *fntFont;
 
-	int		interCharSpace; // espace inter lettre
-
-
-	int		spaceLenght; // largeur d'un espace
-
-	int		textColor;
-	int		initVar2;
-	int		initVar3;
-	int		initVar4;
-	int		initVar5;
-
-	int		setup_lst;
+  int interCharSpace;		// espace inter lettre
 
 
+  int spaceLenght;		// largeur d'un espace
 
-	int		samplesLoaded;
+  int textColor;
+  int initVar2;
+  int initVar3;
+  int initVar4;
+  int initVar5;
 
-	int		textVar1;      // current text bank
-
-	byte	textVar2[256];
-
-	byte	textVar3;
-
-	int		language;
-
-	int		languageCD1;
-
-	int		mainMenu3Var1;
-	int 	mainMenu3Var2;
-
-	char 	mainMenu3Var3[256];
-
-	FILE*		voxFileHandle;
-	int		printTextVar5;
-
-	int		textWindowTop;
-	int		textWindowLeftSave;
-	int		textWindowLeft;
-	int		textWindowTopSave;
-	int		textWindowRight;
-	int		textWindowRightSave;
-	int		textWindowBottom;
-	int		textWindowBottomSave;
-
-	int		dialogueBoxLeft;
-	int		dialogueBoxTop;
-	int		dialogueBoxRight;
-	int		dialogueBoxBottom;
-
-	short int	key1;
-	short int printTextVar12;
-	int		printTextVar13;
-
-	int		largeurEcran;
-	int		hauteurEcran;
-
-	int		flagDisplayText;
-
-	short int	skipIntro;
-	short int palReseted;
-
-	short int buttonDrawVar1;
-
-	char saveGameFileName[143];
-	
-	short int currentRoom;
-	char mainMenuVar3;
-	int mainMenuVar4;
-	short int shadowMode;
-
-	char mainMenuVar1[60];
-
-	short int mainMenuData[12];
-	short int subMenu2Data[8];
-	short int soundMenuData[12];
-	short int subMenuData[14];
-
-	short int needChangeRoom;
-	short int newGameVar2;
-	short int newGameVar4;
+  int setup_lst;
 
 
 
+  int samplesLoaded;
 
-	int newGameVar5;
+  int textVar1;			// current text bank
 
-	int screenLockupTable[2000];   // valeur temporaire...
+  byte textVar2[256];
 
-	int initVideoVar1;
+  byte textVar3;
 
-//	int reinitVar1;
-//	int reinitVar2;
-	short int GV9;
-	short int GV10;
-	short int GV11;
-	short int reinitVar3;
-	short int numClover;
-	short int numCloverBox;
-	short int reinitVar4;
-	short int GV6;
-	short int GV7;
-	short int numCoin;
-	short int numKey;
-	short int GV18;
+  int language;
 
-	short int currentTextBank;
-	short int GV15;
-	short int reinitVar7;
-	short int reinitVar8;
-	short int reinitVar9;
+  int languageCD1;
 
-	short int comportement;
+  int mainMenu3Var1;
+  int mainMenu3Var2;
 
-	short int reinitVar10;
+  char mainMenu3Var3[256];
 
-	short int numTextEntry;         // nombre d'entree de text dans la bank actuelle
+  FILE *voxFileHandle;
+  int printTextVar5;
 
-	int currentTextLength;
-	char *currentTextPtr;
-	
+  int textWindowTop;
+  int textWindowLeftSave;
+  int textWindowLeft;
+  int textWindowTopSave;
+  int textWindowRight;
+  int textWindowRightSave;
+  int textWindowBottom;
+  int textWindowBottomSave;
 
+  int dialogueBoxLeft;
+  int dialogueBoxTop;
+  int dialogueBoxRight;
+  int dialogueBoxBottom;
+
+  short int key1;
+  short int printTextVar12;
+  int printTextVar13;
+
+  int largeurEcran;
+  int hauteurEcran;
+
+  int flagDisplayText;
+
+  short int skipIntro;
+  short int palReseted;
+
+  short int buttonDrawVar1;
+
+  char saveGameFileName[143];
+
+  short int currentRoom;
+  char mainMenuVar3;
+  int mainMenuVar4;
+  short int shadowMode;
+
+  char mainMenuVar1[60];
+
+  short int mainMenuData[12];
+  short int subMenu2Data[8];
+  short int soundMenuData[12];
+  short int subMenuData[14];
+
+  short int needChangeRoom;
+  short int newGameVar2;
+  short int newGameVar4;
+
+
+
+
+  int newGameVar5;
+
+  int screenLockupTable[2000];	// valeur temporaire...
+
+  int initVideoVar1;
+
+//      int reinitVar1;
+//      int reinitVar2;
+  short int GV9;
+  short int GV10;
+  short int GV11;
+  short int reinitVar3;
+  short int numClover;
+  short int numCloverBox;
+  short int reinitVar4;
+  short int GV6;
+  short int GV7;
+  short int numCoin;
+  short int numKey;
+  short int GV18;
+
+  short int currentTextBank;
+  short int GV15;
+  short int reinitVar7;
+  short int reinitVar8;
+  short int reinitVar9;
+
+  short int comportement;
+
+  short int reinitVar10;
+
+  short int numTextEntry;	// nombre d'entree de text dans la bank actuelle
+
+  int currentTextLength;
+  char *currentTextPtr;
 
 
 
 
 
-	int stringLenght;
 
-	char	needChangeRoomVar1[40];
-	short int isMenuDisplayed;
-	short int drawInGameTransBox;
 
-//	SDL_CD *cdrom;
+  int stringLenght;
 
-	int setSomethingVar1;
-	int setSomethingVar2;
-	
-	short int setSomethingVar3;
-	short int setSomethingVar4;
+  char needChangeRoomVar1[40];
+  short int isMenuDisplayed;
+  short int drawInGameTransBox;
 
-//	int setSomething2Var1;
-//	int setSomething2Var2;
-//	int setSomething2Var3;
+//      SDL_CD *cdrom;
 
-	char buf1[256];
+  int setSomethingVar1;
+  int setSomethingVar2;
 
-	char buf2[256]; // check size
+  short int setSomethingVar3;
+  short int setSomethingVar4;
 
-	char *printText8Ptr1;
-	char *printText8Ptr2;	
+//      int setSomething2Var1;
+//      int setSomething2Var2;
+//      int setSomething2Var3;
 
-	int printText8Var1;
-	int printText8Var2;
-	int printText8Var3;
+  char buf1[256];
+
+  char buf2[256];		// check size
+
+  char *printText8Ptr1;
+  char *printText8Ptr2;
+
+  int printText8Var1;
+  int printText8Var2;
+  int printText8Var3;
 
   int printText8Var4;
   int printText8Var5;
@@ -372,35 +372,35 @@ class LBA_engine
   int printText8Var7;
   char *printText8Var8;
 
-	int printText10Var1;
-	int spaceLength;
+  int printText10Var1;
+  int spaceLength;
 
-	int dialogueBoxParam1;
-	int dialogueBoxParam2;
+  int dialogueBoxParam1;
+  int dialogueBoxParam2;
 
-	short int playMusciVar1;
-	
-	int currentlyPlayingMusic;
+  short int playMusciVar1;
 
-	int playMusicFlag;
+  int currentlyPlayingMusic;
 
-	char playerName[30];
+  int playMusicFlag;
 
-	char enterPlayerNameVar1;
+  char playerName[30];
 
-	char allowedCharIndex[71];
+  char enterPlayerNameVar1;
 
-	short int currentKey;
+  char allowedCharIndex[71];
 
-	short int enterPlayerNameVar2;
-	
-	int addLineBreakX;
-	int printText8PrepareBufferVar2;
+  short int currentKey;
 
-	int wordSizeChar;
-	int wordSizePixel;
-		
-	char spaceChar;
+  short int enterPlayerNameVar2;
+
+  int addLineBreakX;
+  int printText8PrepareBufferVar2;
+
+  int wordSizeChar;
+  int wordSizePixel;
+
+  char spaceChar;
 
 /*	short int backInitVar3;
 	short int backDialogueBoxRight;
@@ -411,792 +411,815 @@ class LBA_engine
 	short int backInitVar2;
 	
 	short int back3DialogueBoxRight;*/
- 
- short int polyRenderType;
- 
- short int vertexCoordinates[193];
- 
- short int pRenderV3[96];
- short int *pRenderV1;
- short int *pRenderV2;
- short int numOfVertexRemaining;
- short int polyCropped;
- 
- short int vleft;
- short int vtop;
- short int vright;
- short int vbottom;
- 
- unsigned char oldVertexParam;
- unsigned char vertexParam1;
- unsigned char vertexParam2;
+
+  short int polyRenderType;
+
+  short int vertexCoordinates[193];
+
+  short int pRenderV3[96];
+  short int *pRenderV1;
+  short int *pRenderV2;
+  short int numOfVertexRemaining;
+  short int polyCropped;
+
+  short int vleft;
+  short int vtop;
+  short int vright;
+  short int vbottom;
+
+  unsigned char oldVertexParam;
+  unsigned char vertexParam1;
+  unsigned char vertexParam2;
 
 
-	short int numOfVertex;
-//	short int back3DialogueBoxBottom;
+  short int numOfVertex;
+//      short int back3DialogueBoxBottom;
 
-	short int pt8s4var1[96];
-	short int *pt8s4var2;
-	short int *pt8s4var3;
-	short int *pt8s4var4;
-	short int *pt8s4var5;
-	short int *pt8s4var6;
+  short int pt8s4var1[96];
+  short int *pt8s4var2;
+  short int *pt8s4var3;
+  short int *pt8s4var4;
+  short int *pt8s4var5;
+  short int *pt8s4var6;
 
-	int printText8PrepareBufferVar3;
+  int printText8PrepareBufferVar3;
 
-	short int *tab1;
-	short int *tab2;
-	short int *tab3;
+  short int *tab1;
+  short int *tab2;
+  short int *tab3;
 
-	actor actors[100]; // yeah, can use up to 100 actor !
-	actor *twinsen;
+  actor actors[100];		// yeah, can use up to 100 actor !
+  actor *twinsen;
 
-	short int changeRoomVar1;
+  short int changeRoomVar1;
 
-	short int roomMusic;
-	short int playMusicVar1;
-	short int reinitVar11;
+  short int roomMusic;
+  short int playMusicVar1;
+  short int reinitVar11;
 
-	short int GV9dup;
-	short int GV10dup;
+  short int GV9dup;
+  short int GV10dup;
 
-	short int GV11dup;
+  short int GV11dup;
 
-	short int changeRoomVar2;
+  short int changeRoomVar2;
 
-	timeStruct mainLoopVar1;
-	short int mainLoopVar4;
-	short int mainLoopVar10;
+  timeStruct mainLoopVar1;
+  short int mainLoopVar4;
+  short int mainLoopVar10;
 
-	int changeRoomVar3;
-	int newCameraX;
-	int newCameraZ;
-	int changeRoomVar6;
+  int changeRoomVar3;
+  int newCameraX;
+  int newCameraZ;
+  int changeRoomVar6;
 
-	short int newCameraY;
-	short int changeRoomVar8;
+  short int newCameraY;
+  short int changeRoomVar8;
 
-	short int changeRoomVar9;
+  short int changeRoomVar9;
 
-	short int currentGrid2;
-	short int mainLoopVar2;
-	short int mainLoopVar3;
-	short int changeRoomVar10;
-	short int changeRoomVar11;
-
-
+  short int currentGrid2;
+  short int mainLoopVar2;
+  short int mainLoopVar3;
+  short int changeRoomVar10;
+  short int changeRoomVar11;
 
 
 
-	int numActorInRoom;
-
-	reinitAll2DataVar1Struct reinitAll2SubVar1[50];
-
-	byte roomData1[80];
-	roomData2Struct roomData2[10];
- byte GV16[28];
-
-	int reinitAll2Var3;
-	short int reinitAll2Var4;
-	short int numFlags;
-
-	byte *file3D0;
-	byte *file3D1;
-	byte *file3D2;
-	byte *file3D3;
-	byte *file3D4;
-
-	short int TCos0Init;
-	short int TCos1Init;	
-	short int TCos2Init;
-	short int TCos3Init;
-	short int TCos4Init;
-
-	unsigned char* loadTwinsenCostumesVar1;
-
-	unsigned char* fireEffectVar1;
 
 
-	unsigned char* fireEffectVar2;
+  int numActorInRoom;
 
-	unsigned char* scenePtr;
-	unsigned char* localScenePtr;
+  reinitAll2DataVar1Struct reinitAll2SubVar1[50];
 
-	short int sceneRoomNumber;
-	sceneStruct sceneVar2;
-	sceneStruct sceneVar3;
-	sceneStruct sceneVar4;
-	short int sceneVar14;
-	short int sceneVar15;
-	short int sceneVar16;
-	short int sceneVar17;
-	short int sceneVar18;
-	flagDataStruct *flagData;
-	unsigned char *sceneVarPtr;
+  byte roomData1[80];
+  roomData2Struct roomData2[10];
+  byte GV16[28];
+
+  int reinitAll2Var3;
+  short int reinitAll2Var4;
+  short int numFlags;
+
+  byte *file3D0;
+  byte *file3D1;
+  byte *file3D2;
+  byte *file3D3;
+  byte *file3D4;
+
+  short int TCos0Init;
+  short int TCos1Init;
+  short int TCos2Init;
+  short int TCos3Init;
+  short int TCos4Init;
+
+  unsigned char *loadTwinsenCostumesVar1;
+
+  unsigned char *fireEffectVar1;
 
 
-	unsigned char *currentGrid;
-	unsigned char *currentBll;
+  unsigned char *fireEffectVar2;
 
-	int numberOfBll;
- short int agressivity;
- 
- short int mainLoopVar5;
- short int mainLoopVar6;
- short int mainLoopVar7;
+  unsigned char *scenePtr;
+  unsigned char *localScenePtr;
 
- 
- int musicPosition;
- int musicLength;
- 
- int useSamples;
- 
- int time1;
- int time3;
+  short int sceneRoomNumber;
+  sceneStruct sceneVar2;
+  sceneStruct sceneVar3;
+  sceneStruct sceneVar4;
+  short int sceneVar14;
+  short int sceneVar15;
+  short int sceneVar16;
+  short int sceneVar17;
+  short int sceneVar18;
+  flagDataStruct *flagData;
+  unsigned char *sceneVarPtr;
 
- unsigned char vars[256];
- byte GV14[150];
- short int  counter;
- 
- short int fullRedrawVar1;
- short int fullRedrawVar2;
- 
- int numOfRedrawBox;
- 
- refreshBoxListStruct refreshBoxList[300];
- refreshBoxListStruct refreshBoxList2[300];
- 
- short int fullRedrawVar8;
- 
- unsigned char scanCodeTab1[29];
- unsigned short int scanCodeTab2[31];
- 
- unsigned char * actorScriptPtr;
- 
- int cameraX;
- int cameraZ;
- int cameraY;
- 
- short int fullRedrawVar3;
- short int fullRedrawVar4;
- 
- int zbufferVar1;
- int zbufferVar2;
- 
- short int manipActorVar1;
- 
- short int manipActorResult;
- 
- short int mainLoopVar9;
- 
- unsigned char* bodyPtrTab[200];
 
- short int loadCostumeVar;
- short int loadCostumeVar2;
- short int loadCostumeVar3;
- short int loadCostumeVar4;
- short int loadCostumeVar5;
- short int loadCostumeVar6;
- 
- fullRedrawVar6Struct fullRedrawVar6[150];
- 
- unsigned char* menuCostumeIndex;
- short int TCOS[4];
- 
- timeStruct timeVar;
- 
- short int drawInventoryVar; 
- 
- short int winTab[4];
- 
- char dataString[256];
- 
- short int stringProcessVar;
- 
+  unsigned char *currentGrid;
+  unsigned char *currentBll;
+
+  int numberOfBll;
+  short int agressivity;
+
+  short int mainLoopVar5;
+  short int mainLoopVar6;
+  short int mainLoopVar7;
+
+
+  int musicPosition;
+  int musicLength;
+
+  int useSamples;
+
+  int time1;
+  int time3;
+
+  unsigned char vars[256];
+  byte GV14[150];
+  short int counter;
+
+  short int fullRedrawVar1;
+  short int fullRedrawVar2;
+
+  int numOfRedrawBox;
+
+  refreshBoxListStruct refreshBoxList[300];
+  refreshBoxListStruct refreshBoxList2[300];
+
+  short int fullRedrawVar8;
+
+  unsigned char scanCodeTab1[29];
+  unsigned short int scanCodeTab2[31];
+
+  unsigned char *actorScriptPtr;
+
+  int cameraX;
+  int cameraZ;
+  int cameraY;
+
+  short int fullRedrawVar3;
+  short int fullRedrawVar4;
+
+  int zbufferVar1;
+  int zbufferVar2;
+
+  short int manipActorVar1;
+
+  short int manipActorResult;
+
+  short int mainLoopVar9;
+
+  unsigned char *bodyPtrTab[200];
+
+  short int loadCostumeVar;
+  short int loadCostumeVar2;
+  short int loadCostumeVar3;
+  short int loadCostumeVar4;
+  short int loadCostumeVar5;
+  short int loadCostumeVar6;
+
+  fullRedrawVar6Struct fullRedrawVar6[150];
+
+  unsigned char *menuCostumeIndex;
+  short int TCOS[4];
+
+  timeStruct timeVar;
+
+  short int drawInventoryVar;
+
+  short int winTab[4];
+
+  char dataString[256];
+
+  short int stringProcessVar;
+
 // int renderV1;
 // int renderV2;
 // int renderV3;
- 
- short int renderLeft;
- short int renderTop;
- short int renderRight;
- short int renderBottom;
- 
- unsigned char *pri2Ptr2;
- 
- int renderV9;
- int renderV11;
- int renderV10;
- 
- short int numOfPrimitives;
- renderTabEntry *renderTabEntryPtr;
- renderTabEntry *renderTabEntryPtr2;
- renderTabEntry *renderTabSortedPtr;
- unsigned short int costumeHeader;
- 
- renderTabEntry renderTab[1000];
- renderTabEntry renderTabSorted[1000];
- short int polyTab[960];
- short int polyTab2[960];
- 
- short int numOfPri1;
- unsigned char *pri1Ptr;
- 
- short int numOfPri2;
- unsigned char *pri2Ptr;
 
- int renderTab2[271];
- int *renderTab3;
+  short int renderLeft;
+  short int renderTop;
+  short int renderRight;
+  short int renderBottom;
 
- unsigned char *renderV19;
- 
- pointTab renderTab5[800];
- pointTab renderTab6[800];
- short int shadeTable[500];
- 
- int *renderV21;
+  unsigned char *pri2Ptr2;
 
- 
- int rs1v1;
- int rs1v2;
- 
- short int rs1s2v1;
- unsigned char* rs1s2v2;
- 
- short int primitiveCounter;
- 
- 
- unsigned char renderTab7[10000];
- 
- unsigned char* render23;
- 
- short int render25;
- 
- unsigned char* render24;
+  int renderV9;
+  int renderV11;
+  int renderV10;
 
- int renderLoop;
+  short int numOfPrimitives;
+  renderTabEntry *renderTabEntryPtr;
+  renderTabEntry *renderTabEntryPtr2;
+  renderTabEntry *renderTabSortedPtr;
+  unsigned short int costumeHeader;
 
- int updateActorScript;
+  renderTabEntry renderTab[1000];
+  renderTabEntry renderTabSorted[1000];
+  short int polyTab[960];
+  short int polyTab2[960];
 
- int shadowX;
- int shadowZ;
- int shadowY;
+  short int numOfPri1;
+  unsigned char *pri1Ptr;
 
- unsigned char* flagModelPtr;
+  short int numOfPri2;
+  unsigned char *pri2Ptr;
 
- zbufferDataStruct zbufferData[28][150];
- short int zbufferTab[28];
+  int renderTab2[271];
+  int *renderTab3;
 
- char* keyFramePtr;
- char* animVar1;
- char* lastKeyFramePtr;
+  unsigned char *renderV19;
 
- short int processActorSub2Var0;
- short int processActorSub2Var1;
+  pointTab renderTab5[800];
+  pointTab renderTab6[800];
+  short int shadeTable[500];
 
- int moveActorVar1;
+  int *renderV21;
 
- int mainLoopVar17;
 
- short int currentlyProcessedActorNum;
+  int rs1v1;
+  int rs1v2;
 
- actor* processActorVar1;
- short int processActorVar2;
- short int processActorVar3;
- short int processActorVar4;
+  short int rs1s2v1;
+  unsigned char *rs1s2v2;
 
- short int fieldCauseDamage;
- short int processActorX;
- short int processActorY;
- short int processActorZ;
+  short int primitiveCounter;
 
- short int processActorVar5;
- short int processActorVar6;
- short int currentY;
- short int currentX;
- short int currentZ;
 
- int getPosVar1;
- int getPosVar2;
- int getPosVar3;
+  unsigned char renderTab7[10000];
 
- short int processActorVar11;
- short int processActorVar12;
- short int processActorVar13;
+  unsigned char *render23;
 
- short int animVar4;
+  short int render25;
+
+  unsigned char *render24;
+
+  int renderLoop;
+
+  int updateActorScript;
+
+  int shadowX;
+  int shadowZ;
+  int shadowY;
+
+  unsigned char *flagModelPtr;
+
+  zbufferDataStruct zbufferData[28][150];
+  short int zbufferTab[28];
+
+  char *keyFramePtr;
+  char *animVar1;
+  char *lastKeyFramePtr;
+
+  short int processActorSub2Var0;
+  short int processActorSub2Var1;
+
+  int moveActorVar1;
+
+  int mainLoopVar17;
+
+  short int currentlyProcessedActorNum;
+
+  actor *processActorVar1;
+  short int processActorVar2;
+  short int processActorVar3;
+  short int processActorVar4;
+
+  short int fieldCauseDamage;
+  short int processActorX;
+  short int processActorY;
+  short int processActorZ;
+
+  short int processActorVar5;
+  short int processActorVar6;
+  short int currentY;
+  short int currentX;
+  short int currentZ;
+
+  int getPosVar1;
+  int getPosVar2;
+  int getPosVar3;
+
+  short int processActorVar11;
+  short int processActorVar12;
+  short int processActorVar13;
+
+  short int animVar4;
+
+  char holomapMode;
+
+  int drawVar1;
 
 // order important !
 
 
-	int setSomething2Var1;
-	int setSomething2Var2;
-	int setSomething2Var3;
-	int setSomething3Var12;
-	int setSomething3Var14;
-	int setSeomthing3Var16;
-	int reinitVar1;
-	int reinitVar2;
-	int reinitVar12;
-	int setSomething3Var1;
-	int setSomething3Var8;
-	int setSomething3Var17;
-	int renderV1;
-	int renderV2;
-	int renderV3;
-	int renderV22;
-	int renderV23;
-	int renderV24;
-	int destX;
-	int destZ;
-	int destY;
+  int setSomething2Var1;
+  int setSomething2Var2;
+  int setSomething2Var3;
+  int setSomething3Var12;
+  int setSomething3Var14;
+  int setSeomthing3Var16;
+  int reinitVar1;
+  int reinitVar2;
+  int reinitVar12;
+  int setSomething3Var1;
+  int setSomething3Var8;
+  int setSomething3Var17;
+  int renderV1;
+  int renderV2;
+  int renderV3;
+  int renderV22;
+  int renderV23;
+  int renderV24;
+  int destX;
+  int destZ;
+  int destY;
 
-	int bufRotate0[9];
-	int bufRotate1[9];
+  int bufRotate0[9];
+  int bufRotate1[9];
 
-	int setSomething3Var2;
-	int setSomething3Var3;
-	int setSomething3Var18;
-	int setSomething3Var4;
-	int setSomething3Var5;
-	int setSomething3Var9;
-	int setSomething3Var6;
-	int setSomething3Var7;
-	int setSomething3Var10;
-	
+  int setSomething3Var2;
+  int setSomething3Var3;
+  int setSomething3Var18;
+  int setSomething3Var4;
+  int setSomething3Var5;
+  int setSomething3Var9;
+  int setSomething3Var6;
+  int setSomething3Var7;
+  int setSomething3Var10;
+
 //----------------------------------------------------------------------------------------
 
-void LBA_engine::applyAnimMode0(char** ptr,int bp,int bx);
-void LBA_engine::applyAnimMode1(char** ptr,int bp,int bx);
+  void changeActorAngle (actor * ptr);
 
-void renderS2Sub(unsigned char * esi, int ecx, pointTab *dest,int* eax);
+  void LBA_engine::applyAnimMode0 (char **ptr, int bp, int bx);
+  void LBA_engine::applyAnimMode1 (char **ptr, int bp, int bx);
 
-int getAnimOpcode(char** ptr);
+  void renderS2Sub (unsigned char *esi, int ecx, pointTab * dest, int *eax);
 
-void processActorSub8(int var0,int var1,int var2,int var3);
-void processActorSub9(int var0,int var1,int var2,int var3);
-void processActorSub10(int var0,int var1,int var2,int var3);
-void processActorSub5(int param);
-void processActorSub6(int param);
-void processActorSub7(void);
-int getCurPos(int var0, int var1, int var2);
-void processActorSub1(int var0,int var1,int var2);
-int processActorSub2(int position,char* anim,char* body);
-int processActorSub4(int var0,int var1);
+  int getAnimOpcode (char **ptr);
 
-void addObject(actor* lactor);
-int anotherSqrt(int X1,int Z1,int Y1,int X2,int Z2,int Y2);
-int increaseAnim(char* lBufAnim,char* lBody);
-void initNewCSub(actor* lactor,int actorNum);
+  void processActorSub8 (int var0, int var1, int var2, int var3);
+  void processActorSub9 (int var0, int var1, int var2, int var3);
+  void processActorSub10 (int var0, int var1, int var2, int var3);
+  void processActorSub5 (int param);
+  void processActorSub6 (int param);
+  void processActorSub7 (void);
+  int getCurPos (int var0, int var1, int var2);
+  void processActorSub1 (int var0, int var1, int var2);
+  int processActorSub2 (int position, char *anim, char *body);
+  int processActorSub4 (int var0, int var1);
 
-int getAnimMaxIndex(char* ptr);
-int getAnimStartIndex(char* ptr);
+  void addObject (actor * lactor);
+  int anotherSqrt (int X1, int Z1, int Y1, int X2, int Z2, int Y2);
+  int increaseAnim (char *lBufAnim, char *lBody);
+  void initNewCSub (actor * lactor, int actorNum);
 
-int mainLoopSub17(timeStruct* angleData);
+  int getAnimMaxIndex (char *ptr);
+  int getAnimStartIndex (char *ptr);
 
- void processActor(int actorNum);
+  int mainLoopSub17 (timeStruct * angleData);
 
-void updateActorAngle(int angleFrom,int angleTo,int angleSpeed,timeStruct* angleStruct);
+  void processActor (int actorNum);
 
-int calcAngleToward(int X1,int Y1,int X2,int Y2);
+  void updateActorAngle (int angleFrom, int angleTo, int angleSpeed,
+			 timeStruct * angleStruct);
 
-void updateActors(int actorNum);
+  int calcAngleToward (int X1, int Y1, int X2, int Y2);
 
-int applyAnim(int animState,char* animData,char* body);
-int draw3D1(int animState,char* animData,char* body);
+  void updateActors (int actorNum);
 
-void fullRedrawSub11(void);
+  int applyAnim (int animState, char *animData, char *body);
+  int draw3D1 (int animState, char *animData, char *body);
 
-void sortRenderList(fullRedrawVar6Struct list,int listSize,int param);
+  void fullRedrawSub11 (void);
 
-void redrawBrick(int spriteNum,int x,int y,byte *bufferBrick,byte* buffer);
+  void sortRenderList (fullRedrawVar6Struct list, int listSize, int param);
 
-void addToRedrawBoxMain(int left,int top,int right,int bottom);
+  void redrawBrick (int spriteNum, int x, int y, byte * bufferBrick,
+		    byte * buffer);
 
-void refreshUpperBricks(int X,int Z,int Y);
-void refreshUpperBricks3d(int X,int Z,int Y);
+  void addToRedrawBoxMain (int left, int top, int right, int bottom);
 
-void loadActorSub(int imageNumber,int actorNumber);
+  void refreshUpperBricks (int X, int Z, int Y);
+  void refreshUpperBricks3d (int X, int Z, int Y);
 
-void getSpriteSize(int arg_0,int* arg_4,int* arg_8,char* ptr);
+  void loadActorSub (int imageNumber, int actorNumber);
 
-int getDistanceToward(int X1,int Y1, int X2,int Y2);
+  void getSpriteSize (int arg_0, int *arg_4, int *arg_8, char *ptr);
 
-void moveActor(int actorNumber);
+  int getDistanceToward (int X1, int Y1, int X2, int Y2);
 
- void loadImageCrossFade(int imageNumber);
+  void moveActor (int actorNumber);
 
- void convertPalToRGBA(byte* palSource,byte* palDest);
+  void loadImageCrossFade (int imageNumber);
 
-	int fullRedrawS3(int param0,int param1,int param2,int param3,int param4,int param5);
+  void convertPalToRGBA (byte * palSource, byte * palDest);
 
-  int processActorAngle(timeStruct *arg_0);
+  int fullRedrawS3 (int param0, int param1, int param2, int param3,
+		    int param4, int param5);
 
-  void setTextWindowSize(int left, int top, int right, int bottom);
+  int processActorAngle (timeStruct * arg_0);
 
-  void renderS2S2(short int eax, short int ebx, short int ecx);
+  void setTextWindowSize (int left, int top, int right, int bottom);
 
+  void renderS2S2 (short int eax, short int ebx, short int ecx);
 
-	int finishRender(unsigned char *esi);
 
-	void renderS1S2(unsigned char * esi, int ecx, pointTab *edi, int* eax);
- 
- void renderS1S1(int* eax, int* ebp);
+  int finishRender (unsigned char *esi);
 
-	void renderS1(int edx, int ecx, int ebx, pointEntry* esi);
-	void renderS2(int edx, int ecx, int ebx, pointEntry* esi);
+  void renderS1S2 (unsigned char *esi, int ecx, pointTab * edi, int *eax);
 
-	int prepareRender(void);
+  void renderS1S1 (int *eax, int *ebp);
 
-	int printText10SubSub2(void);
+  void renderS1 (int edx, int ecx, int ebx, pointEntry * esi);
+  void renderS2 (int edx, int ecx, int ebx, pointEntry * esi);
 
- void printText10SubSub(int arg0, int arg_4);
-	void polyRender(int ecx, int edi);
+  int prepareRender (void);
 
-	int renderM1(unsigned char *ptr);
- 
-  int renderM2(unsigned char *ptr);
+  int printText10SubSub2 (void);
 
+  void printText10SubSub (int arg0, int arg_4);
+  void polyRender (int ecx, int edi);
 
-	int startRenderer(int arg_0,int arg_4,int arg_8,int arg_C,int arg_10,int arg_14,unsigned char* arg_18);
+  int renderM1 (unsigned char *ptr);
 
+  int renderM2 (unsigned char *ptr);
 
-	void draw3D4(short int arg_0, short int arg_4, short int arg_8, short int arg_C, short int arg_10, short int arg_14, unsigned char * arg_18);
 
-	void loadActorCostumeSub(unsigned char *arg_0, unsigned char* arg_4);
+  int startRenderer (int arg_0, int arg_4, int arg_8, int arg_C, int arg_10,
+		     int arg_14, unsigned char *arg_18);
 
-	void drawComportementEntry(int anim, int arg, int costume);
 
-	void drawBlackBox(int a,int b,int c,int d, unsigned char e);
+  void draw3D4 (short int arg_0, short int arg_4, short int arg_8,
+		short int arg_C, short int arg_10, short int arg_14,
+		unsigned char *arg_18);
 
+  void loadActorCostumeSub (unsigned char *arg_0, unsigned char *arg_4);
 
-	void drawMenuWin2(short int arg_0, short int arg_4);
+  void drawComportementEntry (int anim, int arg, int costume);
 
-	int setAnimAtKeyFrame(int arg_0, unsigned char * ptr, unsigned char* arg_8);
+  void drawBlackBox (int a, int b, int c, int d, unsigned char e);
 
 
-	int drawInventory2(hqr_entry *hqrPtr, int var);
+  void drawMenuWin2 (short int arg_0, short int arg_4);
 
+  int setAnimAtKeyFrame (int arg_0, unsigned char *ptr, unsigned char *arg_8);
 
-	subHqr* findSubHqr(int arg_0, int arg_4, subHqr * arg_8);
 
-	unsigned char* getHqrdataPtr(hqr_entry* arg_0, short int arg_4);
+  int drawInventory2 (hqr_entry * hqrPtr, int var);
 
-	void drawMenuWin(short int var);
 
-	void processComportementMenu(void);
+  subHqr *findSubHqr (int arg_0, int arg_4, subHqr * arg_8);
 
-	int fullRedrawS2S1(int arg_0, int arg_4, int arg_8);
+  unsigned char *getHqrdataPtr (hqr_entry * arg_0, short int arg_4);
 
-	void loadGfxSub(unsigned char * ptr);
+  void drawMenuWin (short int var);
 
-	int loadBody(int costumeNum, int actorNum);
+  void processComportementMenu (void);
 
-	int doCalc(void);
+  int fullRedrawS2S1 (int arg_0, int arg_4, int arg_8);
 
-	void manipActor(actor* lactor);
+  void loadGfxSub (unsigned char *ptr);
 
-	int playAnim(char costume, short int arg_4, unsigned char arg_8, short int actorNum);
+  int loadBody (int costumeNum, int actorNum);
 
-	void loadActorCostume(char arg_0, short int arg_4);
- 
- void changeTwinsenComp(int newCostume);
+  int doCalc (void);
 
-	void loadVariousGFX(void);
+  void manipActor (actor * lactor);
 
-	void drawSprite(int num, int var1, int var2, unsigned char* localBufferBrick);
-	void drawSprite2(int num, int var1, int var2, unsigned char* localBufferBrick);
+  int playAnim (char costume, short int arg_4, unsigned char arg_8,
+		short int actorNum);
 
-	void zbufferSub2(int y, int z, int x);
- 
- unsigned char * zbufferSub1(int var);
+  void loadActorCostume (char arg_0, short int arg_4);
 
-	void zbuffer(int var1, int var2, int y, int z, int x);
+  void changeTwinsenComp (int newCostume);
 
-	void redrawCube(void);
+  void loadVariousGFX (void);
 
-	void runActorScript(short int actorNumber);
+  void drawSprite (int num, int var1, int var2,
+		   unsigned char *localBufferBrick);
+  void drawSprite2 (int num, int var1, int var2,
+		    unsigned char *localBufferBrick);
 
-	void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int arg_C);
+  void zbufferSub2 (int y, int z, int x);
 
-	void fullRedrawSub5(void);
+  unsigned char *zbufferSub1 (int var);
 
-	void fullRedrawSub1(void);
+  void zbuffer (int var1, int var2, int y, int z, int x);
 
-	void fullRedrawSub3(short int arg_0, short int arg_4, short int arg_8, short int arg_C);
+  void redrawCube (void);
 
-	void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8, timeStruct *timePtr);
+  void runActorScript (short int actorNumber);
 
- void resetActor(int actorNumber);
- 
- void reinitAll3(void);
- 
- void reinitVars(void);
+  void addToRedrawBox (short int arg_0, short int arg_4, short int arg_8,
+		       short int arg_C);
 
-	void unfreezeTime(void);
-	int mainLoop4(void); 
+  void fullRedrawSub5 (void);
 
-	void freezeTime(void);
+  void fullRedrawSub1 (void);
 
+  void fullRedrawSub3 (short int arg_0, short int arg_4, short int arg_8,
+		       short int arg_C);
 
+  void setActorAngleSafe (short int arg_0, short int arg_4, short int arg_8,
+			  timeStruct * timePtr);
 
+  void resetActor (int actorNumber);
 
+  void reinitAll3 (void);
 
-	void mainLoop2sub1(void);
+  void reinitVars (void);
 
-	int getCurrentlyPlayingMusic(void);
- void fullRedraw(int param);
-	void waitRetrace(void);
-	void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct *ptr);
+  void unfreezeTime (void);
+  int mainLoop4 (void);
 
-	void createCube(void);
-	void addCubeEntry(unsigned char* gridEntry, unsigned char* dest);
+  void freezeTime (void);
 
-	void memoryBufferProcess(unsigned char * bufferBrick2, int size);
 
-	int processBuffer2BufferSub(int var,unsigned int *ptr1,unsigned int *ptr2);
 
-	int processBuffer2Buffer(unsigned int* buffer1, unsigned int* buffer2);
 
 
-	void loadBrkSub1(unsigned char * ptr,int size);
+  void mainLoop2sub1 (void);
 
-	int loadBrk(int gridSize);
+  int getCurrentlyPlayingMusic (void);
+  void fullRedraw (int param);
+  void waitRetrace (void);
+  void setActorAngle (short int arg0, short int arg4, short int arg8,
+		      timeStruct * ptr);
 
-	int prepareResource(char * fileName, int index);
+  void createCube (void);
+  void addCubeEntry (unsigned char *gridEntry, unsigned char *dest);
 
-	void makeFireEffect(int top,int param);
-	void makeFireEffectInit(void);
+  void memoryBufferProcess (unsigned char *bufferBrick2, int size);
 
-	int allocHQRMemory(int dataSize, byte** ptr);
+  int processBuffer2BufferSub (int var, unsigned int *ptr1,
+			       unsigned int *ptr2);
 
-	int loadDataFileToPtr(char *fileName, short int arg_4, byte** ptr);
+  int processBuffer2Buffer (unsigned int *buffer1, unsigned int *buffer2);
 
 
-	int initCostume(byte arg_0,short int actorNumber);
+  void loadBrkSub1 (unsigned char *ptr, int size);
 
-	void changeRoom1Sub1(hqr_entry *ptr);
+  int loadBrk (int gridSize);
 
-	void changeRoom1Sub2(void);
+  int prepareResource (char *fileName, int index);
 
-	void reinitData(void);
+  void makeFireEffect (int top, int param);
+  void makeFireEffectInit (void);
 
+  int allocHQRMemory (int dataSize, byte ** ptr);
 
-	void loadRoomActors(short int arg_0);
+  int loadDataFileToPtr (char *fileName, short int arg_4, byte ** ptr);
 
-	void reinitTwinsen(void);
 
-	void saveGame(void);
+  int initCostume (byte arg_0, short int actorNumber);
 
-	int loadGridAndBll(short int roomNumber);
+  void changeRoom1Sub1 (hqr_entry * ptr);
 
-	void playMusicSub2(short int arg_0);
+  void changeRoom1Sub2 (void);
 
+  void reinitData (void);
 
-	int playMusicSub(void);
 
-	void changeRoomSub1(int arg_0);
+  void loadRoomActors (short int arg_0);
 
-	void mainLoop2(int arg_0);
+  void reinitTwinsen (void);
 
-	void loadRoomScene(int sceneNumber);
+  void saveGame (void);
 
-	void loadTwinsenCostumes(void);
+  int loadGridAndBll (short int roomNumber);
 
+  void playMusicSub2 (short int arg_0);
 
-	void changeRoom1(void);
 
-	void printText8Sub2(void);
+  int playMusicSub (void);
 
-	void drawLetter2(int x, int y, int c);
+  void changeRoomSub1 (int arg_0);
 
-	void drawDoubleLetter(int a, int b, int c, int d);
+  void mainLoop2 (int arg_0);
 
+  void loadRoomScene (int sceneNumber);
 
-	void printText8Sub4(short int a, short int b, short int c);
+  void loadTwinsenCostumes (void);
 
-	void setSomething4(int a, int b, int c);
 
-	void printText10Sub2(void);
+  void changeRoom1 (void);
 
-	void printText10Sub3(byte c,int *b,int *a,byte *font);
+  void printText8Sub2 (void);
 
+  void drawLetter2 (int x, int y, int c);
 
-	void getWordSize(char* arg1, char* arg2);	
+  void drawDoubleLetter (int a, int b, int c, int d);
 
-	short int getKeyboardChar(void);
 
+  void printText8Sub4 (short int a, short int b, short int c);
 
-	int optionMenu(void);
+  void setSomething4 (int a, int b, int c);
 
-  void reinitAll1(void);
+  void printText10Sub2 (void);
 
-	void newGame4(void);
-	void newGame2(void);
-	void setNewTextColor(short int param);
+  void printText10Sub3 (byte c, int *b, int *a, byte * font);
 
-	
-	void printText10Sub(void);
 
-  void readBufferSpeak(FILE* fileHandle);
+  void getWordSize (char *arg1, char *arg2);
 
+  short int getKeyboardChar (void);
 
-	void stopCD(void);
 
+  int optionMenu (void);
 
-	int loadVox(int index);
+  void reinitAll1 (void);
 
-	int checkCD(char* string);
+  void newGame4 (void);
+  void newGame2 (void);
+  void setNewTextColor (short int param);
 
-	void changeRoom(void);
 
-	void drawCharacter(int X,int Y,unsigned char caractere);
+  void printText10Sub (void);
 
-	void printStringSimple(int X,int Y,char *string);
+  void readBufferSpeak (FILE * fileHandle);
 
 
-	int getStringLength(char *string);
+  void stopCD (void);
 
-  int findString(int index);
 
+  int loadVox (int index);
 
-	
-	void drawLine(int a, int b, int c, int d, int e);
+  int checkCD (char *string);
 
-	void launchStringProcess(int a,int b, int c, int d, int e);
+  void changeRoom (void);
 
-	void setInitVars(int a,int b, int c);
+  void drawCharacter (int X, int Y, unsigned char caractere);
 
-	void setTextColor(byte i);
-	void setTextColorSub(int i);
-	void drawButton(short int* data,int a);
+  void printStringSimple (int X, int Y, char *string);
 
 
-	char* getStringFromNum(int valeur);
-	void reinitAll(int save);
-	int mainLoop(void);
+  int getStringLength (char *string);
 
-	void checkHeap();
+  int findString (int index);
 
-	void fontInit(byte* font,int param1,int param2);
 
-	byte* loadImageToMemory(char* fileName, short int imageNumber);
 
+  void drawLine (int a, int b, int c, int d, int e);
 
-	int	processMenu(short int* menuData);
-	int enterPlayerName(short int param);
-	void init(void);
+  void launchStringProcess (int a, int b, int c, int d, int e);
 
-	void loadTextBank(int index);
+  void setInitVars (int a, int b, int c);
 
-	void saveTextWindow(void);
-	void maximizeTextWindow(void);
-	int setVoxFileAtDigit(int index);
-	int printText4(FILE* var1);
-	void loadSavedTextWindow(void);
-	int printText6(int var);
+  void setTextColor (byte i);
+  void setTextColorSub (int i);
+  void drawButton (short int *data, int a);
 
 
-	int printText7(int var);
-	int printText8(int var);
-	void drawTextBox(void);
-	int printText10(void);
-	int printText11(void);
+  char *getStringFromNum (int valeur);
+  void reinitAll (int save);
+  int mainLoop (void);
 
-	void drawButtonGFX(int largeur, int posY, int c,int d,int mode);
+  void checkHeap ();
 
-	void resetPalette(void);
-	void resetVideoBuffer1(void);
+  void fontInit (byte * font, int param1, int param2);
 
-	void printTextFullScreen(int textIndex);
-	
-	void copyStringToString(char *a, char *b, int c);
+  byte *loadImageToMemory (char *fileName, short int imageNumber);
 
-	void mainMenu2(void);
-	char* printString(int a,char* b);
-	void playCDtrack(int trackNumber);
 
+  int processMenu (short int *menuData);
+  int enterPlayerName (short int param);
+  void init (void);
 
-	void fadeOut(char* palette);
-	void loadImageAndPalette(int imageNumber);
-	void waitFor(void);
-	void fadeIn2(char* ptr);
+  void loadTextBank (int index);
 
+  void saveTextWindow (void);
+  void maximizeTextWindow (void);
+  int setVoxFileAtDigit (int index);
+  int printText4 (FILE * var1);
+  void loadSavedTextWindow (void);
+  int printText6 (int var);
 
-	void readKeyboard(void);
 
-	void drawBoxTrans(int right, int top,int left, int bottom, char* dest, int right2, int top2, char* source);
+  int printText7 (int var);
+  int printText8 (int var);
+  void drawTextBox (void);
+  int printText10 (void);
+  int printText11 (void);
 
-	void drawBoxInsideTrans(int left,int top, int right, int bottom, int mode);
+  void drawButtonGFX (int largeur, int posY, int c, int d, int mode);
 
-	void blackToWhite(void);
-	void newGame(void);
+  void resetPalette (void);
+  void resetVideoBuffer1 (void);
 
-	FILE* fileOpen(char* fileName);
-	FILE* openResource(char* fileName);
-	void closeResource(FILE* resourceFile);
+  void printTextFullScreen (int textIndex);
 
-	int readResourceData(FILE* resourceFile,char* ptr, int length);
+  void copyStringToString (char *a, char *b, int c);
 
-	void allocBufCube(void);
+  void mainMenu2 (void);
+  char *printString (int a, char *b);
+  void playCDtrack (int trackNumber);
 
-	byte* allocateBuf(int size);
 
-	void fadeIn(byte* palette);
-	void adjustPalette(byte R, byte G, byte B, byte* palette, int a);
+  void fadeOut (char *palette);
+  void loadImageAndPalette (int imageNumber);
+  void waitFor (void);
+  void fadeIn2 (char *ptr);
 
-	int remapComposante(int modifier, int color, int param, int intensity);
-	void setPalette(byte* palette);
 
+  void readKeyboard (void);
 
-	void decompress(int decompressedSize, unsigned char* destination, unsigned char* source);
-	void dumpFile(char* name,char* ptr,int size);
+  void drawBoxTrans (int right, int top, int left, int bottom, char *dest,
+		     int right2, int top2, char *source);
 
+  void drawBoxInsideTrans (int left, int top, int right, int bottom,
+			   int mode);
 
+  void blackToWhite (void);
+  void newGame (void);
 
-	void initVideoStuff(void);
+  FILE *fileOpen (char *fileName);
+  FILE *openResource (char *fileName);
+  void closeResource (FILE * resourceFile);
 
-	void copyToBuffer(byte* source, byte* destination);
+  int readResourceData (FILE * resourceFile, char *ptr, int length);
 
-	void displayAdelineLogo(void);
-	void playMidi(int musicNum);
-	void playMusic(int musicNum);
+  void allocBufCube (void);
 
+  byte *allocateBuf (int size);
 
-	int loadImageToPtr(char* resourceName,byte* Ptr,int imageNumber);
-	byte allocHQMemory(int size);
+  void fadeIn (byte * palette);
+  void adjustPalette (byte R, byte G, byte B, byte * palette, int a);
 
-	hqr_entry* load_hqr(char* fileName, int a, int b);
+  int remapComposante (int modifier, int color, int param, int intensity);
+  void setPalette (byte * palette);
 
-	void loadCFG(void);
-	void initAll(char* fileName,int a);
 
-	void initVars(void);
+  void decompress (int decompressedSize, unsigned char *destination,
+		   unsigned char *source);
+  void dumpFile (char *name, char *ptr, int size);
 
-	void mainMenu(void);
 
-	void playFLA(char* flaName);
-	
-	void drawBoxOutLine(int left, int top, int right, int bottom);
 
-	void setSomething(int a, int b, int c);
-	void setSomething2(int a, int b, int c);
-	void setSomething3(int a,int b,int c);
+  void initVideoStuff (void);
 
-	void stopMusic(void);
-	void fullStopMusic(void);
+  void copyToBuffer (byte * source, byte * destination);
 
-	void optionMenu2(void);
+  void displayAdelineLogo (void);
+  void playMidi (int musicNum);
+  void playMusic (int musicNum);
 
 
-	void drawSelectableLetters(void);
+  int loadImageToPtr (char *resourceName, byte * Ptr, int imageNumber);
+  byte allocHQMemory (int size);
 
-	void drawSelectableLetter(int y, int x, int arg);
+  hqr_entry *load_hqr (char *fileName, int a, int b);
 
+  void loadCFG (void);
+  void initAll (char *fileName, int a);
 
+  void initVars (void);
 
-	int choosePlayerName(int param);
+  void mainMenu (void);
 
-	void processTextLine(void);
+  void playFLA (char *flaName);
+
+  void drawBoxOutLine (int left, int top, int right, int bottom);
+
+  void setSomething (int a, int b, int c);
+  void setSomething2 (int a, int b, int c);
+  void setSomething3 (int a, int b, int c);
+
+  void stopMusic (void);
+  void fullStopMusic (void);
+
+  void optionMenu2 (void);
+
+
+  void drawSelectableLetters (void);
+
+  void drawSelectableLetter (int y, int x, int arg);
+
+
+
+  int choosePlayerName (int param);
+
+  void processTextLine (void);
 
 };

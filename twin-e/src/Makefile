@@ -9,14 +9,20 @@ CC = gcc
 
 CXX = g++
 
-CPPFLAGS = `sdl-config --cflags` -Wall -g
+CPPFLAGS = `sdl-config --cflags` -Wall -g -DFASTDEBUG 
 
-LDFLAGS = `sdl-config --libs` -lefence
+LDFLAGS = `sdl-config --libs`  
 
-lbarecode: ${OBJECTS}
-	${CXX} ${LDFLAGS} ${OBJECTS} -o lbarecode
+EFENCEFLAGS = -lefence
 
-all: lbarecode
+release: $(OBJECTS)
+	$(CXX) $(LDFLAGS) -O3 $(OBJECTS) -o lbarecode
+
+efence: $(OBJECTS)
+	$(CXX) $(LDFLAGS) $(EFENCEFLAGS) $(OBJECTS) -o lbaefence
+
+
+all: release 
 
 clean:
-	rm -f ${OBJECTS} lbarecode
+	rm -f $(OBJECTS) lbarecode lbaefence

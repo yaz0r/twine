@@ -18,55 +18,57 @@
 #include "lba.h"
 #include "SDL.h"
 
-int LBA_engine::checkCD(char* string)
+int
+LBA_engine::checkCD (char *string)
 {
-//	int cur_track;
-//	int min, sec, frame;
-	int numOfCDROM;
-	int cdNum;
+//      int cur_track;
+//      int min, sec, frame;
+  int numOfCDROM;
+  int cdNum;
 
-	return(0);
+  return (0);
 
-	numOfCDROM=SDL_CDNumDrives();
+  numOfCDROM = SDL_CDNumDrives ();
 
-	printf("Found %d CDROM devices\n",numOfCDROM);
+  printf ("Found %d CDROM devices\n", numOfCDROM);
 
-	if(!numOfCDROM){
-  	/* None found */
-  	fprintf(stderr, "No CDROM devices available\n");
-		exit(-1);
-	}
+  if (!numOfCDROM)
+    {
+      /* None found */
+      fprintf (stderr, "No CDROM devices available\n");
+      exit (-1);
+    }
 
-	for(cdNum=0;cdNum<numOfCDROM;cdNum++)
-	{	
+  for (cdNum = 0; cdNum < numOfCDROM; cdNum++)
+    {
 
-		printf("Testing drive %s\n",SDL_CDName(cdNum));		
+      printf ("Testing drive %s\n", SDL_CDName (cdNum));
 
-		/* Open the default drive */
-//		cdrom=SDL_CDOpen(cdNum);
+      /* Open the default drive */
+//              cdrom=SDL_CDOpen(cdNum);
 
-		/* Did if open? Check if cdrom is NULL */
-		/*		if(!cdrom){
- 	 		fprintf(stderr, "Couldn't open drive: %s\n", SDL_GetError());
-		}
-		else*/
-		{
-			/* Print Volume info */
-	/*		SDL_CDStatus(cdrom);
-			if(cdrom->numtracks==10)
-			{
-				printf("Assuming that it is LBA cd...\n");
-				return(1);
-			}*/
-		}
-	//	SDL_CDClose(cdrom);
-	}   
-	return(0);
+      /* Did if open? Check if cdrom is NULL */
+      /*              if(!cdrom){
+         fprintf(stderr, "Couldn't open drive: %s\n", SDL_GetError());
+         }
+         else */
+      {
+	/* Print Volume info */
+	/*              SDL_CDStatus(cdrom);
+	   if(cdrom->numtracks==10)
+	   {
+	   printf("Assuming that it is LBA cd...\n");
+	   return(1);
+	   } */
+      }
+      //      SDL_CDClose(cdrom);
+    }
+  return (0);
 }
 
 
-void LBA_engine::stopCD(void)
+void
+LBA_engine::stopCD (void)
 {
-//	SDL_CDStop(cdrom);
+//      SDL_CDStop(cdrom);
 }
-

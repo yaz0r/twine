@@ -17,18 +17,18 @@
 
 class OSystem
 {
-  public:
-    OSystem(int argc, char* argv[]);
+public:
+  OSystem (int argc, char *argv[]);
 
-	void crossFade(char* buffer,char* palette);
-	void fadeBlackToWhite();
-	void initBuffer(char* buffer,int width,int height);
-    void putpixel(int x, int y, int pixel);
-    void setColor(byte i, byte R, byte G, byte B);
-    void setPalette(byte* palette);
-    void drawBufferToScreen(unsigned char* videoBuffer);
-    void refresh(unsigned char* videoBuffer, int left, int top, int right, int bottom);
+  void crossFade (char *buffer, char *palette);
+  void fadeBlackToWhite ();
+  void initBuffer (char *buffer, int width, int height);
+  void putpixel (int x, int y, int pixel);
+  void setColor (byte i, byte R, byte G, byte B);
+  void setPalette (byte * palette);
+  void drawBufferToScreen (unsigned char *videoBuffer);
+  void refresh (unsigned char *videoBuffer, int left, int top, int right,
+		int bottom);
 
-  private:
+private:
 };
-
