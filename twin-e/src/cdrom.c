@@ -16,7 +16,7 @@
  ***************************************************************************/
 
 #include "lba.h"
-#include "sdl.h"
+#include "SDL.h"
 
 int LBA_engine::checkCD(char* string)
 {
