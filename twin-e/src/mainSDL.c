@@ -112,7 +112,7 @@ OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dep
 
     keyboard[SDLK_RETURN] = 0;
 
-    sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
+    sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
 
     if (sdl_screen == NULL)
 	{
@@ -200,7 +200,7 @@ void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
 {
 	SDL_BlitSurface(sdl_buffer320x200,NULL,sdl_bufferRGBA,NULL);
 
-	sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_ON);
+	sdl_bufferStretch=zoomSurface(sdl_bufferRGBA, 2, 2.4, SMOOTHING_OFF);
 
 //	SDL_FillRect(sdl_screen,NULL,0);
 

@@ -86,11 +86,11 @@ void LBA_engine::playFLA(char *flaName)
 							osystem->setPalette320x200((byte*)flaPaletteRGBA);
 							osystem->draw320x200BufferToScreen((unsigned char*)flaBuffer);
 							
-							do
+							/*do
 							{
 								osystem->delay(5);
 							}while(time<esi+2);
-
+*/
 							readKeyboard();
 						}
 
