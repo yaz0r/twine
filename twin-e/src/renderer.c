@@ -18,6 +18,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#ifdef _DEBUG
+extern actor* pCurrentActorRender;
+#endif
+
 int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr)
 {
   unsigned char *ptr;
@@ -224,7 +228,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
 #ifdef USE_FLOAT
       pointPtrDest->x = (coX + coZ)* 24 /512.f + setSomethingVar1;
       pointPtrDest->y = (((coX - coZ) *12) - coY*30) /512.f + setSomethingVar2;
-          pointPtrDest->z = coZ - coX - coY;
+      pointPtrDest->z = coZ - coX - coY;
 #else
       pointPtrDest->x = (coX + coZ)* 24 /512 + setSomethingVar1;
       pointPtrDest->y = (((coX - coZ) *12) - coY*30) /512 + setSomethingVar2;
@@ -623,9 +627,11 @@ void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
   short int *tempPtr;
 
   int rs1s2v1 = ecx;
+  unsigned char *rs1s2v2;
 
+  do
   {
-    unsigned char *rs1s2v2 = esi;
+    rs1s2v2 = esi;
 
     tempPtr = (short int *) (esi);
 

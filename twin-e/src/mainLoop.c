@@ -322,12 +322,12 @@ int mainLoopInteration(void)
           actors[i].field_22 = actors[i].Y;
           actors[i].field_24 = actors[i].Z;
 
-          if (actors[i].positionInMoveScript != -1)
+        if (actors[i].positionInMoveScript != -1)
         {
-            DoTrack(i);
+          DoTrack(i);
         }
 
-          DoAnim(i);
+        DoAnim(i);
 
                 if (actors[i].staticFlagsBF.bIsZonable)
         {

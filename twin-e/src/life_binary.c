@@ -269,8 +269,8 @@ void runActorScript(short int actorNumber)
              if (currentlyFollowedActor != newActorToFollow)
            {
                newCameraX = (actors[newActorToFollow].X >> 9);
-               newCameraZ = (actors[newActorToFollow].Z >> 8);
-               newCameraY = (actors[newActorToFollow].Y >> 9);
+               newCameraZ = (actors[newActorToFollow].Y >> 8);
+               newCameraY = (actors[newActorToFollow].Z >> 9);
 
                currentlyFollowedActor = newActorToFollow;
                requestBackgroundRedraw = 1;

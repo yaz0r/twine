@@ -72,10 +72,10 @@ void DoTrack(int actorNumber)
         manipActorResult = *scriptPtr;
 
         destX = flagData[manipActorResult].x;
-        destZ = flagData[manipActorResult].z;
         destY = flagData[manipActorResult].y;
+        destZ = flagData[manipActorResult].z;
 
-        newAngle = GetAngle(lactor->X, lactor->Y, destX, destY);
+        newAngle = GetAngle(lactor->X, lactor->Z, destX, destZ);
 
         if (lactor->staticFlagsBF.bIsSpriteActor)
         {
@@ -132,9 +132,9 @@ void DoTrack(int actorNumber)
 
         printf("Actor %d warp to flag %d\n", actorNumber, manipActorResult);
 
-        destX = flagData[manipActorResult].x;
-        destZ = flagData[manipActorResult].z;
+        destX = flagData[manipActorResult].x;     
         destY = flagData[manipActorResult].y;
+        destZ = flagData[manipActorResult].z;
 
         if (lactor->staticFlagsBF.bIsSpriteActor)
         {
@@ -165,10 +165,10 @@ void DoTrack(int actorNumber)
         manipActorResult = *scriptPtr;
 
         destX = flagData[manipActorResult].x;
-        destZ = flagData[manipActorResult].z;
         destY = flagData[manipActorResult].y;
+        destZ = flagData[manipActorResult].z;
 
-        newAngle = 0x200 + GetAngle(lactor->X, lactor->Y, destX, destY);
+        newAngle = 0x200 + GetAngle(lactor->X, lactor->Z, destX, destZ);
 
         if (lactor->staticFlagsBF.bIsSpriteActor)
         {
@@ -222,11 +222,11 @@ void DoTrack(int actorNumber)
           manipActorResult = *scriptPtr;
 
           destX = flagData[manipActorResult].x;
-          destZ = flagData[manipActorResult].z;
           destY = flagData[manipActorResult].y;
+          destZ = flagData[manipActorResult].z;
 
-          lactor->angle = GetAngle(lactor->X, lactor->Z, destX, destZ); // X-Y move
-          lactor->field_78 = GetAngle(lactor->Y, 0, destY, DoTrackVar1);  // Z (vertical) move
+          lactor->angle = GetAngle(lactor->X, lactor->Z, destX, destZ); // X-Z move
+          lactor->field_78 = GetAngle(lactor->Y, 0, destY, DoTrackVar1);  // Y (vertical) move
 
           if (DoTrackVar1 > 100)
           {
@@ -633,10 +633,10 @@ void DoTrack(int actorNumber)
         assert(sscanf(tempPtr,"GOTO_POINT %d", &pointIdx) == 1);
 
         destX = flagData[pointIdx].x;
-        destZ = flagData[pointIdx].z;
         destY = flagData[pointIdx].y;
+        destZ = flagData[pointIdx].z;
 
-        newAngle = GetAngle(currentTrackActor->X, currentTrackActor->Z, destX, destY);
+        newAngle = GetAngle(currentTrackActor->X, currentTrackActor->Z, destX, destZ);
 
         if (currentTrackActor->staticFlagsBF.bIsSpriteActor)
         {
@@ -705,8 +705,8 @@ void DoTrack(int actorNumber)
         currentTrackActor->positionInMoveScript++;
 
         destX = flagData[flagIdx].x;
-        destZ = flagData[flagIdx].z;
         destY = flagData[flagIdx].y;
+        destZ = flagData[flagIdx].z;
 
         if (currentTrackActor->staticFlagsBF.bIsSpriteActor)
         {
@@ -714,8 +714,8 @@ void DoTrack(int actorNumber)
         }
 
         currentTrackActor->X = destX;
-        currentTrackActor->Y = destZ;
-        currentTrackActor->Z = destY;
+        currentTrackActor->Y = destY;
+        currentTrackActor->Z = destZ;
 
         break;
       }
@@ -801,7 +801,7 @@ void DoTrack(int actorNumber)
           else
           {
             currentTrackActor->X = destX;
-            currentTrackActor->Y = destZ;
+            currentTrackActor->Z = destZ;
             currentTrackActor->Z = destY;
 
             currentTrackActor->positionInMoveScript++;

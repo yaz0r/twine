@@ -18,6 +18,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#ifdef _DEBUG
+actor* pCurrentActorRender;
+#endif
+
 void fullRedraw(int param)
 {
   short int temp1;
@@ -292,7 +296,11 @@ void fullRedraw(int param)
 #ifdef PCLIKE
           if(bShowBoundingBoxes)
 #endif
-          MDL_DrawBoundingBoxHiddenPart(lactor);
+            MDL_DrawBoundingBoxHiddenPart(lactor);
+
+#ifdef _DEBUG
+          pCurrentActorRender = lactor;
+#endif
           if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ,lactor->Z - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
           {
 #ifdef PCLIKE
