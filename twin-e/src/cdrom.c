@@ -25,8 +25,6 @@ int LBA_engine::checkCD(char *string)
     int numOfCDROM;
     int cdNum;
 
-    return (0);
-
     numOfCDROM = SDL_CDNumDrives();
 
     printf("Found %d CDROM devices\n", numOfCDROM);
@@ -48,29 +46,33 @@ int LBA_engine::checkCD(char *string)
 	   /*
 	    * Open the default drive 
 	    */
-	   // cdrom=SDL_CDOpen(cdNum);
+	    cdrom=SDL_CDOpen(cdNum);
 
 	   /*
 	    * Did if open? Check if cdrom is NULL 
 	    */
-	   /*
-	    * if(!cdrom){ fprintf(stderr, "Couldn't open drive: %s\n", SDL_GetError()); } else 
-	    */
+	   
+	    if(!cdrom){ fprintf(stderr, "Couldn't open drive: %s\n", SDL_GetError()); } else 
+	    
 	    {
 	       /*
 	        * Print Volume info 
 	        */
-	       /*
-	        * SDL_CDStatus(cdrom); if(cdrom->numtracks==10) { printf("Assuming that it is LBA
-	        * cd...\n"); return(1); } 
-	        */
+	       
+			SDL_CDStatus(cdrom);
+			if(cdrom->numtracks==10)
+			{
+				printf("Assuming that it is LBA cd...\n");
+				return(1);
+			} 
+	        
 	    }
-	   // SDL_CDClose(cdrom);
+	    SDL_CDClose(cdrom);
 	}
     return (0);
 }
 
 void LBA_engine::stopCD(void)
 {
-   // SDL_CDStop(cdrom);
+    SDL_CDStop(cdrom);
 }

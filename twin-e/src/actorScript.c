@@ -40,7 +40,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 	{
 	    opcodePtr = actorScriptPtr++;
 	    opcode = *(opcodePtr);
-	   // printf("(%d)opcode: %d\n",actorNumber,opcode);
+	    //printf("(%d)opcode: %d\n",actorNumber,opcode);
 	    if (opcode <= 105)
 		{
 		    localScriptPtr = actorScriptPtr + 1;
@@ -619,6 +619,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       if (temp != 0)
 				   {
+					   printf("Enter zoom\n");
 				       if (drawInGameTransBox == 0)
 					   {
 					      /*
@@ -634,6 +635,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				   }
 			       else
 				   {
+					   printf("Exit zoom\n");
 				       if (drawInGameTransBox != 0)
 					   {
 					      //                                                      fadeOut(menuPal);
@@ -710,23 +712,64 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       actorScriptPtr += length + 1;
 			       break;
 			   }
-			case 67:
-			    int entryTemp;
+			case 65: //LM_PLAY_MIDI
+				{
+					playMusic(*(actorScriptPtr++));
+					break;
+				}
+			case 66: //LM_INC_CLOVER_BOX
+				{
+					if(numCloverBox<10)
+						numCloverBox++;
 
-			    entryTemp = *(actorScriptPtr++);
-			    if (entryTemp < 24)
-				itemUsed[entryTemp] = 1;
+					break;
+				}
+			case 67: //LM_SET_USED_INVENTORY
+				{
+					int entryTemp;
 
-			    break;
-			case 68:
-			    printf("Ignoring actorScript opcode 68\n");
-			    actorScriptPtr += 2;
-			    break;
-			case 69:
-			    printf("Ignoring actorScript opcode 69\n");
-			    actorScriptPtr += 2;
-			    break;
-			case 70:
+					entryTemp = *(actorScriptPtr++);
+
+					if (entryTemp < 24)
+						itemUsed[entryTemp] = 1;
+
+					break;
+				}
+			case 68: //LM_ADD_CHOICE
+				{
+					inGameMenuData[numOfOptionsInChoice++]=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+					break;
+				}
+			case 69: //LM_ASK_CHOICE
+				{
+					short int choiceNum;
+
+					freezeTime();
+					mainLoop2(1);
+
+					if(showTalkVar)
+					{
+						//drawTalkIcon(actorNumber);
+					}
+
+					setNewTextColor(lactor->talkColor);
+
+					choiceNum=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+
+					processInGameMenu(choiceNum);
+
+					numOfOptionsInChoice=0;
+
+					unfreezeTime();
+
+					fullRedraw(1);
+
+					//waitForKey();
+					break;
+				}
+			case 70: //LM_BIG_MESSAGE
 			   {
 			       int textNumber;
 
@@ -758,32 +801,98 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       break;
 			   }
 
-			case 71:
-			    byte newActor;
-			    newActor = *(actorScriptPtr++);
-			    actors[newActor].field_62 |= 0x20;
-			    currentPingouin = newActor;
-			    actors[newActor].costumeIndex = -1;
-			    actors[newActor].zone = -1;
-			    break;
-
-			case 72:
+			case 71: //LM_INIT_PINGOUIN
+				{
+					byte newActor;
+					newActor = *(actorScriptPtr++);
+					actors[newActor].field_62 |= 0x20;
+					currentPingouin = newActor;
+					actors[newActor].costumeIndex = -1;
+					actors[newActor].zone = -1;
+					break;
+				}
+			case 72: //LM_SET_HOLO_POS
 			   {
-			       printf("Skipping actorScript opcode 72\n");
-			       actorScriptPtr++;
-			       break;
-			   }
+					char position;
 
-			case 76:
-			    currentGrid2 = *(actorScriptPtr++);
-			   // load_LBAGRI(currentGrid2);
-			    printf("Skipping grid reload\n");
-			    break;
-			case 77:
-			    printf("Unsupported actor opcode 77\n");
-			    actorScriptPtr += 2;
-			    break;
-			case 80:
+					position=*(actorScriptPtr++);
+
+					printf("Set holomap position %d\n",position);
+					break;
+			   }
+			case 73: //LM_CLR_HOLO_POS
+				{
+					char position;
+
+					position=*(actorScriptPtr++);
+
+					printf("Clear holomap position %d\n",position);
+					break;
+				}	
+			case 74: //LM_ADD_FUEL
+				{
+					GV15+=*(actorScriptPtr++);
+					if(GV15>100)
+					{
+						GV15=100;
+					}
+					break;
+				}
+			case 75: //LM_SUB_FUEL
+				{
+					GV15-=*(actorScriptPtr++);
+					if(GV15<0)
+					{
+						GV15=0;
+					}
+					break;
+				}
+			case 76: //LM_SET_GRM
+				{
+					currentGrid2 = *(actorScriptPtr++);
+				// load_LBAGRI(currentGrid2);
+					printf("Skipping grid reload\n");
+					break;
+				}
+			case 77: //LM_SAY_MESSAGE
+				{
+					short int messageNumber;
+
+					messageNumber=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+
+					//addOverlayObject(4,messageNumber,0,0,actorNumber,1,2);
+
+					freezeTime();
+					setVoxFileAtDigit(messageNumber);
+					unfreezeTime();
+					
+					break;
+				}
+			case 78: //LM_SAY_MESSAGE_OBJ
+				{
+					char character;
+					short int messageNumber;
+
+					character=*(actorScriptPtr++);
+					messageNumber=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+
+					//addOverlayObject(4,messageNumber,0,0,character,1,2);
+
+					freezeTime();
+					setVoxFileAtDigit(messageNumber);
+					unfreezeTime();
+
+					break;
+				}
+			case 79: //LM_FULL_POINT
+				{
+					twinsen->life=50;
+					magicPoint=magicLevel*20;
+					break;
+				}
+			case 80: //LM_BETA
 			   {
 			       short int newAngle;
 
@@ -793,12 +902,111 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       changeActorAngle(lactor);
 			       break;
 			   }
-			case 88:
+			case 81: //LM_GRM_OFF
+				{
+					if(currentGrid2!=-1)
+					{
+						changeRoomVar9=-1;
+						currentGrid2=-1;
+						createCube();
+						fullRedraw(1);
+						break;
+					}
+				}
+			case 82: //LM_FADE_PAL_RED
+				{
+					printf("fade pal red\n");
+					break;
+				}
+			case 83: //LM_FADE_ALARM_RED
+				{
+					printf("fade alarm red\n");
+					break;
+				}
+			case 84: //LM_FADE_ALARM_PAL
+				{
+					printf("fade alarm pal\n");
+					break;
+				}
+			case 85: //LM_FADE_RED_PAL
+				{
+					printf("fade red pal\n");
+					break;
+				}
+			case 86: //LM_FADE_RED_ALARM
+				{
+					printf("fade red alarm\n");
+					break;
+				}
+			case 87: //LM_FADE_PAL_ALARM
+				{
+					printf("fade pal alarm\n");
+					break;
+				}
+			case 88: //LM_EXPLODE_OBJ
 			   {
 			       actorScriptPtr++;
 			       printf("Ignoring opcode 88 in runActorScript\n");
 			       break;
 			   }
+			case 89: //LM_BULLE_ON
+				{
+					showTalkVar=1;
+					break;
+				}
+			case 90: //LM_BULLE_OFF
+				{
+					showTalkVar=0;
+					break;
+				}
+			case 91: //LM_ASK_CHOICE_OBJ
+				{
+					char talkingActor;
+					short int choiceNumber;
+
+					freezeTime();
+					talkingActor=*(actorScriptPtr++);
+					mainLoop2(1);
+					
+					if(showTalkVar)
+					{
+						//drawTalkIcon(talkingActor);
+					}
+
+					setNewTextColor(actors[talkingActor].talkColor);
+
+					choiceNumber=*(short int*)actorScriptPtr;
+					actorScriptPtr+=2;
+
+//					processInGameMenu(choiceNumber);
+					
+					unfreezeTime();
+					fullRedraw(1);
+					//waitForKey();
+					break;
+				}
+			case 92: //LM_SET_DARK_PAL
+				{
+					freezeTime();
+					loadImageToPtr("ress.hqr",(byte*)palette,24);
+					convertPalToRGBA(palette,paletteRGBA);
+					if(!mainLoopVar3)
+					{
+						osystem->setPalette(paletteRGBA);
+					}
+					isMenuDisplayed=1;
+					unfreezeTime();
+					break;
+				}
+			case 93: //LM_SET_NORMAL_PAL
+				{
+					isMenuDisplayed=0;
+					if(!mainLoopVar3)
+					{
+						osystem->setPalette(menuPalRGBA);
+					}
+					break;
+				}
 			case 94: //LM_MESSAGE_SENDELL
 				{
 					int backupFlag;
@@ -835,14 +1043,41 @@ void LBA_engine::runActorScript(short int actorNumber)
 					break;
 
 				}
-			case 95:
+			case 95: // LM_ANIM_SET
 			   {
 			       lactor->anim = -1;
 			       lactor->currentAnim = -1;
 			       playAnim(*(actorScriptPtr++), 0, 0, actorNumber);
 			       break;
 			   }
-			case 99:
+			case 96: // LM_HOLOMAP_TRAJ
+				{
+					changeRoomVar1=*(actorScriptPtr++);
+					break;
+				}
+			case 97: // LM_GAME_OVER
+				{
+					OPbreak=-1;
+					twinsen->field_62|=4;
+					twinsen->life=0;
+					numClover=0;
+					break;
+				}
+			case 98: // LM_THE_END
+				{
+					OPbreak=-1;
+					numClover=0;
+					twinsen->life=50;
+					magicPoint=80;
+					currentRoom=113;
+					comportementHero=reinitVar10;
+					GV9=-1;
+					twinsen->angle=reinitVar9;
+					saveGame();
+					brutalExit=1;
+					break;
+				}
+			case 99: // LM_MIDI_OFF
 			   {
 			       printf("Stop music!\n");
 			       break;
@@ -852,7 +1087,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       int temp;
 
 			       temp = *(actorScriptPtr++);
-			       printf("Play cd track %d\n", temp);
+				   playCDtrack(temp);
 			       break;
 			   }
 			case 101: //LM_PROJ_ISO
@@ -913,6 +1148,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 			    drawBlackBox(0, 0, 639, 240, 0);
 			    osystem->refresh(videoBuffer1, 0, 0, 639, 240);
 			    break;
+			case 105:
+				brutalExit=0;
+				OPbreak=-1;
+				break;
 			default:
 			   {
 			       printf("Unhandled actorscript opcode %d\n", opcode);
@@ -924,7 +1163,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 	    else
 		{
 		    printf("Warning: opcode too big: %d !\n", opcode);
-		   // exit (1);
+		    exit (1);
 		}
 	}
 
@@ -940,7 +1179,7 @@ void LBA_engine::manipActor(actor * lactor)
     manipActorVar1 = 0;
     opcode = *(actorScriptPtr++);
 
-   // printf("opcode:%d\n",opcode);
+    //printf("manip opcode:%d\n",opcode);
 
     if (opcode > 29)
 	{
@@ -1151,7 +1390,19 @@ void LBA_engine::manipActor(actor * lactor)
 		   {
 		       manipActorResult = 0;
 		   }
+		   break;
 	   }
+	case 26:
+		{
+			manipActorVar1=1;
+			manipActorResult=inGameMenuAnswer;
+			break;
+		}
+	case 27:
+		{
+			manipActorResult=GV15;
+			break;
+		}
 
 	case 28:
 	    manipActorResult = lactor->standOn;
@@ -1402,4 +1653,31 @@ int LBA_engine::anotherSqrt(int X1, int Z1, int Y1, int X2, int Z2, int Y2)
     newY *= newY;
 
     return ((int) sqrt(newX + newZ + newY));
+}
+
+void LBA_engine::processInGameMenu(int index)
+{
+	int i;
+
+	printf("Ask choice %d\n",index);
+	copyToBuffer(videoBuffer1,videoBuffer2);
+
+	choiceTab[1]=numOfOptionsInChoice;
+	choiceTab[0]=0;
+	choiceTab[2]=0;
+	choiceTab[3]=currentTextBank+3;
+
+	for(i=0;i<numOfOptionsInChoice;i++)
+	{
+		choiceTab[i*2+4]=0;
+		choiceTab[i*2+5]=inGameMenuData[i];
+	}
+
+	//playChoiceDigit(index);
+
+	processMenu(choiceTab);
+
+	inGameMenuAnswer=inGameMenuData[choiceTab[0]];
+
+	//TODO: missing giving answer vox
 }

@@ -268,7 +268,7 @@ void LBA_engine::fullRedraw(int param)
 					}
 				   // printf("Draw poly actor %d\n",actorNumber);
 
-				   applyAnim(lactor->animPosition,(char*)getHqrdataPtr(HQRanims,lactor->currentAnim),(char*)bodyPtrTab[lactor->costumeIndex]);
+				   //applyAnim(lactor->animPosition,(char*)getHqrdataPtr(HQRanims,lactor->currentAnim),(char*)bodyPtrTab[lactor->costumeIndex]);
 
 				    if (!startRenderer(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
 					{
@@ -467,7 +467,7 @@ void LBA_engine::fullRedraw(int param)
 	   // loop5
 	}
 
-   /* for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags { char stringTemp[256];
+    for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags { char stringTemp[256];
 	{
 	    char stringTemp[256];
 
@@ -480,7 +480,7 @@ void LBA_engine::fullRedraw(int param)
 
 	    if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 && fullRedrawVar4 < 440)
 			printStringSimple(fullRedrawVar3, fullRedrawVar4, stringTemp);
-	}*/
+	}
 
     counter2 = 0;
 

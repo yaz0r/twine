@@ -1,4 +1,5 @@
 #include "decomp.h"
+#include "sdl.h"
 
 class LBA_engine;
 
@@ -350,6 +351,8 @@ class LBA_engine
 	int lastNumOfColor;
 	int lastStartColor;
 	char flaBuffer[320*200];
+
+	SDL_CD* cdrom;
 
     int time;
     short int key;
@@ -915,6 +918,14 @@ class LBA_engine
 
     short int moveVar1;
 
+	int showTalkVar;
+
+	int numOfOptionsInChoice;
+	short int inGameMenuData[10];
+
+	short int choiceTab[18];
+	int inGameMenuAnswer;
+
    // order important !
 
     int setSomething2Var1;
@@ -949,7 +960,9 @@ class LBA_engine
     int setSomething3Var7;
     int setSomething3Var10;
 
-   // ----------------------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------------------
+
+	void processInGameMenu(int index);
 
 	void flaUnpackFrame1(char* ptr, int width, int height);
 	void flaUnpackFrame2(char* ptr, int width);

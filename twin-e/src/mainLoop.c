@@ -172,8 +172,8 @@ int LBA_engine::mainLoop(void)
 			    */
 /***********************************************/
 
-			   /*
-			      if (printTextVar12 & 2)      // x-- -> bas
+			   
+			/*      if (printTextVar12 & 2)      // x-- -> bas
 			      {
 			      newCameraY++;
 			      mainLoopVar2 = 1;
@@ -1008,7 +1008,7 @@ void LBA_engine::updateActors(int actorNum)
 			   }
 		       else
 			   {
-			       updateActorAngle(lactor->angle, tempAngle, lactor->hitBy,&lactor->time);
+			       updateActorAngle(lactor->angle, tempAngle, lactor->field_34,&lactor->time);
 			   }
 		       break;
 		   }
@@ -1408,25 +1408,21 @@ void LBA_engine::processActor(int actorNum)
 					    lactor->life--;
 					}
 
-				    if (!getCurPos(processActorX, processActorZ, processActorVar4))
+				    if (!getCurPos(processActorX, processActorZ, processActorVar4)) // no Y problem
 					{
-					    if (getCurPos
-						(processActorVar2, processActorZ, processActorY))
-						{
-						    return;
-						}
-
-					    processActorX = processActorVar2;	//no X change
-					}
-				    else
-					{
-					    processActorY = processActorVar4;	//no Y change
+						processActorY = processActorVar4;
 					}
 
-				   /*
-				      processActorX=processActorVar2;
-				      processActorY=processActorVar4;
-				    */
+
+					if (!getCurPos(processActorVar2, processActorZ, processActorY)) // no X problem
+					{
+						processActorX = processActorVar2;	// no X Collision
+					}
+
+					if(getCurPos(processActorX, processActorZ, processActorVar4) && getCurPos(processActorVar2, processActorZ, processActorY))
+					{
+						return; // both X/Y problem -> can't move !
+					}
 				}
 			}
 		    else	// not standing on flat floor
@@ -1517,13 +1513,12 @@ void LBA_engine::processActorSub8(int var0, int var1, int var2, int var3)	// twi
     processActorZ = var1;
     processActorY = var2;
 
-    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
-	&& processActorY <= 0x7E00)
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00	&& processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
 	    pos = getCurPos(processActorX, processActorZ, processActorY);
 
-	    if (pos != 0 && pos == 1)
+	    if (pos == 1)	// next position is a wall
 		{
 		    fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);
@@ -1558,13 +1553,12 @@ void LBA_engine::processActorSub9(int var0, int var1, int var2, int var3)
     processActorZ = var1;
     processActorY = var2;
 
-    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00
-	&& processActorY <= 0x7E00)
+    if (processActorX >= 0 && processActorY >= 0 && processActorX <= 0x7E00	&& processActorY <= 0x7E00)
 	{
 	    processActorSub5(pos);
 	    pos = getCurPos(processActorX, processActorZ, processActorY);
 
-	    if (pos != 0 && pos == 1)	// next position is a wall
+	    if (pos == 1)	// next position is a wall
 		{
 		    fieldCauseDamage |= var3;
 		    pos = getCurPos(processActorX, processActorZ, processActorVar4 + var2);

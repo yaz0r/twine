@@ -1,4 +1,5 @@
 #include "lba.h"
+#include "sdl.h"
 
 void LBA_engine::playMusic(int musicNum)
 {
@@ -22,9 +23,9 @@ void LBA_engine::playMusic(int musicNum)
 
 void LBA_engine::playCDtrack(int trackNumber)
 {
-   /*
-    * if(CD_INDRIVE(SDL_CDStatus(cdrom))) SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
-    */
+   
+     if(CD_INDRIVE(SDL_CDStatus(cdrom))) SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
+    
 }
 
 void LBA_engine::playMidi(int musicNum)

@@ -316,12 +316,12 @@ void OSystem::drawText(int X, int Y, char *string)
 
     SDL_Surface *text;
 
-    text = TTF_RenderText_Solid(font, string, *forecol);
+   /* text = TTF_RenderText_Solid(font, string, *forecol);
 
     rectangle.x = X;
     rectangle.y = Y - 2;
     rectangle.w = text->w;
     rectangle.h = text->h;
 
-    SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
+    SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);*/
 }

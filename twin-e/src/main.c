@@ -1,5 +1,10 @@
 #include "lba.h"
 
+void test(void)
+{
+	printf("Quit !\n");
+}
+
 int main(int argc, char *argv[])
 {
     LBA_engine *engine;
@@ -31,7 +36,16 @@ int main(int argc, char *argv[])
 
 	    startThreadTimer(engine);
 
-	    engine->init();	// startup the game engine !
+		atexit(&test);
+
+		try
+		{
+			engine->init();	// startup the game engine !
+		}
+		catch(char * str)
+		{
+			printf("Exception :%s\n",str);
+		}
 	}
 
     delete(osystem);
