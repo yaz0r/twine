@@ -584,8 +584,8 @@ void LBA_engine::unfreezeTime(void)
 {
     --time1;
 
-   if(time1==0)
-     time = time3;
+ /*  if(time1==0)
+     time = time3;*/
 }
 
 int LBA_engine::mainLoop4(void)	// process le menu "continuer ou abandonner"
