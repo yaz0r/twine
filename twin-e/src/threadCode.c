@@ -4,21 +4,18 @@
 
 LBA_engine *tempEngine;
 
-int
-threadTimer (void *test)
+int threadTimer(void *test)
 {
-  while (1)
-    {
-      SDL_Delay (15);
-      tempEngine->musicPosition++;
-      tempEngine->time++;
+    while (1) {
+	SDL_Delay(15);
+	tempEngine->musicPosition++;
+	tempEngine->time++;
     }
-  return (0);
+    return (0);
 }
 
-void
-startThreadTimer (LBA_engine * lengine)
+void startThreadTimer(LBA_engine * lengine)
 {
-  tempEngine = lengine;
-  SDL_CreateThread (threadTimer, NULL);
+    tempEngine = lengine;
+    SDL_CreateThread(threadTimer, NULL);
 }

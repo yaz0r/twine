@@ -1,114 +1,106 @@
 #include "lba.h"
 
 void
-LBA_engine::fontInit (byte * font, int param2, int param1)
+  LBA_engine::fontInit(byte * font, int param2, int param1)
 {
-  fntFont = font;
-  interCharSpace = param2;
-  spaceLenght = param1;
+    fntFont = font;
+    interCharSpace = param2;
+    spaceLenght = param1;
 }
 
-void
-LBA_engine::drawCharacter (int X, int Y, unsigned char caractere)
+void LBA_engine::drawCharacter(int X, int Y, unsigned char caractere)
 {
-  byte sizeX;
-  byte sizeY;
-  byte param1;
-  byte param2;
-  byte *data;
-  byte *screen;
-//      int temp=0;
-  int toNextLine;
-  char index;
-//      char color;
-  char usedColor;
-  char number;
-  char jump;
+    byte sizeX;
+    byte sizeY;
+    byte param1;
+    byte param2;
+    byte *data;
+    byte *screen;
 
-  int i;
+   // int temp=0;
+    int toNextLine;
+    char index;
 
-  // todo: gerer le cas du cropping...
+   // char color;
+    char usedColor;
+    char number;
+    char jump;
 
+    int i;
 
-  data = fntFont + *((short int *) (fntFont + caractere * 4));
+   // todo: gerer le cas du cropping...
 
+    data = fntFont + *((short int *) (fntFont + caractere * 4));
 
-  sizeX = *(data++);
-  sizeY = *(data++);
-  param1 = *(data++);
-  param2 = *(data++);
+    sizeX = *(data++);
+    sizeY = *(data++);
+    param1 = *(data++);
+    param2 = *(data++);
 
-  X += param1;
-  Y += param2;
+    X += param1;
+    Y += param2;
 
-  usedColor = textColor;
+    usedColor = textColor;
 
-  screen = videoBuffer1 + screenLockupTable[Y] + X;
+    screen = videoBuffer1 + screenLockupTable[Y] + X;
 
-  toNextLine = largeurEcran - sizeX;
+    toNextLine = largeurEcran - sizeX;
 
-  do
-    {
-      index = *(data++);
-      do
-	{
-	  jump = *(data++);
-	  screen += jump;
-	  if (--index == 0)
-	    {
-	      screen += toNextLine;
-	      sizeY--;
-	      if (sizeY <= 0)
-		return;
-	      break;
-	    }
-	  else
-	    {
-	      number = *(data++);
-	      for (i = 0; i < number; i++)
-		*(screen++) = usedColor;
-	      if (--index == 0)
-		{
-		  screen += toNextLine;
-		  sizeY--;
-		  if (sizeY <= 0)
+    do {
+	index = *(data++);
+	do {
+	    jump = *(data++);
+	    screen += jump;
+	    if (--index == 0) {
+		screen += toNextLine;
+		sizeY--;
+		if (sizeY <= 0)
 		    return;
-		  break;
+		break;
+	    } else {
+		number = *(data++);
+		for (i = 0; i < number; i++)
+		    *(screen++) = usedColor;
+		if (--index == 0) {
+		    screen += toNextLine;
+		    sizeY--;
+		    if (sizeY <= 0)
+			return;
+		    break;
 		}
 	    }
 	}
-      while (1);
+	while (1);
     }
-  while (1);
-
+    while (1);
 
 }
 
-void
-LBA_engine::printStringSimple (int X, int Y, char *string)
+void LBA_engine::printStringSimple(int X, int Y, char *string)
 {
 
-  unsigned char character;
+    unsigned char character;
 
-  if (fntFont == 0)		// if the font is defined
-    return;
+    if (fntFont == 0)		// if the font is defined
+	return;
 
-  do
-    {
-      character = (unsigned char) *(string++);	// read the next char from the string
+    do {
+	character = (unsigned char) *(string++);	// read the next char from the string
 
-      if (character == 0)	// if the char is 0x0, -> end of string
-	break;
+	if (character == 0)	// if the char is 0x0, -> end of string
+	    break;
 
-      if (character == 0x20)	// if it's a space char
-	X += spaceLenght;
-      else
-	{
-	  stringLenght = *(fntFont + *((short int *) (fntFont + character * 4)));	// get the length of the character
-	  drawCharacter (X, Y, character);	// draw the character on screen
-	  X += interCharSpace;	// add the length of the space between 2 characters
-	  X += stringLenght;	// add the length of the current character
+	if (character == 0x20)	// if it's a space char
+	    X += spaceLenght;
+	else {
+	    stringLenght = *(fntFont + *((short int *) (fntFont + character * 4)));	// get the
+	   // length
+	   // of the
+	   // character
+	    drawCharacter(X, Y, character);	// draw the character on screen
+	    X += interCharSpace;	// add the length of the space between 2 characters
+	    X += stringLenght;	// add the length of the current character
 	}
     }
-  while (1);
+    while (1);
 }

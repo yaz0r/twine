@@ -1,68 +1,61 @@
 #include "lba.h"
 
-FILE *
-LBA_engine::fileOpen (char *fileName)
+FILE *LBA_engine::fileOpen(char *fileName)
 {
-  FILE *fileHandle;
+    FILE *fileHandle;
 
-  if (!fileName)
-    return (NULL);
+    if (!fileName)
+	return (NULL);
 
-  fileHandle = fopen (fileName, "rb");
+    fileHandle = fopen(fileName, "rb");
 
-  if (!fileHandle)
-    {
-      printf ("%s can't be found !\n", fileName);
-      exit (1);
+    if (!fileHandle) {
+	printf("%s can't be found !\n", fileName);
+	exit(1);
     }
 
-  return (fileHandle);
+    return (fileHandle);
 }
 
-FILE *
-LBA_engine::openResource (char *fileName)
+FILE *LBA_engine::openResource(char *fileName)
 {
-  FILE *fileHandle;
+    FILE *fileHandle;
 
-  if (!fileName)
-    return (NULL);
+    if (!fileName)
+	return (NULL);
 
-  fileHandle = fopen (fileName, "rb");
+    fileHandle = fopen(fileName, "rb");
 
-  if (!fileHandle)
-    {
-      printf ("%s can't be found !\n", fileName);
-      exit (1);
+    if (!fileHandle) {
+	printf("%s can't be found !\n", fileName);
+	exit(1);
     }
 
-  return (fileHandle);
+    return (fileHandle);
 }
 
-int
-LBA_engine::readResourceData (FILE * resourceFile, char *ptr, int length)
+int LBA_engine::readResourceData(FILE * resourceFile, char *ptr, int length)
 {
-  if (!resourceFile)
-    return (1);
+    if (!resourceFile)
+	return (1);
 
-  fread ((char *) ptr, length, 1, resourceFile);
+    fread((char *) ptr, length, 1, resourceFile);
 
-  return (0);
+    return (0);
 
 }
 
-void
-LBA_engine::closeResource (FILE * resourceFile)
+void LBA_engine::closeResource(FILE * resourceFile)
 {
-  fclose (resourceFile);
+    fclose(resourceFile);
 }
 
-void
-LBA_engine::dumpFile (char *name, char *ptr, int size)
+void LBA_engine::dumpFile(char *name, char *ptr, int size)
 {
-  FILE *file;
+    FILE *file;
 
-  file = fopen (name, "wb+");
-  fwrite (ptr, size, 1, file);
+    file = fopen(name, "wb+");
+    fwrite(ptr, size, 1, file);
 
-  fclose (file);
+    fclose(file);
 }

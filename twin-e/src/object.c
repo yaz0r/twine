@@ -1,6 +1,6 @@
 #include "lba.h"
 
 void
-LBA_engine::addObject (actor * lactor)
+  LBA_engine::addObject(actor * lactor)
 {
 }

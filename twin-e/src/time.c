@@ -2,7 +2,7 @@
 #include "SDL.h"
 
 void
-LBA_engine::waitFor ()
+  LBA_engine::waitFor()
 {
-  SDL_Delay (300);
+    SDL_Delay(300);
 }

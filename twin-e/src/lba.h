@@ -14,21 +14,19 @@ typedef signed long int32;
 
 class LBA_engine;
 
-struct mouseStatusStruct
-{
-	int left;
-	int right;
-	int X;
-	int Y;
+struct mouseStatusStruct {
+    int left;
+    int right;
+    int X;
+    int Y;
 };
 
-struct actorBoxStruct
-{
-	int actorNum;
-	int left;
-	int right;
-	int top;
-	int bottom;
+struct actorBoxStruct {
+    int actorNum;
+    int left;
+    int right;
+    int top;
+    int bottom;
 };
 
 #include"osystem.h"
@@ -36,4 +34,3 @@ struct actorBoxStruct
 #include"costume.h"
 #include"debug.h"
 #include"vars.h"
-

@@ -1,7 +1,6 @@
-struct timeStruct
-{
-  short int from;
-  short int to;
-  short int numOfStep;
-  int timeOfChange;
+struct timeStruct {
+    short int from;
+    short int to;
+    short int numOfStep;
+    int timeOfChange;
 };
