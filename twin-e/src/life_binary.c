@@ -391,7 +391,7 @@ void runActorScript(short int actorNumber)
              if (numCoin < 0)
            numCoin = 0;
 
-             addOverlayObject(0,3,10,15,0,0,3);
+             addOverlayObject(0,3,10,15,0,0,3); // display the coin
 
              eax = 0;
              ecx = 0;

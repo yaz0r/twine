@@ -579,6 +579,19 @@ void fullRedraw(int param)
 #ifdef GAME_DEBUG
       else if (flags == 0x2000) // flag
       {
+        int flagIdx = -1;
+        char tempString[40];
+
+        for(i=0;i<numFlags;i++)
+        {
+          if(drawList[arg_1E].X == flagData[i].x && drawList[arg_1E].Y == flagData[i].y && drawList[arg_1E].Z == flagData[i].z)
+          {
+            flagIdx = i;
+          }
+        }
+
+        assert(flagIdx != -1);
+
         AffObjetIso(drawList[arg_1E].X - cameraX, drawList[arg_1E].Y - cameraZ, drawList[arg_1E].Z - cameraY, 0, 0, 0, flagModelPtr);
 
         SetClip(renderLeft, renderTop, renderRight,renderBottom);
@@ -591,9 +604,9 @@ void fullRedraw(int param)
 
           lactor->dynamicFlagsBF.wasDrawn;
 
-          tempX = (drawList[arg_1E].X + 0x100 )>> 9;
+          tempX = (drawList[arg_1E].X )>> 9;
           tempZ = drawList[arg_1E].Y >> 8;
-          tempY = (drawList[arg_1E].Z + 0x100) >> 9;
+          tempY = (drawList[arg_1E].Z) >> 9;
 
           DrawOverBrick(tempX, tempZ, tempY);
 
@@ -605,13 +618,38 @@ void fullRedraw(int param)
           }
         }
 
-    /*    sprintf(stringTemp, "%d", arg_1A);
+        sprintf(tempString, "%d", flagIdx);
         CoulFont(255);
 
-        projectPositionOnScreen(flagData[arg_1A].x - cameraX, flagData[arg_1A].y - cameraZ, flagData[arg_1A].z - cameraY);
+        projectPositionOnScreen(flagData[flagIdx].x - cameraX, flagData[flagIdx].y - cameraZ, flagData[flagIdx].z - cameraY);
 
-        if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
-          Font(projectedPositionX, projectedPositionY, stringTemp); */
+        spriteWidth = SizeFont(tempString);
+        spriteHeight = 48;
+
+        renderLeft = projectedPositionX - (spriteWidth/2);
+        renderRight = projectedPositionX + (spriteWidth/2);
+        renderTop = projectedPositionY - 24;
+        renderBottom = projectedPositionY + spriteHeight;
+
+        if(renderLeft < 0)
+          renderLeft = 0;
+
+        if(renderTop < 0)
+          renderTop = 0;
+
+        if(renderRight > 639)
+          renderRight = 639;
+
+        if(renderBottom > 479)
+          renderBottom = 479;
+
+        SetClip(renderLeft, renderTop, renderRight, renderBottom);
+
+        Font(renderLeft, renderTop, tempString);
+
+        if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
+          AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+
       }
 #endif
 
@@ -655,12 +693,12 @@ void fullRedraw(int param)
 #endif
 
 #ifdef GAME_DEBUG
- //if(bShowSpriteClip)
+/* //if(bShowSpriteClip)
   for(i=0;i<debugger_numOfActorOnScreen;i++)
   {
 #define actorBoxColor 120
     draw2dBox(actorBox[i].left, actorBox[i].top, actorBox[i].right, actorBox[i].bottom,actorBoxColor);
-  }
+  }*/
 #endif
 
 #ifdef GAME_DEBUG

@@ -188,6 +188,11 @@ void init(void)
 #ifdef LBASTUDIO
   reinitAll(1);
 #else
+#ifdef TXT_SCRIPTS
+  reinitAll(1);
+//  newGame();
+  mainLoop();
+#else
   FadeToBlack((char *) paletteRGBA);
 
   if (setup_lst == 0)   // switch pour les 2 version de l'ecran titre de LBA
@@ -217,6 +222,7 @@ void init(void)
   FadeToPal((char *) menuPalRGBA);
 
   MainGameMenu();
+#endif
 #endif
 }
 
@@ -250,6 +256,7 @@ void newGame(void)
   newGame2();
   TestCoulDial(15);
 
+#ifndef TXT_SCRIPTS
   printTextFullScreen(150);
   readKeyboard();
 
@@ -287,7 +294,7 @@ void newGame(void)
       printTextFullScreen(152);
     }
   }
-
+#endif
   newGameVar5 = 0;
   newGame4();
   newGameVar4 = 1;
@@ -296,7 +303,9 @@ void newGame(void)
   osystem_Flip(frontVideoBuffer);
   playMidi(1);
 
+#ifndef TXT_SCRIPTS
   PlayAnimFla("INTROD");
+#endif
   SetBackPal();
   Cls();
   osystem_Flip(frontVideoBuffer);

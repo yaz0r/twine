@@ -602,7 +602,7 @@ void DoTrack(int actorNumber)
       {
         int bodyIdx;
 
-        assert(sscanf(tempPtr,"BODY %d",&bodyIdx) == 1);
+        verify(sscanf(tempPtr,"BODY %d",&bodyIdx) == 1);
 
         InitBody(bodyIdx, actorNumber);
         currentTrackActor->positionInMoveScript++;
@@ -612,7 +612,7 @@ void DoTrack(int actorNumber)
       {
         int animIdx;
 
-        assert(sscanf(tempPtr,"ANIM %d",&animIdx) == 1);
+        verify(sscanf(tempPtr,"ANIM %d",&animIdx) == 1);
 
         if (InitAnim(animIdx, 0, 0, actorNumber))
         {
@@ -629,7 +629,7 @@ void DoTrack(int actorNumber)
         int newAngle;
         int pointIdx;
 
-        assert(sscanf(tempPtr,"GOTO_POINT %d", &pointIdx) == 1);
+        verify(sscanf(tempPtr,"GOTO_POINT %d", &pointIdx) == 1);
 
         destX = flagData[pointIdx].x;
         destY = flagData[pointIdx].y;
@@ -675,7 +675,7 @@ void DoTrack(int actorNumber)
     {
       int angle;
 
-      assert(sscanf(tempPtr,"ANGLE %d", &angle) == 1);
+      verify(sscanf(tempPtr,"ANGLE %d", &angle) == 1);
 
       if (!(currentTrackActor->staticFlagsBF.bIsSpriteActor))
       {
@@ -699,7 +699,7 @@ void DoTrack(int actorNumber)
       {
         int flagIdx;
   
-        assert(sscanf(tempPtr,"POS_POINT %d",&flagIdx) == 1);
+        verify(sscanf(tempPtr,"POS_POINT %d",&flagIdx) == 1);
 
         currentTrackActor->positionInMoveScript++;
 
@@ -722,7 +722,7 @@ void DoTrack(int actorNumber)
       {
         int labelIdx;
 
-        assert(sscanf(tempPtr,"LABEL %d",&labelIdx) == 1);
+        verify(sscanf(tempPtr,"LABEL %d",&labelIdx) == 1);
 
         currentTrackActor->label = labelIdx;
         currentTrackActor->positionInMoveScript++;
@@ -734,7 +734,7 @@ void DoTrack(int actorNumber)
       {
         int labelIdx;
 
-        assert(sscanf(tempPtr,"GOTO %d",&labelIdx) == 1);
+        verify(sscanf(tempPtr,"GOTO %d",&labelIdx) == 1);
 
         currentTrackActor->positionInMoveScript = resolveTrackLineFromLabel(currentTrackActor,labelIdx);
 
@@ -750,7 +750,7 @@ void DoTrack(int actorNumber)
       {
         int waitNumber;
 
-        assert(sscanf(tempPtr,"WAIT_NB_ANIM %d",&waitNumber) == 1);
+        verify(sscanf(tempPtr,"WAIT_NB_ANIM %d",&waitNumber) == 1);
 
         if (currentTrackActor->dynamicFlagsBF.bUnk0004)
         {
@@ -782,7 +782,7 @@ void DoTrack(int actorNumber)
       {
         int flagIdx;
 
-        assert(sscanf(tempPtr,"GOTO_POINT_3D %d",&flagIdx) == 1);
+        verify(sscanf(tempPtr,"GOTO_POINT_3D %d",&flagIdx) == 1);
 
         if (currentTrackActor->staticFlagsBF.bIsSpriteActor)  // if can move
         {
@@ -790,8 +790,8 @@ void DoTrack(int actorNumber)
           destZ = flagData[flagIdx].z;
           destY = flagData[flagIdx].y;
 
-          currentTrackActor->angle = GetAngle(currentTrackActor->X, currentTrackActor->Z, destX, destY);  // X-Y move
-          currentTrackActor->field_78 = GetAngle(currentTrackActor->Y, 0, destZ, DoTrackVar1);  // Z (vertical) move
+          currentTrackActor->angle = GetAngle(currentTrackActor->X, currentTrackActor->Z, destX, destZ);  // X-Y move
+          currentTrackActor->field_78 = GetAngle(currentTrackActor->Y, 0, destY, DoTrackVar1);  // Z (vertical) move
 
           if (DoTrackVar1 > 100)
           {
@@ -812,7 +812,7 @@ void DoTrack(int actorNumber)
       {
         int speed;
 
-        assert(sscanf(tempPtr,"SPEED %d",&speed) == 1);
+        verify(sscanf(tempPtr,"SPEED %d",&speed) == 1);
 
         currentTrackActor->positionInMoveScript ++;
         currentTrackActor->speed = speed;
@@ -827,10 +827,10 @@ void DoTrack(int actorNumber)
       {
         int backgroundFlag;
 
-        assert(sscanf(tempPtr,"BACKGROUND %d",&backgroundFlag) == 1);
+        verify(sscanf(tempPtr,"BACKGROUND %d",&backgroundFlag) == 1);
 
         currentTrackActor->positionInMoveScript ++;
-        if (backgroundFlag != 0)
+      /*  if (backgroundFlag != 0)
         {
           if (!(currentTrackActor->staticFlagsBF.bIsBackgrounded)) //if actor wasn't already in background
           {
@@ -851,14 +851,14 @@ void DoTrack(int actorNumber)
               requestBackgroundRedraw = 1;
             }
           }
-        }
+        }*/
         break;
       }
     case 18: // WAIT_NB_SECOND
       {
         int numSecondes;
 
-        assert(sscanf(tempPtr,"WAIT_NB_SECOND %d",&numSecondes) == 1);
+        verify(sscanf(tempPtr,"WAIT_NB_SECOND %d",&numSecondes) == 1);
 
         if(currentTrackActor->timeDelay == 0)
         {
@@ -891,19 +891,19 @@ void DoTrack(int actorNumber)
           switch (macroIdx - 21)
           {
             case 0:
-              assert(sscanf(tempPtr,"OPEN_LEFT %d",&doorStatus) == 1);
+              verify(sscanf(tempPtr,"OPEN_LEFT %d",&doorStatus) == 1);
               currentTrackActor->angle = 0x300;
             break;
             case 1:
-              assert(sscanf(tempPtr,"OPEN_RIGHT %d",&doorStatus) == 1);
+              verify(sscanf(tempPtr,"OPEN_RIGHT %d",&doorStatus) == 1);
               currentTrackActor->angle = 0x100;
             break;
             case 2:
-              assert(sscanf(tempPtr,"OPEN_UP %d",&doorStatus) == 1);
+              verify(sscanf(tempPtr,"OPEN_UP %d",&doorStatus) == 1);
               currentTrackActor->angle = 0x200;
             break;
             case 3:
-              assert(sscanf(tempPtr,"OPEN_DOWN %d",&doorStatus) == 1);
+              verify(sscanf(tempPtr,"OPEN_DOWN %d",&doorStatus) == 1);
               currentTrackActor->angle = 0;
             break;
             default:

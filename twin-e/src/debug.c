@@ -545,8 +545,16 @@ void debugger_debugActor(int num)
     scriptData *comScript;
     scriptData *trackScript;
 
+#ifndef TXT_SCRIPTS
     comScript = debugger_getActorComScript(num);
     trackScript = debugger_getActorTrackScript(num);
+#else
+    comScript = (scriptData*)malloc(sizeof(scriptData));
+    trackScript = (scriptData*)malloc(sizeof(scriptData));
+
+    comScript->numOfLignes = 0;
+    trackScript->numOfLignes = 0;
+#endif
 
     do
   {

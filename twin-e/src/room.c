@@ -149,6 +149,7 @@ void ChangeCube(void)
   if (roomMusic != -1)
     PlayMusic(roomMusic);
 
+  printf("ChangeCube done\n");
 }
 
 void ClearScene(void)
@@ -174,7 +175,7 @@ void ClearScene(void)
 
 #ifdef TXT_SCRIPTS
 
-const char unpackedDataPath[] = "C:\\devel\\lba\\dataDump";
+const char unpackedDataPath[] = "dataDump";
 const char sceneDataSubdir[] = "SCENE";
 
 void getSceneFileName(char* buffer, int sceneNumber)
@@ -296,7 +297,7 @@ void LoadScene(int sceneNumber)
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"textBank: %d",&currentTextBank) == 1);
+    verify(sscanf(buffer,"textBank: %d",&currentTextBank) == 1);
 
     needChangeRoom = sceneNumber;
 
@@ -306,7 +307,7 @@ void LoadScene(int sceneNumber)
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"cube: %d",&sceneRoomNumber) == 1);
+    verify(sscanf(buffer,"cube: %d",&sceneRoomNumber) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
@@ -314,61 +315,61 @@ void LoadScene(int sceneNumber)
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"AlphaLight: %d",&reinitVar1) == 1);
+    verify(sscanf(buffer,"AlphaLight: %d",&reinitVar1) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"BetaLight: %d",&reinitVar2) == 1);
+    verify(sscanf(buffer,"BetaLight: %d",&reinitVar2) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb0_1: %d",&sceneVar2.field_0) == 1);
+    verify(sscanf(buffer,"amb0_1: %d",&sceneVar2.field_0) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb0_2: %d",&sceneVar3.field_0) == 1);
+    verify(sscanf(buffer,"amb0_2: %d",&sceneVar3.field_0) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb0_3: %d",&sceneVar4.field_0) == 1);
+    verify(sscanf(buffer,"amb0_3: %d",&sceneVar4.field_0) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb1_1: %d",&sceneVar2.field_2) == 1);
+    verify(sscanf(buffer,"amb1_1: %d",&sceneVar2.field_2) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb1_2: %d",&sceneVar3.field_2) == 1);
+    verify(sscanf(buffer,"amb1_2: %d",&sceneVar3.field_2) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb1_3: %d",&sceneVar4.field_2) == 1);
+    verify(sscanf(buffer,"amb1_3: %d",&sceneVar4.field_2) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb2_1: %d",&sceneVar2.field_4) == 1);
+    verify(sscanf(buffer,"amb2_1: %d",&sceneVar2.field_4) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb2_2: %d",&sceneVar3.field_4) == 1);
+    verify(sscanf(buffer,"amb2_2: %d",&sceneVar3.field_4) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb2_3: %d",&sceneVar4.field_4) == 1);
+    verify(sscanf(buffer,"amb2_3: %d",&sceneVar4.field_4) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb3_1: %d",&sceneVar2.field_6) == 1);
+    verify(sscanf(buffer,"amb3_1: %d",&sceneVar2.field_6) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb3_2: %d",&sceneVar3.field_6) == 1);
+    verify(sscanf(buffer,"amb3_2: %d",&sceneVar3.field_6) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"amb3_3: %d",&sceneVar4.field_6) == 1);
+    verify(sscanf(buffer,"amb3_3: %d",&sceneVar4.field_6) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Second_Min: %d",&sceneVar14) == 1);
+    verify(sscanf(buffer,"Second_Min: %d",&sceneVar14) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Second_Ecart: %d",&sceneVar15) == 1);
+    verify(sscanf(buffer,"Second_Ecart: %d",&sceneVar15) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Jingle: %d",&roomMusic) == 1);
+    verify(sscanf(buffer,"Jingle: %d",&roomMusic) == 1);
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
@@ -376,13 +377,13 @@ void LoadScene(int sceneNumber)
 
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"X: %d",&newTwinsenXByScene) == 1);
+    verify(sscanf(buffer,"X: %d",&newTwinsenXByScene) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Y: %d",&newTwinsenYByScene) == 1);
+    verify(sscanf(buffer,"Y: %d",&newTwinsenYByScene) == 1);
     fgets(buffer,256,fHandle);
     *strchr(buffer,0xA) = 0;
-    assert(sscanf(buffer,"Z: %d",&newTwinsenZByScene) == 1);
+    verify(sscanf(buffer,"Z: %d",&newTwinsenZByScene) == 1);
 
     twinsen->moveScript = readTextMoveScript(fHandle);
     twinsen->actorScript = readTextLifeScript(fHandle);
@@ -411,7 +412,7 @@ void LoadScene(int sceneNumber)
       
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"StaticFlags: %d",&staticFlags)==1);
+      verify(sscanf(buffer,"StaticFlags: %d",&staticFlags)==1);
 
       if(staticFlags & 0x1)
       {
@@ -481,7 +482,7 @@ void LoadScene(int sceneNumber)
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"File3D: %d",&actors[currentActor].modelNumber)==1);
+      verify(sscanf(buffer,"File3D: %d",&actors[currentActor].modelNumber)==1);
 
       if (!(actors[currentActor].staticFlagsBF.bIsSpriteActor)) // if not sprite actor
       {
@@ -490,25 +491,25 @@ void LoadScene(int sceneNumber)
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Body: %d",&actors[currentActor].body)==1);
+      verify(sscanf(buffer,"Body: %d",&actors[currentActor].body)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Anim: %d",&actors[currentActor].anim)==1);
+      verify(sscanf(buffer,"Anim: %d",&actors[currentActor].anim)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Sprite: %d",&actors[currentActor].field_8)==1);
+      verify(sscanf(buffer,"Sprite: %d",&actors[currentActor].field_8)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"X: %d",&actors[currentActor].X)==1);
+      verify(sscanf(buffer,"X: %d",&actors[currentActor].X)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Y: %d",&actors[currentActor].Y)==1);
+      verify(sscanf(buffer,"Y: %d",&actors[currentActor].Y)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Z: %d",&actors[currentActor].Z)==1);
+      verify(sscanf(buffer,"Z: %d",&actors[currentActor].Z)==1);
 
       actors[currentActor].field_20 = actors[currentActor].X;
       actors[currentActor].field_22 = actors[currentActor].Y;
@@ -516,53 +517,55 @@ void LoadScene(int sceneNumber)
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"HitForce: %d",&actors[currentActor].field_66)==1);
+      verify(sscanf(buffer,"HitForce: %d",&actors[currentActor].field_66)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Bonus: %d",&actors[currentActor].field_10)==1);
+      verify(sscanf(buffer,"Bonus: %d",&actors[currentActor].field_10)==1);
       actors[currentActor].field_10 &= 0xFE;
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Beta: %d",&actors[currentActor].angle)==1);
+      verify(sscanf(buffer,"Beta: %d",&actors[currentActor].angle)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"SpeedRot: %d",&actors[currentActor].speed)==1);
+      verify(sscanf(buffer,"SpeedRot: %d",&actors[currentActor].speed)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Move: %d",&actors[currentActor].comportement)==1);
+      verify(sscanf(buffer,"Move: %d",&actors[currentActor].comportement)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"CropLeft: %d",&actors[currentActor].cropLeft)==1);
+      verify(sscanf(buffer,"CropLeft: %d",&actors[currentActor].cropLeft)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"CropTop: %d",&actors[currentActor].cropTop)==1);
+      verify(sscanf(buffer,"CropTop: %d",&actors[currentActor].cropTop)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"CropRight: %d",&actors[currentActor].cropRight)==1);
+      verify(sscanf(buffer,"CropRight: %d",&actors[currentActor].cropRight)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"CropBottom: %d",&actors[currentActor].cropBottom)==1);
+      verify(sscanf(buffer,"CropBottom: %d",&actors[currentActor].cropBottom)==1);
+
+      actors[currentActor].followedActor = actors[currentActor].cropBottom;
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"ExtraBonus: %d",&actors[currentActor].field_12)==1);
+      verify(sscanf(buffer,"ExtraBonus: %d",&actors[currentActor].field_12)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Color: %d",&actors[currentActor].talkColor)==1);
+      verify(sscanf(buffer,"Color: %d",&actors[currentActor].talkColor)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Armure: %d",&actors[currentActor].field_14)==1);
+      verify(sscanf(buffer,"Armure: %d",&actors[currentActor].field_14)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"LifePoint: %d",&actors[currentActor].life)==1);
+      verify(sscanf(buffer,"LifePoint: %d",&actors[currentActor].life)==1);
 
       actors[currentActor].moveScript = readTextMoveScript(fHandle);
       actors[currentActor].actorScript = readTextLifeScript(fHandle);
@@ -581,44 +584,44 @@ void LoadScene(int sceneNumber)
     {   
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"X0: %d",&zoneData[numOfZones].bottomLeft.X)==1);
+      verify(sscanf(buffer,"X0: %d",&zoneData[numOfZones].bottomLeft.X)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Y0: %d",&zoneData[numOfZones].bottomLeft.Y)==1);
+      verify(sscanf(buffer,"Y0: %d",&zoneData[numOfZones].bottomLeft.Y)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Z0: %d",&zoneData[numOfZones].bottomLeft.Z)==1);
+      verify(sscanf(buffer,"Z0: %d",&zoneData[numOfZones].bottomLeft.Z)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"X1: %d",&zoneData[numOfZones].topRight.X)==1);
+      verify(sscanf(buffer,"X1: %d",&zoneData[numOfZones].topRight.X)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Y1: %d",&zoneData[numOfZones].topRight.Y)==1);
+      verify(sscanf(buffer,"Y1: %d",&zoneData[numOfZones].topRight.Y)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Z1: %d",&zoneData[numOfZones].topRight.Z)==1);
+      verify(sscanf(buffer,"Z1: %d",&zoneData[numOfZones].topRight.Z)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Type: %d",&zoneData[numOfZones].zoneType)==1);
+      verify(sscanf(buffer,"Type: %d",&zoneData[numOfZones].zoneType)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Info0: %d",&zoneData[numOfZones].generic.data1)==1);
+      verify(sscanf(buffer,"Info0: %d",&zoneData[numOfZones].data.generic.data1)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Info1: %d",&zoneData[numOfZones].generic.data2)==1);
+      verify(sscanf(buffer,"Info1: %d",&zoneData[numOfZones].data.generic.data2)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Info2: %d",&zoneData[numOfZones].generic.data3)==1);
+      verify(sscanf(buffer,"Info2: %d",&zoneData[numOfZones].data.generic.data3)==1);
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Info3: %d",&zoneData[numOfZones].generic.data4)==1);
+      verify(sscanf(buffer,"Info3: %d",&zoneData[numOfZones].data.generic.data4)==1);
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Snap: %d",&zoneData[numOfZones].dummy)==1);
+      verify(sscanf(buffer,"Snap: %d",&zoneData[numOfZones].dummy)==1);
 
       numOfZones++;
 
@@ -632,19 +635,27 @@ void LoadScene(int sceneNumber)
     {
       int flagNum;
 
-      fgets(buffer,256,fHandle);
-      *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"X: %d",&flagData[numFlags].x)==1);
-      fgets(buffer,256,fHandle);
-      *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Y: %d",&flagData[numFlags].z)==1);
-      fgets(buffer,256,fHandle);
-      *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Z: %d",&flagData[numFlags].y)==1);
+      int x;
+      int y;
+      int z;
 
       fgets(buffer,256,fHandle);
       *strchr(buffer,0xA) = 0;
-      assert(sscanf(buffer,"Num: %d",&flagNum)==1);
+      verify(sscanf(buffer,"X: %d",&x)==1);
+      fgets(buffer,256,fHandle);
+      *strchr(buffer,0xA) = 0;
+      verify(sscanf(buffer,"Y: %d",&y)==1);
+      fgets(buffer,256,fHandle);
+      *strchr(buffer,0xA) = 0;
+      verify(sscanf(buffer,"Z: %d",&z)==1);
+
+      flagData[numFlags].x = x;
+      flagData[numFlags].y = y;
+      flagData[numFlags].z = z;
+
+      fgets(buffer,256,fHandle);
+      *strchr(buffer,0xA) = 0;
+      verify(sscanf(buffer,"Num: %d",&flagNum)==1);
 
       assert(numFlags == flagNum);
 

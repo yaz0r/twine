@@ -314,7 +314,7 @@ char* resolveVar(char* var,int* outputVar)
     {
       int actorIdx;
 
-      assert(sscanf(var,"COL_OBJ %d ",&actorIdx)==1);
+      verify(sscanf(var,"COL_OBJ %d ",&actorIdx)==1);
 
       *outputVar = getCOL(&actors[actorIdx]);
 
@@ -325,7 +325,7 @@ char* resolveVar(char* var,int* outputVar)
     {
       int actorIdx;
 
-      assert(sscanf(var,"DISTANCE %d ",&actorIdx) == 1);
+      verify(sscanf(var,"DISTANCE %d ",&actorIdx) == 1);
 
       *outputVar = getDISTANCE(currentScriptActor,&actors[actorIdx]);
 
@@ -403,7 +403,7 @@ char* resolveVar(char* var,int* outputVar)
       int actor2;
       actor* lactor2;
 
-      assert(sscanf(var,"L_TRACK_OBJ %d ",&actor2)==1);
+      verify(sscanf(var,"L_TRACK_OBJ %d ",&actor2)==1);
 
       lactor2 = &actors[actor2];
 
@@ -417,7 +417,7 @@ char* resolveVar(char* var,int* outputVar)
     {
       int varIdx;
 
-      assert(sscanf(var,"FLAG_CUBE %d",&varIdx)==1);
+      verify(sscanf(var,"FLAG_CUBE %d",&varIdx)==1);
 	    *outputVar = cubeFlags[varIdx];
 
       numAdditionalArg = 1;
@@ -490,7 +490,7 @@ char* resolveVar(char* var,int* outputVar)
     {
       int varIdx;
 
-      assert(sscanf(var,"FLAG_GAME %d ",&varIdx) == 1);
+      verify(sscanf(var,"FLAG_GAME %d ",&varIdx) == 1);
 
       if (!vars[70] || (vars[70] && varIdx >= 28))
       {
@@ -517,7 +517,7 @@ char* resolveVar(char* var,int* outputVar)
     {
       int actorIdx;
 
-      assert(sscanf(var,"LIFE_POINT_OBJ %d",&actorIdx) == 1);
+      verify(sscanf(var,"LIFE_POINT_OBJ %d",&actorIdx) == 1);
 
       *outputVar = actors[actorIdx].life;
 
@@ -551,7 +551,7 @@ char* resolveVar(char* var,int* outputVar)
       int actor2;
       actor* lactor2;
 
-      assert(sscanf(var,"DISTANCE_3D %d ",&actor2)==1);
+      verify(sscanf(var,"DISTANCE_3D %d ",&actor2)==1);
 
       lactor2 = &actors[actor2];
 
@@ -840,7 +840,7 @@ void runActorScript(short int actorNumber)
       {
         int bodyIdx;
 
-        assert(sscanf(tempPtr,"BODY %d",&bodyIdx) == 1);
+        verify(sscanf(tempPtr,"BODY %d",&bodyIdx) == 1);
 
         InitBody(bodyIdx, actorNumber);
         break;
@@ -850,7 +850,7 @@ void runActorScript(short int actorNumber)
         int objectIdx;
         int bodyIdx;
 
-        assert(sscanf(tempPtr,"BODY_OBJ %d %d",&objectIdx,&bodyIdx) == 2);
+        verify(sscanf(tempPtr,"BODY_OBJ %d %d",&objectIdx,&bodyIdx) == 2);
 
         InitBody(bodyIdx, objectIdx);
         break;
@@ -859,7 +859,7 @@ void runActorScript(short int actorNumber)
       {
         int animIdx;
 
-        assert(sscanf(tempPtr,"ANIM %d",&animIdx) == 1);
+        verify(sscanf(tempPtr,"ANIM %d",&animIdx) == 1);
 
         InitAnim(animIdx, 0, 0, actorNumber);
         break;
@@ -869,7 +869,7 @@ void runActorScript(short int actorNumber)
         int animIdx;
         int actorIdx;
 
-        assert(sscanf(tempPtr,"ANIM_OBJ %d %d",&actorIdx,&animIdx) == 2);
+        verify(sscanf(tempPtr,"ANIM_OBJ %d %d",&actorIdx,&animIdx) == 2);
 
         InitAnim(animIdx, 0, 0, actorIdx);
         break;
@@ -880,7 +880,7 @@ void runActorScript(short int actorNumber)
       {
         int trackPosition;
 
-        assert(sscanf(tempPtr,"SET_TRACK %d",&trackPosition) == 1);
+        verify(sscanf(tempPtr,"SET_TRACK %d",&trackPosition) == 1);
         currentScriptActor->positionInMoveScript = resolveTrackLineFromLabel(currentScriptActor,trackPosition);
         break;
       }
@@ -889,15 +889,15 @@ void runActorScript(short int actorNumber)
         int objectIdx;
         int trackPosition;
 
-        assert(sscanf(tempPtr,"SET_TRACK_OBJ %d %d",&objectIdx,&trackPosition) == 2);
-        actors[objectIdx].positionInMoveScript = resolveTrackLineFromLabel(actors[objectIdx].moveScript,trackPosition);
+        verify(sscanf(tempPtr,"SET_TRACK_OBJ %d %d",&objectIdx,&trackPosition) == 2);
+        actors[objectIdx].positionInMoveScript = resolveTrackLineFromLabel(&actors[objectIdx],trackPosition);
         break;
       }
     case 25: // MESSAGE
       {
         int messageIdx;
 
-        assert(sscanf(tempPtr,"MESSAGE %d",&messageIdx) == 1);
+        verify(sscanf(tempPtr,"MESSAGE %d",&messageIdx) == 1);
 
         freezeTime();
         TestRestoreModeSVGA(1);
@@ -915,7 +915,7 @@ void runActorScript(short int actorNumber)
       {
         int fallableParam;
 
-        assert(sscanf(tempPtr,"FALLABLE %d",&fallableParam) == 1);
+        verify(sscanf(tempPtr,"FALLABLE %d",&fallableParam) == 1);
 
         currentScriptActor->staticFlagsBF.bIsFallable = fallableParam;
         break;
@@ -924,16 +924,16 @@ void runActorScript(short int actorNumber)
       {
         int newDir;
 
-        assert(sscanf(tempPtr,"SET_DIR %d",&newDir) == 1);
+        verify(sscanf(tempPtr,"SET_DIR %d",&newDir) == 1);
 
         currentScriptActor->comportement = newDir;
         if (newDir == 2)
         {
           int followActor;
 
-          assert(sscanf(tempPtr,"SET_DIR %d follow %d",&newDir,&followActor) == 2);
+          verify(sscanf(tempPtr,"SET_DIR %d follow %d",&newDir,&followActor) == 2);
           
-          currentScriptActor->cropBottom = followActor;
+          currentScriptActor->followedActor = followActor;
         }
         break;
       }
@@ -942,16 +942,16 @@ void runActorScript(short int actorNumber)
         int objIdx;
         int newDir;
 
-        assert(sscanf(tempPtr,"SET_DIR_OBJ %d %d",&objIdx,&newDir) == 2);
+        verify(sscanf(tempPtr,"SET_DIR_OBJ %d %d",&objIdx,&newDir) == 2);
 
         actors[objIdx].comportement = newDir;
         if (newDir == 2)
         {
           int followActor;
 
-          assert(sscanf(tempPtr,"SET_DIR_OBJ %d %d follow %d",&objIdx,&newDir,&followActor) == 2);
+          verify(sscanf(tempPtr,"SET_DIR_OBJ %d %d follow %d",&objIdx,&newDir,&followActor) == 3);
           
-          actors[objIdx].cropBottom = followActor;
+          actors[objIdx].followedActor = followActor;
         }
         break;
       }
@@ -959,7 +959,7 @@ void runActorScript(short int actorNumber)
       {
         int newActorToFollow;
 
-        assert(sscanf(tempPtr,"CAM_FOLLOW %d",&newActorToFollow) == 1);
+        verify(sscanf(tempPtr,"CAM_FOLLOW %d",&newActorToFollow) == 1);
 
         if (currentlyFollowedActor != newActorToFollow)
         {
@@ -976,7 +976,7 @@ void runActorScript(short int actorNumber)
       {
         int comportementIdx;
 
-        assert(sscanf(tempPtr,"COMPORTEMENT_HERO %d",&comportementIdx) == 1);
+        verify(sscanf(tempPtr,"COMPORTEMENT_HERO %d",&comportementIdx) == 1);
 
         InitAnim(ANIM_static, 0, 255, 0);
         SetComportement(comportementIdx);
@@ -988,7 +988,7 @@ void runActorScript(short int actorNumber)
         int var1;
         int var2;
 
-        assert(sscanf(tempPtr,"SET_FLAG_CUBE %d %d",&var1,&var2) == 2);
+        verify(sscanf(tempPtr,"SET_FLAG_CUBE %d %d",&var1,&var2) == 2);
 
         cubeFlags[var1] = var2;
         break;
@@ -1001,7 +1001,7 @@ void runActorScript(short int actorNumber)
       {
         int comportementIdx;
 
-        assert(sscanf(tempPtr,"SET_COMPORTEMENT %d",&comportementIdx) == 1);
+        verify(sscanf(tempPtr,"SET_COMPORTEMENT %d",&comportementIdx) == 1);
         currentScriptActor->positionInActorScript = resolveComportementLineFromIdx(actors[actorNumber].actorScript,comportementIdx);
         break;
       }
@@ -1010,7 +1010,7 @@ void runActorScript(short int actorNumber)
         int comportementIdx;
         int objIdx;
 
-        assert(sscanf(tempPtr,"SET_COMPORTEMENT_OBJ %d %d",&objIdx,&comportementIdx) == 2);
+        verify(sscanf(tempPtr,"SET_COMPORTEMENT_OBJ %d %d",&objIdx,&comportementIdx) == 2);
         actors[objIdx].positionInActorScript = resolveComportementLineFromIdx(actors[objIdx].actorScript,comportementIdx);
         break;
       }
@@ -1024,7 +1024,7 @@ void runActorScript(short int actorNumber)
         int var1;
         int var2;
 
-        assert(sscanf(tempPtr,"SET_FLAG_GAME %d %d",&var1,&var2) == 2);
+        verify(sscanf(tempPtr,"SET_FLAG_GAME %d %d",&var1,&var2) == 2);
 
         vars[var1] = var2;
         break;
@@ -1033,7 +1033,7 @@ void runActorScript(short int actorNumber)
       {
         int objIdx;
 
-        assert(sscanf(tempPtr,"KILL_OBJ",&objIdx) == 1);
+        verify(sscanf(tempPtr,"KILL_OBJ",&objIdx) == 1);
 
         CheckCarrier(objIdx);
 
@@ -1071,7 +1071,7 @@ void runActorScript(short int actorNumber)
         overlayObjectListStruct *edi;
         int oldNumCoin;
 
-        assert(sscanf(tempPtr,"GIVE_GOLD_PIECES %d",&numGoldPieces) == 1);
+        verify(sscanf(tempPtr,"GIVE_GOLD_PIECES %d",&numGoldPieces) == 1);
 
         oldNumCoin = numCoin;
         numCoin -= numGoldPieces;
@@ -1086,11 +1086,11 @@ void runActorScript(short int actorNumber)
 
         while (eax < 10)
         {
-          if (edi->field_0 != -1 && edi->field_6 == 2)
+          if (edi->field_0 != -1 && edi->type == 2)
           {
-            edi->field_0=BoundRegleTrois(edi->field_8,edi->field_0,100,edi->field_C-time-50);
-            edi->field_8 = numGoldPieces;
-            edi->field_C = lba_time + 150;
+            edi->field_0=BoundRegleTrois(edi->followedActor,edi->field_0,100,edi->timeToDie-lba_time-50);
+            edi->followedActor = numGoldPieces;
+            edi->timeToDie = lba_time + 150;
             ecx = 1;
             break;
           }
@@ -1131,7 +1131,7 @@ void runActorScript(short int actorNumber)
       {
         int moveFactor;
 
-        assert(sscanf(tempPtr,"SET_DOOR_LEFT %d",&moveFactor) == 1);
+        verify(sscanf(tempPtr,"SET_DOOR_LEFT %d",&moveFactor) == 1);
 
         currentScriptActor->angle = 0x300;
         currentScriptActor->X = currentScriptActor->lastX - moveFactor;
@@ -1143,7 +1143,7 @@ void runActorScript(short int actorNumber)
       {
         int moveFactor;
 
-        assert(sscanf(tempPtr,"SET_DOOR_RIGHT %d",&moveFactor) == 1);
+        verify(sscanf(tempPtr,"SET_DOOR_RIGHT %d",&moveFactor) == 1);
 
         currentScriptActor->angle = 0x100;
         currentScriptActor->X = currentScriptActor->lastX + moveFactor;
@@ -1155,7 +1155,7 @@ void runActorScript(short int actorNumber)
       {
         int moveFactor;
 
-        assert(sscanf(tempPtr,"SET_DOOR_UP %d",&moveFactor) == 1);
+        verify(sscanf(tempPtr,"SET_DOOR_UP %d",&moveFactor) == 1);
 
         currentScriptActor->angle = 0x200;
         currentScriptActor->Z = currentScriptActor->lastY - moveFactor;
@@ -1167,7 +1167,7 @@ void runActorScript(short int actorNumber)
       {
         int moveFactor;
 
-        assert(sscanf(tempPtr,"SET_DOOR_DOWN %d",&moveFactor) == 1);
+        verify(sscanf(tempPtr,"SET_DOOR_DOWN %d",&moveFactor) == 1);
 
         currentScriptActor->angle = 0;
         currentScriptActor->Z = currentScriptActor->lastY + moveFactor;
@@ -1179,7 +1179,7 @@ void runActorScript(short int actorNumber)
       {
         int colSwitch;
 
-        assert(sscanf(tempPtr,"OBJ_COL %d",&colSwitch) == 1);
+        verify(sscanf(tempPtr,"OBJ_COL %d",&colSwitch) == 1);
 
         if (colSwitch != 0)
         {
@@ -1205,7 +1205,7 @@ void runActorScript(short int actorNumber)
       {
         int invisibleSwitch;
 
-        assert(sscanf(tempPtr,"INVISIBLE %d", &invisibleSwitch) == 1);
+        verify(sscanf(tempPtr,"INVISIBLE %d", &invisibleSwitch) == 1);
 
         currentScriptActor->staticFlagsBF.bNoDisplay = invisibleSwitch;
         break;
@@ -1219,11 +1219,11 @@ void runActorScript(short int actorNumber)
       {
         int flagIdx;
 
-        assert(sscanf(tempPtr,"POS_POINT %d",&flagIdx) == 1);
+        verify(sscanf(tempPtr,"POS_POINT %d",&flagIdx) == 1);
 
         currentScriptActor->X = flagData[flagIdx].x;
-        currentScriptActor->Y = flagData[flagIdx].z;
-        currentScriptActor->Z = flagData[flagIdx].y;
+        currentScriptActor->Y = flagData[flagIdx].y;
+        currentScriptActor->Z = flagData[flagIdx].z;
 
         break;
       }
@@ -1232,7 +1232,7 @@ void runActorScript(short int actorNumber)
         int actorIdx;
         int newLifePoint;
 
-        assert(sscanf(tempPtr,"SET_LIFE_POINT_OBJ %d %d", &actorIdx, &newLifePoint) == 2);
+        verify(sscanf(tempPtr,"SET_LIFE_POINT_OBJ %d %d", &actorIdx, &newLifePoint) == 2);
 
         actors[actorIdx].life = newLifePoint;
 
@@ -1242,7 +1242,7 @@ void runActorScript(short int actorNumber)
       {
         int actorIdx;
 
-        assert(sscanf(tempPtr,"INIT_PINGOUIN %d", &actorIdx) == 1);
+        verify(sscanf(tempPtr,"INIT_PINGOUIN %d", &actorIdx) == 1);
 
         actors[actorIdx].dynamicFlagsBF.bUnk0020 = 1;
         currentPingouin = actorIdx;
@@ -1255,7 +1255,7 @@ void runActorScript(short int actorNumber)
     {
       int messageNumber;
 
-      assert(sscanf(tempPtr,"SAY_MESSAGE %d", &messageNumber) == 1);
+      verify(sscanf(tempPtr,"SAY_MESSAGE %d", &messageNumber) == 1);
 
       addOverlayObject(4,messageNumber,0,0,actorNumber,1,2);
 

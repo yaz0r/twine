@@ -17,6 +17,7 @@ void addOverlayObject(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6
       overlayObjectList[i].followedActor = arg5;
       overlayObjectList[i].positionType = arg6;
       overlayObjectList[i].timeToDie = lba_time + lifeTime * 50;
+      return;
     }
   }
 }

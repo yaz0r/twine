@@ -23,7 +23,7 @@ void studioTick(void);
 #include "lba.h"
 
 #ifdef GAME_DEBUG
-#include "SDL_ttf.h"
+#include <SDL_ttf.h>
 #endif
 
 //#include "SDL_rotozoom.h"
