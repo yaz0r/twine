@@ -700,6 +700,10 @@ class LBA_engine
 
  int updateActorScript;
 
+ int shadowVar1;
+ int shadowVar2;
+ int shadowVar3;
+
 //----------------------------------------------------------------------------------------
 
  void loadImageCrossFade(int imageNumber);

@@ -21,6 +21,7 @@ void LBA_engine::fullRedraw(int param)
 {
 	short int temp1;
 	short int temp2;
+	short int temp4;
 	int counter;
 	int counter2;
 	//  int i;
@@ -62,35 +63,88 @@ void LBA_engine::fullRedraw(int param)
 	arg_46=arg_1A+0x1000;
 	arg_42=arg_1A+0x0C00;
 
-	for(arg_1A=0;arg_1A<numActorInRoom;arg_1A++,arg_46++,arg_42++) // process shadows/priority ?
+	//loop1
+
+	for(arg_1A=0;arg_1A<numActorInRoom;arg_1A++,arg_46++,arg_42++) // process shadows for actors
 	{
 		lactor=&actors[arg_1A];
-		*(byte*)&lactor->field_62 &= 0xEF;
+		*(byte*)&lactor->field_62 &= 0xFFEF; //recheck -> reinit the draw flags for the current objects
 
-		if(!(changeRoomVar9!=-1 && lactor->field_1C>*(short int*)(currentGrid2*24+sceneVarPtr+8)))
+		if((changeRoomVar9 ==-1)||(lactor->field_1C<=*(short int*)((currentGrid2)*24+sceneVarPtr+8)))
 		{
-			if(lactor->field_60 & 0x2000 && param == 0)
+			if(lactor->field_60 & 0x2000 && param == 0) 
 			{
+				//calculate the actor position on screen
 				fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
 
+				//is the actor in the viewable screen ?
 				if(fullRedrawVar3 > -50 && fullRedrawVar3 < 680 && fullRedrawVar4> -30 && fullRedrawVar4< 580)
-					*(byte*)&lactor->field_62|=0x10;
+				{
+					*(byte*)&lactor->field_62|=0x10; // set the draw flag
+				}
 			}
 			else
 			{
-				if(lactor->costumeIndex != -1 && !(lactor->field_60 & 0x200)) // if the costume is set and if the actor is a sprite actor
+				if(lactor->costumeIndex != -1 && !(lactor->field_60 & 0x200))
 				{
+					//calculate the actor position on screen
 					fullRedrawS2S1(lactor->field_1A-changeRoomVar4Bis,lactor->field_1C-changeRoomVar5Bis,lactor->field_1E-changeRoomVar6Bis);
 
-					if((lactor->field_60 & 8 && fullRedrawVar2 >-112 && fullRedrawVar2 < 752 && fullRedrawVar4 > -50 && fullRedrawVar4 < 651)
+					if(((lactor->field_60 & 8) && fullRedrawVar2 >-112 && fullRedrawVar2 < 752 && fullRedrawVar4 > -50 && fullRedrawVar4 < 651)
 					|| ((!(lactor->field_60 & 8)) && fullRedrawVar3> -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4< 580))
 					{
-						temp3=(lactor->field_1E+((lactor->field_1A)-changeRoomVar4Bis))-changeRoomVar6Bis;
+						temp3=lactor->field_1E+lactor->field_1A-changeRoomVar4Bis-changeRoomVar6Bis;
 						if(lactor->field_58!=-1)
 						{
-							printf("Sprite actor %d follow actor %d !\n",arg_1A,lactor->field_58);
+							temp3=actors[lactor->field_58].field_1A-changeRoomVar4Bis+actors[lactor->field_58].field_1E-changeRoomVar6Bis+2;
 						}
-					//	            printf("process sprite actor %d\n",arg_1A);
+
+						if(lactor->field_60&0x400)
+						{
+							fullRedrawVar6[a12].field_2=arg_46;
+							if(lactor->field_60&8)
+							{
+								temp3=lactor->field_6C-changeRoomVar4Bis+lactor->field_70-changeRoomVar6Bis;
+							}
+						}
+						else
+						{
+							fullRedrawVar6->field_2=arg_46;
+						}
+
+						a12++;
+						fullRedrawVar6[a12].field_0=temp3;
+
+						if(shadowMode!=0 && !(lactor->field_60&0x1000)) //0x1000 -> no shadow cast
+						{
+							if(lactor->field_58!=-1)
+							{
+								shadowVar1=lactor->field_1A;
+								shadowVar2=lactor->field_1C-1;
+								shadowVar3=lactor->field_1E;
+							}
+							else
+							{
+//								addShadowActorToCube(lactor->field_1A,lactor->field_1C,lactor->field_1E);
+							}
+
+							temp3--;
+							fullRedrawVar6[a12].field_0=temp3; // save the shadow entry in the fullRedrawVar6
+							fullRedrawVar6[a12].field_4=shadowVar1;
+							fullRedrawVar6[a12].field_6=shadowVar2;
+							fullRedrawVar6[a12].field_8=shadowVar3;
+							fullRedrawVar6[a12].field_A=2;
+
+						}
+
+						if(drawInGameTransBox)
+						{
+							if(reinitVar8!=arg_1A)
+							{
+/*								arg_16=fullRedrawVar3;
+								arg_12=fullRedrawVar4;*/
+							}
+						}
 					}
 				}
 			}
@@ -101,7 +155,9 @@ void LBA_engine::fullRedraw(int param)
 	counter=arg_1A+0x1800;
 	counter2=0;
 
-	do
+	// loop2
+
+	do //process shadows for room elements
 	{
 		if(reinitAll2SubVar1[counter2].field_0 != -1)
 		{
@@ -116,7 +172,33 @@ void LBA_engine::fullRedraw(int param)
 			}
 			else
 			{
-				fullRedrawS2S1(roomData2->field_2-changeRoomVar4Bis,roomData2->field_4-changeRoomVar5Bis,roomData2->field_6-changeRoomVar6Bis);
+				if(
+					(reinitAll2SubVar1[counter2].field_14 & 1) || 
+					(reinitAll2SubVar1[counter2].field_14 & 0x40 ) ||
+					(reinitAll2SubVar1[counter2].field_1C+reinitAll2SubVar1[counter2].field_18-0x96>time) ||
+					(!(time+reinitAll2SubVar1[counter2].field_18 & 8)))
+				{
+					fullRedrawS2S1(roomData2->field_2-changeRoomVar4Bis,roomData2->field_4-changeRoomVar5Bis,roomData2->field_6-changeRoomVar6Bis);
+
+					if(fullRedrawVar3>-50 && fullRedrawVar3<680 && fullRedrawVar4>-30 && fullRedrawVar4<580)
+					{
+						fullRedrawVar6[a12].field_0=roomData2[reinitAll2SubVar1].field_2-changeRoomVar4Bis+roomData2[reinitAll2SubVar1].field_6-changeRoomVar6Bis;
+						fullRedrawVar6[a12].field_2=counter;
+						a12++;
+
+						if(shadowMode==2 && roomData2[reinitAll2SubVar1].field_0&0x8000) //cast shadow
+						{
+							//addShadowActorToCube(roomData2[reinitAll2SubVar1].field_2,roomData2[reinitAll2SubVar1].field_4,roomData2[reinitAll2SubVar1].field_6);
+							fullRedrawVar6[a12].field_0=roomData2[reinitAll2SubVar1].field_2-changerRoomVar4Bis+roomData2[reinitAll2SubVar1].field_6-changeRoomVar6Bis-1;
+							fullRedrawVar6[a12].field_2=0xC00;
+							fullRedrawVar6[a12].field_4=shadowVar1;
+							fullRedrawVar6[a12].field_6=shadowVar2;
+							fullRedrawVar6[a12].field_8=shadowVar3;
+
+							a12++;
+						}
+					}
+				}
 			}
 		//process
 		}
@@ -135,7 +217,8 @@ void LBA_engine::fullRedraw(int param)
 		arg_4A=twinsen->field_1E+twinsen->field_30;
 		a2E=0;
 		result=-1;
-
+		
+		//loop3
 		while(arg_1A<a12)
 		{
 			if(fullRedrawVar6[arg_1A].field_2 == 0)
@@ -146,7 +229,7 @@ void LBA_engine::fullRedraw(int param)
 			}
 		}
 
-	//twinsen process
+	//twinsen process (loop4)
 	}
 
   a0E=0;
@@ -154,15 +237,17 @@ void LBA_engine::fullRedraw(int param)
   arg_1A=0;
   arg_1E=0;
 
+  //loop6
   if(a12 > 0)
   {
   //unknownLoop
 
-   // another process...
+   // loop5
   }
 
   counter2=0;
 
+  //loop7
   do
   {
     if(roomData2[counter2].field_0 != -1)
@@ -172,6 +257,8 @@ void LBA_engine::fullRedraw(int param)
     arg_1A++;
     counter2++;
   }while(arg_1A<10);
+
+ maximizeTextWindow();
 
 // if(fullRedrawVar9!=0)
  //  waitRetrace();

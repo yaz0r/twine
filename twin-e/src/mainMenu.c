@@ -188,6 +188,7 @@ int	LBA_engine::processMenu(short int* menuData)
 	short int currentButton;
 	short int temp3;
 	int musicChanged;
+	int buttonReleased=1;
 
 	musicChanged=0;
  
@@ -216,47 +217,57 @@ int	LBA_engine::processMenu(short int* menuData)
 			}			
 		}
 
-		key=printTextVar12;
-
-		if(((byte)key&2)) // on passe au bouton d'en dessous
+		if(printTextVar12==0)
 		{
-			currentButton++;
-			if(currentButton==numEntry)
-			{
-				currentButton=0; // on se retrouve au dessus
-			}
-			buttonNeedRedraw=1;
+			buttonReleased=1;
 		}
 
-		if(((byte)key&1)) // on passe au bouton d'au dessus
+		if(buttonReleased)
 		{
-			currentButton--;
-			if(currentButton<0)
+			key=printTextVar12;
+
+			if(((byte)key&2)) // on passe au bouton d'en dessous
 			{
-				currentButton=maxButton;  // on se retrouve au dessous
+				currentButton++;
+				if(currentButton==numEntry)
+				{
+					currentButton=0; // on se retrouve au dessus
+				}
+				buttonNeedRedraw=1;
+				buttonReleased=0;
 			}
-			buttonNeedRedraw=1;
-		}
-	
-		temp3=*(localData+currentButton*4+8);   // on recupere le parametre du bouton
-		if(temp3<=5)                            // si c'est un bouton de volume
-		{
-			switch(temp3)
+
+			if(((byte)key&1)) // on passe au bouton d'au dessus
 			{
-				case 1:
+				currentButton--;
+				if(currentButton<0)
 				{
+					currentButton=maxButton;  // on se retrouve au dessous
 				}
-				case 2:
+				buttonNeedRedraw=1;
+				buttonReleased=0;
+			}
+		
+			temp3=*(localData+currentButton*4+8);   // on recupere le parametre du bouton
+			if(temp3<=5)                            // si c'est un bouton de volume
+			{
+				switch(temp3)
 				{
-				}
-				case 3:
-				{
-				}
-				case 4:
-				{
-				}
-				case 5:
-				{
+					case 1:
+					{
+					}
+					case 2:
+					{
+					}
+					case 3:
+					{
+					}
+					case 4:
+					{
+					}
+					case 5:
+					{
+					}
 				}
 			}
 		}
@@ -284,11 +295,17 @@ int	LBA_engine::processMenu(short int* menuData)
 			drawButton(localData,1);
    readKeyboard();
 		}
-			
+	
 	}while(!(key1&2) && !(key1&1));
 	
 	currentButton=*(localData+5+currentButton*2); // on recupere le point de sortie
 	
+	readKeyboard();
+
+	while((key1&2) || (key1&1))
+	{
+		readKeyboard();
+	}
 
 	return(currentButton);
 }
@@ -864,7 +881,7 @@ void LBA_engine::copyStringToString(char *a, char *b, int c)
 int LBA_engine::optionMenu(void)
 {
 	byte temp;
-	byte temp2;
+	byte temp2=0;
 
 	copyToBuffer(videoBuffer1,videoBuffer2);
 	mainMenu2();
