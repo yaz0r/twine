@@ -154,7 +154,7 @@ LBA_engine::moveActor (int actorNumber)
 
 	  newAngle = calcAngleToward (lactor->X, lactor->Y, destX, destY);
 
-	  newAngle += 0x200;
+	  newAngle += 0x200; // backward angle
 
 	  if (lactor->field_60 & 0x400)
 	    {
@@ -163,7 +163,7 @@ LBA_engine::moveActor (int actorNumber)
 	  else
 	    {
 	      updateActorAngle (lactor->angle, newAngle, lactor->field_34,
-				timePtr);
+			  &lactor->time);
 	    }
 
 	  if (moveActorVar1 > 500)

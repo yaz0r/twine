@@ -40,7 +40,7 @@ LBA_engine::runActorScript (short int actorNumber)
     {
       opcodePtr = actorScriptPtr++;
       opcode = *(opcodePtr);
- // printf("Actor: %d Opcode= %2d\n",actorNumber,opcode);
+  printf("Actor: %d Opcode= %2d\n",actorNumber,opcode);
       if (opcode <= 105)
 	{
 	  localScriptPtr = actorScriptPtr + 1;
@@ -1112,6 +1112,13 @@ LBA_engine::calcAngleToward (int X1, int Y1, int X2, int Y2)
 	}*/
     }
 
+	if(tab3[startAngle]!=destVal)
+  if ((tab3[startAngle-1] + tab3[startAngle] )/ 2 <= destVal)
+    {
+      startAngle--;
+    }
+
+
   finalAngle = 128 + startAngle;
 
   if (difX <= 0)		//if we are going left
@@ -1146,8 +1153,6 @@ LBA_engine::calcAngleToward (int X1, int Y1, int X2, int Y2)
 		}
 	}
 	while(--currentAngle);*/
-
-
 
 
   esi = (int) tab3;
