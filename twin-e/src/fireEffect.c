@@ -68,13 +68,13 @@ void makeFireEffect(int top, int param)
 
 void makeFireEffectInit(void)
 {
-  unsigned char *temp1;
-  unsigned char *temp2;
-  char *temp2bis;
-  short int temp4;
-  int i;
-  unsigned int *copy1;
-  unsigned int *copy2;
+  unsigned char *temp1 = 0;
+  unsigned char *temp2 = 0;
+  char *temp2bis = 0;
+  short int temp4 = 0;
+  int i = 0;
+  unsigned int *copy1 = 0;
+  unsigned int *copy2 = 0;
 
   fireEffectVar1 = bufSpeak;
   fireEffectVar2 = bufSpeak + 16000;

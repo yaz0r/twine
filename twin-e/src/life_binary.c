@@ -810,7 +810,13 @@ void runActorScript(short int actorNumber)
 
           position=*(actorScriptPtr++);
 
-          printf("Set holomap position %d\n",position);
+          //setHolomapPosition(*(actorScriptPtr++));
+
+          if(vars[0])
+          {
+            addOverlayObject(3,0,0,0,0,0,3);
+          }
+          
           break;
          }
       case 73: //LM_CLR_HOLO_POS
@@ -1353,7 +1359,7 @@ void manipActor(actor * lactor)
          }
 
            if (manipActorResult == 1)
-         printf("Partially unimplemented actor manip opcode 25\n");
+            addOverlayObject(3,temp,0,0,0,0,3);
        }
          else
        {
