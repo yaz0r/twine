@@ -58,7 +58,7 @@ void LBA_engine::mainMenu(void)
 					playFLA("The_end");
 					resetVideoBuffer1();
 					osystem->drawBufferToScreen(videoBuffer1);
-					osystem->setPalette(menuPal);
+					osystem->setPalette(menuPalRGBA);
 				}
 				copyToBuffer(videoBuffer1,videoBuffer2);
 				do
@@ -96,7 +96,7 @@ void LBA_engine::mainMenu(void)
 
 					resetVideoBuffer1();
 					osystem->drawBufferToScreen(videoBuffer1);
-					osystem->setPalette(menuPal);
+					osystem->setPalette(menuPalRGBA);
 				}
 				copyToBuffer(videoBuffer1,videoBuffer2);
 				do
@@ -131,7 +131,7 @@ void LBA_engine::mainMenu(void)
 
 			resetPalette();
 			osystem->drawBufferToScreen(videoBuffer1);
-			fadeIn2((char*)menuPal);
+			fadeIn2((char*)menuPalRGBA);
 		}
 	}
 	while(!var4);

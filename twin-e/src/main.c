@@ -57,7 +57,9 @@ void LBA_engine::init(void)
 
 	// check screenPtr
 
-//  displayAdelineLogo();
+	osystem->drawBufferToScreen(videoBuffer1);
+
+    displayAdelineLogo();
 
 	checkCD("CD_LBA");
 
@@ -82,6 +84,7 @@ void LBA_engine::init(void)
 	allocHQMemory(400000);
 
 	menuPal=loadImageToMemory("ress.hqr",0);
+	convertPalToRGBA(menuPal,menuPalRGBA);
 
 	HQRess2=loadImageToMemory("ress.hqr",4);
 	HQRess3=loadImageToMemory("ress.hqr",3);
@@ -98,25 +101,25 @@ void LBA_engine::init(void)
 	samplesLoaded=1;
 	HQRanims=load_hqr("anim.hqr",4500000,4500000/800);
 
-/*	fadeOut((char*)palette);
+	fadeOut((char*)paletteRGBA);
 
 	if(setup_lst==0) //switch pour les 2 version de l'ecran titre de LBA
-
 		loadImageAndPalette(49);
 	else
 		loadImageAndPalette(12);
 
+	// now unused since we cross fade the video !
+	//waitFor();
+
+	//fadeOut((char*)paletteRGBA);
+
+	loadImageCrossFade(52); // Electronic Arts Logo
+
 	waitFor();
 
-	fadeOut((char*)palette);
+	fadeOut((char*)paletteRGBA);
 
-	loadImageAndPalette(52);
-
-	waitFor();
-
-	fadeOut((char*)palette);
-
-	playFLA("DRAGON3");*/
+	playFLA("DRAGON3");
 
 	loadImageToPtr("ress.hqr",videoBuffer2,14);
 
@@ -124,7 +127,7 @@ void LBA_engine::init(void)
 
 	osystem->drawBufferToScreen(videoBuffer1);
 
-	fadeIn2((char*)menuPal);
+	fadeIn2((char*)menuPalRGBA);
 
 	mainMenu();
 }
@@ -148,8 +151,13 @@ void LBA_engine::newGame(void)
 	loadImageToPtr("ress.hqr",videoBuffer2,15); // Ecran de Twinsun (ecran 1 de l'intro)
 	copyToBuffer(videoBuffer2,videoBuffer1);
 	loadImageToPtr("ress.hqr",palette,16);
-	osystem->drawBufferToScreen(videoBuffer1);
-	fadeIn2((char*)palette);
+	convertPalToRGBA(palette,paletteRGBA);
+	
+	osystem->crossFade((char*)videoBuffer1,(char*)paletteRGBA);
+	osystem->setPalette(paletteRGBA);
+	//osystem->drawBufferToScreen(videoBuffer1);
+	//fadeIn2((char*)paletteRGBA);
+
 	newGameVar4=0;
 	newGameVar5=1;
 	loadTextBank(2);
@@ -162,25 +170,36 @@ void LBA_engine::newGame(void)
 	
 	if(skipIntro!=1)
 	{
-		resetPalette();
+		//resetPalette();
 		loadImageToPtr("ress.hqr",videoBuffer2,17); // Ecran de la citadelle (ecran 2 de l'intro)
 		copyToBuffer(videoBuffer2,videoBuffer1);
 		loadImageToPtr("ress.hqr",palette,18);
-		osystem->drawBufferToScreen(videoBuffer1);
-		osystem->setPalette(palette);
+		convertPalToRGBA(palette,paletteRGBA);
+
+		osystem->crossFade((char*)videoBuffer1,(char*)paletteRGBA);
+		osystem->setPalette(paletteRGBA);
+
+//		osystem->drawBufferToScreen(videoBuffer1);
+//		osystem->setPalette(paletteRGBA);
 		printTextFullScreen(151);
 		
 		readKeyboard();
 		if(skipIntro!=1)
 
 		{
-			resetPalette();
+		//	resetPalette();
 			loadImageToPtr("ress.hqr",videoBuffer2,19); // Ecran du reve de Twisen (ecran 3 de l'intro)
 			copyToBuffer(videoBuffer2,videoBuffer1);
 			loadImageToPtr("ress.hqr",palette,20);
-			osystem->drawBufferToScreen(videoBuffer1);
 
-			osystem->setPalette(palette);
+			convertPalToRGBA(palette,paletteRGBA);
+
+			osystem->crossFade((char*)videoBuffer1,(char*)paletteRGBA);
+			osystem->setPalette(paletteRGBA);
+
+//			osystem->drawBufferToScreen(videoBuffer1);
+//			osystem->setPalette(paletteRGBA);
+
 			printTextFullScreen(152);
 		}
 	}
@@ -188,7 +207,7 @@ void LBA_engine::newGame(void)
 	newGameVar5=0;
 	newGame4();
 	newGameVar4=1;
-	fadeOut((char*)palette);
+	fadeOut((char*)paletteRGBA);
 	resetVideoBuffer1();
 	osystem->drawBufferToScreen(videoBuffer1);
 	playMidi(1);

@@ -311,9 +311,9 @@ void LBA_engine::reinitAll(int save)
       reinitVar11=0;
     }
   } */
-  fadeOut((char*)menuPal);
+  /*fadeOut((char*)menuPalRGBA);
   resetVideoBuffer1();
-  osystem->drawBufferToScreen(videoBuffer1);
+  osystem->drawBufferToScreen(videoBuffer1);*/
 }
 
 void LBA_engine::reinitAll1(void)
@@ -489,19 +489,16 @@ void LBA_engine::mainLoop2(int arg_0)
  mainLoop2sub1();
 
  if(isMenuDisplayed)
-   osystem->setPalette(menuPal);
+   osystem->setPalette(menuPalRGBA);
  else
-   osystem->setPalette(palette);
+   osystem->setPalette(paletteRGBA);
 
  drawInGameTransBox=0;
 
  // code son non gégé...
 
-
  if(!arg_0)
    fullRedraw(1);
-
-
 }
 
 void LBA_engine::mainLoop2sub1(void)
@@ -821,9 +818,9 @@ void LBA_engine::drawInGameMenuEntry(int lcomportement, int arg, int arg2)
 void LBA_engine::draw3D4(short int arg_0, short int arg_4, short int arg_8, short int arg_C, short int arg_10, short int arg_14, unsigned char * costumePtr)
 {
  int var_4;
-  int temp1;
-  int temp2;
- int temp,tempbis;
+ int temp1;
+ int temp2;
+ short int temp;
 
   var_4=arg_8;
 
@@ -837,14 +834,12 @@ void LBA_engine::draw3D4(short int arg_0, short int arg_4, short int arg_8, shor
   setSomething(temp2,temp1,0);
   setTextWindowSize(arg_0,arg_4,var_4,arg_C);
 
-
  if(arg_14==-1)
  {
   temp=draw3D4sub1(&timeVar);
   if(timeVar.var3==0)
   {
-    tempbis=temp;
-    setActorTime(tempbis,temp-256,50,&timeVar);
+    setActorTime(temp,temp-256,50,&timeVar);
   }
   startRenderer(0,arg_10,0,0,temp,0,costumePtr);
  }

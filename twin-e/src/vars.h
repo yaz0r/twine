@@ -158,6 +158,7 @@ class LBA_engine
  
   byte	palette[256*3]; // tempvalue
   byte palette2[256*3]; // tempvalue
+  byte paletteRGBA[256*4];
 
 
 
@@ -173,6 +174,7 @@ class LBA_engine
   byte	*bufAni2;
 	hqr_entry	*HQRInventory;
 	byte	*menuPal;
+	byte	menuPalRGBA[1024];
 	byte	*HQRess2;
 	byte	*HQRess3;
 	byte	*lbaFont;
@@ -699,6 +701,10 @@ class LBA_engine
  int updateActorScript;
 
 //----------------------------------------------------------------------------------------
+
+ void loadImageCrossFade(int imageNumber);
+
+ void convertPalToRGBA(byte* palSource,byte* palDest);
 
 	int fullRedrawS3(int param0,int param1,int param2,int param3,int param4,int param5);
 

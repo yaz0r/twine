@@ -29,15 +29,15 @@ void LBA_engine::changeRoom(void)
 	currentRoom=needChangeRoom;
 	mainMenu2();
  
-/*	if(isMenuDisplayed!=0)
-		fadeOut((char*)palette);
+	/*if(isMenuDisplayed!=0)
+		fadeOut((char*)paletteRGBA);
 	else
-		fadeOut((char*)menuPal);  */
+		fadeOut((char*)menuPalRGBA);*/
 
 	if(drawInGameTransBox==0)
 	{
-		resetVideoBuffer1();
-		osystem->drawBufferToScreen(videoBuffer1);
+//		resetVideoBuffer1();
+//		osystem->drawBufferToScreen(videoBuffer1);
 	}
 
 	changeRoom1();
@@ -326,9 +326,9 @@ void LBA_engine::changeRoomSub1(int arg_0)
  reinitVar2Copy=mainTab[7];
  
 /* if(!isMenuDisplayed)
- 	fadeOut((char*)menuPal);
+ 	fadeOut((char*)menuPalRGBA);
  else
- 	fadeOut((char*)palette);*/
+ 	fadeOut((char*)paletteRGBA);*/
   
  maximizeTextWindow();
  resetVideoBuffer1();
@@ -747,7 +747,7 @@ void LBA_engine::reinitData(void)
 void LBA_engine::changeRoom1Sub1(hqr_entry *ptr)
 {
 	ptr->remainingSize=ptr->size1;
- ptr->unk=0;
+	ptr->unk=0;
 }
 
 void LBA_engine::changeRoom1Sub2(void)

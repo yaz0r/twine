@@ -53,7 +53,7 @@ void LBA_engine::fullRedraw(int param)
 		resetVideoBuffer1();
 		fullRedrawSub2();
 		fullRedrawSub3(temp1,temp2,fullRedrawVar1,fullRedrawVar2);
-		//  fullRedrawSub4();
+//		fullRedrawSub4();
 		copyToBuffer(videoBuffer1,videoBuffer2);
 	}
 
@@ -191,7 +191,8 @@ void LBA_engine::fullRedraw(int param)
     }
     else
     {
-      osystem->drawBufferToScreen(videoBuffer1);
+		if(!mainLoopVar3)
+			osystem->drawBufferToScreen(videoBuffer1);
       fullRedrawSub5();
       unfreezeTime();
     }
@@ -201,12 +202,25 @@ void LBA_engine::fullRedraw(int param)
     return;
 
   loadImageToPtr("ress.hqr",(byte*)&palette,0);
-  osystem->setPalette((byte*)&palette);
+  convertPalToRGBA(palette,paletteRGBA);
+
+  /*if(isMenuDisplayed)
+    fadeIn2((char*)menuPalRGBA);
+  else
+    fadeIn2((char*)paletteRGBA);*/
 
   if(isMenuDisplayed)
-    fadeIn2((char*)menuPal);
+  {
+	  osystem->crossFade((char*)videoBuffer1,(char*)menuPalRGBA);
+  }
   else
-    fadeIn2((char*)palette);
+  {
+	  osystem->crossFade((char*)videoBuffer1,(char*)paletteRGBA);
+  }
+
+  osystem->setPalette((byte*)&paletteRGBA);
+
+  readKeyboard();
 
   mainLoopVar3=0;
 
