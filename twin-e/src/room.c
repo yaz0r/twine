@@ -17,310 +17,303 @@
 
 #include "lba.h"
 
-void LBA_engine::changeRoom(void)
+void ChangeCube(void)
 {
     int i;
     int oldRoom;
 
-    if (needChangeRoom == 4 && needChangeRoomVar1[0] != 0)
-	needChangeRoom = 118;
-
-    printf("Loading room %d\n", needChangeRoom);
+    if (needChangeRoom == 4 && vars[30] != 0) // if twinsen house has been destroyed, manualy patch the room number
+	    needChangeRoom = 118;
 
     oldRoom = currentRoom;
 
     currentRoom = needChangeRoom;
-    mainMenu2();
+    HQ_StopSample();
 
    /*
-    * if(isMenuDisplayed!=0) fadeOut((char*)paletteRGBA); else fadeOut((char*)menuPalRGBA); 
+    * if(useAlternatePalette!=0) FadeToBlack((char*)paletteRGBA); else FadeToBlack((char*)menuPalRGBA); 
     */
 
     if (drawInGameTransBox == 0)
 	{
-	   // resetVideoBuffer1();
-	   // osystem->drawBufferToScreen(videoBuffer1);
+	   // Cls();
+	   // osystem->Flip(frontVideoBuffer);
 	}
 
-    changeRoom1();
-    loadTwinsenCostumes();
+    //FreeGrille();
+    ClearScene();
+    LoadFicPerso();
 
-    twinsen->field_40 = 1;
+    twinsen->comportement = 1;
     twinsen->zone = -1;
     twinsen->positionInActorScript = 0;
     twinsen->positionInMoveScript = -1;
     twinsen->label = -1;
 
-    loadRoomScene(needChangeRoom);
+    LoadScene(needChangeRoom);
 
-    if (changeRoomVar1 != -1)
+    if (holomapTraj != -1)
 	{
-	    mainLoop2(0);
-	    resetPalette();
-	    changeRoomSub1(changeRoomVar1);
-	    changeRoomVar1 = -1;
+	    TestRestoreModeSVGA(0);
+	    SetBackPal();
+	    HoloTraj(holomapTraj);
+	    holomapTraj = -1;
 	}
 
     if (currentRoom == 116 || currentRoom == 117)
-	currentTextBank = 10;
+	    currentTextBank = 10;
 
-    loadTextBank(currentTextBank + 3);
+    InitDial(currentTextBank + 3);
 
     if (roomMusic != -1)
 	{
-	    if (playMusicVar1 != roomMusic)
+	    if (currentlyPlayingMidi != roomMusic)
 		{
-		    if (playMusicSub())
-			playMusicSub2(1);
+		    if (IsMidiPlaying())
+			    FadeMusicMidi(1);
 		}
 	}
 
-    loadGridAndBll(needChangeRoom);
+    InitGrille(needChangeRoom);
 
-    if (reinitVar11 == 1)
+    if (twinsenPositionModeInNewCube == 1)
 	{
-	    GV9 = GV9dup;
-	    GV10 = GV10dup;
-	    GV11 = GV11dup;
+	    newTwinsenX = newTwinsenXByZone;
+	    newTwinsenZ = newTwinsenZByZone;
+	    newTwinsenY = newTwinsenYByZone;
 	}
 
-    if (reinitVar11 == 2 || reinitVar11 == 0)
+    if (twinsenPositionModeInNewCube == 2 || twinsenPositionModeInNewCube == 0)
 	{
-	    GV9 = sceneVar16;
-	    GV10 = sceneVar17;
-	    GV11 = sceneVar18;
+	    newTwinsenX = newTwinsenXByScene;
+	    newTwinsenZ = newTwinsenZByScene;
+	    newTwinsenY = newTwinsenYByScene;
 	}
 
-    twinsen->X = GV9;
-    twinsen->Z = changeRoomVar2 = GV10;
-    twinsen->Y = GV11;
+    twinsen->X = newTwinsenX;
+    twinsen->Z = twinsenZBeforeFall = newTwinsenZ;
+    twinsen->Y = newTwinsenY;
 
-    setSomething4(reinitVar1, reinitVar2, 0);
+    SetLightVector(reinitVar1, reinitVar2, 0);
 
-    if (oldRoom != needChangeRoom)
+    if (oldRoom != needChangeRoom) // backup comportement and angle in case of gameover/reload
 	{
-	    reinitVar10 = comportementHero;
-	    reinitVar9 = twinsen->angle;
-	    saveGame();
+	    startupComportementHeroInCube = comportementHero;
+	    startupAngleInCube = twinsen->angle;
+	    SaveGame();
 	}
 
-    reinitTwinsen();
+    RestartPerso();
+
+    //StartInitAllObjs
 
     for (i = 1; i < numActorInRoom; i++)
 	{
-	    loadRoomActors(i);
+	    StartInitObj(i);
 	}
 
+    // fin
+
     numKey = 0;
-    mainLoopVar10 = 0;
-    reinitVar11 = 0;
-    changeRoomVar3 = 0;
+    disableScreenRecenter = 0;
+    twinsenPositionModeInNewCube = 0;
+    timeToNextRoomSample = 0;
 
-    newCameraX = actors[reinitVar8].X >> 9;
-    newCameraZ = actors[reinitVar8].Z >> 8;
-    newCameraY = actors[reinitVar8].Y >> 9;
+    newCameraX = actors[currentlyFollowedActor].X >> 9;
+    newCameraZ = actors[currentlyFollowedActor].Z >> 8;
+    newCameraY = actors[currentlyFollowedActor].Y >> 9;
 
-    changeRoomVar7 = -1;
-    changeRoomVar8 = 1;
-    changeRoomVar9 = -1;
+    magicBallIdx = -1;
+    twinsenMoved = 1;
+    useAnotherGrm = -1;
     currentGrid2 = -1;
-    mainLoopVar2 = 1;
-    mainLoopVar3 = 1;
+    requestBackgroundRedraw = 1;
+    lockPalette = 1;
 
     needChangeRoom = -1;
     changeRoomVar10 = 1;
     changeRoomVar11 = 14;
 
-    setSomething4(reinitVar1, reinitVar2, 0);
+    SetLightVector(reinitVar1, reinitVar2, 0);
 
     if (roomMusic != -1)
-	playMusic(roomMusic);
+	    PlayMusic(roomMusic);
 
 }
 
-void LBA_engine::changeRoom1(void)
+void ClearScene(void)
 {
     int i;
 
-    reinitData();
+    reinitExtraObjectList();
 
     for (i = 0; i < 80; i++)
-	cubeFlags[i] = 0;
+	    cubeFlags[i] = 0;
 
     for (i = 0; i < 10; i++)
-	roomData2[i].field_0 = -1;
+	    overlayObjectList[i].field_0 = -1;
 
-    changeRoom1Sub1(HQRanims);
+#ifndef PRELOAD_ALL
+    HQR_Reset_Ressource(HQR_Anims);
+    HQM_Free_All();
+#endif
 
-    changeRoom1Sub2();
-
-    reinitAll2Var3 = 0;
-    isMenuDisplayed = 0;
+    currentPositionInBodyPtrTab = 0;
+    useAlternatePalette = 0;
 
 }
 
-void LBA_engine::loadRoomScene(int sceneNumber)
+void LoadScene(int sceneNumber)
 {
     unsigned char *temp;
     short int temp3;
+	int i;
 
-   // short int temp4;
-    unsigned short int *temp2;
     short int currentActor;
 
-   // short int wordLocalScenePtr;
-   // short int costume;
-   // short int ptr1;
-   // unsigned char* ptr2;
     int modelNumber;
     int size;
 
-    size = loadDataFileToPtr("scene.hqr", sceneNumber, &scenePtr);
+    size = HQRM_Load("scene.hqr", sceneNumber, &scenePtr);
     localScenePtr = scenePtr;
 
    // todo:faire la gestion d'erreur de chargement
 
-    temp = scenePtr;
+    temp = (unsigned char*)scenePtr;
 
-    currentTextBank = *(temp++);
+    currentTextBank = READ_LE_BYTE(temp); temp++;
     needChangeRoom = sceneNumber;
-    sceneRoomNumber = *(temp++);
+    sceneRoomNumber = READ_LE_BYTE(temp); temp++;
     temp += 2;
     temp += 2;
 
-    temp2 = (unsigned short int *) temp;
-    reinitVar1 = *(temp2++);
-    reinitVar2 = *(temp2++);	// ok
+	reinitVar1 = READ_LE_U16(temp); temp+=2;
+	reinitVar2 = READ_LE_U16(temp); temp+=2;
 
-    sceneVar2.field_0 = *(temp2++);
-    sceneVar3.field_0 = *(temp2++);
-    sceneVar4.field_0 = *(temp2++);
-    sceneVar2.field_2 = *(temp2++);
-    sceneVar3.field_2 = *(temp2++);
-    sceneVar4.field_2 = *(temp2++);
-    sceneVar2.field_4 = *(temp2++);
-    sceneVar3.field_4 = *(temp2++);
-    sceneVar4.field_4 = *(temp2++);
-    sceneVar2.field_6 = *(temp2++);
-    sceneVar3.field_6 = *(temp2++);
-    sceneVar4.field_6 = *(temp2++);
+    sceneVar2.field_0 = READ_LE_U16(temp); temp+=2;
+    sceneVar3.field_0 = READ_LE_U16(temp); temp+=2;
+    sceneVar4.field_0 = READ_LE_U16(temp); temp+=2;
+    sceneVar2.field_2 = READ_LE_U16(temp); temp+=2;
+    sceneVar3.field_2 = READ_LE_U16(temp); temp+=2;
+    sceneVar4.field_2 = READ_LE_U16(temp); temp+=2;
+    sceneVar2.field_4 = READ_LE_U16(temp); temp+=2;
+	sceneVar3.field_4 = READ_LE_U16(temp); temp+=2;
+    sceneVar4.field_4 = READ_LE_U16(temp); temp+=2;
+    sceneVar2.field_6 = READ_LE_U16(temp); temp+=2;
+    sceneVar3.field_6 = READ_LE_U16(temp); temp+=2;
+    sceneVar4.field_6 = READ_LE_U16(temp); temp+=2;
 
-    sceneVar14 = *(temp2++);
-    sceneVar15 = *(temp2++);
-    temp = (unsigned char *) temp2;
-    roomMusic = *(temp++);
-    temp2 = (unsigned short int *) temp;
-    sceneVar16 = *(temp2++);
-    sceneVar17 = *(temp2++);
-    sceneVar18 = *(temp2++);
+    sceneVar14 = READ_LE_U16(temp); temp+=2;
+    sceneVar15 = READ_LE_U16(temp); temp+=2;
+    roomMusic = READ_LE_BYTE(temp); temp++;
+    newTwinsenXByScene = READ_LE_U16(temp); temp+=2; // ok jusque la
+    newTwinsenZByScene = READ_LE_U16(temp); temp+=2;
+    newTwinsenYByScene = READ_LE_U16(temp); temp+=2;
 
-    temp3 = *(temp2++);
-
-    twinsen->moveScript = (unsigned char *) temp2;
-
-    temp = (unsigned char *) temp2;
-    temp2 = (unsigned short int *) (temp + temp3);
+    temp3 = READ_LE_U16(temp); temp+=2;
+    twinsen->moveScript = temp;
+	temp+=temp3;
 
     currentActor = 1;
 
-    temp3 = *(temp2++);
+    temp3 = READ_LE_U16(temp); temp+=2;
+    twinsen->actorScript = temp;
+    temp +=temp3;
 
-    twinsen->actorScript = (unsigned char *) temp2;
-
-    temp = (unsigned char *) temp2;
-    temp2 = (unsigned short int *) (temp + temp3);
-
-    numActorInRoom = *(temp2++);
+    numActorInRoom = READ_LE_U16(temp); temp+=2;
 
     while (currentActor < numActorInRoom)
 	{
-	    localScenePtr = (unsigned char *) temp2;
 	    resetActor(currentActor);
-	    temp2 = (unsigned short int *) localScenePtr;
-	    actors[currentActor].field_60 = *(temp2++);
-	    modelNumber = *(temp2++);
-	    localScenePtr = (unsigned char *) temp2;
+	    actors[currentActor].staticFlagsMask = READ_LE_U16(temp); temp+=2;
+	    modelNumber = READ_LE_U16(temp); temp+=2;
 
-	    if (!(actors[currentActor].field_60 & 0x400))	// if not sprite actor
+        if (!(actors[currentActor].staticFlagsBF.bIsSpriteActor))	// if not sprite actor
 		{
-		    loadDataFileToPtr("file3d.hqr", modelNumber, &actors[currentActor].bodyPtr);
+#ifdef PRELOAD_ALL
+			actors[currentActor].entityDataPtr = HQR_GetCopy(HQR_Fic, modelNumber);
+#else
+		    HQRM_Load("file3d.hqr", modelNumber, &actors[currentActor].entityDataPtr);
+#endif
 		}
 
-	    actors[currentActor].body = *(localScenePtr++);
-	    actors[currentActor].anim = *(localScenePtr++);
+	    actors[currentActor].body = READ_LE_BYTE(temp); temp++;
+	    actors[currentActor].anim = READ_LE_BYTE(temp); temp++;
 
-		if(currentActor==5 && actors[currentActor].anim==70)
-			printf("Anim = %d\n",actors[currentActor].anim);
+	    actors[currentActor].field_8 = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].field_20 = actors[currentActor].X = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].field_22 = actors[currentActor].Z = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].field_24 = actors[currentActor].Y = READ_LE_U16(temp); temp+=2;
 
-	    temp2 = (unsigned short int *) localScenePtr;
+	    actors[currentActor].field_66 = READ_LE_BYTE(temp); temp++;
 
-	    actors[currentActor].field_8 = *(temp2++);
-	    actors[currentActor].field_20 = actors[currentActor].X = *(temp2++);
-	    actors[currentActor].field_22 = actors[currentActor].Z = *(temp2++);
-	    actors[currentActor].field_24 = actors[currentActor].Y = *(temp2++);
+	    actors[currentActor].field_10 = READ_LE_U16(temp); temp+=2;
+		actors[currentActor].field_10 &= 0xFE;
+	    actors[currentActor].angle = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].speed = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].comportement = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].cropLeft = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].cropTop = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].cropRight = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].cropBottom = READ_LE_U16(temp); temp+=2;
 
-	    localScenePtr = (unsigned char *) temp2;
+	    actors[currentActor].field_12 = READ_LE_BYTE(temp); temp++;
+	    actors[currentActor].talkColor = READ_LE_BYTE(temp); temp++;
+	    actors[currentActor].field_14 = READ_LE_BYTE(temp); temp++;
+	    actors[currentActor].life = READ_LE_BYTE(temp); temp++;
 
-	    actors[currentActor].field_66 = *(localScenePtr++);
+	    temp3 = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].moveScript = temp;
+		temp+= temp3;
 
-	    temp2 = (unsigned short int *) localScenePtr;
-
-	    actors[currentActor].field_10 = *(temp2++) & 0xFE;
-	    actors[currentActor].angle = *(temp2++);
-	    actors[currentActor].field_34 = *(temp2++);
-	    actors[currentActor].field_40 = *(temp2++);
-	    actors[currentActor].cropLeft = *(temp2++);
-	    actors[currentActor].cropTop = *(temp2++);
-	    actors[currentActor].cropRight = *(temp2++);
-	    actors[currentActor].cropBottom = *(temp2++);
-
-	    localScenePtr = (unsigned char *) temp2;
-
-	    actors[currentActor].field_12 = *(localScenePtr++);
-	    actors[currentActor].talkColor = *(localScenePtr++);
-	    actors[currentActor].field_14 = *(localScenePtr++);
-	    actors[currentActor].life = *(localScenePtr++);
-
-	    temp2 = (unsigned short int *) localScenePtr;
-
-	    temp3 = *(temp2++);
-
-	    actors[currentActor].moveScript = (unsigned char *) temp2;
-
-	    temp = (unsigned char *) temp2;
-	    temp2 = (unsigned short int *) (temp + temp3);
-
-	    temp3 = *(temp2++);
-
-	    actors[currentActor].actorScript = (unsigned char *) temp2;
-
-	    temp = (unsigned char *) temp2;
-	    temp2 = (unsigned short int *) (temp + temp3);
-	    localScenePtr = (unsigned char *) temp2;
+	    temp3 = READ_LE_U16(temp); temp+=2;
+	    actors[currentActor].actorScript = temp;
+		temp+= temp3;
 
 	    currentActor++;
 	};
 
-    reinitAll2Var4 = *(temp2++);
+    numOfZones = READ_LE_U16(temp); temp+=2;
+	assert( numOfZones <= NUM_MAX_ZONES );
+	for( i=0; i<numOfZones; i++)
+	{
+		zoneData[i].bottomLeft.X = READ_LE_S16(temp); temp+=2;
+		zoneData[i].bottomLeft.Y = READ_LE_S16(temp); temp+=2;
+		zoneData[i].bottomLeft.Z = READ_LE_S16(temp); temp+=2;
 
-    sceneVarPtr = (unsigned char *) temp2;
-    localScenePtr = (unsigned char *) temp2 + 2 * (reinitAll2Var4 * 12);
-    temp2 = (unsigned short int *) localScenePtr;
+		zoneData[i].topRight.X = READ_LE_S16(temp); temp+=2;
+		zoneData[i].topRight.Y = READ_LE_S16(temp); temp+=2;
+		zoneData[i].topRight.Z = READ_LE_S16(temp); temp+=2;
 
-    numFlags = *(temp2++);
+		zoneData[i].zoneType = READ_LE_S16(temp); temp+=2;
 
-    localScenePtr = (unsigned char *) temp2;
-    flagData = (flagDataStruct *) temp2;
+		zoneData[i].generic.data1 = READ_LE_S16(temp); temp+=2;
+		zoneData[i].generic.data2 = READ_LE_S16(temp); temp+=2;
+		zoneData[i].generic.data3 = READ_LE_S16(temp); temp+=2;
+		zoneData[i].generic.data4 = READ_LE_S16(temp); temp+=2;
+
+		zoneData[i].dummy = READ_LE_S16(temp); temp+=2;
+	}
+
+    numFlags = READ_LE_U16(temp); temp+=2;
+	assert( numFlags <= NUM_MAX_FLAGS );
+	// copy data to alligned space
+	for( i=0; i<numFlags; i++)
+	{
+		flagData[i].x = READ_LE_S16(temp); temp+=2;
+		flagData[i].z = READ_LE_S16(temp); temp+=2;
+		flagData[i].y = READ_LE_S16(temp); temp+=2;
+	}
 }
 
-void LBA_engine::changeRoomSub1(int arg_0)
+void HoloTraj(int arg_0)
 {
     int reinitVar1Copy;
-    int reinitVar2Copy;
+    int progressiveTextStartColorCopy;
 
    // int i;
     short int var_14;
-    byte *localChangeRoomSub1Var;
+    byte *localmakeHolomapTrajectoryVar;
     int j;
     unsigned short int var;
 
@@ -328,29 +321,29 @@ void LBA_engine::changeRoomSub1(int arg_0)
 
     var_14 = 1;
     reinitVar1Copy = reinitVar1;
-    reinitVar2Copy = reinitVar2;
+    progressiveTextStartColorCopy = progressiveTextStartColor;
 
    /*
-    * if(!isMenuDisplayed) fadeOut((char*)menuPalRGBA); else fadeOut((char*)paletteRGBA);
+    * if(!useAlternatePalette) FadeToBlack((char*)menuPalRGBA); else FadeToBlack((char*)paletteRGBA);
     */
 
-    maximizeTextWindow();
-    resetVideoBuffer1();
-    osystem->drawBufferToScreen(videoBuffer1);
-    loadVariousGFX();
+    UnSetClip();
+    Cls();
+    osystem->Flip(frontVideoBuffer);
+    loadHolomapGFX();
 
-    localChangeRoomSub1Var = videoPtr12;
+    localmakeHolomapTrajectoryVar = videoPtr12;
 
     j = 0;
 
     while (j < arg_0)
 	{			/* implementer la suite */
-	    localChangeRoomSub1Var += 12;
-	    var = *(unsigned short int *) localChangeRoomSub1Var;
+	    localmakeHolomapTrajectoryVar += 12;
+	    var = READ_LE_U16(localmakeHolomapTrajectoryVar);
 	    var += var;
-	    localChangeRoomSub1Var += 2;
+	    localmakeHolomapTrajectoryVar += 2;
 	    j++;
-	    localChangeRoomSub1Var += var;
+	    localmakeHolomapTrajectoryVar += var;
 	}
 
    /*
@@ -359,25 +352,25 @@ void LBA_engine::changeRoomSub1(int arg_0)
 
 }
 
-void LBA_engine::loadVariousGFX(void)
+void loadHolomapGFX(void)
 {
 
     int i;
     int j;
 
-    videoPtr1 = videoBuffer2;
-    videoPtr2 = videoBuffer2 + 4488;
-    videoPtr3 = videoBuffer2 + 7854;
-    videoPtr4 = videoBuffer2 + 8398;
+    videoPtr1 = workVideoBuffer;
+    videoPtr2 = workVideoBuffer + 4488;
+    videoPtr3 = workVideoBuffer + 7854;
+    videoPtr4 = workVideoBuffer + 8398;
 
-    videoPtr5 = videoBuffer2 + 73934;
+    videoPtr5 = workVideoBuffer + 73934;
 
-    loadImageToPtr("ress.hqr", videoPtr3, 6);
-    loadImageToPtr("ress.hqr", videoPtr4, 7);
-    videoPtr6 = videoPtr5 + loadImageToPtr("ress.hqr", videoPtr5, 9);
-    videoPtr7 = videoPtr6 + loadImageToPtr("ress.hqr", videoPtr6, 10);
-    videoPtr8 = videoPtr7 + loadImageToPtr("ress.hqr", videoPtr7, 11);
-    videoPtr11 = videoPtr8 + loadImageToPtr("ress.hqr", videoPtr8, 29);
+    Load_HQR("ress.hqr", videoPtr3, 6);
+    Load_HQR("ress.hqr", videoPtr4, 7);
+    videoPtr6 = videoPtr5 + Load_HQR("ress.hqr", videoPtr5, 9);
+    videoPtr7 = videoPtr6 + Load_HQR("ress.hqr", videoPtr6, 10);
+    videoPtr8 = videoPtr7 + Load_HQR("ress.hqr", videoPtr7, 11);
+    videoPtr11 = videoPtr8 + Load_HQR("ress.hqr", videoPtr8, 29);
 
    // loadGfxSub(videoPtr5);
    // loadGfxSub(videoPtr6);
@@ -386,10 +379,10 @@ void LBA_engine::loadVariousGFX(void)
    // loadGfxSub(videoPtr8);
 
     videoPtr10 = videoPtr11 + 4488;
-    videoPtr12 = videoPtr10 + loadImageToPtr("ress.hqr", videoPtr10, 8);
-    videoPtr13 = videoPtr12 + loadImageToPtr("ress.hqr", videoPtr12, 30);
+    videoPtr12 = videoPtr10 + Load_HQR("ress.hqr", videoPtr10, 8);
+    videoPtr13 = videoPtr12 + Load_HQR("ress.hqr", videoPtr12, 30);
 
-    loadImageToPtr("ress.hqr", (byte *) & palette, 5);
+    Load_HQR("ress.hqr", (byte *) & palette, 5);
 
     j = 576;
     for (i = 0; i < 96; i += 3, j += 3)
@@ -410,143 +403,33 @@ void LBA_engine::loadVariousGFX(void)
    // loadGFXSub1();
    // loadGFXSub2();
 
-   // needToLoadVariousGFX=0;
+   // needToLoadHolomapGFX=0;
 }
 
-int LBA_engine::loadGridAndBll(short int roomNumber)
+void RestartPerso(void)
 {
-    int gridSize;
-    int bllSize;
-    int brickDataSize;
-    int size;
+    twinsen->comportement = 1;
+    twinsen->dynamicFlagsMask = 0;
+    twinsen->staticFlagsMask = 0;
 
-    gridSize = prepareResource("lba_gri.hqr", roomNumber);	// pour recuperer la taille
+    twinsen->staticFlagsBF.bComputeCollisionWithObj = true;
+    twinsen->staticFlagsBF.bComputeCollisionWithBricks = true;
+    twinsen->staticFlagsBF.bIsZonable = true;
+    twinsen->staticFlagsBF.bCanDrown = true;
+    twinsen->staticFlagsBF.bIsFallable = true;
 
-    allocHQRMemory(gridSize, &currentGrid);
-    if (currentGrid == NULL)
-	return (0);
-    loadImageToPtr("lba_gri.hqr", currentGrid, roomNumber);
-
-    bllSize = prepareResource("lba_bll.hqr", roomNumber);	// pour recuperer la taille
-    allocHQRMemory(bllSize, &currentBll);
-    if (currentBll == NULL)
-	return (0);
-
-    loadImageToPtr("lba_bll.hqr", currentBll, roomNumber);
-
-    brickDataSize = loadBrk(gridSize);
-
-    if (!brickDataSize)
-	return (0);
-
-    allocHQRMemory(brickDataSize, &bufferBrick2);
-
-    size = processBuffer2Buffer((unsigned int *) bufferBrick, (unsigned int *) bufferBrick2);
-
-    memoryBufferProcess(bufferBrick2, size);
-
-    numberOfBll = (*(unsigned int *) (currentBll)) >> 2;
-
-    createCube();
-
-   /*
-    * dumpFile("cube",(char*)bufCube,204800); dumpFile("grid",(char*)currentGrid,10000);
-    * dumpFile("brick",(char*)bufferBrick,361472); 
-    */
-
-    return (1);
-}
-
-// this unpack the grid to the cube buffer
-void LBA_engine::createCube(void)
-{
-    int var2 = 0;
-    int ptr1;
-    int ptr2;
-    int i;
-	int j;
-
-    for(j=0;j<64;j++)
-	{
-	    ptr1 = var2;
-	    ptr2 = j << 6;
-
-	    for(i=0;i<64;i++)
-		{
-		    addCubeEntry(currentGrid + *(unsigned short int *) (currentGrid + 2 * (i + ptr2)), bufCube + ptr1);
-		    ptr1 += 50;
-		}
-
-	    var2 += 3200;
-	}
-}
-
-// this unpack a vertical column from the grid to the cube buffer
-void LBA_engine::addCubeEntry(unsigned char *gridEntry, unsigned char *dest)
-{
-
-    int numIteration;
-    int temp1;
-    int temp2;
-
-    int temp3;
-
-    int i;
-    unsigned short int *source;
-    unsigned short int *arrive;
-
-    temp1 = *(gridEntry++);
-
-    do
-	{
-	    temp2 = *(gridEntry++);
-
-	    numIteration = (temp2 & 0x3F) + 1;
-
-	    source = (unsigned short int *) gridEntry;
-	    arrive = (unsigned short int *) dest;
-
-	    if (!(temp2 & 0xC0))
-		{
-		    for (i = 0; i < numIteration; i++)
-			*(arrive++) = 0;
-		}
-	    else if (temp2 & 0x40)
-		{
-		    for (i = 0; i < numIteration; i++)
-			*(arrive++) = *(source++);
-		}
-	    else
-		{
-		    temp3 = *(source++);
-		    for (i = 0; i < numIteration; i++)
-			*(arrive++) = temp3;
-		}
-
-	    gridEntry = (unsigned char *) source;
-	    dest = (unsigned char *) arrive;
-
-	}
-    while (--temp1);
-}
-
-void LBA_engine::reinitTwinsen(void)
-{
-    twinsen->field_40 = 1;
-    twinsen->field_62 = 0;
-    twinsen->field_60 = 2119;
     twinsen->field_14 = 1;
     twinsen->positionInMoveScript = -1;
     twinsen->label = -1;
     twinsen->positionInActorScript = 0;
     twinsen->zone = -1;
-    twinsen->angle = reinitVar9;
+    twinsen->angle = startupAngleInCube;
     setActorAngleSafe(twinsen->angle, twinsen->angle, 0, &twinsen->time);
-    changeTwinsenComp(reinitVar10);
-    reinitVar7 = 0;
+    SetComportement(startupComportementHeroInCube);
+    cropBottomScreen = 0;
 }
 
-void LBA_engine::changeTwinsenComp(int newComportement)
+void SetComportement(int newComportement)
 {
     int temp;
 
@@ -554,23 +437,23 @@ void LBA_engine::changeTwinsenComp(int newComportement)
 	{
 	case 0:
 	    comportementHero = 0;
-	    twinsen->bodyPtr = file3D0;
+	    twinsen->entityDataPtr = file3D0;
 	    break;
 	case 1:
 	    comportementHero = 1;
-	    twinsen->bodyPtr = file3D1;
+	    twinsen->entityDataPtr = file3D1;
 	    break;
 	case 2:
 	    comportementHero = 2;
-	    twinsen->bodyPtr = file3D2;
+	    twinsen->entityDataPtr = file3D2;
 	    break;
 	case 3:
 	    comportementHero = 3;
-	    twinsen->bodyPtr = file3D3;
+	    twinsen->entityDataPtr = file3D3;
 	    break;
 	case 4:
 	    comportementHero = 4;
-	    twinsen->bodyPtr = file3D4;
+	    twinsen->entityDataPtr = file3D4;
 	    break;
 	};
 
@@ -579,193 +462,51 @@ void LBA_engine::changeTwinsenComp(int newComportement)
     twinsen->costumeIndex = -1;
     twinsen->body = -1;
 
-    loadActorCostume(temp, 0);
+    InitBody(temp, 0);
 
     twinsen->anim = -1;
     twinsen->field_78 = 0;
 
-    playAnim(ANIM_static, 0, 255, 0);
+    InitAnim(ANIM_static, 0, 255, 0);
 }
 
-void LBA_engine::memoryBufferProcess(unsigned char *ptr, int size)
+void HQM_Shrink_Last(unsigned char *ptr, int size)
 {
     int temp;
 
-    if (HQMemory == 0)
-	return;
+    if (!Ptr_HQM_Memory)
+	    return;
 
-    if (*((int *) (ptr - 12)) != 0x12345678)
-	return;
+    ptr-=12;
 
-    temp = *(int *) (ptr - 8);
+    if (*((int *) (ptr)) != 0x12345678)
+	    return;
+
+    temp = *(int *) (ptr+4);
     temp -= size;
 
-    HQMemory2 -= temp;
-    HQMemorySize2 += temp;
+    Ptr_HQM_Next -= temp;
+    Size_HQM_Free += temp;
 
-    *(int *) (ptr - 8) -= temp;
+    *(int *) (ptr +4) -= temp;
 }
 
-/*
- * this function uncompress all the bricks to the destBuffer 
- */
-int LBA_engine::processBuffer2Buffer(unsigned int *buffer1, unsigned int *destBuffer)
-{
-    unsigned char *destPtr;
-    int numOfBricks;
-    int i;
-    int sizeOfCurrentBrick;
-    int startOffset;
-    unsigned int firstBrickOffset;
-
-    firstBrickOffset = *buffer1;
-    destPtr = (unsigned char *) (destBuffer + firstBrickOffset);
-    numOfBricks = (*buffer1) >> 2;
-
-    *(destBuffer++) = startOffset = *buffer1;
-
-    for (i = 0; i < numOfBricks - 1; i++)
-	{
-	    sizeOfCurrentBrick = processBuffer2BufferSub(i, buffer1, (unsigned int *) destPtr);
-
-	    destPtr += sizeOfCurrentBrick;
-	    counter += sizeOfCurrentBrick;
-
-	    startOffset += sizeOfCurrentBrick;
-
-	    *(destBuffer++) = startOffset;
-	}
-
-    return (firstBrickOffset);
-}
-
-int LBA_engine::processBuffer2BufferSub(int var, unsigned int *buffer, unsigned int *ptr)
-{
-    unsigned int *ptrSave = ptr;
-    unsigned char *ptr2;
-    unsigned char *esi;
-    unsigned char *edi;
-    byte cl, ch, dl, ah, bl, al, bh;
-    int ebx;
-
-    buffer = (unsigned int *) (*(buffer + var) + (unsigned char *) buffer);
-
-    ebx = *ptr++ = *buffer++;	// on ecrit le flag de la brique
-
-    bh = (ebx & 0x0000FF00) >> 8;
-
-    esi = (unsigned char *) buffer;
-    edi = (unsigned char *) ptr;
-
-    cl = 0;
-    ch = 0;
-
-    do
-	{
-	    dl = 0;
-	    ah = 0;
-	    ptr2 = edi;
-
-	    edi++;
-
-	    bl = *(esi++);
-
-	    if (*(esi) & 0xC0)
-		{
-		    *edi++ = 0;
-		    dl++;
-		}
-
-	    do
-		{
-		    al = *esi++;
-		    cl = al;
-		    cl &= 0x3F;
-		    cl++;
-
-		    if (al & 0x80)
-			{
-			    ah += cl;
-			    esi++;
-			}
-		    else if (al & 0x40)
-			{
-			    ah += cl;
-			    esi += cl + 256 * ch;
-			}
-		    else
-			{
-			    if (ah)
-				{
-				    *edi++ = ah;
-				    dl++;
-				    ah = 0;
-				}
-			    *edi += cl;
-			    dl++;
-			}
-
-		}
-	    while (--bl > 0);
-
-	    if (ah)
-		{
-		    *edi++ = ah;
-		    dl++;
-
-		    ah = 0;
-		}
-	}
-    while (--bh > 0);
-
-    return ((int) ((unsigned char *) edi - (unsigned char *) ptrSave));
-}
-
-void LBA_engine::reinitData(void)
-{
-    int counter;
-
-    for (counter = 0; counter < 50; counter++)
-	{
-	    reinitAll2SubVar1[counter].field_0 = -1;
-	    reinitAll2SubVar1[counter].field_20 = 1;
-	}
-
-    for (counter = 0; counter < 10; counter++)
-	{
-	    roomData2[counter].field_0 = -1;
-	}
-
-    changeRoom1Sub1(HQRanims);
-    changeRoom1Sub2();
-
-    reinitAll2Var3 = 0;
-    isMenuDisplayed = 0;
-
-}
-
-void LBA_engine::changeRoom1Sub1(hqr_entry * ptr)
-{
-    ptr->remainingSize = ptr->size1;
-    ptr->unk = 0;
-}
-
-void LBA_engine::changeRoom1Sub2(void)
+void HQM_Free_All(void)
 {
     byte *temp;
 
-    temp = HQMemory;
+    temp = Ptr_HQM_Memory;
 
-    if (!temp)
+    if (temp)
 	{
-	    HQMemory2 = temp;
-	    HQMemorySize2 = HQMemorySize;
+	    Ptr_HQM_Next = temp;
+	    Size_HQM_Free = Size_HQM_Memory;
 	}
 
-    HQMemory = temp;
+    Ptr_HQM_Memory = temp;
 }
-
-int LBA_engine::loadBrk(int gridSize)
+/*
+int loadBrk(int gridSize)
 {
     int firstBrick;
     int lastBrick;
@@ -815,10 +556,10 @@ int LBA_engine::loadBrk(int gridSize)
     lastBrick = 0;
     counter = 1;
 
-    outPtr = videoBuffer2 + 153800;
+    outPtr = workVideoBuffer + 153800;
     outPtr2 = (unsigned short int *) outPtr;
 
-    loadBrkSub1(outPtr, 20000);
+    RazMem(outPtr, 20000);
 
     offset = 4;
 
@@ -851,7 +592,7 @@ int LBA_engine::loadBrk(int gridSize)
 
 		    while (counter2++ < val3)
 			{
-			    val4 = *(unsigned short int *) ptr2;
+			    val4 = READ_LE_U16( ptr2 );
 			    if (val4 != 0)
 				{
 				    val4--;
@@ -890,21 +631,21 @@ int LBA_engine::loadBrk(int gridSize)
 
     printf("Need to load %d bricks\n", counter3);
 
-    file = openResource("lba_brk.hqr");
+    file = OpenRead("lba_brk.hqr");
 
     if (!file)
 	return (0);
 
-    readResourceData(file, (char *) &headerSize, 4);
+    Read(file, (char *) &headerSize, 4);
 
     fseek(file, 0, 0);
 
-    readResourceData(file, (char *) videoBuffer2, headerSize);
+    Read(file, (char *) workVideoBuffer, headerSize);
 
     counter3 *= 4;
     counter3 += 4;
 
-    finalSize = counter3;	// car on doit au moin avoir 1 ptr par brique
+    finalSize = counter3;	// car on doit au moins avoir 1 ptr par brique
 
     headerSize = headerSize >> 2;
 
@@ -920,7 +661,7 @@ int LBA_engine::loadBrk(int gridSize)
 
     currentBrick = firstBrick;
 
-    ptrUnk = (unsigned int *) (firstBrick * 4 + videoBuffer2);
+    ptrUnk = (unsigned int *) (firstBrick * 4 + workVideoBuffer);
 
     counter6 = 0;
 
@@ -932,20 +673,20 @@ int LBA_engine::loadBrk(int gridSize)
 		    *outPtr4 = counter6;
 		    fseek(file, *ptrUnk, 0);
 
-		    readResourceData(file, (char *) &dataSize, 4);
-		    readResourceData(file, (char *) &compressedSize, 4);
+		    Read(file, (char *) &dataSize, 4);
+		    Read(file, (char *) &compressedSize, 4);
 
-		    readResourceData(file, (char *) &mode, 2);
+		    Read(file, (char *) &mode, 2);
 
 		    if (mode == 0)
 			{
-			    readResourceData(file, (char *) destPtr, dataSize);
+			    Read(file, (char *) destPtr, dataSize);
 			}
 		    else if (mode == 1)
 			{
 			    compressedPtr = dataSize + destPtr - compressedSize + 500;
-			    readResourceData(file, (char *) compressedPtr, compressedSize);
-			    decompress(dataSize, destPtr, compressedPtr);
+			    Read(file, (char *) compressedPtr, compressedSize);
+			    Expand(dataSize, destPtr, compressedPtr);
 			}
 		    finalSize += dataSize;
 		    destPtr += dataSize;
@@ -994,8 +735,7 @@ int LBA_engine::loadBrk(int gridSize)
 			    val4 = *(unsigned short int *) ptr2;
 			    if (val4 != 0)
 				{
-				    *(unsigned short int *) ptr2 =
-					*(unsigned short int *) (outPtr + val4 * 2 - 2);
+				    *(unsigned short int *) ptr2 = *(unsigned short int *) (outPtr + val4 * 2 - 2);
 
 				}
 			    ptr2 += 4;
@@ -1007,12 +747,311 @@ int LBA_engine::loadBrk(int gridSize)
 	}
     while (++counter6 < 256);
 
-    closeResource(file);
+    Close(file);
+
+    return (finalSize);
+} */
+
+int loadBrk(int gridSize)
+{
+    int firstBrick;
+    int lastBrick;
+    int currentBrick;
+
+   // int tempSize2;
+    int counter;
+    int counter2;
+    int counter3;
+    int counter6;
+    int counter7;
+    int offset;
+    int offset2;
+
+    unsigned char *endOfGridPtr;
+    unsigned char *endOfGridPtr2;
+    unsigned char *endOfGridPtr3;
+    unsigned char *outPtr;
+    unsigned char *outPtr2;
+    unsigned char *outPtr3;
+    unsigned char *outPtr4;
+    unsigned char *destPtr;
+    unsigned char *compressedPtr;
+    unsigned char *ptrUnk;
+
+    byte temp;
+    byte temp2;
+    int temp3;
+    int temp4;
+    unsigned char *ptr1;
+    unsigned char *ptr2;
+    int val1;
+    int val2;
+    int val3;
+    unsigned short int val4;
+    int finalSize;
+    unsigned char *localBufferBrick;
+
+    int headerSize;
+    int dataSize;
+    int compressedSize;
+
+    short int mode;
+
+    firstBrick = 60000;
+    lastBrick = 0;
+    counter = 1;
+
+    outPtr = workVideoBuffer + 153800;
+    outPtr2 = outPtr;
+
+    RazMem(outPtr, 20000);
+
+    offset = 4;
+
+    endOfGridPtr2 = endOfGridPtr = currentGrid + (gridSize - 32);
+
+    do
+	{
+	    temp = *(endOfGridPtr2 + (counter >> 3));
+	    temp2 = 7 - (counter & 7);
+
+	    temp3 = 1 << temp2;
+
+	    if (temp & temp3)
+		{
+		    temp4 = *(int *) (currentBll + offset - 4);
+		    ptr1 = currentBll + temp4;
+
+		    val1 = *ptr1;
+		    val2 = *(ptr1 + 1);
+
+		    val2 *= val1;
+
+		    val3 = *(char *) (ptr1 + 2);
+
+		    val3 *= val2;
+
+		    ptr2 = ptr1 + 5;
+
+		    counter2 = 0;
+
+		    while (counter2++ < val3)
+			{
+			    val4 = READ_LE_U16( ptr2 );
+			    if (val4 != 0)
+				{
+				    val4--;
+
+				    if (val4 <= firstBrick)
+					firstBrick = val4;
+
+				    if (val4 > lastBrick)
+					lastBrick = val4;
+
+				    WRITE_LE_U16(outPtr2 + val4*2,1);
+				}
+
+			    ptr2 += 4;
+			}
+
+		}
+
+	    offset += 4;
+	}
+    while (++counter < 256);
+
+    outPtr3 = (outPtr2 + firstBrick*2);
+
+    currentBrick = firstBrick;
+
+    counter3 = 0;
+
+    while (currentBrick <= lastBrick)
+	{
+	    if (READ_LE_U16(outPtr3) != 0)
+		counter3++;
+	    outPtr3+=2;
+	    currentBrick++;
+	}
+
+    printf("Need to load %d bricks\n", counter3);
+
+    counter3 *= 4;
+    counter3 += 4;
+
+    finalSize = counter3;	// car on doit au moins avoir 1 ptr par brique
+
+    outPtr4 = (outPtr2 + firstBrick*2);
+
+#ifndef PCLIKE
+	//DC special
+
+	int handler;
+	char name[256];
+
+	sprintf(name,"brick%d", currentRoom );
+
+	handler = debug_open( name, SNASM_O_RDONLY | SNASM_O_BINARY );
+
+	if(handler==-1)
+	{ // brick not dumped yet, need to build
+		localBufferBrick = bufferBrick;
+
+		destPtr = bufferBrick + counter3;
+
+		WRITE_LE_U32(localBufferBrick,counter3);
+
+		localBufferBrick+=4;
+
+		currentBrick = firstBrick;
+
+		ptrUnk = (firstBrick * 4 + workVideoBuffer);
+
+		counter6 = 0;
+
+		while (currentBrick <= lastBrick)
+		{
+			if (READ_LE_U16(outPtr4))
+			{
+				counter6++;
+				WRITE_LE_U16(outPtr4, counter6);
+
+				Load_HQR("LBA_BRK.HQR",destPtr,currentBrick);
+				dataSize = Size_HQR("LBA_BRK.HQR",currentBrick);
+
+				finalSize += dataSize;
+				destPtr += dataSize;
+				WRITE_LE_U32(localBufferBrick,finalSize);
+				localBufferBrick+=4;
+			}
+
+			outPtr4+=2;
+			ptrUnk+=4;
+			currentBrick++;
+		}
+
+		handler = debug_open( name, SNASM_O_CREAT | SNASM_O_BINARY | SNASM_O_WRONLY );
+
+		debug_write( handler, (char*)&outPtr4, 4 );
+		debug_write( handler, (char*)&finalSize, 4 );
+		debug_write( handler, (char*)bufferBrick, 361472 );
+		debug_write( handler, (char*)workVideoBuffer + 153800, 307700 - 153800 );
+		
+	}
+	else
+	{
+		localBufferBrick = bufferBrick;
+
+		destPtr = bufferBrick + counter3;
+
+		WRITE_LE_U32(localBufferBrick,counter3);
+
+		localBufferBrick+=4;
+
+		currentBrick = firstBrick;
+
+		ptrUnk = (firstBrick * 4 + workVideoBuffer);
+
+		counter6 = 0;
+
+		debug_read( handler, (char*)&outPtr4, 4 );
+		debug_read( handler, (char*)&finalSize, 4 );
+		debug_read( handler, (char*)bufferBrick, 361472 );
+		debug_read( handler, (char*)workVideoBuffer + 153800, 307700 - 153800 );
+	}
+
+	debug_close( handler );
+
+#else
+
+    localBufferBrick = bufferBrick;
+
+    destPtr = bufferBrick + counter3;
+
+    WRITE_LE_U32(localBufferBrick,counter3);
+
+    localBufferBrick+=4;
+
+    currentBrick = firstBrick;
+
+    ptrUnk = (firstBrick * 4 + workVideoBuffer);
+
+    counter6 = 0;
+
+    while (currentBrick <= lastBrick)
+	{
+	    if (READ_LE_U16(outPtr4))
+		{
+		    counter6++;
+		    WRITE_LE_U16(outPtr4, counter6);
+
+			Load_HQR("LBA_BRK.HQR",destPtr,currentBrick);
+			dataSize = Size_HQR("LBA_BRK.HQR",currentBrick);
+
+		    finalSize += dataSize;
+		    destPtr += dataSize;
+		    WRITE_LE_U32(localBufferBrick,finalSize);
+		    localBufferBrick+=4;
+		}
+
+	    outPtr4+=2;
+	    ptrUnk+=4;
+	    currentBrick++;
+	}
+#endif
+
+    counter6 = 1;
+
+    offset2 = 4;
+
+    endOfGridPtr3 = endOfGridPtr = currentGrid + (gridSize - 32);
+
+    do
+	{
+	    temp = *(endOfGridPtr3 + (counter6 >> 3));
+	    temp2 = 7 - (counter6 & 7);
+
+	    temp3 = 1 << temp2;
+
+	    if (temp & temp3)
+		{
+		    temp4 = READ_LE_U32(currentBll + offset2 - 4);
+		    ptr1 = currentBll + temp4;
+
+		    val1 = *ptr1;
+		    val2 = *(ptr1 + 1);
+
+		    val2 *= val1;
+
+		    val3 = *(char *) (ptr1 + 2);
+
+		    val3 *= val2;
+
+		    ptr2 = ptr1 + 5;
+
+		    counter7 = 0;
+
+		    while (counter7++ < val3)
+			{
+			    val4 = READ_LE_U16(ptr2);
+			    if (val4 != 0)
+				{
+				    WRITE_LE_U16(ptr2, READ_LE_U16(outPtr + val4 * 2 - 2));
+
+				}
+			    ptr2 += 4;
+			}
+
+		}
+
+	    offset2 += 4;
+	}
+    while (++counter6 < 256);
 
     return (finalSize);
 }
 
-void LBA_engine::loadBrkSub1(unsigned char *ptr, int size)
+void RazMem(unsigned char *ptr, int size)
 {
     int i;
 

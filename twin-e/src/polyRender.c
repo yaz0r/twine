@@ -1,5 +1,5 @@
 /***************************************************************************
-                          polyRender.cpp  -  description
+                          FillVertic_A.cpp  -  description
                              -------------------
     begin                : Thu May 23 2002
     copyright            : (C) 2002 by Yaz0r
@@ -17,7 +17,7 @@
 
 #include "lba.h"
 
-void LBA_engine::polyRender(int ecx, int edi)
+void FillVertic_A(int ecx, int edi)
 {
     unsigned char *out, *out2;
     short int *ptr1, *ptr2;
@@ -46,7 +46,7 @@ void LBA_engine::polyRender(int ecx, int edi)
     if (vtop >= 480 || vbottom >= 480)
 	return;
 
-    out = videoBuffer1 + screenLockupTable[vtop];
+    out = frontVideoBuffer + screenLockupTable[vtop];
 
     ptr1 = &polyTab[vtop];
     ptr2 = &polyTab2[vtop];
@@ -56,7 +56,7 @@ void LBA_engine::polyRender(int ecx, int edi)
 
     color = edi;
 
-   // osystem->drawBufferToScreen(videoBuffer1);
+   // osystem->Flip(frontVideoBuffer);
 
     switch (ecx)
 	{
@@ -166,7 +166,7 @@ void LBA_engine::polyRender(int ecx, int edi)
 	   }
 	default:
 	   {
-	      // printf("Unsuported render type %d\n",polyRenderType);
+	      // printf("Unsuported render type %d\n",FillVertic_AType);
 	       break;
 	   }
 	};

@@ -1,7 +1,12 @@
 #include "lba.h"
-#include "SDL.h"
 
-void LBA_engine::waitFor()
+#ifdef PCLIKE
+#include "SDL.h"
+#endif //PCLIKE
+
+void TimerPause()
 {
+#ifdef PCLIKE
     SDL_Delay(300);
+#endif //PCLIKE
 }

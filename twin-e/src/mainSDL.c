@@ -20,6 +20,7 @@
 #include "lba.h"
 #include "SDL_ttf.h"
 #include "SDL_rotozoom.h"
+#include "SDL_gfxPrimitives.h"
 
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
@@ -36,8 +37,13 @@ void OSystem::delay(int time)
     SDL_Delay(time);
 }
 
+void OSystem::updateImage()
+{
+}
+
 void OSystem::getMouseStatus(mouseStatusStruct * mouseData)
 {
+
     SDL_GetMouseState(&mouseData->X, &mouseData->Y);
 
     mouseData->left = mouseLeft;
@@ -47,7 +53,7 @@ void OSystem::getMouseStatus(mouseStatusStruct * mouseData)
     mouseRight = 0;
 }
 
-OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dependent
+OSystem::OSystem(int argc, char *argv[])	// that's the constructor of the system dependent
 						// object used for the SDL port
 {
     unsigned char *keyboard;
@@ -112,7 +118,7 @@ OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dep
 
     keyboard[SDLK_RETURN] = 0;
 
-    sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
+    sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE/*|SDL_FULLSCREEN*/);
 
     if (sdl_screen == NULL)
 	{
@@ -126,6 +132,8 @@ OSystem::OSystem(int argc, char *argv[])	// that's the creator of the system dep
 		SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
 	}
 
+    mouseLeft = 0;
+    mouseRight = 0;
 }
 
 void OSystem::putpixel(int x, int y, int pixel)
@@ -189,7 +197,7 @@ void OSystem::fadeBlackToWhite()
 	}
 }
 
-void OSystem::drawBufferToScreen(unsigned char *videoBuffer)
+void OSystem::Flip(unsigned char *videoBuffer)
 {
     SDL_BlitSurface(sdl_buffer, NULL, sdl_screen, NULL);
 
@@ -211,18 +219,18 @@ void OSystem::draw320x200BufferToScreen(unsigned char *videoBuffer)
 	SDL_FreeSurface(sdl_bufferStretch);
 }
 
-void OSystem::refresh(unsigned char *videoBuffer, int left, int top, int right, int bottom)
+void OSystem::CopyBlockPhys(unsigned char *videoBuffer, int left, int top, int right, int bottom)
 {
     SDL_Rect rectangle;
 
     rectangle.x = left;
     rectangle.y = top;
-    rectangle.w = right - left;
-    rectangle.h = bottom - top;
+    rectangle.w = right - left +1 ;
+    rectangle.h = bottom - top +1 ;
 
     SDL_BlitSurface(sdl_buffer, &rectangle, sdl_screen, &rectangle);
 
-    SDL_UpdateRect(sdl_screen, left, top, right - left, bottom - top);
+    SDL_UpdateRect(sdl_screen, left, top, right - left +1, bottom - top+1);
 }
 
 void OSystem::initVideoBuffer(char *buffer, int width, int height)
@@ -284,7 +292,7 @@ void OSystem::crossFade(char *buffer, char *palette)
 #ifndef FASTDEBUG
     int i;
 
-    for (i = 0; i < 16; i++)
+/*    for (i = 0; i < 16; i++)
 	{
 	    SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
 	    SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 16);
@@ -295,6 +303,17 @@ void OSystem::crossFade(char *buffer, char *palette)
 	{
 	    SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
 	    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+	}*/
+
+    for (i = 0; i < 8; i++)
+	{
+	    SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
+	    SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 32);
+	    SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
+   	    SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
+	    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+        SDL_Delay(20);
+
 	}
 
 #endif
@@ -324,4 +343,42 @@ void OSystem::drawText(int X, int Y, char *string)
     rectangle.h = text->h;
 
     SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
+    SDL_FreeSurface(text);
+}
+
+void OSystem::drawTextColor(int X, int Y, char *string, unsigned char r, unsigned char g, unsigned char b)
+{
+    SDL_Color forecol;
+    SDL_Color white = { 0, 0, 0xFF, 0 };
+    SDL_Rect rectangle;
+
+    forecol.r = r;
+    forecol.g = g;
+    forecol.b = b;
+    forecol.unused = 0;
+
+    SDL_Surface *text;
+
+    text = TTF_RenderText_Solid(font, string, forecol);
+
+    rectangle.x = X;
+    rectangle.y = Y - 2;
+    rectangle.w = text->w;
+    rectangle.h = text->h;
+
+    SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
+    SDL_FreeSurface(text);
+}
+
+void OSystem::drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsigned char* palette)
+{
+    palette += color*3;
+    Uint32 colorRGBA = *(Uint32*)palette;
+    colorRGBA |= 0xFF;
+
+    lineColor(sdl_buffer, X1, Y1, X2, Y2, colorRGBA);
+}
+
+void OSystem::set320x200Mode( bool mode )
+{
 }

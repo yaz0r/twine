@@ -1,13 +1,13 @@
 #include "lba.h"
 
-void LBA_engine::fontInit(byte * font, int param2, int param1)
+void SetFont(byte * font, int param2, int param1)
 {
     fntFont = font;
     interCharSpace = param2;
     spaceLenght = param1;
 }
 
-void LBA_engine::drawCharacter(int X, int Y, unsigned char caractere)
+void drawCharacter(int X, int Y, unsigned char caractere)
 {
     byte sizeX;
     byte sizeY;
@@ -41,7 +41,7 @@ void LBA_engine::drawCharacter(int X, int Y, unsigned char caractere)
 
     usedColor = textColor;
 
-    screen = videoBuffer1 + screenLockupTable[Y] + X;
+    screen = frontVideoBuffer + screenLockupTable[Y] + X;
 
     toNextLine = largeurEcran - sizeX;
 
@@ -81,7 +81,7 @@ void LBA_engine::drawCharacter(int X, int Y, unsigned char caractere)
 
 }
 
-void LBA_engine::printStringSimple(int X, int Y, char *string)
+void Font(int X, int Y, char *string)
 {
 
     unsigned char character;

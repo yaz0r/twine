@@ -17,7 +17,7 @@
 
 #include "lba.h"
 
-int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like initBody
+int SearchBody(int bodyNum, int actorNum)	// should be something like initBody
 {
     actor *lactor;
     unsigned char *bodyPtr;
@@ -31,7 +31,7 @@ int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like 
     int index;
 
     lactor = &actors[actorNum];
-    bodyPtr = lactor->bodyPtr;
+    bodyPtr = lactor->entityDataPtr;
 
     do
 	{
@@ -50,21 +50,24 @@ int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like 
 		    if (var2 == bodyNum)
 			{
 			    bodyPtr3 = bodyPtr2 + 1;
-			    flag = *(short int *) bodyPtr3;
+				flag = READ_LE_U16(bodyPtr3);
 
 			    if (!(flag & 0x8000))
 				{
-				    loadDataFileToPtr("body.hqr", flag & 0xFFFF,
-						      &bodyPtrTab[reinitAll2Var3]);
-				    if (!bodyPtrTab[reinitAll2Var3])
+#ifdef PRELOAD_ALL
+					bodyPtrTab[currentPositionInBodyPtrTab] = HQR_GetCopy(HQR_Bodies, flag & 0xFFFF);
+#else
+				    HQRM_Load("body.hqr", flag & 0xFFFF, &bodyPtrTab[currentPositionInBodyPtrTab]);
+#endif
+				    if (!bodyPtrTab[currentPositionInBodyPtrTab])
 					{
 					    printf("Body.HQR in HQ_Mem\n");
 					    exit(1);
 					}
-				    loadGfxSub(bodyPtrTab[reinitAll2Var3]);
-				    *(short int *) bodyPtr3 = reinitAll2Var3 + 0x8000;	// maintenant, on dit que c'est en memoire HQR
-				    index = reinitAll2Var3;
-				    reinitAll2Var3++;
+				    loadGfxSub(bodyPtrTab[currentPositionInBodyPtrTab]);
+					WRITE_LE_U16( bodyPtr3, currentPositionInBodyPtrTab + 0x8000); // maintenant, on dit que c'est en memoire HQR
+				    index = currentPositionInBodyPtrTab;
+				    currentPositionInBodyPtrTab++;
 				}
 			    else
 				{
@@ -89,12 +92,13 @@ int LBA_engine::loadBody(int bodyNum, int actorNum)	// should be something like 
 
 			    bodyPtr5 = (short int *) bodyPtr3;
 
-			    loadCostumeVar = *(bodyPtr5++);	//X1
-			    loadCostumeVar2 = *(bodyPtr5++);	//Z1
-			    loadCostumeVar3 = *(bodyPtr5++);	//Y1
-			    loadCostumeVar4 = *(bodyPtr5++);	//X2
-			    loadCostumeVar5 = *(bodyPtr5++);	//Z2
-			    loadCostumeVar6 = *(bodyPtr5++);	//Y2
+			    loadCostumeVar = READ_LE_U16(bodyPtr3); bodyPtr3+=2;	//X1 bottomLeft
+			    loadCostumeVar2 = READ_LE_U16(bodyPtr3); bodyPtr3+=2;	//Z1
+			    loadCostumeVar3 = READ_LE_U16(bodyPtr3); bodyPtr3+=2;	//Y1
+
+			    loadCostumeVar4 = READ_LE_U16(bodyPtr3); bodyPtr3+=2;	//X2 topRight
+			    loadCostumeVar5 = READ_LE_U16(bodyPtr3); bodyPtr3+=2;	//Z2
+			    loadCostumeVar6 = READ_LE_U16(bodyPtr3); bodyPtr3+=2;	//Y2
 
 			    return (index);
 

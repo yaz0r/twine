@@ -1,6 +1,6 @@
 #include "lba.h"
 
-void LBA_engine::moveActor(int actorNumber)
+void DoTrack(int actorNumber)
 {
     int continueMove;
     int positionInScript;
@@ -30,11 +30,11 @@ void LBA_engine::moveActor(int actorNumber)
 		       break;
 		   }
 		case 2:
-		    loadActorCostume(*scriptPtr, actorNumber);
+		    InitBody(*scriptPtr, actorNumber);
 		    lactor->positionInMoveScript++;
 		    break;
 		case 3:	// ANIM
-		    if (playAnim(*(scriptPtr++), 0, 0, actorNumber))
+		    if (InitAnim(*(scriptPtr++), 0, 0, actorNumber))
 			{
 			    lactor->positionInMoveScript++;
 			}
@@ -54,19 +54,19 @@ void LBA_engine::moveActor(int actorNumber)
 		    destZ = flagData[manipActorResult].z;
 		    destY = flagData[manipActorResult].y;
 
-		    newAngle = calcAngleToward(lactor->X, lactor->Y, destX, destY);
+		    newAngle = GetAngle(lactor->X, lactor->Y, destX, destY);
 
-		    if (lactor->field_60 & 0x400)
+		    if (lactor->staticFlagsBF.bIsSpriteActor)
 			{
 			    lactor->angle = newAngle;
 			}
 		    else
 			{
-			    updateActorAngle(lactor->angle, newAngle, lactor->field_34,
+			    ManualRealAngle(lactor->angle, newAngle, lactor->speed,
 					     &lactor->time);
 			}
 
-		    if (moveActorVar1 > 500)
+		    if (DoTrackVar1 > 500)
 			{
 			    continueMove = 0;
 			    lactor->positionInMoveScript -= 2;
@@ -74,7 +74,7 @@ void LBA_engine::moveActor(int actorNumber)
 
 		    break;
 		case 5:
-		    if (!(lactor->field_62 & 0x4))
+		    if (!(lactor->dynamicFlagsMask & 0x4))
 			{
 			    continueMove = 0;
 			    lactor->positionInMoveScript--;
@@ -82,20 +82,20 @@ void LBA_engine::moveActor(int actorNumber)
 		    else
 			{
 			    continueMove = 0;
-			    changeActorAngle(lactor);
+			    ClearRealAngle(lactor);
 			}
 		    break;
 
 		case 7:	// set angle
 		   {
 		       lactor->positionInMoveScript += 2;
-		       if (!(lactor->field_60 & 0x400))
+		       if (!(lactor->staticFlagsBF.bIsSpriteActor))
 			   {
-			       manipActorResult = *(short int *) scriptPtr;
+			       manipActorResult = READ_LE_S16(scriptPtr);
 			       if (lactor->time.numOfStep == 0)
 				   {
-				       updateActorAngle(lactor->angle, manipActorResult,
-							lactor->field_34, timePtr);
+				       ManualRealAngle(lactor->angle, manipActorResult,
+							lactor->speed, timePtr);
 				   }
 
 			       if (lactor->angle != manipActorResult)
@@ -117,9 +117,9 @@ void LBA_engine::moveActor(int actorNumber)
 		    destZ = flagData[manipActorResult].z;
 		    destY = flagData[manipActorResult].y;
 
-		    if (lactor->field_60 & 0x400)
+		    if (lactor->staticFlagsBF.bIsSpriteActor)
 			{
-			    lactor->field_34 = 0;
+			    lactor->speed = 0;
 			}
 
 		    lactor->X = destX;
@@ -134,7 +134,7 @@ void LBA_engine::moveActor(int actorNumber)
 		    lactor->currentLabelPtr = lactor->positionInMoveScript - 2;
 		    break;
 		case 10:
-		    lactor->positionInMoveScript = *(short int *) scriptPtr;
+		    lactor->positionInMoveScript = READ_LE_S16(scriptPtr);
 		    break;
 		case 11:	// STOP
 		    continueMove = 0;
@@ -149,19 +149,19 @@ void LBA_engine::moveActor(int actorNumber)
 		    destZ = flagData[manipActorResult].z;
 		    destY = flagData[manipActorResult].y;
 
-		    newAngle = 0x200 + calcAngleToward(lactor->X, lactor->Y, destX, destY);
+		    newAngle = 0x200 + GetAngle(lactor->X, lactor->Y, destX, destY);
 
-		    if (lactor->field_60 & 0x400)
+		    if (lactor->staticFlagsBF.bIsSpriteActor)
 			{
 			    lactor->angle = newAngle;
 			}
 		    else
 			{
-			    updateActorAngle(lactor->angle, newAngle, lactor->field_34,
+			    ManualRealAngle(lactor->angle, newAngle, lactor->speed,
 					     &lactor->time);
 			}
 
-		    if (moveActorVar1 > 500)
+		    if (DoTrackVar1 > 500)
 			{
 			    continueMove = 0;
 			    lactor->positionInMoveScript -= 2;
@@ -170,7 +170,7 @@ void LBA_engine::moveActor(int actorNumber)
 		    break;
 		case 13:
 		    lactor->positionInMoveScript += 2;
-		    if (lactor->field_62 & 4)
+		    if (lactor->dynamicFlagsMask & 4)
 			{
 			    (*(scriptPtr + 1))++;
 
@@ -194,13 +194,13 @@ void LBA_engine::moveActor(int actorNumber)
 			}
 		    break;
 		case 14:
-		    fullRedrawS3(*(short int *) scriptPtr, 0x1000, 1, lactor->X, lactor->Z,
+		    HQ_3D_MixSample(READ_LE_S16(scriptPtr), 0x1000, 1, lactor->X, lactor->Z,
 				 lactor->Y);
 		    lactor->positionInMoveScript += 2;
 		    break;
 		case 15:
 		    lactor->positionInMoveScript++;
-		    if (lactor->field_60 & 0x400)	// if can move
+		    if (lactor->staticFlagsBF.bIsSpriteActor)	// if can move
 			{
 			    manipActorResult = *scriptPtr;
 
@@ -208,10 +208,10 @@ void LBA_engine::moveActor(int actorNumber)
 			    destZ = flagData[manipActorResult].z;
 			    destY = flagData[manipActorResult].y;
 
-			    lactor->angle = calcAngleToward(lactor->X, lactor->Y, destX, destY);	// X-Y move
-			    lactor->field_78 = calcAngleToward(lactor->Z, 0, destZ, moveActorVar1);	// Z (vertical) move
+			    lactor->angle = GetAngle(lactor->X, lactor->Y, destX, destY);	// X-Y move
+			    lactor->field_78 = GetAngle(lactor->Z, 0, destZ, DoTrackVar1);	// Z (vertical) move
 
-			    if (moveActorVar1 > 100)
+			    if (DoTrackVar1 > 100)
 				{
 				    continueMove = 0;
 				    lactor->positionInMoveScript -= 2;
@@ -226,70 +226,74 @@ void LBA_engine::moveActor(int actorNumber)
 		    break;
 		case 16:
 		    lactor->positionInMoveScript += 2;
-		    lactor->field_34 = *(short int *) scriptPtr;
-		    if (lactor->field_60 & 0x400)
+		    lactor->speed = READ_LE_S16(scriptPtr);
+            if (lactor->staticFlagsBF.bIsSpriteActor)
 			{
-			    setActorAngle(0, lactor->field_34, 50, timePtr);
+			    setActorAngle(0, lactor->speed, 50, timePtr);
 			}
 		    break;
-		case 17:
+		case 17: // move actor to background
 		    lactor->positionInMoveScript += 1;
 		    if (*scriptPtr != 0)
 			{
-			    if (!(lactor->field_60 & 0x2000))
+			    if (!(lactor->staticFlagsBF.bIsBackgrounded)) //if actor wasn't already in background
 				{
-				    lactor->field_60 |= 0x2000;
-				    if (lactor->field_60 & 0x1000)
+				    lactor->staticFlagsBF.bIsBackgrounded = true; // set him to background
+				    if (lactor->dynamicFlagsMask & 0x10)
 					{
-					    mainLoopVar2 = 1;
+					    requestBackgroundRedraw = 1;
 					}
 				}
 			}
 		    else
 			{
-			    if (lactor->field_60 & 0x2000)
+                if ( lactor->staticFlagsBF.bIsBackgrounded )
 				{
-				    lactor->field_60 &= 0xDFFF;
-				    if (lactor->field_60 & 0x1000)
+				    lactor->staticFlagsBF.bIsBackgrounded = false;
+				    if (lactor->dynamicFlagsMask & 0x10)
 					{
-					    mainLoopVar2 = 1;
+					    requestBackgroundRedraw = 1;
 					}
 				}
 			}
 		    break;
 		case 18:	// wait
-		    lactor->positionInMoveScript += 5;
+			{
+				lactor->positionInMoveScript += 5;
 
-		    if (*(int *) (scriptPtr + 1) == 0)
-			{
-			    *(int *) (scriptPtr + 1) = time + *(unsigned char *) scriptPtr *0x50;
-			}
+				if (READ_LE_S32(scriptPtr + 1) == 0)
+				{
+					WRITE_LE_S32(scriptPtr + 1, time + *(unsigned char *) scriptPtr *0x50);
+				}
 
-		    if (time < *(int *) (scriptPtr + 1))
-			{
-			    continueMove = 0;
-			    lactor->positionInMoveScript -= 6;
+				if (time < READ_LE_S32(scriptPtr + 1))
+				{
+					continueMove = 0;
+					lactor->positionInMoveScript -= 6;
+				}
+				else
+				{
+					WRITE_LE_S32(scriptPtr + 1, 0);
+				}
+				break;
 			}
-		    else
-			{
-			    *(int *) (scriptPtr + 1) = 0;
-			}
-		    break;
 		case 19:
-		    loadActorCostume(-1, actorNumber);
-		    break;
+			{
+				InitBody(-1, actorNumber);
+				break;
+			}
 		case 20:
 		   {
 		       short int beta;
 
-		       beta = *(short int *) scriptPtr;
+		       beta = READ_LE_S16(scriptPtr);
 		       scriptPtr += 2;
 
 		       lactor->angle = beta;
 
-		       if (lactor->field_60 & 0x400)
+               if (lactor->staticFlagsBF.bIsSpriteActor)
 			   {
-			       changeActorAngle(lactor);
+			       ClearRealAngle(lactor);
 			   }
 
 		       break;
@@ -299,12 +303,8 @@ void LBA_engine::moveActor(int actorNumber)
 		case 22:
 		case 23:
 		case 24:
-		    int temp;
-
 		    lactor->positionInMoveScript += 2;
-		    temp = lactor->field_60;
-		    temp &= 0x408;
-		    if (temp == 0x408)
+		    if ( lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping )
 			{
 			    switch (currentOpcode - 21)
 				{
@@ -325,28 +325,28 @@ void LBA_engine::moveActor(int actorNumber)
 				    exit(1);
 				}
 
-			    lactor->field_72 = *(short int *) scriptPtr;
-			    lactor->field_62 |= 0x40;
-			    lactor->field_34 = 1000;
+			    lactor->doorStatus = READ_LE_S16(scriptPtr);
+			    lactor->dynamicFlagsMask |= 0x40;
+			    lactor->speed = 1000;
 			    setActorAngle(0, 1000, 50, timePtr);
 			}
 		    break;
-		case 25:
+		case 25: // TM_CLOSE
 		   {
-		       if ((lactor->field_60 & 0x408) == 0x408)
+		       if (lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping )
 			   {
-			       lactor->field_62 |= 0x40;
-			       lactor->field_72 = 0;
-			       lactor->field_34 = -1000;
+			       lactor->dynamicFlagsMask |= 0x40;
+			       lactor->doorStatus = 0;
+			       lactor->speed = -1000;
 			       setActorAngle(0, -1000, 50, timePtr);
 			   }
 		       break;
 		   }
-		case 26:
+		case 26: // TM_WAIT_DOOR
 		   {
-		       if ((lactor->field_60 & 0x408) == 0x408)
+               if ( lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping )
 			   {
-			       if (lactor->field_34)
+			       if (lactor->speed)
 				   {
 				       continueMove = 0;
 				       lactor->positionInMoveScript--;
@@ -362,7 +362,7 @@ void LBA_engine::moveActor(int actorNumber)
 		   }
 
 		case 28:
-		    fullRedrawS3(*(short int *) scriptPtr, 0x1000, 0, lactor->X, lactor->Z,
+		    HQ_3D_MixSample(READ_LE_S16(scriptPtr), 0x1000, 0, lactor->X, lactor->Z,
 				 lactor->Y);
 		    lactor->positionInMoveScript += 2;
 		    break;
@@ -372,7 +372,7 @@ void LBA_engine::moveActor(int actorNumber)
 		    break;
 		case 31:
 		   {
-		       moveVar1 = *(short int *) scriptPtr;
+		       moveVar1 = READ_LE_S16(scriptPtr);
 		       lactor->positionInMoveScript += 2;
 		       break;
 		   }
@@ -385,17 +385,17 @@ void LBA_engine::moveActor(int actorNumber)
 		case 33:	// look at twinsen
 		   {
 		       lactor->positionInMoveScript += 2;
-		       if (!(lactor->field_60 & 0x400))
+               if (!(lactor->staticFlagsBF.bIsSpriteActor))
 			   {
-			       manipActorResult = *(short int *) scriptPtr;
+			       manipActorResult = READ_LE_S16(scriptPtr);
 			       if (manipActorResult == -1 && lactor->time.numOfStep == 0)
 				   {
 				       manipActorResult =
-					   calcAngleToward(lactor->X, lactor->Y, twinsen->X,
+					   GetAngle(lactor->X, lactor->Y, twinsen->X,
 							   twinsen->Y);
-				       updateActorAngle(lactor->angle, manipActorResult,
-							lactor->field_34, &lactor->time);
-				       *(short int *) scriptPtr = manipActorResult;
+				       ManualRealAngle(lactor->angle, manipActorResult,
+							lactor->speed, &lactor->time);
+				       WRITE_LE_S16(scriptPtr, manipActorResult);
 				   }
 
 			       if (lactor->angle != manipActorResult)
@@ -405,12 +405,55 @@ void LBA_engine::moveActor(int actorNumber)
 				   }
 			       else
 				   {
-				       changeActorAngle(lactor);
-				       *(short int *) scriptPtr = -1;
+				       ClearRealAngle(lactor);
+				       WRITE_LE_S16(scriptPtr, -1);
 				   }
 			   }
 		       break;
 		   }
+        case 34: // angle random
+            {
+                int var_10;
+
+                lactor->positionInMoveScript +=4 ;
+                if (!(lactor->staticFlagsBF.bIsSpriteActor))
+                {
+                    manipActorResult = READ_LE_S16(scriptPtr+2);
+
+                    if(manipActorResult == -1  && lactor->time.numOfStep == 0)
+                    {
+                        if(rand()&1)
+                        {
+                            manipActorResult = READ_LE_S16(scriptPtr);
+                            var_10=lactor->angle + 0x100 + (abs(manipActorResult)>>1);
+
+                            manipActorResult = (var_10 - (rand()%manipActorResult)) & 0x3FF;
+                        }
+                        else
+                        {
+                            manipActorResult = READ_LE_S16(scriptPtr);
+                            var_10=lactor->angle - 0x100 + (abs(manipActorResult)>>1);
+
+                            manipActorResult = (var_10 - (rand()%manipActorResult)) & 0x3FF;
+                        }
+
+                        ManualRealAngle(lactor->angle,manipActorResult, lactor->speed, &lactor->time);
+                        WRITE_LE_S16(scriptPtr+2, manipActorResult);
+                    }
+
+                    if(lactor->angle != manipActorResult)
+                    {
+                        continueMove = 0;
+                        lactor->positionInMoveScript -= 5;
+                    }
+                    else
+                    {
+                        ClearRealAngle(lactor);
+                        WRITE_LE_S16(scriptPtr+2, -1);
+                    }
+                }
+                break;
+            }
 		default:
 		    printf("Unsupported move opcode %d\n", currentOpcode);
 		    exit(1);
@@ -421,7 +464,7 @@ void LBA_engine::moveActor(int actorNumber)
 
 }
 
-void LBA_engine::updateActorAngle(int angleFrom, int angleTo, int angleSpeed,
+void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed,
 				  timeStruct * angleStruct)
 {
     short int numOfStep;

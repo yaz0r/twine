@@ -1,27 +1,38 @@
 #include "lba.h"
-
-void LBA_engine::displayAdelineLogo(void)
+/*
+#include <sn_fcntl.h>
+#include <usrsnasm.h>
+*/
+void AdelineLogo(void)
 {
     playMidi(31);
-    loadImageToPtr("ress.hqr", videoBuffer2, 27);
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    loadImageToPtr("ress.hqr", palette, 28);
+    Load_HQR("ress.hqr", workVideoBuffer, 27);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    Load_HQR("ress.hqr", palette, 28);
     convertPalToRGBA(palette, paletteRGBA);
+
+/*	int debugH = debug_open("palette.raw", SNASM_O_BINARY|SNASM_O_CREAT|SNASM_O_RDWR);
+	debug_write(debugH, (char*)palette, 256*3);
+	debug_close(debugH); */
+
     blackToWhite();
-    osystem->drawBufferToScreen(videoBuffer1);
+    osystem->Flip(frontVideoBuffer);
     fadeIn(paletteRGBA);
    // SDL_Delay(2000);
 }
 
-void LBA_engine::copyToBuffer(byte * source, byte * destination)
+void CopyScreen(byte * source, byte * destination)
 {
 
     memcpy(destination, source, 307200);
 }
 
-void LBA_engine::fadeIn(byte * palette)
+void fadeIn(byte * palette)
 {
-    int i;
+    int i = 100;
+
+	osystem->setPalette(palette);
+	return;
 
     for (i = 0; i < 100; i += 3)
 	{
@@ -30,7 +41,7 @@ void LBA_engine::fadeIn(byte * palette)
 	}
 }
 
-void LBA_engine::adjustPalette(byte R, byte G, byte B, byte * palette, int intensity)
+void adjustPalette(byte R, byte G, byte B, byte * palette, int intensity)
 {
     byte localPalette[1024];
     byte *newR;
@@ -51,9 +62,9 @@ void LBA_engine::adjustPalette(byte R, byte G, byte B, byte * palette, int inten
 
     for (i = 0; i < 256; i++)
 	{
-	    *newR = remapComposante(R, palette[counter], 100, local);
-	    *newG = remapComposante(G, palette[counter + 1], 100, local);
-	    *newB = remapComposante(B, palette[counter + 2], 100, local);
+	    *newR = RegleTrois32(R, palette[counter], 100, local);
+	    *newG = RegleTrois32(G, palette[counter + 1], 100, local);
+	    *newB = RegleTrois32(B, palette[counter + 2], 100, local);
 	    *newA = 0;
 
 	    newR += 4;
@@ -67,40 +78,40 @@ void LBA_engine::adjustPalette(byte R, byte G, byte B, byte * palette, int inten
     osystem->setPalette(localPalette);
 }
 
-int LBA_engine::remapComposante(int modifier, int color, int param, int intensity)
+int RegleTrois32(int modifier, int color, int param, int intensity)
 {
     if (!param)
 	return (color);
     return (((color - modifier) * intensity) / param) + modifier;
 }
 
-void LBA_engine::loadImageAndPalette(int imageNumber)
+void RessPict(int imageNumber)
 {
-    loadImageToPtr("ress.hqr", videoBuffer2, imageNumber);
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    loadImageToPtr("ress.hqr", palette, imageNumber + 1);
+    Load_HQR("ress.hqr", workVideoBuffer, imageNumber);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    Load_HQR("ress.hqr", palette, imageNumber + 1);
     convertPalToRGBA(palette, paletteRGBA);
-    osystem->drawBufferToScreen(videoBuffer1);
-    fadeIn2((char *) paletteRGBA);
+    osystem->Flip(frontVideoBuffer);
+    FadeToPal((char *) paletteRGBA);
 }
 
-void LBA_engine::loadImageCrossFade(int imageNumber)
+void loadImageCrossFade(int imageNumber)
 {
-    loadImageToPtr("ress.hqr", videoBuffer2, imageNumber);
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    loadImageToPtr("ress.hqr", palette, imageNumber + 1);
+    Load_HQR("ress.hqr", workVideoBuffer, imageNumber);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    Load_HQR("ress.hqr", palette, imageNumber + 1);
     convertPalToRGBA(palette, paletteRGBA);
 
-    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
+    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 }
 
-void LBA_engine::fadeOut(char *palette)
+void FadeToBlack(char *palette)
 {
-    int i;
+    int i = 0;
 
     if (palReseted == 0)
 	{
-	    for (i = 100; i >= 0; i -= 3)
+	//    for (i = 100; i >= 0; i -= 3)
 		{
 		    adjustPalette(0, 0, 0, (byte *) palette, i);
 		    readKeyboard();
@@ -110,26 +121,29 @@ void LBA_engine::fadeOut(char *palette)
     palReseted = 1;
 }
 
-void LBA_engine::fadeIn2(char *palette)
+void FadeToPal(char *palette)
 {
-    int i;
+    int i = 100;
 
-    for (i = 0; i <= 100; i += 3)
+/*    for (i = 0; i <= 100; i += 3)
 	{
 	    adjustPalette(0, 0, 0, (byte *) palette, i);
 	    readKeyboard();
-	}
+	} */
+
+	osystem->setPalette( (byte*)palette );
 
     palReseted = 0;
 
 }
 
-void LBA_engine::blackToWhite(void)
+void blackToWhite(void)
 {
     byte palette[1024];
     int i;
 
-    for (i = 0; i < 256; i += 3)
+	i = 256;
+//    for (i = 0; i < 256; i += 3)
 	{
 	    memset(palette, i, 1024);
 
@@ -138,7 +152,7 @@ void LBA_engine::blackToWhite(void)
 	}
 }
 
-void LBA_engine::resetPalette(void)
+void SetBackPal(void)
 {
    // int i;
 
@@ -154,27 +168,34 @@ void LBA_engine::resetPalette(void)
     palReseted = 1;
 }
 
-void LBA_engine::resetVideoBuffer1(void)
+void Cls(void)
 {
    /*
     * int i;
     * 
-    * for(i=0;i<307200;i++) { videoBuffer1[i]=0; }
+    * for(i=0;i<307200;i++) { frontVideoBuffer[i]=0; }
     */
 
-    memset(videoBuffer1, 0, 307200);
+    memset(frontVideoBuffer, 0, 307200);
 }
 
-void LBA_engine::convertPalToRGBA(byte * palSource, byte * palDest)
+void convertPalToRGBA(byte * palSource, byte * palDest)
 {
     int i;
 
     int *colorDest = (int *) palDest;
 
+#ifdef PCLIKE
     for (i = 0; i < 256; i++)
 	{
 	    *(colorDest++) = (*(int *) palSource);	// little optimisation trick
 	    palSource += 3;
 	}
+#else
+    for (i = 0; i < 256*3; i++)
+	{
+	    *(palDest++) = *(palSource++);	// little optimisation trick
+	}
+#endif
 
 }

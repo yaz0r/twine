@@ -1,8 +1,7 @@
 #include "lba.h"
 #include "rendererAngleTab.h"
 
-int LBA_renderer::startRenderer(int X, int Y, int Z, int angleX, int angleY, int angleZ,
-				unsigned char *costumePtr)
+int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr)
 {
     unsigned char *ptr;
     short int costumeHeader;
@@ -20,20 +19,19 @@ int LBA_renderer::startRenderer(int X, int Y, int Z, int angleX, int angleY, int
     * maximum value at the begining of the renderer 
     */
 
-    _renderLeft = 32767;
-    _renderTop = 32767;
+    renderLeft = 32767;
+    renderTop = 32767;
 
-    _renderRight = -32767;
-    _renderBottom = -32767;
+    renderRight = -32767;
+    renderBottom = -32767;
 
-   /*
-    * the use of setSomethingVar4 is still unknown 
-    */
+    if (isUsingOrhoProjection == 0)
+	{       
+        setSomething3sub(X,Y,Z);
 
-    if (setSomethingVar4 == 0)
-	{
-	    printf("Unimplemented startRenderer\n");
-	    exit(1);
+        _X = destX - setSomething3Var12;
+        _Y = destZ - setSomething3Var14;
+        _Z = destY - setSomething3Var16;
 	}
     else
 	{
@@ -46,13 +44,14 @@ int LBA_renderer::startRenderer(int X, int Y, int Z, int angleX, int angleY, int
 
     renderTabEntryPtr = renderTab;	// we restart at the beginning of the renderTable
 
-    costumeHeader = *(short int *) costumePtr;	// costumeHeader seems to contains important flags
-   // for the rendering
+    costumeHeader = *(short int *) costumePtr;
 
     ptr = costumePtr + 16 + *(short int *) (costumePtr + 14);	// we jump after the header
 
     if (costumeHeader & 2)	// if animated
-	return (renderAnimatedModel(ptr));	// That's the mostly used renderer code
+    {
+	    return (renderAnimatedModel(ptr));	// That's the mostly used renderer code
+    }
     else
 	{
 	    printf("Unsupported unanimated model render!\n");
@@ -63,8 +62,21 @@ int LBA_renderer::startRenderer(int X, int Y, int Z, int angleX, int angleY, int
 
 }
 
-void LBA_renderer::setSomething4(int angleX, int angleY, int angleZ)
+void configureOrthoProjection(int a, int b, int c)
 {
+    setSomethingVar1 = a;
+    setSomethingVar2 = b;
+    setSomethingVar3 = c;
+    isUsingOrhoProjection = 1;
+}
+
+
+void SetLightVector(int angleX, int angleY, int angleZ)
+{
+    tab1 = &rendererTab[0];
+    tab2 = &rendererTab[256];
+    tab3 = &rendererTab[384];
+
     _cameraAngleX = angleX;
     _cameraAngleY = angleY;
     _cameraAngleZ = angleZ;
@@ -73,14 +85,60 @@ void LBA_renderer::setSomething4(int angleX, int angleY, int angleZ)
     _angleY = angleY;
     _angleZ = angleZ;
 
-   /*
-    * renderS1S1 (bufRotate0, &setSomething3Var2); renderS2S2 (0, 0, 59);
-    * 
-    * renderV22 = destX; renderV23 = destZ; renderV24 = destY;
-    */
+    RotMatIndex2(_shadeMatrix, _baseMatrix);
+    TranslateGroupeS2(0, 0, 59);
+
+    _lightX = destX;
+    _lightY = destZ;
+    _lightZ = destY;
 }
 
-int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
+void TranslateGroupeS2(short int ax, short int bx, short int cx)
+{
+    int ebp;
+    int ebx;
+    int ecx;
+    int eax;
+    int edi;
+
+    ebp = ax;
+    ebx = bx;
+    ecx = cx;
+
+    edi = _shadeMatrix[0];
+    eax = _shadeMatrix[1];
+    edi *= ebp;
+    eax *= ebx;
+    edi += eax;
+    eax = _shadeMatrix[2];
+    eax *= ecx;
+    eax += edi;
+    eax >>= 14;
+
+    destX = eax;
+
+    edi = _shadeMatrix[3];
+    eax = _shadeMatrix[4];
+    edi *= ebp;
+    eax *= ebx;
+    edi += eax;
+    eax = _shadeMatrix[5];
+    eax *= ecx;
+    eax += edi;
+    eax >>= 14;
+    destZ = eax;
+
+    ebp *= _shadeMatrix[6];
+    ebx *= _shadeMatrix[7];
+    ecx *= _shadeMatrix[8];
+    ebx += ebp;
+    ebx += ecx;
+    ebx >>= 14;
+    destY = eax;
+
+}
+
+int renderAnimatedModel(unsigned char *costumePtr)
 {
     pointEntry *ptEntryPtr;
     pointTab *pointPtr;
@@ -90,7 +148,6 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
     int coZ;
     unsigned char *ptr3;
     int *ptr4;
-    int *ptr5;
     unsigned char *ptr6;
 
     _numOfPoints = *(short int *) costumePtr;
@@ -123,11 +180,9 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
 			    loadPart(ptEntryPtr->rotateX, ptEntryPtr->rotateY, ptEntryPtr->rotateZ, ptEntryPtr);	// rotation
 			}
 		    else
+		    if (ptEntryPtr->flag == 1)
 			{
-			    if (ptEntryPtr->flag == 1)
-				{
-				    renderS2(ptEntryPtr->rotateX, ptEntryPtr->rotateY, ptEntryPtr->rotateZ, ptEntryPtr);	// translation
-				}
+				TranslateGroupe(ptEntryPtr->rotateX, ptEntryPtr->rotateY, ptEntryPtr->rotateZ, ptEntryPtr);	// translation
 			}
 
 		    _currentMatrixTableEntry += 36;
@@ -143,7 +198,7 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
     pointPtr = (pointTab *) _projectedPointTable;
     pointPtrDest = (pointTab *) _flattenPointTable;
 
-    if (setSomethingVar4 != 0)	// use standard projection
+    if (isUsingOrhoProjection != 0)	// use standard projection
 	{
 	    do
 		{
@@ -151,36 +206,82 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
 		    coY = pointPtr->y + _Y;
 		    coZ = -(pointPtr->z + _Z);
 
-		    pointPtrDest->x =
-			(((coX + coZ) * 8 + (coX + coZ) * 16) >> 9) + setSomethingVar1;
-		    pointPtrDest->z = coZ - coX - coY;
-		    pointPtrDest->y =
-			((((coX - coZ) * 4 + (coX - coZ) * 8) + (2 * coY - (coY << 5))) >> 9) +
-			setSomethingVar2;
+		    pointPtrDest->x = (coX + coZ)* 24 /512 + setSomethingVar1;
+		    pointPtrDest->y = (((coX - coZ) *12) - coY*30) /512 + setSomethingVar2;
+            pointPtrDest->z = coZ - coX - coY;
 
-		    if (pointPtrDest->x < _renderLeft)
-			_renderLeft = pointPtrDest->x;
-		    if (pointPtrDest->x > _renderRight)
-			_renderRight = pointPtrDest->x;
+		    if (pointPtrDest->x < renderLeft)
+			    renderLeft = pointPtrDest->x;
+		    if (pointPtrDest->x > renderRight)
+			    renderRight = pointPtrDest->x;
 
-		    if (pointPtrDest->y < _renderTop)
-			_renderTop = pointPtrDest->y;
-		    if (pointPtrDest->y > _renderBottom)
-			_renderBottom = pointPtrDest->y;
+		    if (pointPtrDest->y < renderTop)
+			    renderTop = pointPtrDest->y;
+		    if (pointPtrDest->y > renderBottom)
+			    renderBottom = pointPtrDest->y;
 
 		    pointPtr++;
 		    pointPtrDest++;
 
 		}
 	    while (--_numOfPrimitives);
-
-	    _shadePtr = (int *) _partsPtr;
 	}
     else
 	{
-	    printf("Unsuported render with unstandard camera in renderAnimatedModel !\n");
-	    exit(1);
+        do
+        {
+		    coX = pointPtr->x + _X;
+		    coY = pointPtr->y + _Y;
+		    coZ = -(pointPtr->z + _Z);
+
+            coZ += cameraVar1;
+
+            if(coZ<=0)
+                coZ = 0x7FFFFFFF;
+
+            {
+                coX= (coX * cameraVar2) / coZ + setSomethingVar1;
+
+                if(coX > 0xFFFF)
+                    coX = 0x7FFF;
+
+                pointPtrDest->x = coX;
+
+   		        if (pointPtrDest->x < renderLeft)
+			        renderLeft = pointPtrDest->x;
+		        if (pointPtrDest->x > renderRight)
+			        renderRight = pointPtrDest->x;
+            }
+
+            {
+                coY= (-coY * cameraVar3) / coZ + setSomethingVar2;
+
+                if(coY > 0xFFFF)
+                    coY = 0x7FFF;
+
+                pointPtrDest->y = coY;
+
+		        if (pointPtrDest->y < renderTop)
+			        renderTop = pointPtrDest->y;
+		        if (pointPtrDest->y > renderBottom)
+			        renderBottom = pointPtrDest->y;
+            }
+
+            {
+                if(coZ > 0xFFFF)
+                    coZ = 0x7FFF;
+
+                pointPtrDest->z = coZ;
+            }
+
+		    pointPtr++;
+		    pointPtrDest++;
+
+        }while (--_numOfPrimitives);
 	}
+
+    _shadePtr = (int *) _partsPtr;
+
 
   /*_numOfPrimitives = _numOfPoints;
   pointPtr = _flattenPointTable;
@@ -189,7 +290,7 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
       if ((pointPtr->x > 0 && pointPtr->x < 640)
 	  && (pointPtr->y > 0 && pointPtr->y < 480))
 	{
-	  *(videoBuffer1 + screenLockupTable[pointPtr->y] + pointPtr->x) =
+	  *(frontVideoBuffer + screenLockupTable[pointPtr->y] + pointPtr->x) =
 	    255;
 	}
       else
@@ -225,9 +326,9 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
 			{
 			    int rs1s2v1 = temp;
 
-			    _lightX = 0;	// light position
+			 /*   _lightX = 0;	// light position
 			    _lightY = 40;
-			    _lightZ = 40;
+			    _lightZ = 40;*/
 
 			    _shadeMatrix[0] = (*renderV21) * _lightX;
 			    _shadeMatrix[1] = (*(renderV21 + 1)) * _lightX;
@@ -255,15 +356,9 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
 				    col2 = *(colPtr++);
 				    col3 = *(colPtr++);
 
-				    eax =
-					_shadeMatrix[0] * col1 + _shadeMatrix[1] * col2 +
-					_shadeMatrix[2] * col3;
-				    eax +=
-					_shadeMatrix[3] * col1 + _shadeMatrix[4] * col2 +
-					_shadeMatrix[5] * col3;
-				    eax +=
-					_shadeMatrix[6] * col1 + _shadeMatrix[7] * col2 +
-					_shadeMatrix[8] * col3;
+				    eax = _shadeMatrix[0] * col1 + _shadeMatrix[1] * col2 + _shadeMatrix[2] * col3;
+				    eax += _shadeMatrix[3] * col1 + _shadeMatrix[4] * col2 + _shadeMatrix[5] * col3;
+                    eax += _shadeMatrix[6] * col1 + _shadeMatrix[7] * col2 + _shadeMatrix[8] * col3;
 
 				    edi = 0;
 
@@ -304,7 +399,7 @@ int LBA_renderer::renderAnimatedModel(unsigned char *costumePtr)
     return (finishRender((unsigned char *) _shadePtr));
 }
 
-void LBA_renderer::loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
+void loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
 {
     int *ebp;
     short int var;
@@ -331,44 +426,33 @@ void LBA_renderer::loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
 	{
 	    ebp = _baseMatrix;
 
-	    _destX = 0;
-	    _destY = 0;
-	    _destZ = 0;
+	    destX = 0;
+	    destY = 0;
+	    destZ = 0;
 	}
     else
 	{
 	    ebp = (int *) ((unsigned char *) _matrixTable + var);
 
-	    _destX = _projectedPointTable[ptr->data3 / 6].x;
-	    _destY = _projectedPointTable[ptr->data3 / 6].y;
-	    _destZ = _projectedPointTable[ptr->data3 / 6].z;
+	    destX = _projectedPointTable[ptr->data3 / 6].x;
+	    destY = _projectedPointTable[ptr->data3 / 6].y;
+	    destZ = _projectedPointTable[ptr->data3 / 6].z;
 	}
 
    // renderV19= dest
    // ebp= source
-    renderS1S1((int *) _currentMatrixTableEntry, ebp);	// copie dans renderTab2 + application de
+    RotMatIndex2((int *) _currentMatrixTableEntry, ebp);	// copie dans renderTab2 + application de
    // la rotation
 
    // ? , numOfPoint , destination, rotation data
-    renderS1S2(_pointsPtr + rs1v1, rs1v2, &_projectedPointTable[rs1v1 / 6], (int *) _currentMatrixTableEntry);	// rotation 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // 
-   // des 
-   // elements 
-   // du 
-   // model
+	if(!rs1v2)
+	{
+		printf("No points !\n");
+	}
+    RotList(_pointsPtr + rs1v1, rs1v2, &_projectedPointTable[rs1v1 / 6], (int *) _currentMatrixTableEntry);	// rotation des elements du model
 }
 
-void LBA_renderer::renderS1S2(unsigned char *esi, int ecx, pointTab * dest, int *eax)
+void RotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
 {
     short int param1;
     short int param2;
@@ -388,9 +472,9 @@ void LBA_renderer::renderS1S2(unsigned char *esi, int ecx, pointTab * dest, int 
 	    param2 = tempPtr[1];
 	    param3 = tempPtr[2];
 
-	    dest->x = ((eax[0] * param1 + eax[1] * param2 + eax[2] * param3) >> 14) + _destX;
-	    dest->y = ((eax[3] * param1 + eax[4] * param2 + eax[5] * param3) >> 14) + _destY;
-	    dest->z = ((eax[6] * param1 + eax[7] * param2 + eax[8] * param3) >> 14) + _destZ;
+	    dest->x = ((eax[0] * param1 + eax[1] * param2 + eax[2] * param3) >> 14) + destX;
+	    dest->y = ((eax[3] * param1 + eax[4] * param2 + eax[5] * param3) >> 14) + destY;
+	    dest->z = ((eax[6] * param1 + eax[7] * param2 + eax[8] * param3) >> 14) + destZ;
 
 	    dest++;
 	    esi = rs1s2v2 + 6;
@@ -398,7 +482,7 @@ void LBA_renderer::renderS1S2(unsigned char *esi, int ecx, pointTab * dest, int 
     while (--rs1s2v1);
 }
 
-void LBA_renderer::renderS1S1(int *eax, int *ebp)
+void RotMatIndex2(int *eax, int *ebp)
 {
     int angle;
     int angleVar1;		// esi
@@ -507,7 +591,7 @@ void LBA_renderer::renderS1S1(int *eax, int *ebp)
 
 }
 
-void LBA_renderer::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
+void TranslateGroupe(int edx, int ecx, int ebx, pointEntry * esi)
 {
     int *dest;
     int *source;
@@ -518,9 +602,9 @@ void LBA_renderer::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
 
     if (esi->param == -1)	// base point
 	{
-	    _destX = 0;
-	    _destZ = 0;
-	    _destY = 0;
+	    destX = 0;
+	    destZ = 0;
+	    destY = 0;
 
 	    dest = (int *) _currentMatrixTableEntry;
 
@@ -536,9 +620,9 @@ void LBA_renderer::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
 	}
     else			// dependent
 	{
-	    _destX = _projectedPointTable[(esi->data3) / 6].x;	// todo:
-	    _destZ = _projectedPointTable[(esi->data3) / 6].z;	// inverse because pointab and dest entry are not in the same order....
-	    _destY = _projectedPointTable[(esi->data3) / 6].y;
+	    destX = _projectedPointTable[(esi->data3) / 6].x;	// todo:
+	    destZ = _projectedPointTable[(esi->data3) / 6].z;	// inverse because pointab and dest entry are not in the same order....
+	    destY = _projectedPointTable[(esi->data3) / 6].y;
 
 	    source = (int *) ((unsigned char *) _matrixTable + esi->param);
 	    dest = (int *) _currentMatrixTableEntry;
@@ -554,12 +638,12 @@ void LBA_renderer::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
 	    dest[8] = source[8];
 	}
 
-    renderS2Sub(_pointsPtr + esi->data1, esi->data2, &_projectedPointTable[esi->data1 / 6],
-		(int *) _currentMatrixTableEntry);
+    TransRotList(_pointsPtr + esi->data1, esi->data2, &_projectedPointTable[esi->data1 / 6], (int *) _currentMatrixTableEntry);
 }
 
-void LBA_renderer::renderS2Sub(unsigned char *esi, int ecx, pointTab * dest, int *eax)
+void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
 {
+	int i;
     short int param1;
     short int param2;
     short int param3;
@@ -567,7 +651,7 @@ void LBA_renderer::renderS2Sub(unsigned char *esi, int ecx, pointTab * dest, int
 
     int rs1s2v1 = ecx;
 
-    do
+   
 	{
 	    unsigned char *rs1s2v2 = esi;
 
@@ -577,9 +661,9 @@ void LBA_renderer::renderS2Sub(unsigned char *esi, int ecx, pointTab * dest, int
 	    param2 = tempPtr[1] + _angleY;
 	    param3 = tempPtr[2] + _angleX;
 
-	    dest->x = ((eax[0] * param1 + eax[1] * param2 + eax[2] * param3) >> 14) + _destX;
-	    dest->y = ((eax[3] * param1 + eax[4] * param2 + eax[5] * param3) >> 14) + _destY;
-	    dest->z = ((eax[6] * param1 + eax[7] * param2 + eax[8] * param3) >> 14) + _destZ;
+	    dest->x = ((eax[0] * param1 + eax[1] * param2 + eax[2] * param3) >> 14) + destX;
+	    dest->y = ((eax[3] * param1 + eax[4] * param2 + eax[5] * param3) >> 14) + destY;
+	    dest->z = ((eax[6] * param1 + eax[7] * param2 + eax[8] * param3) >> 14) + destZ;
 
 	    dest++;
 	    esi = rs1s2v2 + 6;
@@ -588,7 +672,7 @@ void LBA_renderer::renderS2Sub(unsigned char *esi, int ecx, pointTab * dest, int
     while (--rs1s2v1);
 }
 
-int LBA_renderer::finishRender(unsigned char *esi)
+int finishRender(unsigned char *esi)
 {
     unsigned char *edi;
     short int temp;
@@ -631,7 +715,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
 
     struct polyHeader
 	{
-	    unsigned char polyRenderType;
+	    unsigned char FillVertic_AType;
 	    unsigned char numOfVertex;
 	    short int colorIndex;
 	};
@@ -657,7 +741,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
     pointTab *destinationVertex;
 
     edi = renderTab7;		// renderTab7 c'est le buffer de coordonnées
-    temp = *(short int *) esi;	// we read the number of polygones
+    temp = READ_LE_S16(esi);	// we read the number of polygones
     esi += 2;
 
     if (temp)			// if there is polygones
@@ -668,16 +752,17 @@ int LBA_renderer::finishRender(unsigned char *esi)
 		{
 		    render23 = edi;
 		    currentPolyHeader = (polyHeader *) esi;
-		    ecx = *(int *) esi;
+		    ecx = READ_LE_S32(esi);
 		    esi += 2;
-		    polyRenderType = currentPolyHeader->polyRenderType;
+		    FillVertic_AType = currentPolyHeader->FillVertic_AType;
 
-		    if (polyRenderType >= 9)
+            assert(FillVertic_AType <=10);
+
+		    if (FillVertic_AType >= 9)
 			{
 			    destinationHeader = (polyHeader *) edi;
 
-			    destinationHeader->polyRenderType =
-				currentPolyHeader->polyRenderType - 2;
+			    destinationHeader->FillVertic_AType =	currentPolyHeader->FillVertic_AType - 2;
 			    destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 			    destinationHeader->colorIndex = currentPolyHeader->colorIndex;
 
@@ -718,21 +803,20 @@ int LBA_renderer::finishRender(unsigned char *esi)
 				}
 			    while (--counter);
 			}
-		    else if (polyRenderType >= 7)	// only 1 shade value is used
+		    else if (FillVertic_AType >= 7)	// only 1 shade value is used
 			{
 			    destinationHeader = (polyHeader *) edi;
 
-			    destinationHeader->polyRenderType =
-				currentPolyHeader->polyRenderType - 7;
+			    destinationHeader->FillVertic_AType =	currentPolyHeader->FillVertic_AType - 7;
 			    destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 
 			    color = currentPolyHeader->colorIndex;
 
-			    shadeEntry = *(short int *) (esi + 2);
+			    shadeEntry = READ_LE_S16(esi + 2);
 
 			    esi += 4;
 
-			    *(short int *) (edi + 2) = color + shadeTable[shadeEntry];
+			    WRITE_LE_S16(edi + 2, color + shadeTable[shadeEntry]);
 
 			    edi += 4;
 			    renderV19 = edi;
@@ -741,7 +825,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
 
 			    do
 				{
-				    eax = *(short int *) esi;
+				    eax = READ_LE_S16(esi);
 				    esi += 2;
 
 				    currentVertex = &_flattenPointTable[eax / 6];
@@ -764,8 +848,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
 			{
 			    destinationHeader = (polyHeader *) edi;
 
-			    destinationHeader->polyRenderType =
-				currentPolyHeader->polyRenderType - 2;
+			    destinationHeader->FillVertic_AType =	currentPolyHeader->FillVertic_AType;
 			    destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 			    destinationHeader->colorIndex = currentPolyHeader->colorIndex;
 
@@ -779,7 +862,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
 
 			    do
 				{
-				    eax = *(short int *) esi;
+				    eax = READ_LE_S16(esi);
 				    esi += 2;
 
 				    currentVertex = &_flattenPointTable[eax / 6];
@@ -804,27 +887,27 @@ int LBA_renderer::finishRender(unsigned char *esi)
 
 		    render25 = bestDepth;
 
-		    ax = *(short int *) (edi + 4);
-		    bx = *(short int *) (edi + 8);
+		    ax = READ_LE_S16(edi + 4);
+		    bx = READ_LE_S16(edi + 8);
 
-		    ax -= *(short int *) (edi + 16);
-		    bx -= *(short int *) (edi + 2);
+		    ax -= READ_LE_S16(edi + 16);
+		    bx -= READ_LE_S16(edi + 2);
 
 		    ax *= bx;
 
 		    bestDepth = ax;
 		    bx = currentDepth;
 
-		    ax = *(short int *) (edi + 2);
-		    cx = *(short int *) (edi + 10);
+		    ax = READ_LE_S16(edi + 2);
+		    cx = READ_LE_S16(edi + 10);
 
-		    ax -= *(short int *) (edi + 14);
-		    cx -= *(short int *) (edi + 4);
+		    ax -= READ_LE_S16(edi + 14);
+		    cx -= READ_LE_S16(edi + 4);
 
 		    ax *= cx;
 
 		    ax -= bestDepth;
-		    currentDepth -= (bx) - 1;	// peut-etre une erreur là
+		    currentDepth -= (bx) - 1;	// peut-etre une erreur la
 
 		    if (currentDepth < 0)
 			{
@@ -846,7 +929,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
 	    while (--primitiveCounter);
 	}
 
-    temp = *(short int *) esi;
+    temp = READ_LE_S16(esi);
     esi += 2;
     if (temp)			// pour les lignes (0)
 	{
@@ -856,19 +939,19 @@ int LBA_renderer::finishRender(unsigned char *esi)
 		    lineDataPtr = (lineData *) esi;
 		    lineCoordinatesPtr = (lineCoordinates *) edi;
 
-		    if (lineDataPtr->p1 % 6 != 0 || lineDataPtr->p2 % 6 != 0)
+		    if (READ_LE_S16(&lineDataPtr->p1) % 6 != 0 || READ_LE_S16(&lineDataPtr->p2) % 6 != 0)
 			{
 			    printf("lineDataPtr reference is malformed !\n");
 			    exit(1);
 			}
 
-		    point1 = lineDataPtr->p1 / 6;
-		    point2 = lineDataPtr->p2 / 6;
-		    lineCoordinatesPtr->data = lineDataPtr->data;
-		    lineCoordinatesPtr->x1 = _flattenPointTable[point1].x;
-		    lineCoordinatesPtr->y1 = _flattenPointTable[point1].y;
-		    lineCoordinatesPtr->x2 = _flattenPointTable[point2].x;
-		    lineCoordinatesPtr->y2 = _flattenPointTable[point2].y;
+		    point1 = READ_LE_S16(&lineDataPtr->p1) / 6;
+		    point2 = READ_LE_S16(&lineDataPtr->p2) / 6;
+		    WRITE_LE_S32(&lineCoordinatesPtr->data, READ_LE_S32(&lineDataPtr->data));
+		    WRITE_LE_S16(&lineCoordinatesPtr->x1, _flattenPointTable[point1].x);
+		    WRITE_LE_S16(&lineCoordinatesPtr->y1, _flattenPointTable[point1].y);
+		    WRITE_LE_S16(&lineCoordinatesPtr->x2, _flattenPointTable[point2].x);
+		    WRITE_LE_S16(&lineCoordinatesPtr->y2, _flattenPointTable[point2].y);
 		    bestDepth = _flattenPointTable[point1].z;
 		    depth = _flattenPointTable[point2].z;
 
@@ -886,7 +969,7 @@ int LBA_renderer::finishRender(unsigned char *esi)
 	    while (--temp);
 	}
 
-    temp = *(short int *) esi;
+    temp = READ_LE_S16(esi);
     esi += 2;
     if (temp)			// pour les cercles (2)
 	{
@@ -922,6 +1005,9 @@ int LBA_renderer::finishRender(unsigned char *esi)
 	}
     renderTabEntryPtr2 = renderTabSorted;
 
+/*    _numOfPrimitives = 1;
+    renderTabEntryPtr2++;*/
+
     if (_numOfPrimitives)
 	{
 	    primitiveCounter = _numOfPrimitives;
@@ -936,34 +1022,84 @@ int LBA_renderer::finishRender(unsigned char *esi)
 			{
 			case 0:	// draw a line
 			   {
+#ifndef PCLIKE
+				   break;
+#endif
 			       lineCoordinatesPtr = (lineCoordinates *) esi;
 			       color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
-			      // drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
+			       drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
 			       break;
 			   }
 			case 1:	// draw a polygon
 			   {
-			       eax = *(int *) esi;
+			       eax = READ_LE_S32(esi);
 			       esi += 4;
 
-			       polyRenderType = eax & 0xFF;
+			       FillVertic_AType = eax & 0xFF;
 			       numOfVertex = (eax & 0xFF00) >> 8;
 			       color = (eax & 0xFF0000) >> 16;
+
+                   assert(FillVertic_AType <=10);
 
 			       destPtr = (unsigned char *) vertexCoordinates;
 
 			       for (i = 0; i < (numOfVertex * 3); i++)
 				   {
-				       *(short int *) destPtr = *(short int *) esi;
+				       WRITE_LE_S16(destPtr, READ_LE_S16(esi));
 				       destPtr += 2;
 				       esi += 2;
 				   }
 
-			       if (prepareRender() != 2)
-				   polyRender(polyRenderType, color);
+			       if (ComputePoly_A() != 2)
+				    FillVertic_A(FillVertic_AType, color);
 
 			       break;
 			   }
+            case 2: // draw a circle
+                {
+                  //  int circleSize;
+                  //  char circleColor;
+
+           /*         int circleParam1;
+                    int circleParam2;
+                    int circleParam3;
+
+                    eax = *(int*) esi;
+
+                    circleParam1 = eax & 0xFF;
+                    circleParam2 = (eax & 0xFFFF00) >> 8;
+                    esi += 4;
+                    eax = *(int*) esi;
+                    circleParam3 = eax & 0xFFFF;
+                    circleParam4 = (eax & 0xFFFF0000) >> 16;
+                    esi += 4;
+                    circleParam5 = *(short int*)esi;
+                    esi += 2;
+
+                    if(!isUsingOrhoProjection)
+                    {
+                        circleParam3 = (circleParam3 * cameraVar2) / (cameraVar1 + *(short int*)esi);
+                    }
+                    else
+                    {
+                        circleParam3 = (circleParam3 * 34) >> 9;
+                    }
+
+                    if(circleParam4 + circleParam3 > renderRight)
+                        renderRight = circleParam4 + circleParam3;
+
+                    if(circleParam4 - circleParam3 < renderLeft)
+                        renderLeft = circleParam4 - circleParam3;
+
+                    if(circleParam5 + circleParam3 > renderBottom)
+                        renderBottom = circleParam5 + circleParam3;
+
+                    if(circleParam5 - circleParam3 < renderTop)
+                        renderTop = circileParam5 - circleParam3;
+
+                    prepareCircle(circleParam3*/
+
+                }
 
 			default:
 			   {
@@ -974,7 +1110,6 @@ int LBA_renderer::finishRender(unsigned char *esi)
 		    renderTabEntryPtr2++;
 		}
 	    while (--primitiveCounter);
-	   // while(0);
 	}
     else
 	{
@@ -988,10 +1123,11 @@ int LBA_renderer::finishRender(unsigned char *esi)
     return (0);
 }
 
-void LBA_renderer::polyRender(int ecx, int edi)
+void FillVertic_A(int ecx, int edi)
 {
     unsigned char *out, *out2;
-    short int *ptr1, *ptr2;
+    short int *ptr1;
+    short int *ptr2;
     int vsize, hsize;
     int color;
     int eax;
@@ -1017,7 +1153,7 @@ void LBA_renderer::polyRender(int ecx, int edi)
     if (vtop >= 480 || vbottom >= 480)
 	return;
 
-    out = videoBuffer1 + screenLockupTable[vtop];
+    out = frontVideoBuffer + screenLockupTable[vtop];
 
     ptr1 = &polyTab[vtop];
     ptr2 = &polyTab2[vtop];
@@ -1027,16 +1163,13 @@ void LBA_renderer::polyRender(int ecx, int edi)
 
     color = edi;
 
-   // osystem->drawBufferToScreen(videoBuffer1);
+   // osystem->Flip(frontVideoBuffer);
 
     switch (ecx)
 	{
-	case 0:		// flat polygone
+	case 0:		// flat polygon
 	   {
-	       eax =
-		   (color & 0xFF) | ((color & 0xFF) << 8) | ((color & 0xFF) << 16) | ((color & 0xFF)
-										      << 24);
-	       for (i = 0; i < vsize; i++)
+           do
 		   {
 		       stop = ptr1[480];
 		       start = ptr1[0];
@@ -1044,7 +1177,7 @@ void LBA_renderer::polyRender(int ecx, int edi)
 		       ptr1++;
 		       hsize = stop - start;
 
-		       if (hsize > 0)
+		       if (hsize >= 0)
 			   {
 			       hsize++;
 			       out2 = start + out;
@@ -1054,11 +1187,109 @@ void LBA_renderer::polyRender(int ecx, int edi)
 				   }
 			   }
 		       out += 640;
-		   }
+		   }while(--vsize);
 	       break;
 	   }
-	case 7:		// main codec
-	case 8:
+    case 1:     // copper
+        {
+            do
+            {
+                start = ptr1[0];
+                stop = ptr1[480];
+
+                ptr1++;
+                hsize = stop - start;
+
+                if(hsize>=0)
+                {
+                    unsigned short int mask = 0x43DB;
+                    unsigned short int dx;
+                    
+                    dx = (unsigned char)color;
+                    dx |= 0x300;
+
+                    hsize++;
+                    out2 = start + out;
+                    for(j = 0; j< hsize; j++)
+                    {
+                        start += mask;
+                        start = (start &0xFF00) | ((start&0xFF) & (unsigned char)(dx>>8)) ;
+                        start = (start &0xFF00) | ((start&0xFF) + (dx&0xFF));
+                        *(out2++) = start&0xFF;
+                        mask = (mask << 2) | (mask >> 14);
+                        mask++;
+                    }
+                }
+                out += 640;
+            }while(--vsize);
+            break;
+        }
+    case 2: // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine // BUGGYYYY !
+        {
+            do
+            {
+                start = ptr1[0];
+                stop = ptr1[480];
+                ptr1++;
+                hsize = stop - start;
+
+                if(hsize >= 0)
+                {
+			       hsize++;
+			       out2 = start + out;
+			       for (j = 0; j < hsize; j++)
+				   {
+                       if((int)out2&1)
+				        *(out2) = color;
+                       out2++;
+				   }
+                }
+                out += 640;
+            }while(--vsize);
+            break;
+        }
+    case 6: // trame (buggé)
+        {
+            unsigned char bl=color;
+            unsigned char bh=0;
+
+            do
+            {
+                start = ptr1[0];
+                stop = ptr1[480];
+                ptr1++;
+                hsize = stop - start;
+
+                if(hsize >= 0)
+                {
+                    hsize++;
+                    out2 = start + out;
+                    
+                    hsize/=2;
+                    if(hsize>1)
+                    {
+                       bh ^= 1;
+                        unsigned short int ax;
+                        ax = (unsigned short int) out2;
+                        ax &= 1;
+                        if(ax ^ bh)
+                        {
+                            out2++;
+                        }
+
+			            for (j = 0; j < hsize; j++)
+				        {
+				                *(out2) = (unsigned char)color;
+                            out2+=2;
+				        }
+                    }
+                }
+                out+=640;
+
+            }while(--vsize);
+            break;
+        }
+	case 7:		// gouraud
 	   {
 	       renderLoop = vsize;
 	       do
@@ -1070,80 +1301,180 @@ void LBA_renderer::polyRender(int ecx, int edi)
 		       out2 = start + out;
 		       hsize = stop - start;
 
-		       var2 = stopColor = ptr2[480];
-		       var3 = startColor = ptr2[0];
+		       varf2 = ptr2[480];
+		       varf3 = ptr2[0];
+
+               unsigned short int startColor = ptr2[0];
+               unsigned short int stopColor = ptr2[480];
+
+                short int colorSize = stopColor - startColor;
 
 		       ptr2++;
 
-		       varf2 = var2;
-		       varf3 = var3;
-
-		       varf4 = varf2 - varf3;
+		       varf4 = (int)varf2 - (int)varf3;
 
 		       if (hsize == 0)
 			   {
-			       *out2 = (unsigned char) ((varf3 + varf2) / 2);	// moyenne des 2 couleurs
+			       *out2 = ((startColor + stopColor) / 2)>>8;	// moyenne des 2 couleurs
 			   }
 		       else if (hsize > 0)
 			   {
 			       if (hsize == 1)
 				   {
-				       *(out2 + 1) = (char) varf2;
-				       *(out2) = (char) varf3;
+				       *(out2 + 1) = stopColor>>8;
+				       *(out2) = startColor>>8;
 				   }
 			       else if (hsize == 2)
 				   {
-				       *(out2 + 2) = (char) varf2;
-				       *(out2 + 1) = (char) ((varf2 + varf3) / 2);
-				       *(out2) = (char) varf3;
+				       *(out2 + 2) = stopColor>>8;
+				       *(out2 + 1) = ((startColor + stopColor) / 2)>>8;
+				       *(out2) = startColor>>8;
 				   }
 			       else
 				   {
-				       varf4 /= hsize;
 
-				       do
-					   {
-					       *(out2++) = (char) varf3;
-					       varf3 += varf4;
-					   }
-				       while (--hsize);
-				   }
-			   }
+                       colorSize /= hsize;
+                       hsize++;
 
-		      /*
-		       * if(hsize==0) // ok { stopColor+=startColor; ptr2++; stopColor>>=1;
-		       * *out2=((stopColor&0xFF00)>>8); } else if(hsize>0) // face dans le bon sens {
-		       * var2=stopColor-=startColor; //largeur de la bande varf2=var2; if(stopColor<0) //
-		       * ok { if(hsize<=2) // ok { varf3=ptr2[480]; varf2=ptr2[0]; ptr2++;
-		       * *(out2+hsize)=(char)varf3; if(--hsize) { varf3+=varf2; varf3/=2;
-		       * *(out2+1)=(char)varf3; } *out2=(char)varf2; } else // ok { varf2=-varf2; varf3=0;
-		       * varf2/=hsize; varf3=ptr2[0]; ptr2++; hsize++; do { (*out2++)=(char)varf3;
-		       * varf3-=varf2; }while(--hsize); } } else { if(hsize<=2) { var2=ptr2[480]; ptr2++;
-		       * *(out2+hsize)=var2; if(--hsize) { var3+=var2; var3>>=1; *(out2+1)=var3; }
-		       * *(out2)=var2; } else // le plus interessant, face visible + couleurs normales {
-		       * var3=0; //var2/=hsize; //largeur de la bande
-		       * 
-		       * varf2=var2; varf2/=(hsize);
-		       * 
-		       * varf3=ptr2[0];
-		       * 
-		       * ptr2++; hsize++; do { (*out2++)=(char)varf3; varf3+=varf2; }while(--hsize); } } } 
-		       */
+                        if(hsize%2)
+                        {
+                            hsize/=2;
+                            *(out2++)=startColor>>8;
+                            startColor+=colorSize;
+                        }
+                        else
+                        {
+                            hsize/=2;
+                        }
+
+                        do
+                        {
+                            *(out2)=startColor>>8;
+                            startColor+=colorSize;
+                            *(out2+1)=startColor>>8;
+                            out2+=2;
+                            startColor+=colorSize;
+                        }while(--hsize);
+                   }
+               }
 		       out += 640;
 		   }
 	       while (--renderLoop);
 
 	       break;
 	   }
+    case 8: // dithering
+        {
+            renderLoop = vsize;
+
+            do
+            {
+
+                stop = ptr1[480];	// stop
+                start = ptr1[0];	// start
+                ptr1++;
+                hsize = stop - start;
+               
+                if(hsize>=0)
+                {
+                    out2 = start + out;
+                    unsigned short int startColor = ptr2[0];
+                    unsigned short int stopColor = ptr2[480];
+                    ptr2++;
+
+                    if(hsize==0)
+                    {
+                        *(out2)=(unsigned char)(((startColor + stopColor)/2)>>8);
+                    }
+                    else
+                    {
+                        short int colorSize = stopColor - startColor;
+                        if(hsize==1)
+                        {
+                            hsize++;
+                            hsize/=2;
+                            unsigned short int currentColor = startColor;
+                            currentColor&=0xFF;
+                            currentColor+=startColor;
+                            *(out2) = currentColor>>8;
+                            currentColor&=0xFF;
+                            startColor+=colorSize;
+                            currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                            currentColor +=startColor;
+                            *(out2+1) = currentColor>>8;
+                        }
+                        else if(hsize==2)
+                        {
+                            hsize++;
+                            hsize/=2;
+                            unsigned short int currentColor = startColor;
+
+                            currentColor&=0xFF;
+                            colorSize/=2;
+                            currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                            currentColor +=startColor;
+                            *(out2++) = currentColor>>8;
+                            startColor+=colorSize;
+
+                            currentColor&=0xFF;
+                            currentColor+=startColor;
+                            *(out2) = currentColor>>8;
+                            currentColor&=0xFF;
+                            startColor+=colorSize;
+                            currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                            currentColor +=startColor;
+                            *(out2+1) = currentColor>>8;
+                        }
+                        else
+                        {
+                            colorSize/=hsize;
+                            hsize++;
+                            unsigned short int currentColor = startColor;
+
+                            if(hsize%2)
+                            {
+                                hsize/=2;
+                                currentColor&=0xFF;
+                                currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                                currentColor +=startColor;
+                                *(out2++) = currentColor>>8;
+                            }
+                            else
+                            {
+                                hsize/=2;
+                            }
+
+                            do
+                            {
+                                currentColor&=0xFF;
+                                currentColor+=startColor;
+                                *(out2) = currentColor>>8;
+                                currentColor&=0xFF;
+                                startColor+=colorSize;
+                                currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                                currentColor +=startColor;
+                                *(out2+1) = currentColor>>8;
+
+                                out2+=2;
+                                startColor+=colorSize;
+                            }while(--hsize);
+                        }
+                    }
+                }
+                out += 640;
+            }while(--renderLoop);
+
+            break;
+        }
 	default:
 	   {
-	      // printf("Unsuported render type %d\n",polyRenderType);
+	       printf("Unsuported render type %d\n",FillVertic_AType);
 	       break;
 	   }
 	};
 }
 
-int LBA_renderer::prepareRender(void)
+int ComputePoly_A(void)
 {
     short int vertexX, vertexY;
     short int *ptr1, *ptr3;
@@ -1241,7 +1572,7 @@ int LBA_renderer::prepareRender(void)
 
     if (polyCropped)
 	{
-	    printf("prepareRender-> cropped poly !\n");
+	    printf("ComputePoly_A-> cropped poly !\n");
 	    exit(1);
 	}
 
@@ -1261,35 +1592,13 @@ int LBA_renderer::prepareRender(void)
 
 	   // drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
 
-	    if (currentVertexY == oldVertexY)	// since it's scanline based, we don't care when we 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // 
-	       // are only moving along X
+	    if (currentVertexY == oldVertexY)	// since it's scanline based, we don't care when we are only moving along X
 		{
 		    oldVertexX = size = currentVertexX;
 		}
 	    else
 		{
-		    psh1 = currentVertexX;	// let's save the current coordinates since we are going to 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // modify the values
+		    psh1 = currentVertexX;	// let's save the current coordinates since we are going to modify the values
 		    psh2 = currentVertexY;
 
 		    if (currentVertexY < oldVertexY)	// if we are going up
@@ -1349,63 +1658,98 @@ int LBA_renderer::prepareRender(void)
 				    vfloat2 -= vfloat;
 				}
 
-			    if (polyRenderType >= 7)
+			    if (FillVertic_AType >= 7) // we must compute the color progression
 				{
-				    ptr3 = &polyTab2[temp2 + 480];
+                    short int* ptr3 = &polyTab2[temp2 + 480];
 
-				    temp4 = ((vertexParam2 - oldVertexParam));
+				    temp4 = (vertexParam2 - oldVertexParam); // compute the color difference
 
 				    if (temp4 >= 0)
 					{
-					   /*
-					    * temp5=temp4/oldVertexX; temp6=temp4%oldVertexX;
-					    */
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }test;
 
-					    vcfloat = ((float) (temp4)) / ((float) oldVertexX);
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }reste;
+            
+                        test.bit.al = oldVertexParam;
+                        test.bit.ah = vertexParam2;
 
-					   /*
-					    * (*(unsigned char*)&temp6)>>=1; (*(unsigned char*)&temp6)+=0x7F;
-					    */
+                        test.bit.ah -= test.bit.al;
 
-					   // temp6=(temp6&0xFF) | (oldVertexParam)<<8;
+                        test.bit.al = 0;
 
-					    vcfloat2 = oldVertexParam;
+                        reste.temp = test.temp % oldVertexX;
 
-					   // temp6=oldVertexParam;
+                        test.temp /= oldVertexX;
 
-					    oldVertexX += 2;
+                        reste.bit.al >>1;
+                        reste.bit.al += 0x7F;
 
-					    for (i = 0; i <= oldVertexX; i++)
+                        reste.bit.ah = oldVertexParam;
+
+                        oldVertexX+=2;
+
+					    for (i = 0; i < oldVertexX; i++)
 						{
-						    *(ptr3) = (short int) vcfloat2;
+						    *(ptr3) = reste.temp;
 						    ptr3 += direction;
-						    vcfloat2 += vcfloat;
+						    reste.temp += test.temp;
 						}
 					}
 				    else
 					{
-					    temp5 = temp4 / oldVertexX;
-					    temp6 = temp4 % oldVertexX;
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }test;
 
-					    vcfloat = -((float) (temp4)) / ((float) oldVertexX);
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }reste;
 
-					    (*(unsigned char *) &temp6) >>= 1;
-					    (*(unsigned char *) &temp6) += 0x7F;
 
-					    temp6 = (temp6 & 0xFF) | (oldVertexParam & 0xFF) << 8;
+                        test.bit.al = oldVertexParam;
+                        test.bit.ah = vertexParam2;
 
-					    vcfloat2 = oldVertexParam;
+                        test.bit.ah -= test.bit.al;
+                        test.bit.ah = -test.bit.ah;
 
-					    temp6 = oldVertexParam;
+                        test.bit.al = 0;
 
-					    oldVertexX += 2;
+                        reste.temp = test.temp % (oldVertexX);
+
+                        test.temp /= oldVertexX;
+
+                        reste.bit.al >>=1;
+                        reste.bit.al = -reste.bit.al;
+                        reste.bit.al += 0x7F;
+
+                        reste.bit.ah = oldVertexParam;
 
 					    for (i = 0; i <= oldVertexX; i++)
 						{
-						    *(ptr3) = (short int) vcfloat2;
+						    *(ptr3) = reste.temp;
 						    ptr3 += direction;
-						    vcfloat2 -= vcfloat;
-						}
+						    reste.temp -= test.temp;
+                        }
 					}
 				}
 			    direction = 1;
@@ -1471,66 +1815,101 @@ int LBA_renderer::prepareRender(void)
 				    vfloat2 += vfloat;
 				}
 
-			    if (polyRenderType >= 7)
+			    if (FillVertic_AType >= 7)
 				{
-				    ptr3 = &polyTab2[temp2];
+				    short int* ptr3 = &polyTab2[temp2];
 
-				    temp4 = ((vertexParam2 - oldVertexParam));
+				    temp4 = ((vertexParam2 - oldVertexParam)); // compute the color difference
 
 				    if (temp4 >= 0)
 					{
-					    temp5 = temp4 / oldVertexX;
-					    temp6 = temp4 % oldVertexX;
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }test;
 
-					    vcfloat =
-						((float) (vertexParam2 - oldVertexParam)) /
-						((float) oldVertexX);
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }reste;
+            
+                        test.bit.al = oldVertexParam;
+                        test.bit.ah = vertexParam2;
 
-					    (*(unsigned char *) &temp6) >>= 1;
-					    (*(unsigned char *) &temp6) += 0x7F;
+                        test.bit.ah -= test.bit.al;
 
-					    temp6 = (temp6 & 0xFF) | (oldVertexParam) << 8;
+                        test.bit.al = 0;
 
-					    vcfloat2 = oldVertexParam;
+                        reste.temp = test.temp % oldVertexX;
 
-					    temp6 = oldVertexParam;
+                        test.temp /= oldVertexX;
 
-					    oldVertexX += 2;
+                        reste.bit.al >>1;
+                        reste.bit.al += 0x7F;
 
-					    for (i = 0; i <= oldVertexX; i++)
+                        reste.bit.ah = oldVertexParam;
+
+                        oldVertexX+=2;
+
+					    for (i = 0; i < oldVertexX; i++)
 						{
-						    *(ptr3) = (short int) vcfloat2;
+						    *(ptr3) = reste.temp;
 						    ptr3 += direction;
-						    vcfloat2 += vcfloat;
+						    reste.temp += test.temp;
 						}
 					}
 				    else
 					{
-					    temp5 = temp4 / oldVertexX;
-					    temp6 = temp4 % oldVertexX;
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }test;
 
-					    vcfloat =
-						-((float) (vertexParam2 - oldVertexParam)) /
-						((float) oldVertexX);
+                        union {
+                            struct{
+                                unsigned char al;
+                                unsigned char ah;
+                            } bit;
+                            unsigned short int temp;
+                        }reste;
 
-					    (*(unsigned char *) &temp6) >>= 1;
-					    (*(unsigned char *) &temp6) += 0x7F;
 
-					    temp6 = (temp6 & 0xFF) | (oldVertexParam & 0xFF) << 8;
+                        test.bit.al = oldVertexParam;
+                        test.bit.ah = vertexParam2;
 
-					    vcfloat2 = oldVertexParam;
+                        test.bit.ah -= test.bit.al;
+                        test.bit.ah = -test.bit.ah;
 
-					    temp6 = oldVertexParam;
+                        test.bit.al = 0;
 
-					   // oldVertexX+=2;
+                        reste.temp = test.temp % (oldVertexX);
+
+                        test.temp /= oldVertexX;
+
+                        reste.bit.al >>=1;
+                        reste.bit.al = -reste.bit.al;
+                        reste.bit.al += 0x7F;
+
+                        reste.bit.ah = oldVertexParam;
 
 					    for (i = 0; i <= oldVertexX; i++)
 						{
-						    *(ptr3) = (short int) vcfloat2;
+						    *(ptr3) = reste.temp;
 						    ptr3 += direction;
-						    vcfloat2 -= vcfloat;
-						}
+						    reste.temp -= test.temp;
+                        }
 					}
+
+
 				}
 
 			    direction = 1;
@@ -1544,7 +1923,7 @@ int LBA_renderer::prepareRender(void)
     return (1);
 }
 
-void LBA_renderer::drawLine(int a, int b, int c, int d, int e)
+void drawLine(int a, int b, int c, int d, int e)
 {
     int temp;
     short int flag;
@@ -1553,7 +1932,7 @@ void LBA_renderer::drawLine(int a, int b, int c, int d, int e)
     short int color;
     short int var2;
     short int xchg;
-    int stringProcessVar = e;
+    int currentLineColor = e;
 
     if (a > c)			// pour toujours dessiner de gauche à droite
 	{
@@ -1621,9 +2000,9 @@ void LBA_renderer::drawLine(int a, int b, int c, int d, int e)
 	    d = -d;
 	}
 
-    out = videoBuffer1 + screenLockupTable[b] + a;
+    out = frontVideoBuffer + screenLockupTable[b] + a;
 
-    color = stringProcessVar;
+    color = currentLineColor;
     if (c < d)			// pente importante
 	{
 	    xchg = c;
@@ -1670,4 +2049,118 @@ void LBA_renderer::drawLine(int a, int b, int c, int d, int e)
 		}
 	    while (--c);
 	}
+}
+
+void setCameraPosition( int X, int Y, int param2, int param3, int param4 )
+{
+    setSomethingVar1 = X;
+    setSomethingVar2 = Y;
+
+    cameraVar1 = param2;
+    cameraVar2 = param3;
+    cameraVar3 = param4;
+
+    isUsingOrhoProjection = 0;
+}
+
+void setCameraAngle(int param0, int param1, int param2, int param3, int param4, int param5, int param6)
+{
+    setSomething2Var1 = param0;
+    setSomething2Var2 = param1;
+    setSomething2Var3 = param2;
+
+    setSomething3(param3, param4, param5);
+
+    setSomething3Var16 += param6;
+
+    setCameraAngleSub(setSomething3Var12, setSomething3Var14, setSomething3Var16);
+
+    setSomething2Var1 = destX;
+    setSomething2Var2 = destZ;
+    setSomething2Var3 = destY;
+}
+
+void setCameraAngleSub(int eax, int ebx, int ecx)
+{
+    destX = (_baseMatrix[0] * eax + _baseMatrix[3] * ebx + _baseMatrix[6] * ecx)>>14;
+    destZ = (_baseMatrix[1] * eax + _baseMatrix[4] * ebx + _baseMatrix[7] * ecx)>>14;
+    destY = (_baseMatrix[2] * eax + _baseMatrix[5] * ebx + _baseMatrix[8] * ecx)>>14;
+}
+
+void setSomething3sub(int eax, int ebx, int ecx)
+{
+    destX = (_baseMatrix[0] * eax + _baseMatrix[1] * ebx + _baseMatrix[2] * ecx)>>14;
+    destZ = (_baseMatrix[3] * eax + _baseMatrix[4] * ebx + _baseMatrix[5] * ecx)>>14;
+    destY = (_baseMatrix[6] * eax + _baseMatrix[7] * ebx + _baseMatrix[8] * ecx)>>14;
+}
+
+void setSomething2(int a, int b, int c)
+{
+    setSomething2Var1 = a;
+    setSomething2Var2 = b;
+    setSomething2Var3 = c;
+}
+
+void setSomething3(int a, int b, int c)	// setupBaseMatrix
+{
+    int setSomething3Var2;
+    int setSomething3Var3;
+    int setSomething3Var18;
+    int setSomething3Var4;
+    int setSomething3Var5;
+    int setSomething3Var9;
+    int setSomething3Var6;
+    int setSomething3Var7;
+    int setSomething3Var10;
+
+    int var1;
+    int var2;
+    int var3;
+    int var4;
+    int var5;
+    int var6;
+    int var7;
+
+    tab1 = &rendererTab[0];
+    tab2 = &rendererTab[256];
+    tab3 = &rendererTab[384];
+
+    baseMatrixRotationX = a & 0x3FF;
+    baseMatrixRotationY = b & 0x3FF;
+    baseMatrixRotationZ = c & 0x3FF;
+
+    int angleXCos = tab1[baseMatrixRotationX];
+    int angleXSin = tab1[(baseMatrixRotationX + 256) & 0x3FF];
+
+    int angleYCos = tab1[baseMatrixRotationY];
+    int angleYSin = tab1[(baseMatrixRotationY + 256) & 0x3FF];
+
+    int angleZCos = tab1[baseMatrixRotationZ];
+    int angleZSin = tab1[(baseMatrixRotationZ + 256) & 0x3FF];
+
+    _baseMatrix[0] = angleZSin;
+    _baseMatrix[1] = -angleZCos;
+    _baseMatrix[3] = (angleZCos * angleXSin)>>14;
+    _baseMatrix[4] = (angleZSin * angleXSin)>>14;
+    _baseMatrix[6] = (angleZCos * angleXCos)>>14;
+    _baseMatrix[7] = (angleZSin * angleXCos)>>14;
+
+    _baseMatrix[0] = (angleZSin * angleYSin)>>14;
+    _baseMatrix[2] = (angleZSin * angleYCos)>>14;
+
+    int temp = _baseMatrix[3];
+
+    _baseMatrix[3] = ((angleYSin * temp) + (angleYCos * angleXCos))>>14;
+    _baseMatrix[5] = ((angleYCos * temp) - (angleYSin * angleXCos))>>14;
+
+    temp = _baseMatrix[6];
+
+    _baseMatrix[6] = ((angleYSin * temp) - (angleXSin * angleYCos))>>14;
+    _baseMatrix[8] = ((angleYCos * temp) + (angleXSin * angleYSin))>>14;
+
+    setSomething3sub(setSomething2Var1, setSomething2Var2, setSomething2Var3);
+
+    setSomething3Var12 = destX;
+    setSomething3Var14 = destZ;
+    setSomething3Var16 = destY;
 }

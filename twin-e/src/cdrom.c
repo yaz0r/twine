@@ -16,14 +16,20 @@
  ***************************************************************************/
 
 #include "lba.h"
-#include "SDL.h"
 
-int LBA_engine::checkCD(char *string)
+#ifdef PCLIKE
+#include "SDL.h"
+#endif
+
+int InitCDR(char *string)
 {
+#ifdef PCLIKE
    // int cur_track;
    // int min, sec, frame;
     int numOfCDROM;
     int cdNum;
+    cdrom=NULL;
+    return(0);
 
     numOfCDROM = SDL_CDNumDrives();
 
@@ -73,12 +79,16 @@ int LBA_engine::checkCD(char *string)
 	cdrom=NULL;
 
 	printf("Can't find LBA1 CD!\n");
+	
+#endif
 
     return (0);
 }
 
-void LBA_engine::stopCD(void)
+void stopCD(void)
 {
+#ifdef PCLIKE
 	if(cdrom!=NULL)
 		SDL_CDStop(cdrom);
+#endif
 }

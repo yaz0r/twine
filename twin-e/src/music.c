@@ -1,12 +1,16 @@
 #include "lba.h"
-#include "SDL.h"
 
-void LBA_engine::playMusic(int musicNum)
+#ifdef PCLIKE
+#include "SDL.h"
+#endif //PCLIKE
+
+void PlayMusic(int musicNum)
 {
+    return;
     if (musicNum == -1)
 	{			/* stop music */
 	    fullStopMusic();
-	    currentlyPlayingMusic = -1;
+	    currentlyPlayingCDTrack = -1;
 	   // playMusic2();
 	    playMusciVar1 = -1;
 	    return;
@@ -21,40 +25,43 @@ void LBA_engine::playMusic(int musicNum)
 
 }
 
-void LBA_engine::playCDtrack(int trackNumber)
+void playCDtrack(int trackNumber)
 {
+    return;
+#ifdef PCLIKE
 	if(cdrom!=NULL)  
 		if(CD_INDRIVE(SDL_CDStatus(cdrom))) SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
+#endif //PCLIKE
     
 }
 
-void LBA_engine::playMidi(int musicNum)
+void playMidi(int musicNum)
 {
 }
 
-void LBA_engine::fullStopMusic(void)
+void fullStopMusic(void)
 {
 }
 
-void LBA_engine::stopMusic(void)
+void stopMusic(void)
 {
     fullStopMusic();
-    currentlyPlayingMusic = -1;
+    currentlyPlayingCDTrack = -1;
 }
 
-int LBA_engine::playMusicSub(void)
+int IsMidiPlaying(void)
 {
     return (0);
 }
 
-void LBA_engine::playMusicSub2(short int arg_0)
+void FadeMusicMidi(short int arg_0)
 {
 }
 
-int LBA_engine::getCurrentlyPlayingMusic(void)
+int getCurrentlyPlayingMusic(void)
 {
     if (musicPosition > musicLength)
-	currentlyPlayingMusic = -1;
+	currentlyPlayingCDTrack = -1;
 
-    return (currentlyPlayingMusic);
+    return (currentlyPlayingCDTrack);
 }

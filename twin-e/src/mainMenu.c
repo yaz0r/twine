@@ -1,30 +1,31 @@
 #include "lba.h"
 
-void LBA_engine::mainMenu(void)
+void MainGameMenu(void)
 {
     short int var4;
     int temp;
     int temp2;
     int temp3;
 
-   // FILE* saveGame;
+   // FILE* SaveGame;
 
-    mainMenu2();
+    HQ_StopSample();
     var4 = 0;
-    copyToBuffer(videoBuffer1, videoBuffer2);
+    CopyScreen(frontVideoBuffer, workVideoBuffer);
 
     if (var4 != 0)
 	return;
 
     do
 	{
-	    loadTextBank(0);
-	    playCDtrack(9);
-	    mainMenu2();
-	    printString(49, mainMenuVar1);
+	    InitDial(0);
+	 //   playCDtrack(9);
+	    HQ_StopSample();
+	    GetMultiText(49, mainMenuVar1);
 	    temp = processMenu(mainMenuData);
 
 	    if (temp == 20)
+	//	if( 1)
 		{
 		    if (enterPlayerName(42))
 			{
@@ -34,16 +35,16 @@ void LBA_engine::mainMenu(void)
 			    * saveGameFileName[0]=mainMenuVar3; saveGameFileName[1]=0; // pas dans le code
 			    * original.. // random pour avoir un num entre 0000 et 9999
 			    * strcat(saveGameFileName,mainMenu7(10000*rand()));
-			    * strcat(saveGameFileName,".LBA"); saveGame=fileOpen(saveGameFileName);
-			    * }while(!saveGame);
+			    * strcat(saveGameFileName,".LBA"); SaveGame=checkIfFileExist(saveGameFileName);
+			    * }while(!SaveGame);
 			    */
 			    reinitAll(1);
 			    newGame();
 			    if (mainLoop())
 				{
-				    mainMenuVar4 = 1;
-				    temp2 = shadowMode;
+				    gameStaffIsDisplayed = 1;
 
+				    temp2 = shadowMode;
 				    temp3 = languageCD1;
 				    languageCD1 = 0;
 				    shadowMode = 0;
@@ -51,17 +52,19 @@ void LBA_engine::mainMenu(void)
 				    currentRoom = 119;
 				    needChangeRoom = 119;
 				    mainLoop();
-				    mainMenuVar4 = 0;
+				    gameStaffIsDisplayed = 0;
+
 				    languageCD1 = temp3;
 				    shadowMode = temp2;
-				    resetVideoBuffer1();
-				    osystem->drawBufferToScreen(videoBuffer1);
-				    playFLA("The_end");
-				    resetVideoBuffer1();
-				    osystem->drawBufferToScreen(videoBuffer1);
+
+				    Cls();
+				    osystem->Flip(frontVideoBuffer);
+				    PlayAnimFla("The_end");
+				    Cls();
+				    osystem->Flip(frontVideoBuffer);
 				    osystem->setPalette(menuPalRGBA);
 				}
-			    copyToBuffer(videoBuffer1, videoBuffer2);
+			    CopyScreen(frontVideoBuffer, workVideoBuffer);
 			    do
 				{
 				    do
@@ -74,13 +77,14 @@ void LBA_engine::mainMenu(void)
 		}
 	    else if (temp == 21)
 		{
-		    if (choosePlayerName(21))
+		    if (chooseSave(21))
 			{
 			    reinitAll(-1);
 			    newGame();
 			    if (mainLoop())
 				{
-				    mainMenuVar4 = 1;
+				    gameStaffIsDisplayed = 1;
+
 				    temp2 = shadowMode;
 				    temp3 = languageCD1;
 				    languageCD1 = 0;
@@ -89,18 +93,19 @@ void LBA_engine::mainMenu(void)
 				    currentRoom = 119;
 				    needChangeRoom = 119;
 				    mainLoop();
-				    mainMenuVar4 = 0;
+				    gameStaffIsDisplayed = 0;
+
 				    languageCD1 = temp3;
 				    shadowMode = temp2;
-				    resetVideoBuffer1();
-				    osystem->drawBufferToScreen(videoBuffer1);
-				    playFLA("The_end");
+				    Cls();
+				    osystem->Flip(frontVideoBuffer);
+				    PlayAnimFla("The_end");
 
-				    resetVideoBuffer1();
-				    osystem->drawBufferToScreen(videoBuffer1);
+				    Cls();
+				    osystem->Flip(frontVideoBuffer);
 				    osystem->setPalette(menuPalRGBA);
 				}
-			    copyToBuffer(videoBuffer1, videoBuffer2);
+			    CopyScreen(frontVideoBuffer, workVideoBuffer);
 			    do
 				{
 				    do
@@ -118,8 +123,8 @@ void LBA_engine::mainMenu(void)
 		}
 	    else if (temp == 23)
 		{
-		    copyToBuffer(videoBuffer2, videoBuffer1);
-		    osystem->drawBufferToScreen(videoBuffer1);
+		    CopyScreen(workVideoBuffer, frontVideoBuffer);
+		    osystem->Flip(frontVideoBuffer);
 		    soundMenuData[5] = 26;
 		    optionMenu();
 		}
@@ -127,28 +132,46 @@ void LBA_engine::mainMenu(void)
 		{
 		   // playSubVideo();
 
-		    loadImageToPtr("ress.hqr", videoBuffer2, 14);
-		    copyToBuffer(videoBuffer2, videoBuffer1);
+		    Load_HQR("ress.hqr", workVideoBuffer, 14);
+		    CopyScreen(workVideoBuffer, frontVideoBuffer);
 
-		    resetPalette();
-		    osystem->drawBufferToScreen(videoBuffer1);
-		    fadeIn2((char *) menuPalRGBA);
+		    SetBackPal();
+		    osystem->Flip(frontVideoBuffer);
+		    FadeToPal((char *) menuPalRGBA);
 		}
 	}
     while (!var4);
 }
 
-void LBA_engine::mainMenu2(void)
+void HQ_StopSample(void)
 {
    // todo: implement this
 }
 
-int LBA_engine::choosePlayerName(int param)
+int chooseSave(int param)
 {
-    return (0);
+  /*  var_14 = 1;
+    var_0C = 50;
+
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    osystem->Flip(frontVideoBuffer);
+    var_24 = alloc(1500);
+    var_28 = alloc(200);
+
+    var_8 = findAllSaves(var_28,var_24);
+
+    if(!var_8)
+        return(0);
+
+    InitDial(0);
+
+    drawSaveNameButton(320,40,GetMultiText(21,var_12C));*/
+
+
+    return (1);
 }
 
-char *LBA_engine::printString(int a, char *b)
+char *GetMultiText(int a, char *b)
 {
     if (a == mainMenu3Var1)
 	{
@@ -170,8 +193,7 @@ char *LBA_engine::printString(int a, char *b)
     copyStringToString((char *) currentTextPtr, b, currentTextLength);	// on copie dans b
    // *(currentTextPtr+currentTextLength)=0; // on ajoute un \n a la fin
     currentTextLength++;	// on augmente la taille de la string de 1
-    copyStringToString(b, mainMenu3Var3, currentTextLength);	// enfin, on copie le tout dan
-   // mainMenu3Var3
+    copyStringToString(b, mainMenu3Var3, currentTextLength);	// enfin, on copie le tout dans mainMenu3Var3
 
     mainMenu3Var1 = a;
     mainMenu3Var2 = currentTextBank;
@@ -180,7 +202,7 @@ char *LBA_engine::printString(int a, char *b)
 
 }
 
-int LBA_engine::processMenu(short int *menuData)
+int processMenu(short int *menuData)
 {
     int localTime;
     int numEntry;
@@ -196,7 +218,7 @@ int LBA_engine::processMenu(short int *menuData)
 
     buttonNeedRedraw = 1;
 
-    loadImageToPtr("ress.hqr", bufSpeak, 51);
+    Load_HQR("ress.hqr", bufSpeak, 51);
 
     numEntry = localData[1];
     currentButton = localData[0];
@@ -284,6 +306,7 @@ int LBA_engine::processMenu(short int *menuData)
 			{
 			    readKeyboard();
 			    drawButton(localData, 1);
+				osystem->updateImage();
 			}
 		    while (printTextVar12 == 0 && key1 == 0 && skipIntro == 0);
 		    buttonNeedRedraw = 0;
@@ -300,6 +323,7 @@ int LBA_engine::processMenu(short int *menuData)
 		    readKeyboard();
 		}
 
+		osystem->updateImage();
 	}
     while (!(key1 & 2) && !(key1 & 1));
 
@@ -310,7 +334,7 @@ int LBA_engine::processMenu(short int *menuData)
     return (currentButton);
 }
 
-void LBA_engine::drawSelectableLetters(void)
+void drawSelectableLetters(void)
 {
     char x, y;
 
@@ -319,7 +343,7 @@ void LBA_engine::drawSelectableLetters(void)
 	    drawSelectableLetter(x, y, 0);
 }
 
-void LBA_engine::drawSelectableLetter(int x, int y, int arg)
+void drawSelectableLetter(int x, int y, int arg)
 {
     char buffer[256];
 
@@ -344,28 +368,28 @@ void LBA_engine::drawSelectableLetter(int x, int y, int arg)
 
     if (arg != 0)
 	{
-	    drawBlackBox(left, top, right, bottom, 91);
+	    Box(left, top, right, bottom, 91);
 	}
     else
 	{
-	    blitRectangle(left, top, right, bottom, (char *) videoBuffer2, left, top,
-			 (char *) videoBuffer1);
+	    blitRectangle(left, top, right, bottom, (char *) workVideoBuffer, left, top,
+			 (char *) frontVideoBuffer);
 	    right2 = right;
 	    drawBoxInsideTrans(left, top, right2, bottom, 4);
 	}
 
-    drawBoxOutLine(left, top, right, bottom);
+    DrawCadre(left, top, right, bottom);
     right2 = right;
 
-    setTextColor(15);
+    CoulFont(15);
 
-    printStringSimple(centerX - getStringLength(buffer) / 2, centerY - 18, buffer);
+    Font(centerX - SizeFont(buffer) / 2, centerY - 18, buffer);
 
-    osystem->refresh(videoBuffer1, left, top, right2, bottom);
+    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right2, bottom);
 
 }
 
-int LBA_engine::enterPlayerName(short int param)
+int enterPlayerName(short int param)
 {
     char buffer[256];
 
@@ -377,18 +401,18 @@ int LBA_engine::enterPlayerName(short int param)
     b = 0;
     c = 0;
 
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    osystem->drawBufferToScreen(videoBuffer1);
-    loadTextBank(0);
-    printString(param, buffer);
-    setTextColor(15);
-    printStringSimple(320 - (getStringLength(buffer) / 2), 20, buffer);
-    osystem->refresh(videoBuffer1, 0, 0, 639, 99);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    osystem->Flip(frontVideoBuffer);
+    InitDial(0);
+    GetMultiText(param, buffer);
+    CoulFont(15);
+    Font(320 - (SizeFont(buffer) / 2), 20, buffer);
+    osystem->CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 99);
     playerName[0] = enterPlayerNameVar1;
    // drawSmallButton(320,100,playerName,1);
     drawSelectableLetters();
 
-    do
+   /* do
 	{
 	    readKeyboard();
 	}
@@ -398,32 +422,32 @@ int LBA_engine::enterPlayerName(short int param)
 	{
 	    key = (char) getKeyboardChar();
 	}
-    while (!key);
+    while (!key);*/
 
    // todo: implement this
 
     enterPlayerNameVar2 = 0;
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    osystem->drawBufferToScreen(videoBuffer1);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    osystem->Flip(frontVideoBuffer);
 
     return (1);
 
     return (c);
 }
 
-char *LBA_engine::getStringFromNum(int valeur)
+char *Itoa(int valeur)
 {
    // toto: implement this
     char *text;
 
-    text = (char *) malloc(256);
+    text = (char *) Malloc(256);
     sprintf(text, "%d", valeur);
 
     return (text);
    // return("test");
 }
 
-void LBA_engine::drawButton(short int *data, int a)
+void drawButton(short int *data, int a)
 {
     int buttonNumber;
     int maxButton;
@@ -492,7 +516,7 @@ void LBA_engine::drawButton(short int *data, int a)
     while (currentButton < maxButton);
 }
 
-void LBA_engine::drawButtonGFX(int largeur, int posY, int c, int d, int mode)
+void drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 {
 
     int right;
@@ -523,25 +547,25 @@ void LBA_engine::drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 			{
 			case 1:
 			   {
-			      // musicVolumeRemaped=remapComposante(left,right,255,musicVolume);
+			      // musicVolumeRemaped=RegleTrois32(left,right,255,musicVolume);
 			   }
 			case 2:
 			   {
-			      // waveVolumeRemaped=remapComposante(left,right,255,waveVolume);
+			      // waveVolumeRemaped=RegleTrois32(left,right,255,waveVolume);
 
 			   }
 			case 3:
 			   {
-			      // CDVolumeRemaped=remapComposante(left,right,255,CDVolume);
+			      // CDVolumeRemaped=RegleTrois32(left,right,255,CDVolume);
 			   }
 			case 4:
 			   {
-			      // lineVolume=remapComposante(left,right,255,lineVolume);
+			      // lineVolume=RegleTrois32(left,right,255,lineVolume);
 			   }
 			case 5:
 
 			   {
-			      // masterVolume=remapComposante(left,right,255,masterVolume);
+			      // masterVolume=RegleTrois32(left,right,255,masterVolume);
 			   }
 			};
 		}
@@ -562,64 +586,26 @@ void LBA_engine::drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 	}
     else
 	{
-	    blitRectangle(left, top, right, bottom, (char *) videoBuffer2, left, top,
-			 (char *) videoBuffer1);
+	    blitRectangle(left, top, right, bottom, (char *) workVideoBuffer, left, top,
+			 (char *) frontVideoBuffer);
 
 	    drawBoxInsideTrans(left, top, right, bottom2, 4);
 	}
 
-    drawBoxOutLine(left, top, right, bottom);
-    setTextColor(15);
-    printString(d, buttonText);
-    stringLength = getStringLength(buttonText);
-    printStringSimple(largeur - (stringLength / 2), posY - 18, buttonText);
+    DrawCadre(left, top, right, bottom);
+    CoulFont(15);
+    GetMultiText(d, buttonText);
+    stringLength = SizeFont(buttonText);
+    Font(largeur - (stringLength / 2), posY - 18, buttonText);
 
    // todo: implementer les boutons de volume...
 
-    osystem->refresh(videoBuffer1, left, top, right, bottom);
+    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
 
 }
 
-void LBA_engine::blitRectangle(int left, int top, int right, int bottom, char *source, int leftDest, int topDest, char *dest)	// pout 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// les 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// boutons 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// 
-																// actifs
+void blitRectangle(int left, int top, int right, int bottom, char *source, int leftDest, int topDest, char *dest)
 {
-   // int localBottom=bottom;
-
     int largeur;
     int hauteur;
 
@@ -629,6 +615,12 @@ void LBA_engine::blitRectangle(int left, int top, int right, int bottom, char *s
     int interligne;
     int temp3;
     int i;
+    int j;
+
+    assert(left >= 0);
+    assert(right < 640);
+    assert(top >= 0);
+    assert(bottom < 480);
 
     s = screenLockupTable[top] + source + left;
     d = screenLockupTable[topDest] + dest + leftDest;
@@ -643,7 +635,7 @@ void LBA_engine::blitRectangle(int left, int top, int right, int bottom, char *s
     left >>= 2;
     temp3 &= 3;
 
-    while (--hauteur)
+    for(j = 0; j < hauteur; j++)
 	{
 	    for (i = 0; i < largeur; i++)
 		{
@@ -655,7 +647,7 @@ void LBA_engine::blitRectangle(int left, int top, int right, int bottom, char *s
 	}
 }
 
-void LBA_engine::drawBoxInsideTrans(int left, int top, int right, int bottom, int mode)
+void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode)
 {
 
     byte *pos;
@@ -687,7 +679,7 @@ void LBA_engine::drawBoxInsideTrans(int left, int top, int right, int bottom, in
     if (bottom > textWindowBottom)
 	bottom = textWindowBottom;
 
-    pos = screenLockupTable[top] + videoBuffer1 + left;
+    pos = screenLockupTable[top] + frontVideoBuffer + left;
     hauteur2 = hauteur = bottom - top;
     hauteur2++;
 
@@ -704,10 +696,11 @@ void LBA_engine::drawBoxInsideTrans(int left, int top, int right, int bottom, in
 		    color2 = color = *pos;
 		    color2 &= 0xF0;
 		    color &= 0x0F;
-		    if (color < localMode)
-			color = color2;
+            color -= localMode;
+		    if (color < 0)
+			    color = color2;
 		    else
-			color += color2 - localMode;
+			    color += color2;
 		    *pos++ = color;
 		    var1--;
 		}
@@ -718,18 +711,15 @@ void LBA_engine::drawBoxInsideTrans(int left, int top, int right, int bottom, in
     while (hauteur2 > 0);
 }
 
-void LBA_engine::drawBoxOutLine(int left, int top, int right, int bottom)
+void DrawCadre(int left, int top, int right, int bottom)
 {
-
-    --bottom;			// FIXME ! je devrais pas avoir ces 2 lignes.
-    --right;
-    launchStringProcess(left, top, right, top, 79);	// ligne du haut
-    launchStringProcess(left, top, left, bottom, 79);	// ligne de gauche
-    launchStringProcess(right, ++top, right, bottom, 73);	// ligne de droite
-    launchStringProcess(++left, bottom, right, bottom, 73);	// ligne du bas
+    Line(left, top, right, top, 79);	// ligne du haut
+    Line(left, top, left, bottom, 79);	// ligne de gauche
+    Line(right, ++top, right, bottom, 73);	// ligne de droite
+    Line(++left, bottom, right, bottom, 73);	// ligne du bas
 }
 
-void LBA_engine::launchStringProcess(int a, int b, int c, int d, int e)
+void Line(int a, int b, int c, int d, int e)
 {
     drawLine(a, b, c, d, e);
 }
@@ -738,136 +728,197 @@ void LBA_engine::launchStringProcess(int a, int b, int c, int d, int e)
 // b=y1
 // c=x2
 // d=y2;
-void LBA_engine::drawLine(int a, int b, int c, int d, int e)
+/*void drawLine(int X1, int Y1, int X2, int Y2, int color)
 {
     int temp;
     short int flag;
     int flag2;
     unsigned char *out;
-    short int color;
     short int var2;
     short int xchg;
 
-    stringProcessVar = e;
+    osystem->drawLine(X1,Y1,X2,Y2,color,palette);
+    return;
 
-    if (a > c)			// pour toujours dessiner de gauche à droite
+    currentLineColor = color;
+
+    if (X1 > X2)			// pour toujours dessiner de gauche à droite
 	{
-	    temp = c;
-	    c = a;
-	    a = temp;
+	    temp = X2;
+	    X2 = X1;
+	    X1 = temp;
 
-	    temp = d;
-	    d = b;
-	    b = temp;
+	    temp = Y2;
+	    Y2 = Y1;
+	    Y1 = temp;
 
 	}
 
-    flag = 0;
+    do
+    {
+        flag = 0;
 
-    if (a < textWindowLeft)
-	{
-	    flag |= 1;
-	}
-    else
-	{
-	    if (a > textWindowRight)
-		return;
-	}
-    if (b < textWindowTop)
-	{
-	    flag |= 8;
-	}
-    else
-	{
-	    if (b > textWindowBottom)
-		flag |= 4;
-	}
+        if (X1 < textWindowLeft)
+	    {
+	        flag |= 1;
+	    }
+        else
+	    {
+	        if (X1 > textWindowRight)
+		    return; // line completly out of screen
+	    }
+        if (Y1 < textWindowTop)
+	    {
+	        flag |= 8;
+	    }
+        else
+	    {
+	        if (Y1 > textWindowBottom)
+		    flag |= 4;
+	    }
 
-    flag <<= 8;
+        flag <<= 8;
 
-    if (c < textWindowLeft)
-	return;
-    if (c <= textWindowLeft)
-	flag |= 2;
+        if (X2 < textWindowLeft)
+	    return; // line out of screen
 
-    if (d < textWindowTop)
-	{
-	    flag |= 8;
-	}
-    else
-	{
-	    if (d > textWindowBottom)
-		flag |= 4;
-	}
+        if (X2 > textWindowRight)
+	    flag |= 2;
 
-    flag2 = flag;
+        if (Y2 < textWindowTop)
+	    {
+	        flag |= 8;
+	    }
+        else
+	    {
+	        if (Y2 > textWindowBottom)
+		    flag |= 4;
+	    }
 
-    if (flag)
-	return;
+        flag2 = flag >> 8;
+
+        if (flag & flag2)
+	    return;
+
+        flag2 |= flag;
+
+        if(flag2)
+        {
+            int step1=Y1-X1;
+            int step2=Y2-X2;
+
+            if(flag & 0x100) // crop left
+            {
+                return;
+                X1=-(X1-textWindowLeft);
+                X1*=step2;
+                X1/=step1;
+                X2+=X1;
+                X1=textWindowLeft;
+            }
+            else
+            if(flag & 0x800)
+            {
+                return;
+            }
+            else
+            if(flag & 0x400)
+            {
+                return;
+            }
+            else
+            if(flag & 0x2) // crop right
+            {
+                Y1=X1;
+                X1=textWindowRight;
+                X1-=Y1;
+                X1*=step2;
+                X1/=step1;
+                Y2=X1;
+                Y2+=X2;
+                X1=Y1;
+                Y1=textWindowRight;
+            }
+            else
+            if(flag & 0x8)
+            {
+                return;
+            }
+            else
+            if(flag & 0x4)
+            {
+                return;
+            }
+        }
+        else
+        {
+            break;
+        }
+    }
+    while(1);
 
    // implementer la suite
 
     flag2 = 640;		// esi
-    c -= a;
-    d -= b;
-    if (d < 0)
+    X2 -= X1;
+    Y2 -= Y1;
+    if (Y2 < 0)
 	{
 	    flag2 = -flag2;
-	    d = -d;
+	    Y2 = -Y2;
 	}
 
-    out = videoBuffer1 + screenLockupTable[b] + a;
+    out = frontVideoBuffer + screenLockupTable[Y1] + X1;
 
-    color = stringProcessVar;
-    if (c < d)			// pente importante
+    if (X2 < Y2)			// pente importante
 	{
-	    xchg = c;
-	    c = d;
-	    d = xchg;
-	    var2 = c;
+	    xchg = X2;
+	    X2 = Y2;
+	    Y2 = xchg;
+	    var2 = X2;
 	    var2 <<= 1;
-	    b = c;
-	    d <<= 1;
-	    c++;
+	    Y1 = X2;
+	    Y2 <<= 1;
+	    X1++;
 	    do
 		{
 		    *out = (unsigned char) color;
-		    b -= d;
-		    if (b > 0)
+		    Y1 -= Y2;
+		    if (Y1 > 0)
 			{
 			    out += flag2;
 			}
 		    else
 			{
-			    b += var2;
+			    Y1 += var2;
 			    out += flag2 + 1;
 			}
 		}
-	    while (--c);
+	    while (--X2);
 	}
     else			// pente reduite
 	{
-	    var2 = c;
+	    var2 = X2;
 	    var2 <<= 1;
-	    b = c;
-	    d <<= 1;
-	    c++;
+	    Y1 = X2;
+	    Y2 <<= 1;
+	    X1++;
 	    do
 		{
 		    *out = (unsigned char) color;
 		    out++;
-		    b -= d;
-		    if (b < 0)
+		    Y1 -= Y2;
+		    if (Y1 < 0)
 			{
-			    b += var2;
+			    Y1 += var2;
 			    out += flag2;
 			}
 		}
-	    while (--c);
+	    while (--X2);
 	}
-}
+}*/
 
-int LBA_engine::getStringLength(char *string)
+int SizeFont(char *string)
 {
     stringLenght = 0;
     unsigned char caractere;
@@ -894,7 +945,7 @@ int LBA_engine::getStringLength(char *string)
     return (stringLenght);
 }
 
-void LBA_engine::copyStringToString(char *a, char *b, int c)
+void copyStringToString(char *a, char *b, int c)
 {
     int i;
 
@@ -902,13 +953,13 @@ void LBA_engine::copyStringToString(char *a, char *b, int c)
 	*(b++) = *(a++);
 }
 
-int LBA_engine::optionMenu(void)
+int optionMenu(void)
 {
     byte temp;
     byte temp2 = 0;
 
-    copyToBuffer(videoBuffer1, videoBuffer2);
-    mainMenu2();
+    CopyScreen(frontVideoBuffer, workVideoBuffer);
+    HQ_StopSample();
 
     playCDtrack(9);		// warning... Truc pas trop gere avec BX là...
 
@@ -922,39 +973,39 @@ int LBA_engine::optionMenu(void)
 		}
 	    else if (temp == 30)
 		{
-		    copyToBuffer(videoBuffer2, videoBuffer1);
-		    osystem->drawBufferToScreen(videoBuffer1);
+		    CopyScreen(workVideoBuffer, frontVideoBuffer);
+		    osystem->Flip(frontVideoBuffer);
 		   // volumeMenu();
 		}
 	    else if (temp == 46)
 		{
 
-		    copyToBuffer(videoBuffer2, videoBuffer1);
-		    osystem->drawBufferToScreen(videoBuffer1);
+		    CopyScreen(workVideoBuffer, frontVideoBuffer);
+		    osystem->Flip(frontVideoBuffer);
 		   // saveManipMenu();
 
 		}
 	    else if (temp == 47)
 		{
-		    copyToBuffer(videoBuffer2, videoBuffer1);
-		    osystem->drawBufferToScreen(videoBuffer1);
+		    CopyScreen(workVideoBuffer, frontVideoBuffer);
+		    osystem->Flip(frontVideoBuffer);
 		    optionMenu2();
 		}
 	}
     while (temp2 != 1);
 
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    osystem->drawBufferToScreen(videoBuffer1);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    osystem->Flip(frontVideoBuffer);
 
     return (0);
 }
 
-void LBA_engine::optionMenu2(void)
+void optionMenu2(void)
 {
     byte temp;
     byte quit = 0;
 
-    copyToBuffer(videoBuffer1, videoBuffer2);
+    CopyScreen(frontVideoBuffer, workVideoBuffer);
 
     do
 	{
@@ -1005,12 +1056,12 @@ void LBA_engine::optionMenu2(void)
 	    else if (temp == 2)
 		{
 		    subMenuData[7] = 4;
-		    agressivity = 0;
+		    autoAgressivity = 0;
 		}
 	    else if (temp == 4)
 		{
 		    subMenuData[7] = 2;
-		    agressivity = 1;
+		    autoAgressivity = 1;
 		}
 
 	}
@@ -1018,6 +1069,10 @@ void LBA_engine::optionMenu2(void)
 
    // todo: implementer le process interne
 
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    osystem->drawBufferToScreen(videoBuffer1);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    osystem->Flip(frontVideoBuffer);
+}
+
+void abort(void)
+{
 }

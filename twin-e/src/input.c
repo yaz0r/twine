@@ -18,7 +18,7 @@
 #include "lba.h"
 #include <SDL.h>
 
-void LBA_engine::readKeyboard(void)
+void readKeyboard(void)
 {
     SDL_Event event;
     int localKey;
@@ -47,7 +47,7 @@ void LBA_engine::readKeyboard(void)
 		    break;
 
 		case SDL_MOUSEBUTTONDOWN:
-		    if (event.button.button == 0)
+		    if (event.button.button == 3)
 			{
 			    osystem->mouseRight = 1;
 			}
@@ -93,6 +93,10 @@ void LBA_engine::readKeyboard(void)
 			case SDLK_RSHIFT:
 			    localKey = 0x36;
 			    break;
+
+            case SDLK_LALT:
+                localKey = 0x38;
+                break;
 
 			case SDLK_SPACE:
 			    localKey = 0x39;
@@ -192,7 +196,7 @@ void LBA_engine::readKeyboard(void)
    // printf("scancode= %X\n",skipIntro);
 }
 
-short int LBA_engine::getKeyboardChar(void)
+short int getKeyboardChar(void)
 {
     do
 	{

@@ -1,12 +1,12 @@
 #include "lba.h"
 
-void LBA_engine::loadCFG(void)
+void InitProgram(void)
 {
     initAll("LBA.CFG", 15);
    // processVOXfile
 }
 
-void LBA_engine::initAll(char *fileName, int a)
+void initAll(char *fileName, int a)
 {
    // int var0C=0;
    // int var10=unkPtr;
@@ -15,6 +15,7 @@ void LBA_engine::initAll(char *fileName, int a)
     char **usedCFG;
 
     printf("Copyright (c) Adeline Software International 1994, All Rights Reserved.\n");
+    printf("Compiled the %s at %s\n", __DATE__, __TIME__);
     cfg_file = 0;
 
     if (a == 0)
@@ -23,8 +24,10 @@ void LBA_engine::initAll(char *fileName, int a)
     if (!(a & 16))
 	a |= 1;
 
+#ifdef PCLIKE
     environment = getenv("Adeline");
     usedCFG = &environment;
+#endif //PCLIKE
 
   /*  if (a != -50)
 	{
@@ -37,7 +40,7 @@ void LBA_engine::initAll(char *fileName, int a)
 			    exit(1);
 			}
 
-		    cfg_file = fileOpen(environment);
+		    cfg_file = checkIfFileExist(environment);
 
 		    if (!cfg_file)
 			{
@@ -49,7 +52,7 @@ void LBA_engine::initAll(char *fileName, int a)
 				    printf("         Using local configuration file %s.\n",
 					   fileName);
 				}
-			    cfg_file = fileOpen(fileName);
+			    cfg_file = checkIfFileExist(fileName);
 			    if (!cfg_file)
 				{
 				    printf("Error: Cannot find configuration file %s.\n", fileName);
@@ -62,7 +65,7 @@ void LBA_engine::initAll(char *fileName, int a)
 		}
 	    else
 		{
-		    cfg_file = fileOpen(environment);
+		    cfg_file = checkIfFileExist(environment);
 		    if (environment)
 			usedCFG = &environment;
 		}
@@ -89,13 +92,13 @@ void LBA_engine::initAll(char *fileName, int a)
 
 }
 
-void LBA_engine::initVideoStuff(void)
+void initVideoStuff(void)
 {
     int i, j, k;
 
-    videoBuffer1 = videoBuffer1bis = (byte *) malloc(sizeof(byte) * 307200);
+    frontVideoBuffer = frontVideoBufferbis = (byte *) Malloc(sizeof(byte) * 307200);
 
-    osystem->initBuffer((char *) videoBuffer1, 640, 480);
+    osystem->initBuffer((char *) frontVideoBuffer, 640, 480);
 	osystem->initVideoBuffer(flaBuffer,320,200);
 
     j = 0;
@@ -108,8 +111,4 @@ void LBA_engine::initVideoStuff(void)
 	}
 
     initVideoVar1 = -1;
-
-    renderer.videoBuffer1 = videoBuffer1;
-    renderer.screenLockupTable = screenLockupTable;
-    renderer.osystem = osystem;
 }

@@ -1,7 +1,6 @@
 #include "lba.h"
 
-void LBA_engine::loadTextBank(int index)	// ca devrais plutot etre un truc du genre
-						// loadTextBank
+void InitDial(int index)
 {
 
     int bundleEntryPoint;
@@ -16,38 +15,31 @@ void LBA_engine::loadTextBank(int index)	// ca devrais plutot etre un truc du ge
 
     bundleEntryPoint = (language * 14) * 2 + index * 2;
 
-    size = loadImageToPtr("text.hqr", (byte *) bufOrder, bundleEntryPoint);
+    size = Load_HQR("text.hqr", (byte *) bufOrder, bundleEntryPoint);
 
     numTextEntry = size / 2;
 
     bundleEntryPoint++;
 
-    textSize = loadImageToPtr("text.hqr", (byte *) bufText, bundleEntryPoint);
-
-#ifdef DEBUG
-    dumpFile("currentBufOrder", bufOrder, printStringVar1);
-    dumpFile("currentBufText", bufText, textSize);
-#endif
+    textSize = Load_HQR("text.hqr", (byte *) bufText, bundleEntryPoint);
 
     if (languageCD1 != 0)
-	loadVox(index);
+	    loadVox(index);
 
     return;
-
 }
 
-void LBA_engine::printTextFullScreen(int textIndex)
+void printTextFullScreen(int textIndex)
 {
     int isVoxSet;
     int temp2;
     int temp3 = 0;
 
     saveTextWindow();
-    maximizeTextWindow();
-    copyToBuffer(videoBuffer1, videoBuffer2);
+    UnSetClip();
+    CopyScreen(frontVideoBuffer, workVideoBuffer);
 
-    if (languageCD1 != 0)	// si on doit player le vox, on le met le pointeur à la bonne
-       // position
+    if (languageCD1 != 0)	// si on doit player le vox, on met le pointeur à la bonne position
 	{
 	    isVoxSet = setVoxFileAtDigit(textIndex);
 	}
@@ -81,16 +73,17 @@ void LBA_engine::printTextFullScreen(int textIndex)
 	    return;
 	}
 
-    printText8(textIndex);	// prépare le text
-    drawTextBox();
+    initText(textIndex);	// prépare le text
+    InitDialWindow();
 
     do				// debut de la boucle d'affichage du text+sons
 	{
+        waitRetrace();
 	    readKeyboard();
 	    isVoxSet = temp2 = printText10();	// on doit player le son ?
 	    printText4(voxFileHandle);
 
-	    if (isVoxSet == 2)
+	  /*  if (isVoxSet == 2)
 		{
 		    do
 			{
@@ -109,7 +102,7 @@ void LBA_engine::printTextFullScreen(int textIndex)
 			    printText4(voxFileHandle);
 			}
 		    while (1);
-		}
+		}*/
 
 	    if (skipIntro == 1)
 		{
@@ -124,6 +117,7 @@ void LBA_engine::printTextFullScreen(int textIndex)
 			    break;
 			}
 		}
+		osystem->updateImage();
 	}
     while (!temp3);
 
@@ -154,7 +148,7 @@ void LBA_engine::printTextFullScreen(int textIndex)
 	}
     while (skipIntro || key1 || printTextVar12);
 
-    do
+    /*do
 	{
 	    readKeyboard();
 	    if (skipIntro != 0)
@@ -169,14 +163,14 @@ void LBA_engine::printTextFullScreen(int textIndex)
 		    return;
 		}
 	}
-    while (!printTextVar12);
+    while (!printTextVar12);*/
 
     loadSavedTextWindow();
     return;
 
 }
 
-void LBA_engine::saveTextWindow(void)
+void saveTextWindow(void)
 {
     textWindowLeftSave = textWindowLeft;
     textWindowTopSave = textWindowTop;
@@ -184,14 +178,14 @@ void LBA_engine::saveTextWindow(void)
     textWindowBottomSave = textWindowBottom;
 }
 
-void LBA_engine::maximizeTextWindow(void)
+void UnSetClip(void)
 {
     textWindowTop = textWindowLeft = 0;
     textWindowRight = largeurEcran - 1;
     textWindowBottom = hauteurEcran - 1;
 }
 
-int LBA_engine::printText4(FILE * fileHandle)
+int printText4(FILE * fileHandle)
 {
     int result;
 
@@ -213,20 +207,20 @@ int LBA_engine::printText4(FILE * fileHandle)
     return (1);
 }
 
-void LBA_engine::readBufferSpeak(FILE * fileHandle)
+void readBufferSpeak(FILE * fileHandle)
 {
     int a;
     int b;
     int c;
 
-    readResourceData(fileHandle, (char *) &b, 4);
-    readResourceData(fileHandle, (char *) &c, 4);
-    readResourceData(fileHandle, (char *) &a, 2);
+    Read(fileHandle, (char *) &b, 4);
+    Read(fileHandle, (char *) &c, 4);
+    Read(fileHandle, (char *) &a, 2);
 
    // todo: implementer la suite
 }
 
-void LBA_engine::loadSavedTextWindow(void)
+void loadSavedTextWindow(void)
 {
     textWindowLeft = textWindowLeftSave;
     textWindowTop = textWindowTopSave;
@@ -234,14 +228,14 @@ void LBA_engine::loadSavedTextWindow(void)
     textWindowBottom = textWindowBottomSave;
 }
 
-int LBA_engine::printText6(int var)
+int printText6(int var)
 {
    // todo: implement this
    // sound function
     return (0);
 }
 
-int LBA_engine::printText7(int var)
+int printText7(int var)
 {
    // todo: implement this
    // sound function
@@ -249,15 +243,12 @@ int LBA_engine::printText7(int var)
 
 }
 
-int LBA_engine::printText8(int var)
+int initText(int var)
 {
-    int result;
-
     printTextVar13 = 0;
 
-    result = findString(var);
-    if (!result)
-	return (0);
+    if(!findString(var))
+	    return (0);
 
     printText8Ptr1 = buf1;
     printText8Ptr2 = buf2;
@@ -269,45 +260,47 @@ int LBA_engine::printText8(int var)
     buf2[0] = 0;
     printText8Var2 = var;
     printText8Var3 = 0;
-    printText8Var4 = dialogueBoxLeft + 8;
+    TEXT_CurrentLetterX = dialogueBoxLeft + 8;
     printText8Var5 = 0;
     printText8Var6 = 0;
-    printText8Var7 = dialogueBoxTop + 8;
+    TEXT_CurrentLetterY = dialogueBoxTop + 8;
     printText8Var8 = currentTextPtr;
 
-    fontInit(lbaFont, 2, 7);
+    SetFont(lbaFont, 2, 7);
 
     return (0);
 }
 
-void LBA_engine::drawTextBox(void)
+void InitDialWindow(void)
 {
     blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
-		 (char *) videoBuffer2, dialogueBoxLeft, dialogueBoxTop, (char *) videoBuffer1);
+		 (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
     if (newGameVar4 != 0)
 	{
-	    drawBoxOutLine(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+	    DrawCadre(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 	    drawBoxInsideTrans(dialogueBoxLeft + 1, dialogueBoxTop + 1, dialogueBoxRight - 1,
 			       dialogueBoxBottom - 1, 3);
 	}
 
-    osystem->refresh(videoBuffer1, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
+    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
 		     dialogueBoxBottom);
 
     printText8Var3 = 0;
 
     blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom,
-		 (char *) videoBuffer1, dialogueBoxLeft, dialogueBoxTop, (char *) videoBuffer2);
+		 (char *) frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) workVideoBuffer);
+
+	osystem->updateImage();
 }
 
-int LBA_engine::printText10(void)
+int printText10(void)
 {
 
     int a;
     int b;
 
     if (printTextVar13 == 0)
-	return (0);
+	    return (0);
 
     if (*printText8Ptr2 == 0)
 	{
@@ -318,21 +311,20 @@ int LBA_engine::printText10(void)
 		    printTextVar13 = 0;
 		    return (0);
 		}
+
 	    if (printText8Var6 != 0)
 		{
-		    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight,
-				 dialogueBoxBottom, (char *) videoBuffer2, dialogueBoxLeft,
-				 dialogueBoxTop, (char *) videoBuffer1);
-		    osystem->refresh(videoBuffer1, dialogueBoxLeft, dialogueBoxTop,
-				     dialogueBoxRight, dialogueBoxBottom);
+		    blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
+		    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 		    printText8Var3 = 0;
 		    printText8Var6 = 0;
-		    printText8Var4 = dialogueBoxLeft + 8;
-		    printText8Var7 = dialogueBoxTop + 8;
+		    TEXT_CurrentLetterX = dialogueBoxLeft + 8;
+		    TEXT_CurrentLetterY = dialogueBoxTop + 8;
 		}
+
 	    if (*printText8Var8 == 0)
 		{
-		    printText8Sub2();
+		    initProgressiveTextBuffer();
 		    printText8Var5 = 1;
 		    return (1);
 		}
@@ -342,26 +334,23 @@ int LBA_engine::printText10(void)
     if (*printText8Ptr2 == 0)
 	return (1);
 
-    printText8Sub4(printText8Var4, printText8Var7, *printText8Ptr2);	// printText8var4 ==
-   // currentLetterX
-   // printText8Var7 ==
-   // currentLetter7
+    printText8Sub4(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *printText8Ptr2);
     printText10Sub2();		// fonction responsable de l'affichage du text
 
-    printText10Sub3(*printText8Ptr2, &a, &b, lbaFont);
+    TEXT_GetLetterSize(*printText8Ptr2, &a, &b, lbaFont);
 
     if (*printText8Ptr2 != 0x20)
 	{
-	    printText8Var4 += a + 2;
+	    TEXT_CurrentLetterX += a + 2;
 	}
     else
 	{
 	    if (printText10Var1 != 0)
 		{
-		    printText8Var4++;
+		    TEXT_CurrentLetterX++;
 		    printText10Var1--;
 		}
-	    printText8Var4 += spaceLength;
+	    TEXT_CurrentLetterX += spaceLength;
 	}
 
     printText8Ptr2++;		// on passe au caractere suivant ?
@@ -369,8 +358,8 @@ int LBA_engine::printText10(void)
     if (*printText8Ptr2 != 0)
 	return (1);
 
-    printText8Var7 += 38;
-    printText8Var4 = dialogueBoxLeft + 8;
+    TEXT_CurrentLetterY += 38;
+    TEXT_CurrentLetterX = dialogueBoxLeft + 8;
     if (printText8Var6 == 1)
 	if (printText8Var5 == 0)
 	    {
@@ -382,7 +371,7 @@ int LBA_engine::printText10(void)
     if (printText8Var1 < dialogueBoxParam1)
 	return (1);
 
-    printText8Sub2();
+    initProgressiveTextBuffer();
     printText8Var6 = 1;
 
     if (*printText8Var8 == 0)
@@ -392,13 +381,13 @@ int LBA_engine::printText10(void)
 
 }
 
-void LBA_engine::printText8Sub2(void)
+void initProgressiveTextBuffer(void)
 {
     int i = 0;
 
     buf2[0] = 0;
 
-    while (i < initVar5)
+    while (i < progressiveTextBufferSize)
 	{
 	    strcat(buf2, " ");
 	    i++;
@@ -407,10 +396,10 @@ void LBA_engine::printText8Sub2(void)
     printText8Ptr2 = buf2;
     addLineBreakX = 16;
     printText8Var1 = 0;
-    printText8PrepareBufferVar3 = initVar5;
+    printText8PrepareBufferVar3 = progressiveTextBufferSize;
 }
 
-void LBA_engine::printText10Sub2(void)
+void printText10Sub2(void)
 {
     int currentLetter;
     int currentIndex;
@@ -428,32 +417,32 @@ void LBA_engine::printText10Sub2(void)
    // todo: gerer le delay ici...
 
     counter = printText8Var3;
-    counter2 = initVar2;
+    counter2 = progressiveTextStartColor;
 
     while (--counter >= 0)
 	{
-	    setTextColor(counter2);
+	    CoulFont(counter2);
 	    drawDoubleLetter(*(ptr + 1), *(ptr + 2), *ptr, counter2);
-	    counter2 -= initVar4;
-	    if (counter2 > initVar3)
-		counter2 = initVar3;
+	    counter2 -= progressiveTextStepSize;
+	    if (counter2 > progressiveTextStopColor)
+		    counter2 = progressiveTextStopColor;
 	    ptr -= 3;
 	};
 
 }
 
-void LBA_engine::drawDoubleLetter(int a, int b, int c, int d)
+void drawDoubleLetter(int a, int b, int c, int d)
 {
     int left, top, right, bottom;
 
     if (c == 0x20)
 	return;
 
-    setTextColor(0);		// on met la couleur grise
+    CoulFont(0);		// on met la couleur grise
 
     drawLetter2(a + 2, b + 4, c);	// le caractere derriere en gris
 
-    setTextColor(d);		// on met la bonne couleur
+    CoulFont(d);		// on met la bonne couleur
 
     drawLetter2(a, b, c);
 
@@ -464,30 +453,30 @@ void LBA_engine::drawDoubleLetter(int a, int b, int c, int d)
 
    // manque les check pour la taille de la boite de dialogue...
 
-    osystem->refresh(videoBuffer1, left, top, right, bottom);
+    osystem->CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
 }
 
-void LBA_engine::drawLetter2(int x, int y, int c)
+void drawLetter2(int x, int y, int c)
 {
     char temp[2];		// todo: faire une vrais implementation de la chose...
 
     temp[1] = 0;
     temp[0] = (char) c;
 
-    printStringSimple(x, y, temp);
+    Font(x, y, temp);
 }
 
-void LBA_engine::printText10Sub3(byte c, int *b, int *a, byte * font)
+void TEXT_GetLetterSize(byte character, int *pLetterWidth, int *pLetterHeight, byte * pFont)
 {
     byte *temp;
 
-    temp = font + *((short int *) (font + c * 4));
-    *b = *(temp);
-    *a = *(temp + 1);
+    temp = pFont + *((short int *) (pFont + character * 4));
+    *pLetterWidth = *(temp);
+    *pLetterHeight = *(temp + 1);
 
 }
 
-void LBA_engine::printText8Sub4(short int a, short int b, short int c)
+void printText8Sub4(short int a, short int b, short int c)
 {
     int counter;
     int temp;
@@ -525,43 +514,43 @@ void LBA_engine::printText8Sub4(short int a, short int b, short int c)
     printText8Var3 = counter;
 }
 
-void LBA_engine::printText10Sub(void)
+void printText10Sub(void)
 {
-    vertexCoordinates[0] = initVar3;	// les 3 vertex ?
+    vertexCoordinates[0] = progressiveTextStopColor;	// les 3 vertex ?
     vertexCoordinates[1] = dialogueBoxRight - 3;
     vertexCoordinates[2] = dialogueBoxBottom - 24;
-    vertexCoordinates[3] = initVar3;
+    vertexCoordinates[3] = progressiveTextStopColor;
     vertexCoordinates[4] = dialogueBoxRight - 24;
     vertexCoordinates[5] = dialogueBoxBottom - 3;
-    vertexCoordinates[6] = initVar2;
+    vertexCoordinates[6] = progressiveTextStartColor;
     vertexCoordinates[7] = vertexCoordinates[1];
     vertexCoordinates[8] = vertexCoordinates[5];
 
-    polyRenderType = 0;
+    FillVertic_AType = 0;
     numOfVertex = 3;
 
-    if (printText10SubSub2())
+    if (ComputePoly())
 	{
-	    printText10SubSub(polyRenderType, initVar3);
+	    FillVertic(FillVertic_AType, progressiveTextStopColor);
 	}
 
-    osystem->refresh(videoBuffer1, dialogueBoxRight - 24, dialogueBoxBottom - 24,
+    osystem->CopyBlockPhys(frontVideoBuffer, dialogueBoxRight - 24, dialogueBoxBottom - 24,
 		     dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
 }
 
-void LBA_engine::printText10SubSub(int arg_0, int arg_4)
+void FillVertic(int arg_0, int arg_4)
 {
-    polyRender(arg_0, arg_4);
+    FillVertic_A(arg_0, arg_4);
 }
 
-int LBA_engine::printText10SubSub2(void)
+int ComputePoly(void)
 {
     pRenderV1 = vertexCoordinates;
-    return (prepareRender());
+    return (ComputePoly_A());
 }
 
-int LBA_engine::prepareRender(void)
+/*int ComputePoly_A(void)
 {
     short int vertexX, vertexY;
     short int *ptr1, *ptr3;
@@ -659,7 +648,7 @@ int LBA_engine::prepareRender(void)
 
     if (polyCropped)
 	{
-	    printf("prepareRender-> cropped poly !\n");
+	    printf("ComputePoly_A-> cropped poly !\n");
 	    exit(1);
 	}
 
@@ -767,7 +756,7 @@ int LBA_engine::prepareRender(void)
 				    vfloat2 -= vfloat;
 				}
 
-			    if (polyRenderType >= 7)
+			    if (FillVertic_AType >= 7)
 				{
 				    ptr3 = &polyTab2[temp2 + 480];
 
@@ -779,7 +768,7 @@ int LBA_engine::prepareRender(void)
 					    * temp5=temp4/oldVertexX; temp6=temp4%oldVertexX;
 					    */
 
-					    vcfloat = ((float) (temp4)) / ((float) oldVertexX);
+				/*	    vcfloat = ((float) (temp4)) / ((float) oldVertexX);
 
 					   /*
 					    * (*(unsigned char*)&temp6)>>=1; (*(unsigned char*)&temp6)+=0x7F;
@@ -787,7 +776,7 @@ int LBA_engine::prepareRender(void)
 
 					   // temp6=(temp6&0xFF) | (oldVertexParam)<<8;
 
-					    vcfloat2 = oldVertexParam;
+					/*    vcfloat2 = oldVertexParam;
 
 					   // temp6=oldVertexParam;
 
@@ -889,7 +878,7 @@ int LBA_engine::prepareRender(void)
 				    vfloat2 += vfloat;
 				}
 
-			    if (polyRenderType >= 7)
+			    if (FillVertic_AType >= 7)
 				{
 				    ptr3 = &polyTab2[temp2];
 
@@ -960,9 +949,9 @@ int LBA_engine::prepareRender(void)
     while (--numOfVertexRemaining);
 
     return (1);
-}
+}*/
 
-int LBA_engine::findString(int index)
+int findString(int index)
 {
     int temp = 0;
     int temp2 = 0;
@@ -1019,12 +1008,12 @@ int LBA_engine::findString(int index)
 
 }
 
-int LBA_engine::printText11(void)
+int printText11(void)
 {
     return (printText4(voxFileHandle));
 }
 
-void LBA_engine::processTextLine(void)
+void processTextLine(void)
 {
     short int var4;
     char *buffer;
@@ -1038,7 +1027,7 @@ void LBA_engine::processTextLine(void)
     printText8PrepareBufferVar2 = 0;
     buf2[0] = 0;
 
-  pt8start:
+    pt8start:
     if (*buffer == 0x20)
 	{
 	    buffer++;
@@ -1100,19 +1089,7 @@ void LBA_engine::processTextLine(void)
 	{
 
 	    spaceLength += (dialogueBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
-	    printText10Var1 = dialogueBoxParam2 - addLineBreakX - dialogueBoxParam2 - addLineBreakX;	// stupid... 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // recheck
+	    printText10Var1 = dialogueBoxParam2 - addLineBreakX - dialogueBoxParam2 - addLineBreakX;	// stupid... recheck
 	}
 
     printText8Var8 = buffer;
@@ -1121,7 +1098,7 @@ void LBA_engine::processTextLine(void)
 
 }
 
-void LBA_engine::getWordSize(char *arg1, char *arg2)
+void getWordSize(char *arg1, char *arg2)
 {
     int temp = 0;
     char *arg2Save = arg2;
@@ -1134,6 +1111,6 @@ void LBA_engine::getWordSize(char *arg1, char *arg2)
 
     wordSizeChar = temp;
     *arg2 = 0;
-    wordSizePixel = getStringLength(arg2Save);
+    wordSizePixel = SizeFont(arg2Save);
 
 }

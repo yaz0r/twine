@@ -15,17 +15,30 @@
  *                                                                         *
  ***************************************************************************/
 
+struct MDL_BoundingBoxPoint
+{
+	short int bottomLeft;
+	short int topRight;
+};
+
+struct MDL_BoundingBox
+{
+	MDL_BoundingBoxPoint X;
+	MDL_BoundingBoxPoint Y;
+	MDL_BoundingBoxPoint Z;
+};
+
 struct actor
     {
-	byte *bodyPtr;
 	char body;
 	char anim;
 	byte field_2;
 	byte field_3;
-	unsigned char *field_4;
+	unsigned char *animExtraData;
 	short int field_8;
 	short int currentLabelPtr;
-	byte field_10;
+   	byte *entityDataPtr;
+	short int field_10;
 	short int field_12;
 	short int field_14;
 	short int talkColor;
@@ -36,16 +49,13 @@ struct actor
 	short int field_20;
 	short int field_22;
 	short int field_24;
-	short int field_26;	/* \ */
-	short int field_28;	/* | */
-	short int field_2A;	/* |____ costume loading vars */
-	short int field_2C;	/* | */
-	short int field_2E;	/* | */
-	short int field_30;	/* / */
+
+	MDL_BoundingBox boudingBox;
+
 	short int angle;	// rotation ?
-	short int field_34;
+	short int speed;
 	timeStruct time;
-	short int field_40;
+	short int comportement;
 	short int positionInMoveScript;
 	short int positionInActorScript;
 
@@ -62,18 +72,67 @@ struct actor
 	short int standOn;
 	short int zone;
 	short int label;
-	short int field_5E;
-	unsigned short int field_60;	// flags
-	short int field_62;	// flags2
+	short int pausedTrackPtr;
+
+    union
+    {
+	    U16 staticFlagsMask;
+
+        struct
+        {
+            U16 bComputeCollisionWithObj            : 1; // 0x0001
+            U16 bComputeCollisionWithBricks         : 1; // 0x0002
+            U16 bIsZonable                          : 1; // 0x0004
+            U16 bIsUsingClipping                    : 1; // 0x0008
+            U16 bIsPushable                         : 1; // 0x0010
+            U16 bIsDead                             : 1; // 0x0020
+            U16 bCanDrown                           : 1; // 0x0040
+            U16 bUnk80                              : 1; // 0x0080
+            U16 bUnk0100                            : 1; // 0x0100
+            U16 bNoDisplay                          : 1; // 0x0200
+            U16 bIsSpriteActor                      : 1; // 0x0400
+            U16 bIsFallable                         : 1; // 0x0800
+            U16 bDoesntCastShadow                   : 1; // 0x1000
+            U16 bIsBackgrounded                     : 1; // 0x2000
+            U16 bIsCarrier                          : 1; // 0x4000
+            U16 bIsUsingMiniZv                      : 1; // 0x8000
+        } staticFlagsBF;
+    };
+
+    union
+    {
+        U16 dynamicFlagsMask;
+
+        struct
+        {
+            U16 bUnk0001                            : 1; // 0x0001
+            U16 bUnk0002                            : 1; // 0x0002
+            U16 bUnk0004                            : 1; // 0x0004
+            U16 bUnk0008                            : 1; // 0x0008
+            U16 bUnk0010                            : 1; // 0x0010
+            U16 bUnk0020                            : 1; // 0x0020
+            U16 bIsMoving                           : 1; // 0x0040
+            U16 bUnk0080                            : 1; // 0x0080
+            U16 bUnk0100                            : 1; // 0x0100
+            U16 bUnk0200                            : 1; // 0x0200
+            U16 bUnk0400                            : 1; // 0x0400
+            U16 bUnk0800                            : 1; // 0x0800
+            U16 bUnk1000                            : 1; // 0x1000
+            U16 bUnk2000                            : 1; // 0x2000
+            U16 bUnk4000                            : 1; // 0x4000
+            U16 bUnk8000                            : 1; // 0x8000
+        } dynamicFlagsBF;
+    };
+
 	short int hitBy;
 	short int field_66;
 	short int life;
-	short int field_6A;
+	short int lastRotationSpeed;
 	short int lastX;
 	short int lastZ;
 	short int lastY;
-	short int currentAnim;
-	short int field_72;
+	short int previousAnimIndex;
+	short int doorStatus;
 	short int animPosition;	// animPosition
 	short int field_78;
 

@@ -21,18 +21,23 @@
  * That's the entry point of the 3D renderer 
  */
 
-int LBA_engine::startRenderer(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14,
+int AffObjetIso(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14,
 			      unsigned char *costumePtr)
 {
     unsigned char *ptr;
 
-    renderer.textWindowBottom = textWindowBottom;
-    renderer.textWindowTop = textWindowTop;
-    renderer.textWindowLeft = textWindowLeft;
-    renderer.textWindowRight = textWindowRight;
+    textWindowBottom = textWindowBottom;
+    textWindowTop = textWindowTop;
+    textWindowLeft = textWindowLeft;
+    textWindowRight = textWindowRight;
 
-    int temp = renderer.startRenderer(arg_0, arg_4, arg_8, arg_C, arg_10, arg_14,
-				      costumePtr);
+   
+        unsigned char* data;
+        data = HQR_Get(InventoryObj,5);
+   
+
+//    int temp = renderer.AffObjetIso(arg_0, arg_4, arg_8, 0, 500, 0, data);
+    int temp = AffObjetIso(arg_0, arg_4, arg_8, arg_C, arg_10, arg_14, costumePtr);
 
     renderLeft = renderer._renderLeft;
     renderRight = renderer._renderRight;
@@ -57,12 +62,12 @@ int LBA_engine::startRenderer(int arg_0, int arg_4, int arg_8, int arg_C, int ar
     renderBottom = -32767;
 
    /*
-    * the use of setSomethingVar4 is still unknown 
+    * the use of isUsingOrhoProjection is still unknown 
     */
 
-    if (setSomethingVar4 == 0)
+    if (renderer.isUsingOrhoProjection == 0)
 	{
-	    printf("Unimplemented startRenderer\n");
+	    printf("Unimplemented AffObjetIso\n");
 	    exit(1);
 	}
     else
@@ -82,31 +87,13 @@ int LBA_engine::startRenderer(int arg_0, int arg_4, int arg_8, int arg_C, int ar
     ptr = costumePtr + 16 + *(short int *) (costumePtr + 14);	// we jump after the header
 
     if (costumeHeader & 2)	// if animated
-	return (renderM1(ptr));	// That's the mostly used renderer code
+	return (AnimNuage(ptr));	// That's the mostly used renderer code
     else
-	return (renderM2(ptr));	// unanimated models
+	return (RotateNuage(ptr));	// unanimated models
 
 }
 
-void LBA_engine::setSomething4(int a, int b, int c)
-{
-    reinitVar1 = a;
-    renderV1 = a;
-    reinitVar2 = b;
-    renderV2 = b;
-    reinitVar12 = c;
-
-    renderV3 = c;
-
-    renderS1S1(bufRotate0, &setSomething3Var2);
-    renderS2S2(0, 0, 59);
-
-    renderV22 = destX;
-    renderV23 = destZ;
-    renderV24 = destY;
-}
-
-int LBA_engine::renderM1(unsigned char *costumePtr)
+int AnimNuage(unsigned char *costumePtr)
 {
     unsigned int var1;
     unsigned char *ptr3;
@@ -141,7 +128,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 
     renderV19 = (unsigned char *) renderTab2;
 
-    renderS1(renderV3, renderV2, renderV1, (pointEntry *) pri2Ptr2);	// that's the process of
+    RotateGroupe(renderV3, renderV2, renderV1, (pointEntry *) pri2Ptr2);	// that's the process of
    // the "base point"
 
     pri2Ptr2 += 38;		// jump to the next point data
@@ -160,7 +147,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 		{
 		    if (ptEntryPtr->flag == 0)
 			{
-			    renderS1(ptEntryPtr->rotate3, ptEntryPtr->rotate2, ptEntryPtr->rotate1, ptEntryPtr);	// renderS1 
+			    RotateGroupe(ptEntryPtr->rotate3, ptEntryPtr->rotate2, ptEntryPtr->rotate1, ptEntryPtr);	// RotateGroupe 
 			   // 
 			   // 
 			   // 
@@ -194,7 +181,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 			{
 			    if (ptEntryPtr->flag == 1)
 				{
-				    renderS2(ptEntryPtr->rotate3, ptEntryPtr->rotate2,
+				    TranslateGroupe(ptEntryPtr->rotate3, ptEntryPtr->rotate2,
 					     ptEntryPtr->rotate1, ptEntryPtr);
 				}
 			}
@@ -213,7 +200,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
     pointPtr2 = (pointTab *) renderTab5;
     pointPtr = renderTab6;
 
-    if (setSomethingVar4 != 0)	// boucle de convertion des points de 3D (de renderTab5) à 2D (de
+    if (renderer.isUsingOrhoProjection != 0)	// boucle de convertion des points de 3D (de renderTab5) à 2D (de
        // renderTab6)
 	{
 	    do
@@ -223,10 +210,8 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 		    coY = pointPtr2->y + renderV11;
 		    coZ = -(pointPtr2->z + renderV10);
 
-		    pointPtr->x = (((coX + coZ) * 8 + (coX + coZ) * 16) >> 9) + setSomethingVar1;
-		    pointPtr->y =
-			((((coX - coZ) * 4 + (coX - coZ) * 8) + (2 * coY - (coY << 5))) >> 9) +
-			setSomethingVar2;
+		    pointPtr->x = (coX - coY) * 24 / 512 + renderer.setSomethingVar1;
+		    pointPtr->y = (((coX + coY) * 12) - coZ * 30) / 512 + renderer.setSomethingVar2;
 		    pointPtr->z = coZ - coX - coY;
 
 		    if (pointPtr->x < renderLeft)	// this part setup the size of the rendered model
@@ -252,7 +237,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 	}
     else
 	{
-	    printf("renderM1\n");	// another rarely used part.
+	    printf("AnimNuage\n");	// another rarely used part.
 	    exit(1);
 	}
 
@@ -266,7 +251,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 	{
 	    if ((pointPtr->x > 0 && pointPtr->x < 640) && (pointPtr->y > 0 && pointPtr->y < 480))
 		{
-		    *(videoBuffer1 + screenLockupTable[pointPtr->y] + pointPtr->x) = 255;
+		    *(frontVideoBuffer + screenLockupTable[pointPtr->y] + pointPtr->x) = 255;
 		}
 	    else
 		{
@@ -278,7 +263,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
 	}
     while (--primitiveCounter);
 
-   // osystem->drawBufferToScreen (videoBuffer1);
+   // osystem->Flip (frontVideoBuffer);
    // #endif
 
     temp = *(short int *) ptr5;
@@ -379,7 +364,7 @@ int LBA_engine::renderM1(unsigned char *costumePtr)
     return (finishRender((unsigned char *) ptr5));
 }
 
-int LBA_engine::finishRender(unsigned char *esi)
+int finishRender(unsigned char *esi)
 {
     unsigned char *edi;
     short int temp;
@@ -418,7 +403,7 @@ int LBA_engine::finishRender(unsigned char *esi)
 
     struct polyHeader
 	{
-	    unsigned char polyRenderType;
+	    unsigned char FillVertic_AType;
 	    unsigned char numOfVertex;
 	    short int colorIndex;
 	};
@@ -457,14 +442,14 @@ int LBA_engine::finishRender(unsigned char *esi)
 		    currentPolyHeader = (polyHeader *) esi;
 		    ecx = *(int *) esi;
 		    esi += 2;
-		    polyRenderType = currentPolyHeader->polyRenderType;
+		    FillVertic_AType = currentPolyHeader->FillVertic_AType;
 
-		    if (polyRenderType >= 9)
+		    if (FillVertic_AType >= 9)
 			{
 			    destinationHeader = (polyHeader *) edi;
 
-			    destinationHeader->polyRenderType =
-				currentPolyHeader->polyRenderType - 2;
+			    destinationHeader->FillVertic_AType =
+				currentPolyHeader->FillVertic_AType - 2;
 			    destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 			    destinationHeader->colorIndex = currentPolyHeader->colorIndex;
 
@@ -504,12 +489,12 @@ int LBA_engine::finishRender(unsigned char *esi)
 				}
 			    while (--counter);
 			}
-		    else if (polyRenderType >= 7)	// only 1 shade value is used
+		    else if (FillVertic_AType >= 7)	// only 1 shade value is used
 			{
 			    destinationHeader = (polyHeader *) edi;
 
-			    destinationHeader->polyRenderType =
-				currentPolyHeader->polyRenderType - 7;
+			    destinationHeader->FillVertic_AType =
+				currentPolyHeader->FillVertic_AType - 7;
 			    destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 
 			    color = currentPolyHeader->colorIndex;
@@ -550,8 +535,8 @@ int LBA_engine::finishRender(unsigned char *esi)
 			{
 			    destinationHeader = (polyHeader *) edi;
 
-			    destinationHeader->polyRenderType =
-				currentPolyHeader->polyRenderType - 2;
+			    destinationHeader->FillVertic_AType =
+				currentPolyHeader->FillVertic_AType - 2;
 			    destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 			    destinationHeader->colorIndex = currentPolyHeader->colorIndex;
 
@@ -610,7 +595,9 @@ int LBA_engine::finishRender(unsigned char *esi)
 		    ax *= cx;
 
 		    ax -= bestDepth;
-		    currentDepth -= (bx) - 1;	// peut-etre une erreur là
+
+			// recheck next line:
+			currentDepth -= (bx) - 1;
 
 		    if (currentDepth < 0)
 			{
@@ -724,7 +711,7 @@ int LBA_engine::finishRender(unsigned char *esi)
 			   {
 			       lineCoordinatesPtr = (lineCoordinates *) esi;
 			       color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
-			      // drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
+			       //drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
 			       break;
 			   }
 			case 1:	// draw a polygon
@@ -732,7 +719,7 @@ int LBA_engine::finishRender(unsigned char *esi)
 			       eax = *(int *) esi;
 			       esi += 4;
 
-			       polyRenderType = eax & 0xFF;
+			       FillVertic_AType = eax & 0xFF;
 			       numOfVertex = (eax & 0xFF00) >> 8;
 			       color = (eax & 0xFF0000) >> 16;
 
@@ -745,8 +732,8 @@ int LBA_engine::finishRender(unsigned char *esi)
 				       esi += 2;
 				   }
 
-			       if (prepareRender() != 2)
-				   polyRender(polyRenderType, color);
+			       if (ComputePoly_A() != 2)
+				   FillVertic_A(FillVertic_AType, color);
 
 			       break;
 			   }
@@ -759,8 +746,8 @@ int LBA_engine::finishRender(unsigned char *esi)
 		    esi = renderV19;
 		    renderTabEntryPtr2++;
 		}
-	    while (--primitiveCounter);
-	   // while(0);
+	    //while (--primitiveCounter);
+	    while(0);
 	}
     else
 	{
@@ -774,7 +761,7 @@ int LBA_engine::finishRender(unsigned char *esi)
     return (0);
 }
 
-void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry * ptr)
+void RotateGroupe(int edx, int ecx, int ebx, pointEntry * ptr)
 {
     int *ebp;
     short int var;
@@ -799,7 +786,7 @@ void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry * ptr)
 
     if (var == -1)		// si c'est le premier point
 	{
-	    ebp = &setSomething3Var2;
+	//    ebp = &setSomething3Var2;
 
 	    destX = 0;
 	    destZ = 0;
@@ -817,10 +804,10 @@ void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry * ptr)
 
    // renderV19= dest
    // ebp= source
-    renderS1S1((int *) renderV19, ebp);	// copie dans renderTab2 + application de la rotation
+    RotMatIndex2((int *) renderV19, ebp);	// copie dans renderTab2 + application de la rotation
 
    // ? , numOfPoint , destination, rotation data
-    renderS1S2(pri1Ptr + rs1v1, rs1v2, &renderTab5[rs1v1 / 6], (int *) renderV19);	// rotation 
+    RotList(pri1Ptr + rs1v1, rs1v2, &renderTab5[rs1v1 / 6], (int *) renderV19);	// rotation 
    // 
    // 
    // 
@@ -838,7 +825,7 @@ void LBA_engine::renderS1(int edx, int ecx, int ebx, pointEntry * ptr)
    // du model
 }
 
-void LBA_engine::renderS1S2(unsigned char *esi, int ecx, pointTab * dest, int *eax)
+void RotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
 {
     short int param1;
     short int param2;
@@ -867,7 +854,7 @@ void LBA_engine::renderS1S2(unsigned char *esi, int ecx, pointTab * dest, int *e
     while (--rs1s2v1);
 }
 
-void LBA_engine::renderS1S1(int *eax, int *ebp)
+void RotMatIndex2(int *eax, int *ebp)
 {
     int angle;
     int angleVar1;		// esi
@@ -976,14 +963,14 @@ void LBA_engine::renderS1S1(int *eax, int *ebp)
 
 }
 
-int LBA_engine::renderM2(unsigned char *ptr)
+int RotateNuage(unsigned char *ptr)
 {
-    printf("renderM2\n");
+    printf("RotateNuage\n");
     exit(1);
     return (-1);
 }
 
-void LBA_engine::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
+void TranslateGroupe(int edx, int ecx, int ebx, pointEntry * esi)
 {
     int *dest;
     int *source;
@@ -1000,7 +987,7 @@ void LBA_engine::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
 
 	    dest = (int *) renderV19;
 
-	    dest[0] = setSomething3Var2;
+/*	    dest[0] = setSomething3Var2;
 	    dest[1] = setSomething3Var3;
 	    dest[2] = setSomething3Var18;
 	    dest[3] = setSomething3Var4;
@@ -1008,7 +995,7 @@ void LBA_engine::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
 	    dest[5] = setSomething3Var9;
 	    dest[6] = setSomething3Var6;
 	    dest[7] = setSomething3Var7;
-	    dest[8] = setSomething3Var10;
+	    dest[8] = setSomething3Var10;*/
 	}
     else			// dependent
 	{
@@ -1032,10 +1019,10 @@ void LBA_engine::renderS2(int edx, int ecx, int ebx, pointEntry * esi)
 	    dest[8] = source[8];
 	}
 
-    renderS2Sub(pri1Ptr + esi->data1, esi->data2, &renderTab5[esi->data1 / 6], (int *) renderV19);
+    TransRotList(pri1Ptr + esi->data1, esi->data2, &renderTab5[esi->data1 / 6], (int *) renderV19);
 }
 
-void LBA_engine::renderS2Sub(unsigned char *esi, int ecx, pointTab * dest, int *eax)
+void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax)
 {
     short int param1;
     short int param2;

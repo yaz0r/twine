@@ -1,52 +1,37 @@
 #include "lba.h"
+/*
+-----------------
+memory usage list:
+-----------------
 
-void LBA_engine::allocBufCube(void)
+data:
+
+- fic				  11k		 82 files
+- inventory			  60k		 28 files
+- text				 170k		 56 files  (french only)
+- scenes			 250k		120 files
+- sprites			 290k		118 files
+- animes			 440k		516 files
+- body				 620k		132 files
+- samples			3600k		230 files
+
+-----------------------------------------
+Special:
+
+- bricks			3900k		unpacked, used to speed up cube loading
+-----------------------------------------
+
+total:				9341k
+
+
+
+*/
+
+
+void InitBufferCube(void)
 {
    // todo: mettre les codes d'erreur
 
-    bufCube = (byte *) malloc(204800);	// 204800 = 64*64*25*2
-    bufferBrick = (byte *) malloc(361472);
-}
-
-byte *LBA_engine::allocateBuf(int size)
-{
-    byte *ptr;
-
-   // normalement, on a tout un code en fonction du DPMI pour la gestion des pages...
-   // C'est maintenant completement obsolete
-
-    ptr = (byte *) malloc(size);
-
-    if (!ptr)
-	{
-	    printf("Can't alloc %d!\n", size);
-	    exit(1);
-	}
-
-    return (ptr);
-}
-
-int LBA_engine::allocHQRMemory(int dataSize, byte ** ptr)
-{
-   /*
-    * byte *temp1;
-    * 
-    * temp1=HQMemory2;
-    * 
-    * if(!HQMemory) { *ptr=0; HQMemory2=temp1; return(0); }
-    * 
-    * if(dataSize>(HQMemorySize+12)) { *ptr=0; HQMemory2=temp1; return(0); }
-    * 
-    * *ptr=(HQMemory2+12);
-    * 
-    * *(int*)HQMemory2=0x12345678; *(int*)(HQMemory2+1)=dataSize; *(byte**)(HQMemory2+2)=*ptr;
-    * 
-    * HQMemorySize2=dataSize+12;
-    * 
-    * HQMemory2=HQMemory2+dataSize+12;
-    */
-
-    *ptr = (byte *) malloc(dataSize + 5000);
-
-    return (1);
+    bufCube = (byte *) Malloc(204800);	// 204800 = 64*64*25*2
+    bufferBrick = (byte *) Malloc(361472);
 }

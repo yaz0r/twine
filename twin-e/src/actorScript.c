@@ -18,7 +18,7 @@
 #include "lba.h"
 #include "math.h"
 
-void LBA_engine::runActorScript(short int actorNumber)
+void runActorScript(short int actorNumber)
 {
     char string[256];
     short int OPbreak;
@@ -27,8 +27,6 @@ void LBA_engine::runActorScript(short int actorNumber)
     unsigned char *localScriptPtr;
     unsigned char *opcodePtr;
     int temp;
-
-   // return;
 
     lactor = &actors[actorNumber];
 
@@ -60,13 +58,13 @@ void LBA_engine::runActorScript(short int actorNumber)
 				   {
 				       *opcodePtr = 13;
 				   }
-			       actorScriptPtr = lactor->actorScript + *(short int *) actorScriptPtr;
+			       actorScriptPtr = lactor->actorScript + READ_LE_S16(actorScriptPtr);
 			       break;
 			   }
 
 			case 3:
 			   {
-			       actorScriptPtr = lactor->actorScript + *(short int *) actorScriptPtr;
+			       actorScriptPtr = lactor->actorScript + READ_LE_S16(actorScriptPtr);
 			       break;
 			   }
 
@@ -74,7 +72,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   {
 			       manipActor(lactor);
 			       doCalc();
-			       actorScriptPtr = lactor->actorScript + *(short int *) actorScriptPtr;
+			       actorScriptPtr = lactor->actorScript + READ_LE_S16(actorScriptPtr);
 			       break;
 			   }
 			case 10:
@@ -95,7 +93,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       if (!doCalc())
 				   {
 				       actorScriptPtr =
-					   lactor->actorScript + *(short int *) actorScriptPtr;
+					   lactor->actorScript + READ_LE_S16(actorScriptPtr);
 				   }
 			       else
 				   {
@@ -110,7 +108,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       if (!doCalc())
 				   {
 				       actorScriptPtr =
-					   lactor->actorScript + *(short int *) actorScriptPtr;
+					   lactor->actorScript + READ_LE_S16(actorScriptPtr);
 				   }
 			       else
 				   {
@@ -126,7 +124,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       if (!doCalc())
 				   {
 				       actorScriptPtr =
-					   lactor->actorScript + *(short int *) actorScriptPtr;
+					   lactor->actorScript + READ_LE_S16(actorScriptPtr);
 
 				   }
 			       else
@@ -140,13 +138,13 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			case 15:
 			   {
-			       actorScriptPtr = lactor->actorScript + *(short int *) actorScriptPtr;
+			       actorScriptPtr = lactor->actorScript + READ_LE_S16(actorScriptPtr);
 			       break;
 			   }
 
 			case 17:	// loadCostume
 			   {
-			       loadActorCostume(*(actorScriptPtr++), actorNumber);
+			       InitBody(*(actorScriptPtr++), actorNumber);
 			       break;
 			   }
 
@@ -158,25 +156,25 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       param1 = *(actorScriptPtr++);
 			       param2 = *(actorScriptPtr++);
 
-			       loadActorCostume(param2, param1);
+			       InitBody(param2, param1);
 			       break;
 			   }
 
-			case 19:	// playAnim
+			case 19:	// InitAnim
 			   {
-			       playAnim(*(actorScriptPtr++), 0, 0, actorNumber);
+			       InitAnim(*(actorScriptPtr++), 0, 0, actorNumber);
 			       break;
 			   }
 
 			case 20:	// playAnimAnother
 			   {
-			       playAnim(*(actorScriptPtr + 1), 0, 0, *actorScriptPtr);
+			       InitAnim(*(actorScriptPtr + 1), 0, 0, *actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
 			case 21:
 			   {
-			       lactor->positionInActorScript = *(short int *) actorScriptPtr;
+			       lactor->positionInActorScript = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
@@ -186,15 +184,14 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       tempActor = &actors[*(actorScriptPtr++)];
 
-			       tempActor->positionInActorScript = *(short int *) actorScriptPtr;
+			       tempActor->positionInActorScript = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
 
 			case 23:	// SET_TRACK
 			   {
-			       lactor->positionInMoveScript =
-				   *(unsigned short int *) actorScriptPtr;
+			       lactor->positionInMoveScript =READ_LE_U16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
@@ -204,8 +201,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       int actorNumTemp;
 
 			       actorNumTemp = *(actorScriptPtr++);
-			       actors[actorNumTemp].positionInMoveScript =
-				   *((short int *) actorScriptPtr);
+			       actors[actorNumTemp].positionInMoveScript = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
@@ -213,12 +209,12 @@ void LBA_engine::runActorScript(short int actorNumber)
 			case 25:
 			   {
 			       freezeTime();
-			       mainLoop2(1);
+			       TestRestoreModeSVGA(1);
 			      //                             if(showTalkIcon)
-			      //                             drawTalkIcon(actorNumber);
-			       setNewTextColor(lactor->talkColor);	// setTextColor
-			      //                             talkingActor=actorNumber;
-			       printTextFullScreen(*(short int *) actorScriptPtr);
+			      //                             DrawBulle(actorNumber);
+			       TestCoulDial(lactor->talkColor);	// CoulFont
+			       talkingActor=actorNumber;
+			       printTextFullScreen(READ_LE_S16(actorScriptPtr));
 			       actorScriptPtr += 2;
 			       unfreezeTime();
 			       fullRedraw(1);
@@ -226,20 +222,18 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       break;
 			   }
 
-			case 26:
+            case 26: // LM_FALLABLE
 			   {
-			       int ltemp = *(actorScriptPtr++);
+ 			       int ltemp = *(actorScriptPtr++);
 
-			       ltemp <<= 11;
-			       lactor->field_60 &= 0xF7FF;
-			       lactor->field_60 |= ltemp;
+                   lactor->staticFlagsBF.bIsFallable = ltemp & 1;
 			       break;
 			   }
 
 			case 27:	// SET_COMPORTEMENT
 			   {
 			       temp = *(actorScriptPtr++);
-			       lactor->field_40 = temp;
+			       lactor->comportement = temp;
 			       if (temp == 2)
 				   {
 				       lactor->cropBottom = *(actorScriptPtr++);
@@ -253,7 +247,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       tempActor = &actors[*(actorScriptPtr++)];
 			       temp = *(actorScriptPtr++);
-			       tempActor->field_40 = temp;
+			       tempActor->comportement = temp;
 
 			       if (temp == 2)
 				   {
@@ -269,14 +263,14 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       newActorToFollow = *(actorScriptPtr++);
 
-			       if (reinitVar8 != newActorToFollow)
+			       if (currentlyFollowedActor != newActorToFollow)
 				   {
 				       newCameraX = (actors[newActorToFollow].X >> 9);
 				       newCameraZ = (actors[newActorToFollow].Z >> 8);
 				       newCameraY = (actors[newActorToFollow].Y >> 9);
 
-				       reinitVar8 = newActorToFollow;
-				       mainLoopVar2 = 1;
+				       currentlyFollowedActor = newActorToFollow;
+				       requestBackgroundRedraw = 1;
 				   }
 
 			       break;
@@ -284,8 +278,8 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			case 30:
 			   {
-			       playAnim(ANIM_static, 0, 255, 0);
-			       changeTwinsenComp(*(actorScriptPtr++));
+			       InitAnim(ANIM_static, 0, 255, 0);
+			       SetComportement(*(actorScriptPtr++));
 			       break;
 			   }
 
@@ -309,7 +303,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			case 33:
 			   {
-			       lactor->positionInActorScript = *(short int *) actorScriptPtr;
+			       lactor->positionInActorScript = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
@@ -319,8 +313,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       int tempActorNum;
 
 			       tempActorNum = *(actorScriptPtr++);
-			       actors[tempActorNum].positionInActorScript =
-				   *((short int *) actorScriptPtr);
+			       actors[tempActorNum].positionInActorScript = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       break;
 			   }
@@ -348,9 +341,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       temp = *(actorScriptPtr++);
 
-			      //                             removeActorFromRoom(temp);
+			       CheckCarrier(temp);
 
-			       actors[temp].field_62 |= 0x20;
+			       actors[temp].dynamicFlagsMask |= 0x20;
 			       actors[temp].costumeIndex = -1;
 			       actors[temp].zone = -1;
 			       actors[temp].life = 0;
@@ -360,8 +353,8 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			case 38:
 			   {
-			      //                             removeActorFromRoom(actorNumber);
-			       lactor->field_62 |= 0x20;
+			       CheckCarrier(actorNumber);
+			       lactor->dynamicFlagsMask |= 0x20;
 			       lactor->costumeIndex = -1;
 			       lactor->zone = -1;
 			       lactor->life = 0;
@@ -375,19 +368,19 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       if (numKey < 0)
 				   numKey = 0;
 
-			      //                                      showUsedItem2D(0,6,0,0,0,1,1);
+			      //showUsedItem2D(0,6,0,0,0,1,1);
 			       break;
 			   }
 			case 40:
 			   {
 			       int eax;
 			       int ecx;
-			       roomData2Struct *edi;
+			       overlayObjectListStruct *edi;
 			       int oldNumCoin;
 
 			       short int cost;
 
-			       cost = *(short int *) actorScriptPtr;
+			       cost = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 
 			       oldNumCoin = numCoin;
@@ -399,13 +392,13 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       eax = 0;
 			       ecx = 0;
-			       edi = roomData2;
+			       edi = overlayObjectList;
 
 			       while (eax < 10)
 				   {
 				       if (edi->field_0 != -1 && edi->field_6 == 2)
 					   {
-					      //                                                      edi->field_0=addRoomData2Entry(edi->field_8,edi->field_0,100,edi->field_C-time-50);
+					      //                                                      edi->field_0=BoundRegleTrois(edi->field_8,edi->field_0,100,edi->field_C-time-50);
 					       edi->field_8 = numCoin;
 					       edi->field_C = time + 150;
 					       ecx = 1;
@@ -431,13 +424,13 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   }
 			case 42:	// stopTrack
 			   {
-			       lactor->field_5E = lactor->currentLabelPtr;
+			       lactor->pausedTrackPtr = lactor->currentLabelPtr;
 			       lactor->positionInMoveScript = -1;
 			       break;
 			   }
 			case 43:	// resumeTrack
 			   {
-			       lactor->positionInMoveScript = lactor->field_5E;
+			       lactor->positionInMoveScript = lactor->pausedTrackPtr;
 			       break;
 			   }
 			case 44:
@@ -446,21 +439,21 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       int textNum;
 
 			       freezeTime();
-			       mainLoop2(1);
+			       TestRestoreModeSVGA(1);
 
 			       temp = *(actorScriptPtr++);
 
 			      /*
 			         if(showTalkVar) 
 			         {
-			         drawTalkIcon(temp);
+			         DrawBulle(temp);
 			         } 
 			       */
 
-			       setNewTextColor(actors[temp].talkColor);
-			      //                             talkingActor=temp;
+			       TestCoulDial(actors[temp].talkColor);
+			       talkingActor=temp;
 
-			       textNum = *(short int *) actorScriptPtr;
+			       textNum = READ_LE_S16(actorScriptPtr);
 
 			       printTextFullScreen(textNum);
 
@@ -485,11 +478,11 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       int temp;
 
 			       freezeTime();
-			       mainLoop2(1);
+			       TestRestoreModeSVGA(1);
 
 			       temp = *(actorScriptPtr++);
 
-			      //                                      actorTalk(temp);
+			       foundObject(temp);
 
 			       unfreezeTime();
 			       fullRedraw(1);
@@ -498,36 +491,36 @@ void LBA_engine::runActorScript(short int actorNumber)
 			case 47:
 			   {
 			       lactor->angle = 0x300;
-			       lactor->X = lactor->lastX - *((short int *) actorScriptPtr);
-			       lactor->field_62 &= 0xFFBF;
-			       lactor->field_34 = 0;
+			       lactor->X = lactor->lastX - READ_LE_S16(actorScriptPtr);
+			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
 			   }
 			case 48:
 			   {
 			       lactor->angle = 0x100;
-			       lactor->X = lactor->lastX + *((short int *) actorScriptPtr);
-			       lactor->field_62 &= 0xFFBF;
-			       lactor->field_34 = 0;
+			       lactor->X = lactor->lastX + READ_LE_S16(actorScriptPtr);
+			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
 			   }
 			case 49:
 			   {
 			       lactor->angle = 0x200;
-			       lactor->Y = lactor->lastY - *((short int *) actorScriptPtr);
-			       lactor->field_62 &= 0xFFBF;
-			       lactor->field_34 = 0;
+			       lactor->Y = lactor->lastY - READ_LE_S16(actorScriptPtr);
+			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
 			   }
 			case 50:
 			   {
 			       lactor->angle = 0;
-			       lactor->Y = lactor->lastY + *((short int *) actorScriptPtr);
-			       lactor->field_62 &= 0xFFBF;
-			       lactor->field_34 = 0;
+			       lactor->Y = lactor->lastY + READ_LE_S16(actorScriptPtr);
+			       lactor->dynamicFlagsMask &= 0xFFBF;
+			       lactor->speed = 0;
 			       actorScriptPtr += 2;
 			       break;
 			   }
@@ -537,7 +530,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       if (lactor->field_10 & 0x1F0)
 				   {
-				       addObject(lactor);
+				       GiveExtraBonus(lactor);
 				   }
 
 			       temp = *(actorScriptPtr++);
@@ -550,38 +543,39 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   }
 			case 52:
 			   {
-			       reinitVar11 = 2;
+			       twinsenPositionModeInNewCube = 2;
 			       needChangeRoom = *(actorScriptPtr++);
 			       break;
 			   }
-			case 53:
+			case 53: // OBJ_COL
 			   {
 			       if (*(actorScriptPtr++) != 0)
 				   {
-				       lactor->field_60 |= 1;	// toggle actor collision
+				       lactor->staticFlagsBF.bComputeCollisionWithObj = 1;
 				   }
 			       else
 				   {
-				       lactor->field_60 &= 0xFFFE;
+				       lactor->staticFlagsBF.bComputeCollisionWithObj = 0;
 				   }
 			       break;
 			   }
-			case 54:	// toggle wall collision
+			case 54:	// BRICK_COL
 			   {
 			       char temp;
 
 			       temp = *(actorScriptPtr++);
 
-			       lactor->field_60 &= 0xFFDD;
+                   lactor->staticFlagsBF.bComputeCollisionWithBricks = false;
+                   lactor->staticFlagsBF.bIsDead = false;
 
 			       if (temp == 1)
 				   {
-				       lactor->field_60 &= 0xFFDD;
-				       lactor->field_60 |= 2;
+                       lactor->staticFlagsBF.bComputeCollisionWithBricks = true;
 				   }
 			       else if (temp == 2)
 				   {
-				       lactor->field_60 |= 0x22;
+                       lactor->staticFlagsBF.bComputeCollisionWithBricks = true;
+                       lactor->staticFlagsBF.bIsDead = true;
 				   }
 			       break;
 			   }
@@ -590,8 +584,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       manipActor(lactor);
 			       if (doCalc())
 				   {
-				       actorScriptPtr =
-					   lactor->actorScript + *(short int *) actorScriptPtr;
+				       actorScriptPtr = lactor->actorScript + READ_LE_S16(actorScriptPtr);
 				   }
 			       else
 				   {
@@ -599,16 +592,9 @@ void LBA_engine::runActorScript(short int actorNumber)
 				   }
 			       break;
 			   }
-			case 56:	// invisible
+			case 56:	// INVISIBLE
 			   {
-			       if (*(actorScriptPtr++) != 0)
-				   {
-				       lactor->field_60 |= 0x200;
-				   }
-			       else
-				   {
-				       lactor->field_60 &= 0xFDFF;
-				   }
+                   lactor->staticFlagsBF.bNoDisplay = *(actorScriptPtr++);
 			       break;
 			   }
 			case 57:
@@ -625,10 +611,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 					      /*
 					         if(zoomMode!=0)
 					         {
-					         fadeOut(menuPal);
-					         //                                                           enterZoom();
-					         resetPalette();
-					         mainLoopVar3=1;
+					         FadeToBlack(menuPal);
+					         //                                                           ExtInitMcga();
+					         SetBackPal();
+					         lockPalette=1;
 					         }
 					       */
 					   }
@@ -638,11 +624,11 @@ void LBA_engine::runActorScript(short int actorNumber)
 					   printf("Exit zoom\n");
 				       if (drawInGameTransBox != 0)
 					   {
-					      //                                                      fadeOut(menuPal);
-					      //                                                      exitZoom();
-					       resetPalette();
-					       mainLoopVar3 = 1;
-					       mainLoopVar2 = 1;
+					      //                                                      FadeToBlack(menuPal);
+					      //                                                      ExtInitSvga();
+					       SetBackPal();
+					       lockPalette = 1;
+					       requestBackgroundRedraw = 1;
 					   }
 				   }
 			       break;
@@ -701,20 +687,24 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   }
 			case 63:	//LM_HIT_OBJ
 			   {
-			       printf("Ignoring actorScript opcode 63\n");
-			       actorScriptPtr += 2;
+                   char tempActorNumber;
+                   char temp;
+
+                   tempActorNumber = *(actorScriptPtr++);
+                   temp = *(actorScriptPtr++);
+                   HitObj(actorNumber, tempActorNumber, temp, actors[tempActorNumber].angle);
 			       break;
 			   }
 			case 64:	//LM_PLAY_FLA
 			   {
 				   int length=strlen((char*)actorScriptPtr);
-			       playFLA((char*)actorScriptPtr);
+			       PlayAnimFla((char*)actorScriptPtr);
 			       actorScriptPtr += length + 1;
 			       break;
 			   }
 			case 65: //LM_PLAY_MIDI
 				{
-					playMusic(*(actorScriptPtr++));
+					PlayMusic(*(actorScriptPtr++));
 					break;
 				}
 			case 66: //LM_INC_CLOVER_BOX
@@ -737,7 +727,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				}
 			case 68: //LM_ADD_CHOICE
 				{
-					inGameMenuData[numOfOptionsInChoice++]=*(short int*)actorScriptPtr;
+					inGameMenuData[numOfOptionsInChoice++]=READ_LE_S16(actorScriptPtr);
 					actorScriptPtr+=2;
 					break;
 				}
@@ -746,16 +736,16 @@ void LBA_engine::runActorScript(short int actorNumber)
 					short int choiceNum;
 
 					freezeTime();
-					mainLoop2(1);
+					TestRestoreModeSVGA(1);
 
 					if(showTalkVar)
 					{
-						//drawTalkIcon(actorNumber);
+						//DrawBulle(actorNumber);
 					}
 
-					setNewTextColor(lactor->talkColor);
+					TestCoulDial(lactor->talkColor);
 
-					choiceNum=*(short int*)actorScriptPtr;
+					choiceNum=READ_LE_S16(actorScriptPtr);
 					actorScriptPtr+=2;
 
 					processInGameMenu(choiceNum);
@@ -774,18 +764,18 @@ void LBA_engine::runActorScript(short int actorNumber)
 			       int textNumber;
 
 			       freezeTime();
-			       mainLoop2(1);
+			       TestRestoreModeSVGA(1);
 			       newGame2();
 
 			      /*
-			       * if(showTalkVar) { drawTalkIcon(actorNumber); } 
+			       * if(showTalkVar) { DrawBulle(actorNumber); } 
 			       */
 
-			       setNewTextColor(lactor->talkColor);
+			       TestCoulDial(lactor->talkColor);
 
-			      // talkingActor=actorNumber;
+			       talkingActor=actorNumber;
 
-			       textNumber = *(short int *) actorScriptPtr;
+			       textNumber = READ_LE_S16(actorScriptPtr);
 
 			       printTextFullScreen(textNumber);
 
@@ -805,7 +795,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 				{
 					byte newActor;
 					newActor = *(actorScriptPtr++);
-					actors[newActor].field_62 |= 0x20;
+					actors[newActor].dynamicFlagsMask |= 0x20;
 					currentPingouin = newActor;
 					actors[newActor].costumeIndex = -1;
 					actors[newActor].zone = -1;
@@ -831,34 +821,33 @@ void LBA_engine::runActorScript(short int actorNumber)
 				}	
 			case 74: //LM_ADD_FUEL
 				{
-					GV15+=*(actorScriptPtr++);
-					if(GV15>100)
+					fuel+=*(actorScriptPtr++);
+					if(fuel>100)
 					{
-						GV15=100;
+						fuel=100;
 					}
 					break;
 				}
 			case 75: //LM_SUB_FUEL
 				{
-					GV15-=*(actorScriptPtr++);
-					if(GV15<0)
+					fuel-=*(actorScriptPtr++);
+					if(fuel<0)
 					{
-						GV15=0;
+						fuel=0;
 					}
 					break;
 				}
 			case 76: //LM_SET_GRM
 				{
 					currentGrid2 = *(actorScriptPtr++);
-				// load_LBAGRI(currentGrid2);
-					printf("Skipping grid reload\n");
+					IncrustGrm(currentGrid2);
 					break;
 				}
 			case 77: //LM_SAY_MESSAGE
 				{
 					short int messageNumber;
 
-					messageNumber=*(short int*)actorScriptPtr;
+					messageNumber=READ_LE_S16(actorScriptPtr);
 					actorScriptPtr+=2;
 
 					//addOverlayObject(4,messageNumber,0,0,actorNumber,1,2);
@@ -875,7 +864,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 					short int messageNumber;
 
 					character=*(actorScriptPtr++);
-					messageNumber=*(short int*)actorScriptPtr;
+					messageNumber=READ_LE_S16(actorScriptPtr);
 					actorScriptPtr+=2;
 
 					//addOverlayObject(4,messageNumber,0,0,character,1,2);
@@ -896,17 +885,17 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   {
 			       short int newAngle;
 
-			       newAngle = *(short int *) actorScriptPtr;
+			       newAngle = READ_LE_S16(actorScriptPtr);
 			       actorScriptPtr += 2;
 			       lactor->angle = newAngle;
-			       changeActorAngle(lactor);
+			       ClearRealAngle(lactor);
 			       break;
 			   }
 			case 81: //LM_GRM_OFF
 				{
 					if(currentGrid2!=-1)
 					{
-						changeRoomVar9=-1;
+						useAnotherGrm=-1;
 						currentGrid2=-1;
 						createCube();
 						fullRedraw(1);
@@ -961,21 +950,21 @@ void LBA_engine::runActorScript(short int actorNumber)
 				}
 			case 91: //LM_ASK_CHOICE_OBJ
 				{
-					char talkingActor;
+					char currentTalkingActor;
 					short int choiceNumber;
 
 					freezeTime();
-					talkingActor=*(actorScriptPtr++);
-					mainLoop2(1);
+					currentTalkingActor=*(actorScriptPtr++);
+					TestRestoreModeSVGA(1);
 					
 					if(showTalkVar)
 					{
-						//drawTalkIcon(talkingActor);
+						//DrawBulle(currentTalkingActor);
 					}
 
-					setNewTextColor(actors[talkingActor].talkColor);
+					TestCoulDial(actors[currentTalkingActor].talkColor);
 
-					choiceNumber=*(short int*)actorScriptPtr;
+					choiceNumber=READ_LE_S16(actorScriptPtr);
 					actorScriptPtr+=2;
 
 //					processInGameMenu(choiceNumber);
@@ -988,20 +977,20 @@ void LBA_engine::runActorScript(short int actorNumber)
 			case 92: //LM_SET_DARK_PAL
 				{
 					freezeTime();
-					loadImageToPtr("ress.hqr",(byte*)palette,24);
+					Load_HQR("ress.hqr",(byte*)palette,24);
 					convertPalToRGBA(palette,paletteRGBA);
-					if(!mainLoopVar3)
+					if(!lockPalette)
 					{
 						osystem->setPalette(paletteRGBA);
 					}
-					isMenuDisplayed=1;
+					useAlternatePalette=1;
 					unfreezeTime();
 					break;
 				}
 			case 93: //LM_SET_NORMAL_PAL
 				{
-					isMenuDisplayed=0;
-					if(!mainLoopVar3)
+					useAlternatePalette=0;
+					if(!lockPalette)
 					{
 						osystem->setPalette(menuPalRGBA);
 					}
@@ -1012,24 +1001,24 @@ void LBA_engine::runActorScript(short int actorNumber)
 					int backupFlag;
 
 					freezeTime();
-					mainLoop2(1);
-					fadeOut((char*) paletteRGBA);
-					loadImageToPtr("ress.hqr",videoBuffer2,25);
-					copyToBuffer(videoBuffer2,videoBuffer1);
-					loadImageToPtr("ress.hqr",(byte *) & palette,26);
+					TestRestoreModeSVGA(1);
+					FadeToBlack((char*) paletteRGBA);
+					Load_HQR("ress.hqr",workVideoBuffer,25);
+					CopyScreen(workVideoBuffer,frontVideoBuffer);
+					Load_HQR("ress.hqr",(byte *) & palette,26);
 					convertPalToRGBA(palette, paletteRGBA);
-					osystem->drawBufferToScreen(videoBuffer1);
-					fadeIn2((char*)paletteRGBA);
+					osystem->Flip(frontVideoBuffer);
+					FadeToPal((char*)paletteRGBA);
 					newGame2();
-					setNewTextColor(15);
+					TestCoulDial(15);
 					newGameVar4=0;
 					backupFlag=flagDisplayText;
 					flagDisplayText=1;
 					printTextFullScreen(6);
 					newGameVar4=1;
 					newGame4();
-					fadeOut((char*)paletteRGBA);
-					resetVideoBuffer1();
+					FadeToBlack((char*)paletteRGBA);
+					Cls();
 					osystem->setPalette(menuPalRGBA);
 					flagDisplayText=backupFlag;
 
@@ -1044,21 +1033,21 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 				}
 			case 95: // LM_ANIM_SET
-			   {
+			   { // play new anim, no transition
 			       lactor->anim = -1;
-			       lactor->currentAnim = -1;
-			       playAnim(*(actorScriptPtr++), 0, 0, actorNumber);
+			       lactor->previousAnimIndex = -1;
+			       InitAnim(*(actorScriptPtr++), 0, 0, actorNumber);
 			       break;
 			   }
 			case 96: // LM_HOLOMAP_TRAJ
 				{
-					changeRoomVar1=*(actorScriptPtr++);
+					holomapTraj=*(actorScriptPtr++);
 					break;
 				}
 			case 97: // LM_GAME_OVER
 				{
 					OPbreak=-1;
-					twinsen->field_62|=4;
+					twinsen->dynamicFlagsMask|=4;
 					twinsen->life=0;
 					numClover=0;
 					break;
@@ -1070,10 +1059,10 @@ void LBA_engine::runActorScript(short int actorNumber)
 					twinsen->life=50;
 					magicPoint=80;
 					currentRoom=113;
-					comportementHero=reinitVar10;
-					GV9=-1;
-					twinsen->angle=reinitVar9;
-					saveGame();
+					comportementHero=startupComportementHeroInCube;
+					newTwinsenX=-1;
+					twinsen->angle=startupAngleInCube;
+					SaveGame();
 					brutalExit=1;
 					break;
 				}
@@ -1092,22 +1081,24 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   }
 			case 101: //LM_PROJ_ISO
 				{
-					setSomething(311,240,512);
+					configureOrthoProjection(311,240,512);
 					setSomething2(0,0,0);
 					setSomething3(0,0,0);
-					setSomething4(reinitVar1,reinitVar2,0);
+					SetLightVector(reinitVar1,reinitVar2,0);
 					break;
 				}
 
 			case 102:	//LM_PROJ_3D
-			    resetVideoBuffer1();
-			    copyToBuffer(videoBuffer1, videoBuffer2);
-			    osystem->drawBufferToScreen(videoBuffer1);
+			    Cls();
+			    CopyScreen(frontVideoBuffer, workVideoBuffer);
+			    osystem->Flip(frontVideoBuffer);
 			    changeRoomVar10 = 0;
-			   // changeCameraAngle2(320,240,1024,1024);
-			   // setCameraAngle(0,1500,0,25,-128,0,13000);
-			    setSomething4(896, 950, 0);
-			    loadTextBank(1);
+
+			    setCameraPosition(320,240,128,1024,1024);
+			    setCameraAngle(0,1500,0,25,-128,0,13000);
+			    SetLightVector(896, 950, 0);
+
+			    InitDial(1);
 			    break;
 			case 103:
 			   {
@@ -1117,27 +1108,27 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 			       if (drawVar1 < 440)
 				   {
-				       temp = *(short int *) actorScriptPtr;
+				       temp = READ_LE_S16(actorScriptPtr);
 				       if (setup_lst != 0)
 					   {
 					       if (!temp)
 						   temp = 16;
 					   }
 
-				       printString(temp, string);
+				       GetMultiText(temp, string);
 
 				       actorScriptPtr += 2;
 
-				       esi = edi = getStringLength(string);
+				       esi = edi = SizeFont(string);
 
-				       setTextColor(15);
+				       CoulFont(15);
 
-				       printStringSimple(0, drawVar1, string);
+				       Font(0, drawVar1, string);
 
 				       if (esi > 639)
 					   edi = 639;
 
-				       osystem->refresh(videoBuffer1, 0, drawVar1, edi, drawVar1+40);
+				       osystem->CopyBlockPhys(frontVideoBuffer, 0, drawVar1, edi, drawVar1+40);
 				       drawVar1 += 40;
 				   }
 
@@ -1145,8 +1136,8 @@ void LBA_engine::runActorScript(short int actorNumber)
 			   }
 			case 104:
 			    drawVar1 = 0;
-			    drawBlackBox(0, 0, 639, 240, 0);
-			    osystem->refresh(videoBuffer1, 0, 0, 639, 240);
+			    Box(0, 0, 639, 240, 0);
+			    osystem->CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 240);
 			    break;
 			case 105:
 				brutalExit=0;
@@ -1169,7 +1160,7 @@ void LBA_engine::runActorScript(short int actorNumber)
 
 }
 
-void LBA_engine::manipActor(actor * lactor)
+void manipActor(actor * lactor)
 {
     unsigned char opcode;
     unsigned char *localScriptPtr;
@@ -1211,18 +1202,17 @@ void LBA_engine::manipActor(actor * lactor)
 	case 2:
 	    lactor2 = &actors[*(actorScriptPtr++)];
 	    manipActorVar1 = 1;
-	    if (!(lactor2->field_62 & 0x20))
+	    if (!(lactor2->dynamicFlagsMask & 0x20))
 		{
-		    if (lactor2->Z - lactor->Z >= 1500)
+		    if ( abs(lactor2->Z - lactor->Z) >= 1500)
 			{
 			    manipActorResult = 32000;
 			}
 		    else
 			{
-			    manipActorResult =
-				getDistanceToward(lactor->X, lactor->Y, lactor2->X, lactor2->Y);
+                manipActorResult = Distance2D(lactor->X, lactor->Y, lactor2->X, lactor2->Y);
 			    if (manipActorResult > 32000)
-				manipActorResult = 32000;
+				    manipActorResult = 32000;
 			}
 		}
 	    else
@@ -1267,17 +1257,17 @@ void LBA_engine::manipActor(actor * lactor)
 	    lactor2 = &actors[newActor];
 	    manipActorVar1 = 1;
 	    actorScriptPtr = localScriptPtr;
-	    if (!(lactor2->field_62 & 0x20))
+	    if (!(lactor2->dynamicFlagsMask & 0x20))
 		{
 		    if (lactor2->Z - lactor->Z < 1500)
 			{
-			    angle = calcAngleToward(lactor->X, lactor->Y, lactor2->X, lactor2->Y);
-			    if (moveActorVar1 > 32000)
-				moveActorVar1 = 32000;
+			    angle = GetAngle(lactor->X, lactor->Y, lactor2->X, lactor2->Y);
+			    if (DoTrackVar1 > 32000)
+				DoTrackVar1 = 32000;
 			}
 		    else
 			{
-			    moveActorVar1 = 32000;
+			    DoTrackVar1 = 32000;
 			}
 
 		    if (!newActor)
@@ -1293,7 +1283,7 @@ void LBA_engine::manipActor(actor * lactor)
 				}
 			    else
 				{
-				    manipActorResult = moveActorVar1;
+				    manipActorResult = DoTrackVar1;
 				}
 			}
 		}
@@ -1310,7 +1300,7 @@ void LBA_engine::manipActor(actor * lactor)
 	    break;
 	case 15:		// VAR_GAME
 	    temp = *(actorScriptPtr++);
-	    if (!vars[28] || (vars[28] && temp >= 28))
+	    if (!vars[70] || (vars[70] && temp >= 28))
 		{
 		    manipActorResult = vars[temp];
 		}
@@ -1345,10 +1335,10 @@ void LBA_engine::manipActor(actor * lactor)
 	    lactor2 = &actors[*actorScriptPtr];
 	    manipActorVar1 = 1;
 	    actorScriptPtr = localScriptPtr;
-	    if (!(lactor2->field_62 & 0x20))
+	    if (!(lactor2->dynamicFlagsMask & 0x20))
 		{
 		    manipActorResult =
-			anotherSqrt(lactor->X, lactor->Z, lactor->Y, lactor2->X, lactor2->Z,
+			Distance3D(lactor->X, lactor->Z, lactor->Y, lactor2->X, lactor2->Z,
 				    lactor2->Y);
 
 		    if (manipActorResult > 32000)
@@ -1365,7 +1355,7 @@ void LBA_engine::manipActor(actor * lactor)
 
 	       temp = *actorScriptPtr;
 	       actorScriptPtr = localScriptPtr;
-	       if (holomapMode == 0)
+	       if (vars[70] == 0)
 		   {
 		       if (temp == mainLoopVar9)
 			   {
@@ -1400,7 +1390,7 @@ void LBA_engine::manipActor(actor * lactor)
 		}
 	case 27:
 		{
-			manipActorResult=GV15;
+			manipActorResult=fuel;
 			break;
 		}
 
@@ -1420,7 +1410,7 @@ void LBA_engine::manipActor(actor * lactor)
 	}
 }
 
-int LBA_engine::doCalc(void)
+int doCalc(void)
 {
     unsigned char *localActorScript = actorScriptPtr;
     unsigned char opcode;
@@ -1439,7 +1429,7 @@ int LBA_engine::doCalc(void)
 	   }
 	case 1:
 	   {
-	       opcode2 = *(short int *) localActorScript;
+	       opcode2 = READ_LE_S16(localActorScript);
 	       localActorScript += 2;
 	       break;
 	   }
@@ -1487,7 +1477,7 @@ int LBA_engine::doCalc(void)
 
 }
 
-int LBA_engine::getDistanceToward(int X1, int Y1, int X2, int Y2)
+int Distance2D(int X1, int Y1, int X2, int Y2)
 {
     int Xdata;
     int Ydata;
@@ -1501,7 +1491,7 @@ int LBA_engine::getDistanceToward(int X1, int Y1, int X2, int Y2)
     return ((int) sqrt(Xdata + Ydata));
 }
 
-int LBA_engine::calcAngleToward(int X1, int Y1, int X2, int Y2)
+int GetAngle(int X1, int Y1, int X2, int Y2)
 {
     int newX;
     int newY;
@@ -1534,9 +1524,9 @@ int LBA_engine::calcAngleToward(int X1, int Y1, int X2, int Y2)
 	    flag = 0;
 	}
 
-    moveActorVar1 = (int) sqrt(newX + newY);
+    DoTrackVar1 = (int) sqrt(newX + newY);
 
-    if (!moveActorVar1)
+    if (!DoTrackVar1)
 	return (0);
 
     int destVal;
@@ -1544,7 +1534,7 @@ int LBA_engine::calcAngleToward(int X1, int Y1, int X2, int Y2)
     int stopAngle;
     int finalAngle;
 
-    destVal = (difY << 14) / moveActorVar1;
+    destVal = (difY << 14) / DoTrackVar1;
 
     startAngle = 0;
     stopAngle = 0x100;
@@ -1594,14 +1584,14 @@ int LBA_engine::calcAngleToward(int X1, int Y1, int X2, int Y2)
 	    ebx += edi;
 	    ebx >>= 1;
 
-	    if (eax > *(short int *) ebx)
+	    if (eax > READ_LE_S16((void*)ebx))
 		{
 		    edi = ebx;
 		}
 	    else
 		{
 		    esi = ebx;
-		    if (eax == *(short int *) ebx)
+		    if (eax == READ_LE_S16((void*)ebx))
 			{
 			    goto endCalc;
 			}
@@ -1611,7 +1601,7 @@ int LBA_engine::calcAngleToward(int X1, int Y1, int X2, int Y2)
 	}
     while (--ebx > 2);
 
-    if ((*(short int *) esi + *(short int *) edi) / 2 <= eax)
+    if ((READ_LE_S16((void*)esi) + READ_LE_S16((void*)edi)) / 2 <= eax)
 	{
 	    esi = edi;
 	}
@@ -1637,7 +1627,7 @@ int LBA_engine::calcAngleToward(int X1, int Y1, int X2, int Y2)
 
 }
 
-int LBA_engine::anotherSqrt(int X1, int Z1, int Y1, int X2, int Z2, int Y2)
+int Distance3D(int X1, int Z1, int Y1, int X2, int Z2, int Y2)
 {
     int newX;
     int newZ;
@@ -1655,12 +1645,12 @@ int LBA_engine::anotherSqrt(int X1, int Z1, int Y1, int X2, int Z2, int Y2)
     return ((int) sqrt(newX + newZ + newY));
 }
 
-void LBA_engine::processInGameMenu(int index)
+void processInGameMenu(int index)
 {
 	int i;
 
 	printf("Ask choice %d\n",index);
-	copyToBuffer(videoBuffer1,videoBuffer2);
+	CopyScreen(frontVideoBuffer,workVideoBuffer);
 
 	choiceTab[1]=numOfOptionsInChoice;
 	choiceTab[0]=0;
@@ -1673,11 +1663,280 @@ void LBA_engine::processInGameMenu(int index)
 		choiceTab[i*2+5]=inGameMenuData[i];
 	}
 
-	//playChoiceDigit(index);
+	MyDial(index);
 
 	processMenu(choiceTab);
 
 	inGameMenuAnswer=inGameMenuData[choiceTab[0]];
 
 	//TODO: missing giving answer vox
+}
+
+void MyDial(int index)
+{
+    int textStatus = 1;
+    int digitStatus;
+
+    if(languageCD1 != 0)
+    {
+        setVoxFileAtDigit(index);
+    }
+
+    initText(index);
+    InitDialWindow();
+
+    while(textStatus)
+    {
+        textStatus = printText10();
+        printText4(voxFileHandle);
+
+        if(textStatus == 2)
+        {
+            while(skipIntro || key1 || printTextVar12)
+            {
+                printText4(voxFileHandle);
+                readKeyboard();
+            }
+
+            while(!(skipIntro || key1 || printTextVar12))
+            {
+                printText4(voxFileHandle);
+                readKeyboard();
+            }
+        }
+
+        waitRetrace();
+    }
+
+    while(printText4(voxFileHandle))
+    {
+        readKeyboard();
+    }
+
+    printTextVar5 = 0;
+
+    if(languageCD1 && voxFileHandle)
+    {
+        if(printText6(4660))
+            printText7(4660);
+    }
+
+    printTextVar13 = 0;
+}
+
+void foundObject(int objectNumber)
+{
+    int objectX;
+    int objectY;
+    int objectZ;
+
+    int object2X;
+    int object2Y;
+    int object2Z;
+
+    int boxTopLeftX;
+    int boxTopLeftY;
+    int boxBottomRightX;
+    int boxBottomRightY;
+
+    bool voxNotFound;
+
+    int textDisplayState;
+    bool closeWindow;
+
+    unsigned char* twinsenAnim;
+
+    unsigned char* objectPtr;
+
+    int twinsenAnimKeyframe;
+
+    newCameraX = (twinsen->X + 0x100)>>9;
+    newCameraZ = (twinsen->Z + 0x100)>>8;
+    newCameraY = (twinsen->Y + 0x100)>>9;
+
+    twinsen->staticFlagsBF.bNoDisplay = true;
+    fullRedraw(1);
+    twinsen->staticFlagsBF.bNoDisplay = false;
+
+    CopyScreen(frontVideoBuffer, workVideoBuffer);
+
+    objectX = newCameraX << 9;
+    objectZ = newCameraZ << 8;
+    objectY = newCameraY << 9;
+
+    AffObjetIso(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY, 0, 0x80, 0, bodyPtrTab[twinsen->costumeIndex]);
+
+    SetClip(renderLeft, renderTop, renderRight, renderBottom);
+
+    object2X = (twinsen->X + 0x100)>>9;
+    object2Z = (twinsen->Z)>>8;
+    if(twinsen->field_3 & 0x7F)
+        object2Z++;
+    object2Y = (twinsen->Y + 0x100)>>9;
+
+    DrawOverBrick(object2X, object2Z, object2Y);
+
+    osystem->Flip(frontVideoBuffer);
+
+    projectPositionOnScreen(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY);
+
+    projectedPositionY -= 150;
+
+    boxTopLeftX = projectedPositionX - 65;
+    boxTopLeftY = projectedPositionY - 65;
+
+    boxBottomRightX = projectedPositionX + 65;
+    boxBottomRightY = projectedPositionY + 65;
+
+    //playSample(41, 0x1000, 1, 0x80, 0x80);
+
+/*    if(getFoundVox(2))
+    {
+        voxNotFound = false;
+        InitDial(2);
+    }
+    else*/
+    {
+        int temp;
+
+        stopMusic();
+        voxNotFound = true;
+
+        temp = languageCD1;
+        languageCD1 = 0;
+        InitDial(2);
+        languageCD1 = temp;
+    }
+
+    UnSetClip();
+    OpenDial(objectNumber);
+
+    textDisplayState = 1;
+    closeWindow = false;
+
+    TestCoulDial(4);
+
+    if(!voxNotFound)
+    {
+        //startFoundVox(2, objectNumber);
+    }
+    else
+    {
+        setVoxFileAtDigit(objectNumber);
+    }
+
+    twinsenAnim = HQR_Get(HQR_Anims,getAnimIndexForBody( ANIM_findObject, 0));
+
+    bufAni2+=StockInterAnim((char*)bufAni2,(char*)bodyPtrTab[twinsen->costumeIndex]);
+    if(bufAni1+4488 > bufAni2)
+        bufAni2 = bufAni1;
+
+    twinsenAnimKeyframe = 0;
+
+    objectPtr = HQR_Get(HQR_Inventory, objectNumber);
+
+    if(HQR_Flag)
+        loadGfxSub(objectPtr);
+
+    numOfRedrawBox = 0;
+
+    while(!closeWindow)
+    {
+        UnSetClip();
+        fullRedrawVar8=0;
+        blitBackgroundOnDirtyBoxes();
+        drawBoxInsideTrans(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY, 4);
+
+        SetClip(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
+
+        objectRotation[objectNumber] += 8;
+
+//        Draw3dObject(projectedPositionX, projectedPositionY, objectPtr, objectRotation[objectNumber], 10000);
+
+        DrawCadre(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
+        AddPhysBox(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
+        UnSetClip();
+        reinitAll1();
+
+        if(SetInterAnimObjet(twinsenAnimKeyframe, (char*)twinsenAnim, (char*)bodyPtrTab[twinsen->costumeIndex]))
+        {
+            twinsenAnimKeyframe++;
+            if(twinsenAnimKeyframe == GetNbFramesAnim((char*)twinsenAnim))
+            {
+                twinsenAnimKeyframe = GetBouclageAnim((char*)twinsenAnim);
+            }
+        }
+
+        AffObjetIso(twinsen->X - objectX, twinsen->Z - objectZ, twinsen->Y - objectY, 0, 0x80, 0, bodyPtrTab[twinsen->costumeIndex]);
+        SetClip(renderLeft, renderTop, renderRight, renderBottom);
+        DrawOverBrick(object2X, object2Z, object2Y);
+        AddPhysBox(renderLeft, renderTop, renderRight, renderBottom);
+
+        if(textDisplayState)
+        {
+            UnSetClip();
+            textDisplayState = printText10();
+        }
+
+        if(textDisplayState)
+        {
+            waitRetrace();
+        }
+
+        FlipBoxes();
+
+        readKeyboard();
+        if(key1)
+        {
+            if(!textDisplayState)
+            {
+                closeWindow = true;
+            }
+
+            if( textDisplayState == 2)
+                textDisplayState = 1;
+        }
+    }
+
+ /*   if(!voxNotFound)
+    {
+        while(closeFoundVox())
+        {
+            readKeyboard();
+            if(skipIntro==1)
+                break;
+        }
+    }
+    else*/
+    {
+        while(printText11())
+        {
+            readKeyboard();
+            if(skipIntro==1)
+                break;
+        }
+    }
+
+//    stopVox();
+    reinitAll1();
+    InitDial(currentTextBank + 3);
+
+    while(skipIntro==1)
+    {
+        readKeyboard();
+    }
+}
+
+void OpenDial(int textNumber)
+{
+    initText(textNumber);
+    InitDialWindow();
+}
+
+void Draw3dObject(int X, int Y, char* objectPtr, int rotation, int param)
+{
+    setCameraPosition(X, Y, 128, 200, 200);
+    setCameraAngle(0,0,0,60,0,0,param);
+
+    AffObjetIso(0,0,0,0,rotation, 0, (unsigned char*)objectPtr);
 }

@@ -1,26 +1,54 @@
 #include "lba.h"
 
-int manipActorVar1 = 0;
+unsigned char colorTab[][3]=
+{
+    {0x0, 0x0, 0x0}, // SCRIPT_COLOR_DEFAULT
+    {0xFF, 0x0, 0x0}, // SCRIPT_COLOR_LABEL,
+    {0, 247, 0}, // SCRIPT_COLOR_ANIM,
+    {252, 255, 0}, // BUTTON_COLOR_TEXT,
+    {243, 246, 0}, // BUTTON_COLOR_TEXT_ACTIVATED,
+};
+
+
+//int manipActorVar1 = 0;
+
+void debugger::init(void)
+{
+    cubeClipEnabled = false;
+    cubeClipX= 64;
+    cubeClipY= 25;
+    cubeClipZ= 64;
+}
 
 int debugger::processDebug(void)
 {
     mouseStatusStruct mouseData;
     int actorNum;
 
+//	freezeTime();
+
     osystem->getMouseStatus(&mouseData);
-
-   // printf("Mouse: %d %d - %d %d\n",mouseData.X,mouseData.Y,mouseData.left,mouseData.right);
-   // printf("Num Actors: %d\n",numOfActorOnScreen);
-
-    actorNum = findActor(mouseData.X, mouseData.Y);
 
     numOfWindows = 0;
 
-    if (actorNum != -1 && mouseData.left)
+    if (mouseData.right)
+    {
+        debugMainMenu();
+        fullRedraw(1);
+    }
+    else
+    if (mouseData.left)
 	{
-	    debugActor(actorNum);
-	    engine->fullRedraw(1);
+        actorNum = findActor(mouseData.X, mouseData.Y);
+
+        if( actorNum != -1)
+        {
+	        debugActor(actorNum);
+	        fullRedraw(1);
+        }
 	}
+
+//	unfreezeTime();
 
     return (0);
 }
@@ -31,10 +59,10 @@ int debugger::findActor(int X, int Y)
 
     for (i = numOfActorOnScreen; i >= 0; i--)
 	{
-	    if (inBox
-		(X, Y, actorBox[i].top, actorBox[i].left, actorBox[i].bottom, actorBox[i].right))
+	    if (inBox(X, Y, actorBox[i].top, actorBox[i].left, actorBox[i].bottom, actorBox[i].right))
 		{
-		    return (actorBox[i].actorNum);
+			if(!(actorBox[i].top == 0 && actorBox[i].right == 639 && actorBox[i].left == 0 && actorBox[i].bottom == 479))
+				return (actorBox[i].actorNum);
 		}
 	}
 
@@ -56,20 +84,20 @@ void debugger::fillArea(int X, int Y, int width, int height)
     unsigned char *ptr;
     int offset;
 
-    ptr = engine->videoBuffer1 + engine->screenLockupTable[Y] + X;
+    ptr = frontVideoBuffer + screenLockupTable[Y] + X;
     offset = 640 - (width);
 
     for (i = 0; i < height; i++)
 	{
 	    for (j = 0; j < width; j++)
 		{
-		    *(ptr++) = 72;
+		    *(ptr++) = 74;
 		}
 	    ptr += offset;
 	}
 
-   // osystem->drawBufferToScreen(engine->videoBuffer1);
-   // osystem->refresh(engine->videoBuffer1,0,0,640,480);
+   // osystem->Flip(frontVideoBuffer);
+   // osystem->CopyBlockPhys(frontVideoBuffer,0,0,640,480);
 
 }
 
@@ -79,7 +107,7 @@ void debugger::fillArea2(int X, int Y, int width, int height, char color)
     unsigned char *ptr;
     int offset;
 
-    ptr = engine->videoBuffer1 + engine->screenLockupTable[Y] + X;
+    ptr = frontVideoBuffer + screenLockupTable[Y] + X;
     offset = 640 - (width);
 
     for (i = 0; i < height; i++)
@@ -91,8 +119,8 @@ void debugger::fillArea2(int X, int Y, int width, int height, char color)
 	    ptr += offset;
 	}
 
-   // osystem->drawBufferToScreen(engine->videoBuffer1);
-   // osystem->refresh(engine->videoBuffer1,0,0,640,480);
+   // osystem->Flip(frontVideoBuffer);
+   // osystem->CopyBlockPhys(frontVideoBuffer,0,0,640,480);
 
 }
 
@@ -115,10 +143,9 @@ void debugger::addButton(int winIndex, int X, int Y, int width, int height, char
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Width = width;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Height = height;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].type = type;
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 70;
+    windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 71;
 
-    windows[winIndex].buttons[windows[winIndex].numOfButtons].text =
-	(char *) malloc(strlen(text) + 1);
+    windows[winIndex].buttons[windows[winIndex].numOfButtons].text = (char *) malloc(strlen(text) + 1);
 
     strcpy(windows[winIndex].buttons[windows[winIndex].numOfButtons].text, text);
 
@@ -126,7 +153,7 @@ void debugger::addButton(int winIndex, int X, int Y, int width, int height, char
 }
 
 void debugger::addButton(int winIndex, int X, int Y, int width, int height, char *text,
-			 buttonType type, char boolVar)
+			 buttonType type, short int boolVar)
 {
     windows[winIndex].buttons[windows[winIndex].numOfButtons].X = X;
     windows[winIndex].buttons[windows[winIndex].numOfButtons].Y = Y;
@@ -136,7 +163,7 @@ void debugger::addButton(int winIndex, int X, int Y, int width, int height, char
     if (boolVar)
 	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 100;
     else
-	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 70;
+	windows[winIndex].buttons[windows[winIndex].numOfButtons].color = 71;
 
     windows[winIndex].buttons[windows[winIndex].numOfButtons].text =
 	(char *) malloc(strlen(text) + 1);
@@ -177,7 +204,7 @@ buttonType debugger::processInput()
 
     do
 	{
-	    engine->readKeyboard();
+	    readKeyboard();
 	    osystem->getMouseStatus(&mouseData);
 
 	    if (mouseData.left)
@@ -208,14 +235,248 @@ void debugger::drawAll()
 
 	    for (j = 0; j < windows[i].numOfButtons; j++)
 		{
+            unsigned char r;
+            unsigned char g;
+            unsigned char b;
+
+            r = colorTab[BUTTON_COLOR_TEXT][0];
+            g = colorTab[BUTTON_COLOR_TEXT][1];
+            b = colorTab[BUTTON_COLOR_TEXT][2];
+
 		    if (windows[i].buttons[j].type != BUTTON_INFO)
-			fillArea2(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y,
-				  windows[i].buttons[j].Width, windows[i].buttons[j].Height,
-				  windows[i].buttons[j].color);
-		    osystem->drawText(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y,
-				      windows[i].buttons[j].text);
+			    fillArea2(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y, windows[i].buttons[j].Width, windows[i].buttons[j].Height, windows[i].buttons[j].color);
+		    osystem->drawTextColor(X + windows[i].buttons[j].X, Y + windows[i].buttons[j].Y, windows[i].buttons[j].text,r,g,b);
 		}
 	}
+}
+
+void debugger::debugCubeClip(void)
+{
+    bool bQuit = false;
+    buttonType button;
+    char string[255];
+
+    do
+    {
+        numOfWindows = 0;
+	    addWin(0, 100, 100, 96, 56);
+        addButton(0, 1, 1, 94, 10, "ON/OFF", BUTTON_CUBE_CLIP_TOGGLE, cubeClipEnabled);
+
+        addButton(0, 1, 12, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_X);
+        sprintf(string, "X: %d", cubeClipX);
+        addButton(0, 18, 12, 60, 10, string, BUTTON_GEN);
+        addButton(0, 79, 12, 16, 10, "+", BUTTON_CUBE_CLIP_INC_X);
+
+        addButton(0, 1, 23, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_Y);
+        sprintf(string, "Y: %d", cubeClipY);
+        addButton(0, 18, 23, 60, 10, string, BUTTON_GEN);
+        addButton(0, 79, 23, 16, 10, "+", BUTTON_CUBE_CLIP_INC_Y);
+
+        addButton(0, 1, 34, 16, 10, "-", BUTTON_CUBE_CLIP_DEC_Z);
+        sprintf(string, "Z: %d", cubeClipZ);
+        addButton(0, 18, 34, 60, 10, string, BUTTON_GEN);
+        addButton(0, 79, 34, 16, 10, "+", BUTTON_CUBE_CLIP_INC_Z);
+
+	    addButton(0, 1, 45, 94, 10, "OK", BUTTON_OK);
+
+        drawAll();
+
+   	    osystem->Flip(frontVideoBuffer);
+
+	    button = processInput();
+
+        switch(button)
+        {
+        case BUTTON_OK:
+            {
+                bQuit = true;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_DEC_X:
+            {
+                if( cubeClipX > 0)
+                    cubeClipX--;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_INC_X:
+            {
+                if( cubeClipX < 64)
+                    cubeClipX++;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_DEC_Y:
+            {
+                if( cubeClipY > 0)
+                    cubeClipY--;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_INC_Y:
+            {
+                if( cubeClipY < 25)
+                    cubeClipY++;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_DEC_Z:
+            {
+                if( cubeClipZ > 0)
+                    cubeClipZ--;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_INC_Z:
+            {
+                if( cubeClipZ < 64)
+                    cubeClipZ++;
+                break;
+            }
+        case BUTTON_CUBE_CLIP_TOGGLE:
+            {
+                if( cubeClipEnabled )
+                {
+                    cubeClipEnabled = false;
+                }
+                else
+                {
+                    cubeClipEnabled = true;
+                }
+                break;
+            }
+        default:
+            {
+                break;
+            }
+        }
+
+        fullRedraw(1);
+
+    }
+    while(!bQuit);
+}
+
+void debugger::debugMainMenu(void)
+{
+    bool bQuit = false;
+    buttonType button;
+
+    do
+    {
+        numOfWindows = 0;
+	    addWin(0, 10, 10, 220, 300);
+
+        addButton(0, 20, 10, 140, 10, "   Cube Clip", BUTTON_CUBE_CLIP);
+
+        addButton(0, 20, 21, 140, 10, "Inventory Full", BUTTON_HAVE_ALL_ITEMS);
+
+		addButton(0, 20, 32, 140, 10, "Show Bounding Box", BUTTON_SHOW_BOUNDING_BOXES, bShowBoundingBoxes);
+
+		addButton(0, 20, 43, 140, 10, "Show Cube Zones", BUTTON_SHOW_CUBE_CHANGE_ZONES, bShowCubeChangeZones);
+		addButton(0, 20, 54, 140, 10, "Show Camera Zones", BUTTON_SHOW_CAMERA_ZONES, bShowCameraZones);
+		addButton(0, 20, 65, 140, 10, "Show Scenaric Zones", BUTTON_SHOW_SCENARIC_ZONES, bShowScenaricZones);
+		addButton(0, 20, 76, 140, 10, "Show GRM Zones", BUTTON_SHOW_GRM_ZONES, bShowGRMZones);
+		addButton(0, 20, 87, 140, 10, "Show Obj Zones", BUTTON_SHOW_OBJ_ZONES, bShowObjZones);
+		addButton(0, 20, 98, 140, 10, "Show Text Zones", BUTTON_SHOW_TEXT_ZONES, bShowTextZones);
+		addButton(0, 20, 109, 140, 10, "Show Ladder Zones", BUTTON_SHOW_LADDER_ZONES, bShowLadderZones);
+		addButton(0, 20, 120, 140, 10, "Show Actors Number", BUTTON_SHOW_ACTORS_NUMBER, bShowActorNumbers);
+		addButton(0, 20, 131, 140, 10, "Show Flags", BUTTON_SHOW_FLAGS, bShowFlags);
+
+
+	    addButton(0, 65, 285, 80, 10, "       OK", BUTTON_OK);
+
+        drawAll();
+
+   	    osystem->Flip(frontVideoBuffer);
+
+	    button = processInput();
+
+        switch(button)
+        {
+        case BUTTON_OK:
+            {
+                bQuit = true;
+                break;
+            }
+        case BUTTON_CUBE_CLIP:
+            {
+                fullRedraw(1);
+                debugCubeClip();
+                break;
+            }
+        case BUTTON_HAVE_ALL_ITEMS:
+            {
+                int i;
+                for(i=0;i<=27;i++)
+                {
+                    vars[i]=1;
+                }
+				break;
+            }
+		case BUTTON_SHOW_BOUNDING_BOXES:
+			{
+				bShowBoundingBoxes ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_CUBE_CHANGE_ZONES:
+			{
+				bShowCubeChangeZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_CAMERA_ZONES:
+			{
+				bShowCameraZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_SCENARIC_ZONES:
+			{
+				bShowScenaricZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_GRM_ZONES:
+			{
+				bShowGRMZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_OBJ_ZONES:
+			{
+				bShowObjZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_TEXT_ZONES:
+			{
+				bShowTextZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_LADDER_ZONES:
+			{
+				bShowLadderZones ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_ACTORS_NUMBER:
+			{	
+				bShowActorNumbers ^=1;
+				fullRedraw(1);
+				break;
+			}
+		case BUTTON_SHOW_FLAGS:
+			{
+				bShowFlags ^=1;
+				fullRedraw(1);
+				break;
+			}
+        default:
+            {
+                break;
+            }
+        }
+
+    }
+    while(!bQuit);
 }
 
 void debugger::debugActor(int num)
@@ -238,28 +499,50 @@ void debugger::debugActor(int num)
 
     do
 	{
-	    char fallable;
-	    char noshado;
-	    char backgrd;
-	    char carrier;
-	    char zonable;
-	    char objcol;
-	    char brick;
-	    char no_col;
-	    char clip;
-	    char no_aff;
-	    char minizy;
-	    char pushable;
-	    char codejeu;
-	    char no_choc;
-	    char noclip;
+	    short int fallable;
+	    short int noshado;
+	    short int backgrd;
+	    short int carrier;
+	    short int zonable;
+	    short int objcol;
+	    short int brick;
+//	    short int no_col;
+	    short int clip;
+	    short int no_aff;
+	    short int miniZv;
+	    short int pushable;
+//	    short int codejeu;
+//	    short int no_choc;
+//	    short int noclip;
 
-	    objcol = engine->actors[num].field_60 & 0x0001;
-	    zonable = engine->actors[num].field_60 & 0x0004;
-	    no_aff = engine->actors[num].field_60 & 0x0200;
-	    fallable = engine->actors[num].field_60 & 0x0800;
-	    noshado = engine->actors[num].field_60 & 0x1000;
-	    backgrd = engine->actors[num].field_60 & 0x2000;
+		short int money;
+		short int life;
+		short int magic;
+		short int clove;
+		short int key;
+
+        objcol = actors[num].staticFlagsBF.bComputeCollisionWithObj;
+        brick = actors[num].staticFlagsBF.bComputeCollisionWithBricks;
+        zonable = actors[num].staticFlagsBF.bIsZonable;
+        clip = actors[num].staticFlagsBF.bIsUsingClipping;
+        pushable = actors[num].staticFlagsBF.bIsPushable;
+        //0x20: dead
+        //0x40: can drown
+        //0x80: ?
+        //0x100: ?
+        no_aff = actors[num].staticFlagsBF.bNoDisplay;
+        // 0x400: spriteActor
+        fallable = actors[num].staticFlagsBF.bIsFallable;
+        noshado = actors[num].staticFlagsBF.bDoesntCastShadow;
+        backgrd = actors[num].staticFlagsBF.bIsBackgrounded;
+        carrier = actors[num].staticFlagsBF.bIsCarrier;
+        miniZv = actors[num].staticFlagsBF.bIsUsingMiniZv;
+
+        money = actors[num].field_10 & 0x0010;
+		life = actors[num].field_10 & 0x0020;
+		magic = actors[num].field_10 & 0x0040;
+		key = actors[num].field_10 & 0x0080;
+		clove = actors[num].field_10 & 0x0100;
 
 	    numOfWindows = 0;
 	    addWin(0, 420, 145, 220, 300);	// track win
@@ -277,67 +560,68 @@ void debugger::debugActor(int num)
 	    addButton(3, 0, 0, 90, 15, "Name", BUTTON_GEN);
 
 	    addButton(3, 0, 16, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "X: %d", engine->actors[num].X);
+	    sprintf(string, "X: %d", actors[num].X);
 	    addButton(3, 16, 16, 70, 15, string, BUTTON_GEN);
 	    addButton(3, 87, 16, 15, 15, "+", BUTTON_GEN);
 
 	    addButton(3, 0, 32, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "Y: %d", engine->actors[num].Z);	// TODO: inverse Y/Z
+	    sprintf(string, "Y: %d", actors[num].Z);	// TODO: inverse Y/Z
 	    addButton(3, 16, 32, 70, 15, string, BUTTON_GEN);
 	    addButton(3, 87, 32, 15, 15, "+", BUTTON_GEN);
 
 	    addButton(3, 0, 48, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "Z: %d", engine->actors[num].Y);
+	    sprintf(string, "Z: %d", actors[num].Y);
 	    addButton(3, 16, 48, 70, 15, string, BUTTON_GEN);	// TODO: inverse Y/Z
 	    addButton(3, 87, 48, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 103, 16, 40, 15, "Angl", BUTTON_INFO);
+	    addButton(3, 103, 16, 40, 15, "Angle", BUTTON_INFO);
 	    addButton(3, 144, 16, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "%d", engine->actors[num].angle);
+	    sprintf(string, "%d", actors[num].angle);
 	    addButton(3, 160, 16, 35, 15, string, BUTTON_GEN);
 	    addButton(3, 196, 16, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 103, 32, 40, 15, "Vite", BUTTON_INFO);
+	    addButton(3, 103, 32, 40, 15, "Vitesse", BUTTON_INFO);
 	    addButton(3, 144, 32, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "?");
+	    sprintf(string, "%d", actors[num].speed);
 	    addButton(3, 160, 32, 35, 15, string, BUTTON_GEN);
 	    addButton(3, 196, 32, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 103, 48, 40, 15, "Pav", BUTTON_INFO);
+	    addButton(3, 103, 48, 40, 15, "Vie", BUTTON_INFO);
 	    addButton(3, 144, 48, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "?");
+        sprintf(string, "%d", actors[num].life);
 	    addButton(3, 160, 48, 35, 15, string, BUTTON_GEN);
 	    addButton(3, 196, 48, 15, 15, "+", BUTTON_GEN);
 
 	    addButton(3, 95, 64, 48, 15, "Armure", BUTTON_INFO);
 	    addButton(3, 144, 64, 15, 15, "-", BUTTON_GEN);
-	    sprintf(string, "?");
+        sprintf(string, "%d", actors[num].field_14);
 	    addButton(3, 160, 64, 35, 15, string, BUTTON_GEN);
 	    addButton(3, 196, 64, 15, 15, "+", BUTTON_GEN);
 
-	    addButton(3, 212, 0, 50, 15, "MONEY", BUTTON_GEN);
-	    addButton(3, 212, 16, 50, 15, "LIFE", BUTTON_GEN);
-	    addButton(3, 212, 32, 50, 15, "MAGIC", BUTTON_GEN);
-	    addButton(3, 212, 48, 50, 15, "KEY", BUTTON_GEN);
-	    addButton(3, 212, 64, 50, 15, "CLOVE", BUTTON_GEN);
+	    addButton(3, 212, 0, 50, 15, "MONEY", BUTTON_GEN, money);
+	    addButton(3, 212, 16, 50, 15, "LIFE", BUTTON_GEN, life);
+	    addButton(3, 212, 32, 50, 15, "MAGIC", BUTTON_GEN, magic);
+	    addButton(3, 212, 48, 50, 15, "KEY", BUTTON_GEN, key);
+	    addButton(3, 212, 64, 50, 15, "CLOVE", BUTTON_GEN, clove);
 
 	    addButton(3, 263, 0, 65, 15, "FALLABLE", BUTTON_GEN, fallable);
 	    addButton(3, 263, 16, 65, 15, "NOSHADO", BUTTON_GEN, noshado);
 	    addButton(3, 263, 32, 65, 15, "BACKGRD", BUTTON_GEN, backgrd);
-	    addButton(3, 263, 48, 65, 15, "CARRIER", BUTTON_GEN);
+	    addButton(3, 263, 48, 65, 15, "CARRIER", BUTTON_GEN, carrier);
 
 	    addButton(3, 329, 0, 65, 15, "ZONABLE", BUTTON_GEN, zonable);
 	    addButton(3, 329, 16, 65, 15, "OBJCOL", BUTTON_GEN, objcol);
-	    addButton(3, 329, 32, 65, 15, "BRICK", BUTTON_GEN);
+	    addButton(3, 329, 32, 65, 15, "BRICK", BUTTON_GEN, brick);
 	    addButton(3, 329, 48, 65, 15, "NO_COL", BUTTON_GEN);
-	    addButton(3, 329, 64, 65, 15, "CLIP", BUTTON_GEN);
+	    addButton(3, 329, 64, 65, 15, "CLIP", BUTTON_GEN, clip);
 
 	    addButton(3, 395, 0, 65, 15, "NO_AFF", BUTTON_GEN, no_aff);
-	    addButton(3, 395, 16, 65, 15, "MINIZY", BUTTON_GEN);
-	    addButton(3, 395, 32, 65, 15, "PUSHABLE", BUTTON_GEN);
+	    addButton(3, 395, 16, 65, 15, "MINIZV", BUTTON_GEN, miniZv);
+	    addButton(3, 395, 32, 65, 15, "PUSHABLE", BUTTON_GEN, pushable);
 	    addButton(3, 395, 48, 65, 15, "CODE JEU", BUTTON_GEN);
 	    addButton(3, 395, 64, 65, 15, "NO_CHOC", BUTTON_GEN);
 
+        addButton(3, 461, 0, 65, 15, "CHG CODE", BUTTON_GEN);
 	    addButton(3, 461, 16, 65, 15, "NOCLIP", BUTTON_GEN);
 	    addButton(3, 461, 32, 65, 15, "ZBUFFER", BUTTON_GEN);
 	    addButton(3, 461, 48, 65, 15, "MESSAGES", BUTTON_GEN);
@@ -355,7 +639,15 @@ void debugger::debugActor(int num)
 
 	    for (i = startLineTrack; i < (numOfLines + startLineTrack); i++)
 		{
-		    osystem->drawText(425, Y, trackScript->lines[i]);
+            unsigned char r;
+            unsigned char g;
+            unsigned char b;
+
+            r = colorTab[trackScript->lines[i].color][0];
+            g = colorTab[trackScript->lines[i].color][1];
+            b = colorTab[trackScript->lines[i].color][2];
+
+            osystem->drawTextColor(425, Y, trackScript->lines[i].line,r,g,b);
 		    Y += 11;
 		}
 
@@ -368,11 +660,29 @@ void debugger::debugActor(int num)
 
 	    for (i = startLineCom; i < (numOfLines + startLineCom); i++)
 		{
-		    osystem->drawText(5, Y, comScript->lines[i]);
+            char buffer[50];
+            sprintf(buffer,"%d:", comScript->lines[i].lineNumber);
+            osystem->drawTextColor(5, Y, buffer,0,0,0);
 		    Y += 11;
 		}
 
-	    osystem->drawBufferToScreen(engine->videoBuffer1);
+        Y = 150;
+	    for (i = startLineCom; i < (numOfLines + startLineCom); i++)
+		{
+            unsigned char r;
+            unsigned char g;
+            unsigned char b;
+
+            r = colorTab[comScript->lines[i].color][0];
+            g = colorTab[comScript->lines[i].color][1];
+            b = colorTab[comScript->lines[i].color][2];
+
+            osystem->drawTextColor(50, Y, comScript->lines[i].line,r,g,b);
+		    Y += 11;
+		}
+
+
+	    osystem->Flip(frontVideoBuffer);
 
 	    button = processInput();
 
@@ -398,10 +708,25 @@ void debugger::debugActor(int num)
 
 void debugger::addLine(char *buffer, scriptData * script)
 {
-    script->lines = (char **) realloc(script->lines, sizeof(char *) * (script->numOfLignes + 1));
+    script->lines = (scriptLineData *) realloc(script->lines, sizeof(scriptLineData) * (script->numOfLignes +1 ));
 
-    script->lines[script->numOfLignes] = (char *) malloc(strlen(buffer) + 1);
-    strcpy(script->lines[script->numOfLignes], buffer);
+    script->lines[script->numOfLignes].line = (char *) malloc(strlen(buffer) + 1);
+    script->lines[script->numOfLignes].color = SCRIPT_COLOR_DEFAULT;
+    script->lines[script->numOfLignes].indentation = 0;
+
+    strcpy(script->lines[script->numOfLignes].line, buffer);
+    script->numOfLignes++;
+}
+
+void debugger::addLineColor(char *buffer, scriptData * script, debuggerColor color)
+{
+    script->lines = (scriptLineData *) realloc(script->lines, sizeof(scriptLineData) * (script->numOfLignes +1 ));
+
+    script->lines[script->numOfLignes].line = (char *) malloc(strlen(buffer) + 1);
+    script->lines[script->numOfLignes].color = color;
+    script->lines[script->numOfLignes].indentation = 0;
+
+    strcpy(script->lines[script->numOfLignes].line, buffer);
     script->numOfLignes++;
 }
 
@@ -412,13 +737,14 @@ scriptData *debugger::getActorTrackScript(int num)
     unsigned char opcode;
     scriptData *script;
     char buffer[256];
+//    int lineNumber;
 
     script = (scriptData *) malloc(sizeof(scriptData));
 
     script->lines = 0;
     script->numOfLignes = 0;
 
-    scriptPtr = engine->actors[num].moveScript;
+    scriptPtr = actors[num].moveScript;
 
     do
 	{
@@ -446,7 +772,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		case 3:
 		   {
 		       sprintf(buffer, "ANIM %d", *(scriptPtr++));	// bleu
-		       addLine(buffer, script);
+		       addLineColor(buffer, script, SCRIPT_COLOR_ANIM);
 		       break;
 		   }
 		case 4:
@@ -487,7 +813,7 @@ scriptData *debugger::getActorTrackScript(int num)
 		case 9:
 		   {
 		       sprintf(buffer, "LABEL %d", (*scriptPtr++));	// rouge
-		       addLine(buffer, script);
+               addLineColor(buffer, script, SCRIPT_COLOR_LABEL);
 		       break;
 		   }
 		case 10:
@@ -498,7 +824,7 @@ scriptData *debugger::getActorTrackScript(int num)
 
 		       scriptPtr += 2;
 
-		       temp = *(engine->actors[num].moveScript + temp + 1);
+		       temp = *(actors[num].moveScript + temp + 1);
 
 		       sprintf(buffer, "GOTO %d", temp);
 		       addLine(buffer, script);
@@ -601,7 +927,7 @@ scriptData *debugger::getActorTrackScript(int num)
 
 		       scriptPtr += 2;
 
-		       sprintf(buffer, "OPEN_LEFT %d", script, temp);
+		       sprintf(buffer, "OPEN_LEFT %d", temp);
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -613,7 +939,7 @@ scriptData *debugger::getActorTrackScript(int num)
 
 		       scriptPtr += 2;
 
-		       sprintf(buffer, "OPEN_RIGHT %d", script, temp);
+		       sprintf(buffer, "OPEN_RIGHT %d", temp);
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -625,7 +951,7 @@ scriptData *debugger::getActorTrackScript(int num)
 
 		       scriptPtr += 2;
 
-		       sprintf(buffer, "OPEN_UP %d", script, temp);
+		       sprintf(buffer, "OPEN_UP %d", temp);
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -637,7 +963,7 @@ scriptData *debugger::getActorTrackScript(int num)
 
 		       scriptPtr += 2;
 
-		       sprintf(buffer, "OPEN_DOWN %d", script, temp);
+		       sprintf(buffer, "OPEN_DOWN %d", temp);
 		       addLine(buffer, script);
 		       break;
 		   }
@@ -751,853 +1077,989 @@ scriptData *debugger::getActorTrackScript(int num)
 scriptData *debugger::getActorComScript(int num)
 {
     unsigned char *scriptPtr;
-    int finish = 0;
+    bool finish = false;
+    bool endComportement = false;
+    int currentComportement = 0;
     unsigned char opcode;
     scriptData *script;
     char buffer[256];
     char buffer2[256];
+    int currentLineNumber;
 
     script = (scriptData *) malloc(sizeof(scriptData));
 
     script->lines = 0;
     script->numOfLignes = 0;
 
-    scriptPtr = engine->actors[num].actorScript;
+    scriptPtr = actors[num].actorScript;
 
     do
-	{
-	    sprintf(buffer, "%5d:    ", scriptPtr - engine->actors[num].actorScript);
-	    opcode = *(scriptPtr++);
-	    switch (opcode)
-		{
-		case 0:
-		   {
-		       strcat(buffer, "END");
-		       addLine(buffer, script);
-		       finish = 1;
-		       break;
-		   }
-		case 1:
-		   {
-		       strcat(buffer, "NOP");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 2:
-		   {
-		       short int temp;
-
-		       strcat(buffer, "SNIF ");
-		       manipActor(&scriptPtr, buffer);
-		       doCalc(&scriptPtr, buffer);
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-		       sprintf(buffer2, " goto %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 3:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "OFFSET %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 4:
-		   {
-		       short int temp;
-
-		       strcat(buffer, "NEVERIF ");
-		       manipActor(&scriptPtr, buffer);
-		       doCalc(&scriptPtr, buffer);
-
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, " goto %d", temp);
-		       strcat(buffer, buffer2);
-
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 10:
-		   {
-		       sprintf(buffer2, "LABEL %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 11:
-		   {
-		       strcat(buffer, "RETURN");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 12:
-		   {
-		       short int temp;
-
-		       strcat(buffer, "IF ");
-		       manipActor(&scriptPtr, buffer);
-		       doCalc(&scriptPtr, buffer);
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-		       sprintf(buffer2, " else goto %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 13:
-		   {
-		       short int temp;
-
-		       strcat(buffer, "SWIF ");
-		       manipActor(&scriptPtr, buffer);
-		       doCalc(&scriptPtr, buffer);
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-		       sprintf(buffer2, " else goto %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 14:
-		   {
-		       short int temp;
-
-		       strcat(buffer, "ONEIF ");
-		       manipActor(&scriptPtr, buffer);
-		       doCalc(&scriptPtr, buffer);
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-		       sprintf(buffer2, " else goto %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 15:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "ELSE %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 17:
-		   {
-		       sprintf(buffer2, "BODY %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 18:
-		   {
-		       char temp1;
-		       char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "BODY_OBJ %d %d", temp2, temp1);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 19:
-		   {
-		       sprintf(buffer2, "ANIM %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 20:
-		   {
-		       char temp1;
-		       char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "ANIM_OBJ %d %d", temp2, temp1);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 21:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_LIFE %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 22:
-		   {
-		       char temp1;
-		       short int temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_LIFE_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 23:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       temp = *(engine->actors[num].moveScript + temp + 1);
-
-		       sprintf(buffer2, "SET_TRACK %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 24:
-		   {
-		       char temp1;
-		       short int temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       temp2 = *(engine->actors[num].moveScript + temp2 + 1);
-
-		       sprintf(buffer2, "SET_TRACK_OBJ %d %d", temp2, temp1);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 25:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "MESSAGE %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 26:
-		   {
-		       sprintf(buffer2, "FALLABLE %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 27:
-		   {
-		       char temp;
-		       char temp2;
-
-		       temp = *scriptPtr++;
-
-		       if (temp == 2)
-			   {
-			       temp2 = *scriptPtr++;
-			       sprintf(buffer2, "SET_DIR %d follow %d", temp, temp2);
-			   }
-		       else
-			   {
-			       sprintf(buffer2, "SET_DIR %d", temp);
-			   }
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 28:
-		   {
-		       char temp;
-		       char temp2;
-		       char temp3;
-
-		       temp3 = *scriptPtr++;
-		       temp = *scriptPtr++;
-
-		       if (temp == 2)
-			   {
-			       temp2 = *scriptPtr++;
-			       sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d follow %d", temp3, temp,
-				       temp2);
-			   }
-		       else
-			   {
-			       sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d", temp3, temp);
-			   }
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-
-		   }
-		case 29:
-		   {
-		       sprintf(buffer2, "CAM_FOLLOW %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 30:
-		   {
-		       sprintf(buffer2, "COMPORTEMENT_HERO %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 31:
-		   {
-		       unsigned char temp1;
-		       unsigned char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "SET_FLAG_CUBE %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 32:
-		   {
-		       scriptPtr++;
-		       strcat(buffer, "COMPORTEMENT %d");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 33:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_COMPORTEMENT %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 34:
-		   {
-		       char temp1;
-		       short int temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_COMPORTEMENT_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 35:
-		   {
-		       strcat(buffer, "END_COMPORTEMENT");
-		       strcat(buffer, buffer2);
-		       break;
-		   }
-		case 36:
-		   {
-		       unsigned char temp1;
-		       char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "SET_FLAG_GAME %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 37:
-		   {
-		       sprintf(buffer2, "KILL_OBJ %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 38:
-		   {
-		       strcat(buffer, "SUICIDE");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 39:
-		   {
-		       strcat(buffer, "USE_ONE_LITTLE_KEY");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 40:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "GIVE_GOLD_PIECES %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 41:
-		   {
-		       strcat(buffer, "END_LIFE");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 42:
-		   {
-		       strcat(buffer, "STOP_L_TRACK");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 43:
-		   {
-		       strcat(buffer, "RESTORE_L_TRACK");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 44:
-		   {
-		       char temp1;
-		       short int temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(short int *) (scriptPtr);
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "MESSAGE_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 45:
-		   {
-		       strcat(buffer, "INC_CHAPTER");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 46:
-		   {
-		       sprintf(buffer2, "FOUND_OBJECT %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 47:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) (scriptPtr++);
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_DOOR_LEFT %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 48:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) (scriptPtr++);
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_DOOR_RIGHT %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 49:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) (scriptPtr++);
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_DOOR_UP %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 50:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) (scriptPtr++);
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SET_DOOR_DOWN %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 51:
-		   {
-		       sprintf(buffer2, "GIVE_BONUS %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 52:
-		   {
-		       sprintf(buffer2, "CHANGE_CUBE %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 53:
-		   {
-		       sprintf(buffer2, "OBJ_COL %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 54:
-		   {
-		       sprintf(buffer2, "BRICK_COL %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 55:
-		   {
-		       short int temp;
-
-		       strcat(buffer, "OR_IF ");
-		       manipActor(&scriptPtr, buffer);
-		       doCalc(&scriptPtr, buffer);
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-		       sprintf(buffer2, " goto %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 56:
-		   {
-		       sprintf(buffer2, "INVISIBLE %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 57:
-		   {
-		       sprintf(buffer2, "ZOOM %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 58:
-		   {
-		       sprintf(buffer2, "POS_POINT %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 59:
-		   {
-		       sprintf(buffer2, "SET_MAGIC_LEVEL %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 60:
-		   {
-		       sprintf(buffer2, "SUB_MAGIC_POINT %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 61:
-		   {
-		       char temp1;
-		       char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "SET_LIFE_POINT_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 62:
-		   {
-		       char temp1;
-		       char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "SUB_LIFE_POINT_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 63:
-		   {
-		       char temp1;
-		       char temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(scriptPtr++);
-
-		       sprintf(buffer2, "HIT_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 64:
-		   {
-		       int temp = strlen((char *) scriptPtr);
-
-		       sprintf(buffer2, "PLAY_FLA %s", (char *) scriptPtr);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       scriptPtr += temp + 1;
-		       break;
-		   }
-		case 65:
-		   {
-		       sprintf(buffer2, "PLAY_MIDI %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 66:
-		   {
-		       strcat(buffer, "INC_CLOVER_BOX");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 67:
-		   {
-		       sprintf(buffer2, "SET_USED_INVENTORY %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 68:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) (scriptPtr);
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "ADD_CHOICE %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 69:
-		   {
-		       strcat(buffer, "ASK_CHOICE");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 70:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "BIG_MESSAGE %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 71:
-		   {
-		       sprintf(buffer2, "INIT_PINGOUIN %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 72:
-		   {
-		       sprintf(buffer2, "SET_HOLO_POS %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 73:
-		   {
-		       sprintf(buffer2, "CLR_HOLO_POS %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 74:
-		   {
-		       sprintf(buffer2, "ADD_FUEL %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 75:
-		   {
-		       sprintf(buffer2, "SUB_FUEL%d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 76:
-		   {
-		       sprintf(buffer2, "SET_GRM %d", *(scriptPtr++));
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 77:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "SAY_MESSAGE %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 78:
-		   {
-		       sprintf(buffer2, "SAY_MESSAGE_OBJ %d", *(scriptPtr++));	// recheck !
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 79:
-		   {
-		       strcat(buffer, "FULL_POINT");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 80:
-		   {
-		       short int angle;
-
-		       angle = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "BETA %d", angle);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 81:
-		   {
-		       strcat(buffer, "GRM_OFF");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 82:
-		   {
-		       strcat(buffer, "FADE_PAL_RED");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 89:
-		   {
-		       strcat(buffer, "BULLE_ON");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 90:
-		   {
-		       strcat(buffer, "BULLE_OFF");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 91:
-		   {
-		       char temp1;
-		       short int temp2;
-
-		       temp1 = *(scriptPtr++);
-		       temp2 = *(short int *) scriptPtr;
-
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "ASK_CHOICE_OBJ %d %d", temp1, temp2);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 101:
-		   {
-		       strcat(buffer, "PROJ_ISO");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 102:
-		   {
-		       strcat(buffer, "PROJ_3D");
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 103:
-		   {
-		       short int temp;
-
-		       temp = *(short int *) scriptPtr;
-		       scriptPtr += 2;
-
-		       sprintf(buffer2, "TEXT %d", temp);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       break;
-		   }
-		case 104:
-		   {
-		       strcat(buffer, "CLEAR_TEXT");
-		       addLine(buffer, script);
-		       break;
-		   }
-		default:
-		   {
-		       sprintf(buffer2, "Unknown opcode %d", opcode);
-		       strcat(buffer, buffer2);
-		       addLine(buffer, script);
-		       finish = 1;
-		       break;
-		   }
-		}
+    {
+        endComportement = false;
+
+        if(*scriptPtr != 0)
+        {
+            sprintf(buffer, "COMPORTEMENT %d _________________________________", currentComportement);
+            addLine(buffer, script);
+            script->lines[script->numOfLignes-1].lineNumber = scriptPtr - actors[num].actorScript;
+        }
+
+        do
+        {
+            sprintf(buffer, "");
+            currentLineNumber = scriptPtr - actors[num].actorScript;
+            opcode = *(scriptPtr++);
+            switch (opcode)
+            {
+	        case 0:
+	        {
+		        strcat(buffer, "END");
+		        addLine(buffer, script);
+		        finish = 1;
+                endComportement = true;
+		        break;
+	        }
+	        case 1:
+	        {
+		        strcat(buffer, "NOP");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 2:
+	        {
+		        short int temp;
+
+		        strcat(buffer, "SNIF ");
+		        manipActor(&scriptPtr, buffer);
+		        doCalc(&scriptPtr, buffer);
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+		        sprintf(buffer2, " goto %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 3:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "OFFSET %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 4:
+	        {
+		        short int temp;
+
+		        strcat(buffer, "NEVERIF ");
+		        manipActor(&scriptPtr, buffer);
+		        doCalc(&scriptPtr, buffer);
+
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, " goto %d", temp);
+		        strcat(buffer, buffer2);
+
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 10:
+	        {
+		        sprintf(buffer2, "LABEL %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 11:
+	        {
+		        strcat(buffer, "RETURN");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 12:
+	        {
+		        short int temp;
+
+		        strcat(buffer, "IF ");
+		        manipActor(&scriptPtr, buffer);
+		        doCalc(&scriptPtr, buffer);
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+		        sprintf(buffer2, " else goto %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 13:
+	        {
+		        short int temp;
+
+		        strcat(buffer, "SWIF ");
+		        manipActor(&scriptPtr, buffer);
+		        doCalc(&scriptPtr, buffer);
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+		        sprintf(buffer2, " else goto %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 14:
+	        {
+		        short int temp;
+
+		        strcat(buffer, "ONEIF ");
+		        manipActor(&scriptPtr, buffer);
+		        doCalc(&scriptPtr, buffer);
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+		        sprintf(buffer2, " else goto %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 15:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "ELSE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 17:
+	        {
+		        sprintf(buffer2, "BODY %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 18:
+	        {
+		        char temp1;
+		        char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "BODY_OBJ %d %d", temp2, temp1);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 19:
+	        {
+		        sprintf(buffer2, "ANIM %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 20:
+	        {
+		        char temp1;
+		        char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "ANIM_OBJ %d %d", temp2, temp1);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 21:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_LIFE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 22:
+	        {
+		        char temp1;
+		        short int temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_LIFE_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 23:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        temp = *(actors[num].moveScript + temp + 1);
+
+		        sprintf(buffer2, "SET_TRACK %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 24:
+	        {
+		        char temp1;
+		        short int temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        temp2 = *(actors[num].moveScript + temp2 + 1);
+
+		        sprintf(buffer2, "SET_TRACK_OBJ %d %d", temp2, temp1);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 25:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "MESSAGE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 26:
+	        {
+		        sprintf(buffer2, "FALLABLE %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 27:
+	        {
+		        char temp;
+		        char temp2;
+
+		        temp = *scriptPtr++;
+
+		        if (temp == 2)
+		        {
+			        temp2 = *scriptPtr++;
+			        sprintf(buffer2, "SET_DIR %d follow %d", temp, temp2);
+		        }
+		        else
+		        {
+			        sprintf(buffer2, "SET_DIR %d", temp);
+		        }
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 28:
+	        {
+		        char temp;
+		        char temp2;
+		        char temp3;
+
+		        temp3 = *scriptPtr++;
+		        temp = *scriptPtr++;
+
+		        if (temp == 2)
+		        {
+			        temp2 = *scriptPtr++;
+			        sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d follow %d", temp3, temp,
+				        temp2);
+		        }
+		        else
+		        {
+			        sprintf(buffer2, "SET_DIR_OBJ (actor %d) %d", temp3, temp);
+		        }
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+
+	        }
+	        case 29:
+	        {
+		        sprintf(buffer2, "CAM_FOLLOW %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 30:
+	        {
+		        sprintf(buffer2, "COMPORTEMENT_HERO %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 31:
+	        {
+		        unsigned char temp1;
+		        unsigned char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "SET_FLAG_CUBE %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 32:
+	        {
+		        scriptPtr++;
+		        strcat(buffer, "COMPORTEMENT %d");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 33:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_COMPORTEMENT %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 34:
+	        {
+		        char temp1;
+		        short int temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_COMPORTEMENT_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 35:
+	        {
+		        strcat(buffer, "END_COMPORTEMENT");
+                addLine(buffer, script);
+
+                endComportement = true;
+
+		        break;
+	        }
+	        case 36:
+	        {
+		        unsigned char temp1;
+		        char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "SET_FLAG_GAME %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 37:
+	        {
+		        sprintf(buffer2, "KILL_OBJ %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 38:
+	        {
+		        strcat(buffer, "SUICIDE");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 39:
+	        {
+		        strcat(buffer, "USE_ONE_LITTLE_KEY");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 40:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "GIVE_GOLD_PIECES %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 41:
+	        {
+		        strcat(buffer, "END_LIFE");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 42:
+	        {
+		        strcat(buffer, "STOP_L_TRACK");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 43:
+	        {
+		        strcat(buffer, "RESTORE_L_TRACK");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 44:
+	        {
+		        char temp1;
+		        short int temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(short int *) (scriptPtr);
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "MESSAGE_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 45:
+	        {
+		        strcat(buffer, "INC_CHAPTER");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 46:
+	        {
+		        sprintf(buffer2, "FOUND_OBJECT %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 47:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) (scriptPtr);
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_DOOR_LEFT %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 48:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) (scriptPtr);
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_DOOR_RIGHT %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 49:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) (scriptPtr);
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_DOOR_UP %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 50:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) (scriptPtr++);
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SET_DOOR_DOWN %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 51:
+	        {
+		        sprintf(buffer2, "GIVE_BONUS %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 52:
+	        {
+		        sprintf(buffer2, "CHANGE_CUBE %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 53:
+	        {
+		        sprintf(buffer2, "OBJ_COL %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 54:
+	        {
+		        sprintf(buffer2, "BRICK_COL %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 55:
+	        {
+		        short int temp;
+
+		        strcat(buffer, "OR_IF ");
+		        manipActor(&scriptPtr, buffer);
+		        doCalc(&scriptPtr, buffer);
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+		        sprintf(buffer2, " goto %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 56:
+	        {
+		        sprintf(buffer2, "INVISIBLE %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 57:
+	        {
+		        sprintf(buffer2, "ZOOM %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 58:
+	        {
+		        sprintf(buffer2, "POS_POINT %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 59:
+	        {
+		        sprintf(buffer2, "SET_MAGIC_LEVEL %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 60:
+	        {
+		        sprintf(buffer2, "SUB_MAGIC_POINT %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 61:
+	        {
+		        char temp1;
+		        char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "SET_LIFE_POINT_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 62:
+	        {
+		        char temp1;
+		        char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "SUB_LIFE_POINT_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 63:
+	        {
+		        char temp1;
+		        char temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(scriptPtr++);
+
+		        sprintf(buffer2, "HIT_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 64:
+	        {
+		        int temp = strlen((char *) scriptPtr);
+
+		        sprintf(buffer2, "PLAY_FLA %s", (char *) scriptPtr);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        scriptPtr += temp + 1;
+		        break;
+	        }
+	        case 65:
+	        {
+		        sprintf(buffer2, "PLAY_MIDI %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 66:
+	        {
+		        strcat(buffer, "INC_CLOVER_BOX");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 67:
+	        {
+		        sprintf(buffer2, "SET_USED_INVENTORY %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 68:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) (scriptPtr);
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "ADD_CHOICE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 69:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "ASK_CHOICE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 70:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "BIG_MESSAGE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 71:
+	        {
+		        sprintf(buffer2, "INIT_PINGOUIN %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 72:
+	        {
+		        sprintf(buffer2, "SET_HOLO_POS %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 73:
+	        {
+		        sprintf(buffer2, "CLR_HOLO_POS %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 74:
+	        {
+		        sprintf(buffer2, "ADD_FUEL %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 75:
+	        {
+		        sprintf(buffer2, "SUB_FUEL%d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 76:
+	        {
+		        sprintf(buffer2, "SET_GRM %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 77:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "SAY_MESSAGE %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 78:
+	        {
+		        sprintf(buffer2, "SAY_MESSAGE_OBJ %d", *(scriptPtr++));	// recheck !
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 79:
+	        {
+		        strcat(buffer, "FULL_POINT");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 80:
+	        {
+		        short int angle;
+
+		        angle = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "BETA %d", angle);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 81:
+	        {
+		        strcat(buffer, "GRM_OFF");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 82:
+	        {
+		        strcat(buffer, "FADE_PAL_RED");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 83:
+	        {
+		        strcat(buffer, "FADE_ALARM_RED");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 84:
+	        {
+		        strcat(buffer, "FADE_ALARM_PAL");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 85:
+	        {
+		        strcat(buffer, "FADE_RED_PAL");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 86:
+	        {
+		        strcat(buffer, "FADE_RED_ALARM");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 87:
+	        {
+		        strcat(buffer, "FADE_PAL_ALARM");
+		        addLine(buffer, script);
+		        break;
+	        }
+   	        case 88:
+	        {
+		        char temp;
+
+		        temp = *(scriptPtr++);
+
+		        sprintf(buffer2, "EXPLODE_OBJ %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 89:
+	        {
+		        strcat(buffer, "BULLE_ON");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 90:
+	        {
+		        strcat(buffer, "BULLE_OFF");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 91:
+	        {
+		        char temp1;
+		        short int temp2;
+
+		        temp1 = *(scriptPtr++);
+		        temp2 = *(short int *) scriptPtr;
+
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "ASK_CHOICE_OBJ %d %d", temp1, temp2);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+            case 92:
+	        {
+		        strcat(buffer, "SET_DARK_PAL");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 93:
+	        {
+		        strcat(buffer, "SET_NORMAL_PAL");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 94:
+	        {
+		        strcat(buffer, "MESSAGE_SENDELL");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 95:
+	        {
+		        sprintf(buffer2, "ANIM_SET %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 96:
+	        {
+		        sprintf(buffer2, "HOLOMAP_TRAJ %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 97:
+	        {
+		        strcat(buffer, "GAME_OVER");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 98:
+	        {
+		        strcat(buffer, "THE_END");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 99:
+	        {
+		        strcat(buffer, "MIDI_OFF");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 100:
+	        {
+		        sprintf(buffer2, "PLAY_CD_TRACK %d", *(scriptPtr++));
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 101:
+	        {
+		        strcat(buffer, "PROJ_ISO");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 102:
+	        {
+		        strcat(buffer, "PROJ_3D");
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 103:
+	        {
+		        short int temp;
+
+		        temp = *(short int *) scriptPtr;
+		        scriptPtr += 2;
+
+		        sprintf(buffer2, "TEXT %d", temp);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        break;
+	        }
+	        case 104:
+	        {
+		        strcat(buffer, "CLEAR_TEXT");
+		        addLine(buffer, script);
+		        break;
+	        }
+ 	        case 105:
+	        {
+		        strcat(buffer, "BRUTAL_EXIT");
+		        addLine(buffer, script);
+		        break;
+	        }     
+	        default:
+	        {
+		        sprintf(buffer2, "Unknown opcode %d", opcode);
+		        strcat(buffer, buffer2);
+		        addLine(buffer, script);
+		        finish = 1;
+		        break;
+	        }
+            }
+
+            script->lines[script->numOfLignes-1].lineNumber = currentLineNumber;
+
+        }while (!endComportement);
+
+        currentComportement ++;
 	}
     while (!finish);
 

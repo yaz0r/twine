@@ -2,21 +2,25 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 
-LBA_engine *tempEngine;
+extern volatile int time;
 
 int threadTimer(void *test)	// LBA time is 50 frames per seconds ie,  a frame every 20 miliseconds
 {
+    int temp = SDL_GetTicks();
     while (1)
 	{
-	    SDL_Delay(15); // granularity restriction
-	    tempEngine->musicPosition++;
-	    tempEngine->time++;
+	    SDL_Delay(2); // granularity restriction
+        if(SDL_GetTicks() - temp >= 15)
+        {
+            musicPosition++;
+	        time++;
+            temp = SDL_GetTicks();
+        }
 	}
     return (0);
 }
 
-void startThreadTimer(LBA_engine * lengine)
+void startThreadTimer()
 {
-    tempEngine = lengine;
     SDL_CreateThread(threadTimer, NULL);
 }

@@ -36,32 +36,32 @@ int setAnimAtKeyFrame(int index, unsigned char *anim, unsigned char *body)
     short int numOfPointInBody;
     int i;
 
-    numOfIndexInAnim = READ_LE_S16(anim);
+    numOfIndexInAnim = READ_LE_U16(anim);
 
     if (index >= numOfIndexInAnim)
-	return (numOfIndexInAnim);
+		return (numOfIndexInAnim);
 
-    numOfPointInAnim = READ_LE_S16(anim + 2);
+    numOfPointInAnim = READ_LE_U16(anim + 2);
 
     ptrToData = (char *) ((numOfPointInAnim * 8 + 8) * index + anim + 8);
 
-    bodyHeader = READ_LE_S16(body);
+    bodyHeader = READ_LE_U16(body);
 
     if (!(bodyHeader & 2))
 	return (0);
 
     ptrToBodyData = (char *) (body + 14);
 
-	WRITE_LE_U32(ptrToBodyData + 2, (uint32)ptrToData);
-    WRITE_LE_S32(ptrToBodyData + 6, time );
+    *(char **) (ptrToBodyData + 2) = ptrToData;
+    *(int *) (ptrToBodyData + 6) = time;
 
-    ptrToBodyData = ptrToBodyData + READ_LE_S16(ptrToBodyData) + 2;
+    ptrToBodyData = ptrToBodyData + *(short int *) ptrToBodyData + 2;
 
-    numOfElementInBody = READ_LE_S16(ptrToBodyData);
+    numOfElementInBody = *(short int *) ptrToBodyData;
 
     ptrToBodyData = ptrToBodyData + numOfElementInBody * 6 + 12;
 
-    numOfPointInBody = READ_LE_S16(ptrToBodyData - 10);
+    numOfPointInBody = *(short int *) (ptrToBodyData - 10);
 
     if (numOfPointInAnim > numOfPointInBody)
 	{
@@ -100,12 +100,12 @@ int setAnimAtKeyFrame(int index, unsigned char *anim, unsigned char *body)
 
 int GetNbFramesAnim(char *ptr)
 {
-    return (READ_LE_S16(ptr));
+    return (READ_LE_U16(ptr));
 }
 
 int GetBouclageAnim(char *ptr)
 {
-    return (READ_LE_S16(ptr + 4));
+    return (READ_LE_U16(ptr + 4));
 }
 
 int SetInterAnimObjet2(int animState, char *animData, char *body)
@@ -140,8 +140,8 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 
     animVar1 = edi;
 
-    ebx = (char*)READ_LE_U32(edi);
-    ebp = READ_LE_U32(edi + 4);
+    ebx = *(char **) edi;
+    ebp = *(int *) (edi + 4);
 
     if (!ebx)
 	{
@@ -155,14 +155,14 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 
     lastKeyFramePtr = ebx;
 
-    eax = READ_LE_S16(edi - 2);
+    eax = *(short int *) (edi - 2);
     edi += eax;
 
-    eax = READ_LE_S16(edi);
+    eax = *(short int *) (edi);
     eax = eax + eax * 2;
     edi = edi + eax * 2 + 12;
 
-    numOfPointInBody = READ_LE_S16(edi - 10);
+    numOfPointInBody = *(short int *) (edi - 10);
 
     if (numOfPointInAnim > numOfPointInBody)
 	{
@@ -181,16 +181,26 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 
 	    do
 		{
-			WRITE_LE_U32( destPtr++, READ_LE_U32(sourcePtr++));
-			WRITE_LE_U32( destPtr++, READ_LE_U32(sourcePtr++));
+			unsigned char* source = (unsigned char*)sourcePtr;
+			unsigned char* dest = (unsigned char*)destPtr;
+
+			*(dest++) = *(source++);
+			*(dest++) = *(source++);
+			*(dest++) = *(source++);
+			*(dest++) = *(source++);
+
+			*(dest++) = *(source++);
+			*(dest++) = *(source++);
+			*(dest++) = *(source++);
+			*(dest++) = *(source++);
 
 		    destPtr = (int *) (((char *) destPtr) + 30);
 
 		}
 	    while (--numOfPointInAnim);
 
-		WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-	    WRITE_LE_U32(animVar1 + 4, time);
+	    *(char **) animVar1 = keyFramePtr;
+	    *(int *) (animVar1 + 4) = time;
 
 	    currentX = READ_LE_S16(keyFramePtr + 2);
 	    currentZ = READ_LE_S16(keyFramePtr + 4);
@@ -264,9 +274,9 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 		    while (--animVar4);
 		}
 
-	    currentX = ( READ_LE_S16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	    currentZ = ( READ_LE_S16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	    currentY = ( READ_LE_S16(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	    currentX = (READ_LE_S16(keyFramePtrOld + 2) * eax) / keyFrameLength;
+	    currentZ = (READ_LE_S16(keyFramePtrOld + 4) * eax) / keyFrameLength;
+	    currentY = (READ_LE_S16(keyFramePtrOld + 6) * eax) / keyFrameLength;
 	}
 
     return (0);
@@ -295,17 +305,17 @@ void loadGfxSub(unsigned char *bodyPtr)
 
     bodyDataPtr = bodyPtr + offsetToData + 16;
 
-    numOfElement1 = READ_LE_S16(bodyDataPtr);
+    numOfElement1 = *(short int *) bodyDataPtr;
     unsigned char *ptr2 = bodyDataPtr + 2 + numOfElement1 * 6;
 
-    numOfPoint = READ_LE_S16(ptr2);
+    numOfPoint = *(short int *) ptr2;
 
     ptrToKeyData = ptr2 + 2;
 
     for (i = 0; i < numOfPoint; i++)
 	{
 	    ptrToKeyData += 38;
-	    WRITE_LE_S16(ptrToKeyData + 6,(READ_LE_S16(ptrToKeyData + 6) * bp) / bx);
+	    *(short int *) (ptrToKeyData + 6) = (READ_LE_U16(ptrToKeyData + 6) * bp) / bx;
 	}
 }
 
@@ -324,13 +334,13 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
     int numOfPointInAnim;
     char *keyFramePtrOld;
 
-    numOfPointInAnim = READ_LE_S16(animData + 2);
+    numOfPointInAnim = READ_LE_U16(animData + 2);
 
     keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animData + 8;
 
-    keyFrameLength = READ_LE_S16(keyFramePtr);
+    keyFrameLength = READ_LE_U16(keyFramePtr);
 
-    var0 = READ_LE_S16(body);
+    var0 = READ_LE_U16(body);
 
     if (!(var0 & 2))
 	{
@@ -341,8 +351,8 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 
     animVar1 = edi;
 
-    ebx = (char*)READ_LE_U32(edi);
-    ebp = READ_LE_U32(edi + 4);
+    ebx = *(char **) edi;
+    ebp = *(int *) (edi + 4);
 
     if (!ebx)
 	{
@@ -352,14 +362,14 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 
     lastKeyFramePtr = ebx;
 
-    eax = READ_LE_S16(edi - 2);
+    eax = *(short int *) (edi - 2);
     edi += eax;
 
-    eax = READ_LE_S16(edi);
+    eax = *(short int *) (edi);
     eax = eax + eax * 2;
     edi = edi + eax * 2 + 12;
 
-    numOfPointInBody = READ_LE_S16(edi - 10);
+    numOfPointInBody = *(short int *) (edi - 10);
 
     if (numOfPointInAnim > numOfPointInBody)
 	{
@@ -378,25 +388,25 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 
 	    do
 		{
-			WRITE_LE_U32( destPtr++, READ_LE_U32(sourcePtr++));
-			WRITE_LE_U32( destPtr++, READ_LE_U32(sourcePtr++));
+		    *(destPtr++) = *(sourcePtr++);
+		    *(destPtr++) = *(sourcePtr++);
 
 		    destPtr = (int *) (((char *) destPtr) + 30);
 
 		}
 	    while (--numOfPointInAnim);
 
-	    WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-	    WRITE_LE_S32(animVar1 + 4, time);
+	    *(char **) animVar1 = keyFramePtr;
+	    *(int *) (animVar1 + 4) = time;
 
-	    currentX = READ_LE_S16(keyFramePtr + 2);
-	    currentZ = READ_LE_S16(keyFramePtr + 4);
-	    currentY = READ_LE_S16(keyFramePtr + 6);
+	    currentX = *(short int *) (keyFramePtr + 2);
+	    currentZ = *(short int *) (keyFramePtr + 4);
+	    currentY = *(short int *) (keyFramePtr + 6);
 
-	    processActorVar5 = READ_LE_S16(keyFramePtr + 8);
-	    processActorSub2Var0 = READ_LE_S16(keyFramePtr + 10);
-	    processActorVar6 = READ_LE_S16(keyFramePtr + 12);
-	    processActorSub2Var1 = READ_LE_S16(keyFramePtr + 14);
+	    processActorVar5 = *(short int *) (keyFramePtr + 8);
+	    processActorSub2Var0 = *(short int *) (keyFramePtr + 10);
+	    processActorVar6 = *(short int *) (keyFramePtr + 12);
+	    processActorSub2Var1 = *(short int *) (keyFramePtr + 14);
 
 	    return (1);
 	}
@@ -407,10 +417,10 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 	    lastKeyFramePtr += 8;
 	    keyFramePtr += 8;
 
-	    processActorVar5 = READ_LE_S16(keyFramePtr);
-	    processActorSub2Var0 = (READ_LE_S16(keyFramePtr + 2) * eax) / keyFrameLength;
-	    processActorVar6 = (READ_LE_S16(keyFramePtr + 4) * eax) / keyFrameLength;
-	    processActorSub2Var1 = (READ_LE_S16(keyFramePtr + 6) * eax) / keyFrameLength;
+	    processActorVar5 = *(short int *) keyFramePtr;
+	    processActorSub2Var0 = (*(short int *) (keyFramePtr + 2) * eax) / keyFrameLength;
+	    processActorVar6 = (*(short int *) (keyFramePtr + 4) * eax) / keyFrameLength;
+	    processActorSub2Var1 = (*(short int *) (keyFramePtr + 6) * eax) / keyFrameLength;
 
 	    lastKeyFramePtr += 8;
 	    keyFramePtr += 8;
@@ -461,9 +471,9 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 		    while (--animVar4);
 		}
 
-	    currentX = ( READ_LE_S16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	    currentZ = ( READ_LE_S16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	    currentY = ( READ_LE_S16(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	    currentX = (*(short int *) (keyFramePtrOld + 2) * eax) / keyFrameLength;
+	    currentZ = (*(short int *) (keyFramePtrOld + 4) * eax) / keyFrameLength;
+	    currentY = (*(short int *) (keyFramePtrOld + 6) * eax) / keyFrameLength;
 	}
 
     return (0);
@@ -499,7 +509,7 @@ int getAnimIndexForBody(byte anim, short int actorNumber)
 		    if (anim == *bodyPtr)
 			{
 			    ptr++;
-			    var1 = READ_LE_S16(ptr);
+			    var1 = *ptr + 256* (*(ptr+1));
 			    ptr += 2;
 			    ptr2 = ptr;
 			    ptr++;
@@ -568,7 +578,7 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
 
     if (lactor->previousAnimIndex == -1)	// if no previous animation
 	{
-	    setAnimAtKeyFrame(0, HQR_Get(HQR_Anims, animIndex), bodyPtrTab[lactor->costumeIndex]);	// set animation directly to first keyFrame
+	    setAnimAtKeyFrame(0, HQR_Get(HQRanims, animIndex), bodyPtrTab[lactor->costumeIndex]);	// set animation directly to first keyFrame
 	}
     else // interpolation between animations
 	{
@@ -613,7 +623,7 @@ int StockInterAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a
     assert_ptr(lBufAnim);
     assert_ptr(lBody);
 
-    temp = READ_LE_S16(lBody);
+    temp = *(short int *) lBody;
 
     if (temp & 2)
 	{
@@ -622,21 +632,21 @@ int StockInterAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a
         todo("remove hack to prevent time warp in anim");
 
         if(time1)
-	        WRITE_LE_S32(ptr + 4, time3);
+	        *(int *) (ptr + 4) = time3;
         else
-            WRITE_LE_S32(ptr + 4, time);
+            *(int *) (ptr + 4) = time;
 
-		WRITE_LE_U32(ptr,(uint32)lBufAnim);
+	    *(char **) (ptr) = lBufAnim;
 
-	    var0 = READ_LE_S16(ptr - 2);
+	    var0 = *(short int *) (ptr - 2);
 	    ptr = ptr + var0;
 
-	    var1 = READ_LE_S16(ptr);
+	    var1 = *(short int *) (ptr);
 	    var1 = var1 + var1 * 2;
 
 	    ptr = ptr + var1 * 2 + 2;
 
-	    var2 = READ_LE_S16(ptr);
+	    var2 = *(short int *) (ptr);
 	    counter = var2;
 	    var2 = (var2 * 8) + 8;
 
@@ -645,8 +655,8 @@ int StockInterAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a
 
 	    do
 		{
-			WRITE_LE_U32(edi++, READ_LE_U32(esi++));
-			WRITE_LE_U32(edi++, READ_LE_U32(esi++));
+		    *(edi++) = *(esi++);
+		    *(edi++) = *(esi++);
 
 		    esi = (int *) (((char *) esi) + 30);
 
@@ -737,7 +747,7 @@ void GereAnimAction(actor * lactor, int actorNum)
 
 		        if (temp == lactor->animPosition)
 			    {
-			        HQ_3D_MixSample(READ_LE_S16(ebx), 0x1000, 1, lactor->X, lactor->Z, lactor->Y);
+			        HQ_3D_MixSample(*(short int *) ebx, 0x1000, 1, lactor->X, lactor->Z, lactor->Y);
 			    }
 
 		        ebx += 2;
@@ -750,10 +760,10 @@ void GereAnimAction(actor * lactor, int actorNum)
                 int temp_28;
                 int temp_1C;
 
-                temp_28 = READ_LE_S16(ebx);
+                temp_28 = *(short int*)ebx;
                 ebx+=2;
 
-                temp_1C = READ_LE_S16(ebx);
+                temp_1C = *(short int*)ebx;
                 ebx+=2;
                 
                 HQ_3D_MixSample(temp_28, (rand()%temp_1C) + 0x1000 - (abs(temp_1C)>>1), 1, lactor->X, lactor->Z, lactor->Y);
@@ -774,18 +784,18 @@ void GereAnimAction(actor * lactor, int actorNum)
                 int cx;
                 int dx;
 
-                temp_8 = READ_LE_S16(ebx);
+                temp_8 = *(short int*)ebx;
                 ebx+=2;
 
                 temp_C = *(ebx++);
 
-                cx = READ_LE_S16(ebx);
+                cx = *(short int*)ebx;
                 ebx+=2;
 
-                dx = lactor->angle + READ_LE_S16(ebx);
+                dx = lactor->angle + *(short int*)ebx;
                 ebx+=2;
 
-                temp_24 = READ_LE_S16(ebx);
+                temp_24 = *(short int*)ebx;
                 ebx+=2;
 
                 temp_14 = *(ebx++);
@@ -808,11 +818,11 @@ void GereAnimAction(actor * lactor, int actorNum)
                     int var_24;
                     int var_14;
 
-                    var_8 = READ_LE_S16(ebx);
+                    var_8 = *(short int*)ebx;
                     ebx +=2;
-                    dx = READ_LE_S16(ebx);
+                    dx = *(short int*)ebx;
                     ebx +=2;
-                    var_24 = READ_LE_S16(ebx);
+                    var_24 = *(short int*)ebx;
                     ebx +=2;
                     var_14 = *(ebx++);
 
@@ -836,9 +846,9 @@ void GereAnimAction(actor * lactor, int actorNum)
 			    int dx;
 			    int cx;
 
-			    dx = READ_LE_S16(ebx);
+			    dx = *(short int *) ebx;
 			    ebx += 2;
-			    cx = READ_LE_S16(ebx);
+			    cx = *(short int *) ebx;
 			    ebx += 2;
 
 			    HQ_3D_MixSample(dx, 0x1000, cx, lactor->X, lactor->Z, lactor->Y);
@@ -858,11 +868,11 @@ void GereAnimAction(actor * lactor, int actorNum)
                 int var_24;
                 int temp;
 
-                var_8 = READ_LE_S16(ebx);
+                var_8 = *(short int*)ebx;
                 ebx += 2;
                 var_C = *(ebx++);
                 dx = *(ebx++);
-                var_24 = READ_LE_S16(ebx);
+                var_24 = *(short int*)ebx;
                 ebx += 2;
                 temp = *(ebx++);
 
@@ -891,14 +901,14 @@ void GereAnimAction(actor * lactor, int actorNum)
                 distance = Distance2D(lactor->X,lactor->Y,twinsen->X,twinsen->Y);
                 angle = GetAngle(lactor->Z, 0, twinsen->Z, distance);
 
-                var_8 = READ_LE_S16(edi);
+                var_8 = *(short int*)edi;
                 ebx = edi+2;
                 var_C =*(ebx++);
-                dx = READ_LE_S16(ebx);
+                dx = *(short int*)ebx;
                 ebx += 2;
-                cx = lactor->angle + READ_LE_S16(ebx);
+                cx = lactor->angle + *(short int*)ebx;
                 ebx += 2;
-                var_24 = READ_LE_S16(ebx);
+                var_24 = *(short int*)ebx;
                 ebx +=2;
                 var_14 = *(ebx++);
                 temp = *(ebx++);
@@ -915,7 +925,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             if(temp == lactor->animPosition)
             {
                 // TODO: implement
-                //playSound7(READ_LE_S16(edi));
+                //playSound7(*(short int*)edi);
                 ebx = var_48;
             }
             else
@@ -957,16 +967,16 @@ void GereAnimAction(actor * lactor, int actorNum)
                 int di;
 
                 newAngle = GetAngle(lactor->Z, 0, twinsen->Z, Distance2D(lactor->X, lactor->Y, twinsen->X, twinsen->Y));
-                var20 = READ_LE_S16(edi);
-                di = READ_LE_S16(var_48);
-                Rotate(var20,READ_LE_S16(var_50),lactor->angle);
+                var20 = *(short int*)edi;
+                di = *(short int*)var_48;
+                Rotate(var20,*(short int*)var_50,lactor->angle);
 
                 var20 = destX + lactor->X;
 
                 varC = *var_44;
-                var10 = READ_LE_S16(var_40) + newAngle;
+                var10 = *(short int*)var_40 + newAngle;
 
-                var24=READ_LE_S16(var_4C);
+                var24=*(short int*)var_4C;
                 var14=*var_38;
 
                 ThrowExtra(actorNum, var20, di + lactor->Z, destZ + lactor->Y, varC, var10, lactor->angle + *(short int*)var_3C, var24, var14, *var_34);
@@ -998,8 +1008,7 @@ int PatchType(char **ptr)
 
     lptr = (short int *) *ptr;
 
-    opcode = READ_LE_S16(keyFramePtr);
-	WRITE_LE_S16( lptr, opcode );
+    *lptr = opcode = *(short int *) keyFramePtr;
 
     keyFramePtr += 2;
     *(ptr) = *(ptr) + 2;
@@ -1016,10 +1025,10 @@ void PatchInterAngle(char **ptr, int bp, int bx)
     short int angleDif;
     short int computedAngle;
 
-    lastAngle = READ_LE_S16(lastKeyFramePtr);
+    lastAngle = *(short int *) lastKeyFramePtr;
     lastKeyFramePtr += 2;
 
-    newAngle = READ_LE_S16(keyFramePtr);
+    newAngle = *(short int *) keyFramePtr;
     keyFramePtr += 2;
 
     lastAngle &= 0x3FF;
@@ -1047,7 +1056,7 @@ void PatchInterAngle(char **ptr, int bp, int bx)
 
     dest = (short int *) *(ptr);
 
-	WRITE_LE_S16( dest, computedAngle & 0x3FF);
+    *dest = computedAngle & 0x3FF;
 
     *(ptr) = *(ptr) + 2;
 }

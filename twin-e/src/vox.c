@@ -17,7 +17,7 @@
 
 #include "lba.h"
 
-int LBA_engine::setVoxFileAtDigit(int index)
+int setVoxFileAtDigit(int index)
 {
     int temp = 0;
     int temp2 = 0;
@@ -77,7 +77,7 @@ int LBA_engine::setVoxFileAtDigit(int index)
     return (1);
 }
 
-int LBA_engine::loadVox(int index)
+int loadVox(int index)
 {
     return (0);
 }

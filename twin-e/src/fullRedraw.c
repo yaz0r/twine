@@ -17,7 +17,7 @@
 
 #include "lba.h"
 
-void LBA_engine::fullRedraw(int param)
+void fullRedraw(int param)
 {
     short int temp1;
     short int temp2;
@@ -39,29 +39,22 @@ void LBA_engine::fullRedraw(int param)
     int spriteWidth;
     int spriteHeight;
 
-   // debug:
-
-   // param=1;
-
-   // char stringTemp[10];
-
-    temp1 = fullRedrawVar1;
+	temp1 = fullRedrawVar1;
     temp2 = fullRedrawVar2;
 
-    maximizeTextWindow();
+    UnSetClip();
 
     if (!param)
 	{
-	    fullRedrawSub1();	// blit background on the actors
+	    blitBackgroundOnDirtyBoxes();	// blit background on dirty boxes
 	}
-    else			// redraw the background as well
+    else			// fully redraw the background
 	{
 	    freezeTime();
-	    resetVideoBuffer1();
-	    redrawCube();
-	    fullRedrawSub3(temp1, temp2, fullRedrawVar1, fullRedrawVar2);
-	   // fullRedrawSub4();
-	    copyToBuffer(videoBuffer1, videoBuffer2);
+	    Cls();
+	    redrawCube(); // draw cube background to frontVideoBuffer
+	    updateOverlayObjectsPosition(temp1, temp2, fullRedrawVar1, fullRedrawVar2);
+	    CopyScreen(frontVideoBuffer, workVideoBuffer);
 	}
 
     arg_1A = 0;
@@ -74,30 +67,30 @@ void LBA_engine::fullRedraw(int param)
     for (arg_1A = 0; arg_1A < numActorInRoom; arg_1A++, arg_46++, arg_42++)	// process actors (and draw shadow if applicable)
 	{
 	    lactor = &actors[arg_1A];
-	    lactor->field_62 &= 0xFFEF;	// recheck -> reinit the draw flags for the current objects
+	    lactor->dynamicFlagsMask &= 0xFFEF;	// recheck -> reinit the draw flags for the current objects
 
-	    if ((changeRoomVar9 == -1) || (lactor->Z <= *(short int *) ((currentGrid2) * 24 + sceneVarPtr + 8)))
+	    if ((useAnotherGrm == -1) || (lactor->Z <= READ_LE_S16((currentGrid2) * 24 + (char*)zoneData + 8))) // eject characters hidden when using another GRM
 		{
-		    if (lactor->field_60 & 0x2000 && param != 0)	// background
+            if ( lactor->staticFlagsBF.bIsBackgrounded && param == 0 )	// background actor, no redraw required
 			{
 			   // calculate the actor position on screen
-			    fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY);
+			    projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY);
 
 			   // is the actor in the viewable screen ?
-			    if (fullRedrawVar3 > -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4 < 580)
+			    if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
 				{
-				    lactor->field_62 |= 0x10;
+				    lactor->dynamicFlagsMask |= 0x10; // flag ?
 				}
 			}
 		    else
 			{
-			    if (lactor->costumeIndex != -1	&& !(lactor->field_60 & 0x200)) // 0x200 -> visible
+			    if (lactor->costumeIndex != -1	&& !(lactor->staticFlagsBF.bNoDisplay)) // 0x200 -> visible
 				{
 				   // calculate the actor position on screen
-				    fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+				    projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
 
-				    if (((lactor->field_60 & 8) && fullRedrawVar3 > -112 && fullRedrawVar3 < 752 && fullRedrawVar4 > -50 && fullRedrawVar4 < 651)
-						|| ((!(lactor->field_60 & 8)) && fullRedrawVar3 > -50 && fullRedrawVar3 < 680 && fullRedrawVar4 > -30 && fullRedrawVar4 < 580))
+                    if (((lactor->staticFlagsBF.bIsUsingClipping) && projectedPositionX > -112 && projectedPositionX < 752 && projectedPositionY > -50 && projectedPositionY < 651)
+						|| ((!(lactor->staticFlagsBF.bIsUsingClipping)) && projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580))
 					{
 					    temp3 = lactor->Y + lactor->X - cameraX - cameraY;
 
@@ -106,54 +99,53 @@ void LBA_engine::fullRedraw(int param)
 						    temp3 = actors[lactor->standOn].X - cameraX + actors[lactor->standOn].Y - cameraY + 2;
 						}
 
-					    if (lactor->field_60 & 0x400)
+                        if (lactor->staticFlagsBF.bIsSpriteActor)
 						{
-						    fullRedrawVar6[a12].field_2 = arg_46;	// 0x1000
-						    if (lactor->field_60 & 8)
+						    drawList[a12].field_2 = arg_46;	// 0x1000
+                            if (lactor->staticFlagsBF.bIsUsingClipping)
 							{
 							    temp3 =	lactor->lastX - cameraX + lactor->lastY - cameraY;
 							}
 						}
 					    else
 						{
-						    fullRedrawVar6[a12].field_2 = arg_1A;
+						    drawList[a12].field_2 = arg_1A;
 						}
 
-					    fullRedrawVar6[a12].field_0 = temp3;
+					    drawList[a12].field_0 = temp3;
 
 					    a12++;
 
-					    if (shadowMode != 0 && !(lactor->field_60 & 0x1000))	// 0x1000 -> no shadow cast
+                        if (shadowMode != 0 && !(lactor->staticFlagsBF.bDoesntCastShadow))	// 0x1000 -> no shadow cast
 						{
-						   // if(lactor->field_58!=-1) // quick shadow calc if on another
-						   // actor
+                            if(lactor->standOn!=-1) // quick shadow calc if on another actor
 						    {
-							shadowX = lactor->X;
-							shadowZ = lactor->Z - 1;
-							shadowY = lactor->Y;
+							    shadowX = lactor->X;
+							    shadowZ = lactor->Z - 1;
+							    shadowY = lactor->Y;
 						    }
-						   // else
+						    else
 						    {
-						       // addShadowActorToCube(lactor->X,lactor->Z,lactor->Y);
+						        GetShadow(lactor->X,lactor->Z,lactor->Y);
 						    }
 
 						    temp3--;
-						    fullRedrawVar6[a12].field_0 = temp3;	// save the shadow entry in the fullRedrawVar6
-						    fullRedrawVar6[a12].field_2 = arg_42;	// 0xC00
-						    fullRedrawVar6[a12].X = shadowX;
-						    fullRedrawVar6[a12].Z = shadowZ;
-						    fullRedrawVar6[a12].Y = shadowY;
-						    fullRedrawVar6[a12].field_A = 2;
+						    drawList[a12].field_0 = temp3;	// save the shadow entry in the drawList
+						    drawList[a12].field_2 = arg_42;	// 0xC00
+						    drawList[a12].X = shadowX;
+						    drawList[a12].Z = shadowZ;
+						    drawList[a12].Y = shadowY;
+						    drawList[a12].field_A = 2;
 						    a12++;
 
 						}
 
 					    if (drawInGameTransBox)
 						{
-						    if (reinitVar8 != arg_1A)
+						    if (currentlyFollowedActor != arg_1A)
 							{
 							   /*
-							    * arg_16=fullRedrawVar3; arg_12=fullRedrawVar4;
+							    * arg_16=projectedPositionX; arg_12=projectedPositionY;
 							    */
 							}
 						}
@@ -169,48 +161,40 @@ void LBA_engine::fullRedraw(int param)
 
    // loop2
 
-    do				// process "sprite" elements (like key, hearts,...)
+	
+    do				// process extras (like key, hearts,...)
 	{
-	    if (reinitAll2SubVar1[counter2].field_0 != -1)
+	    if (extraList[counter2].field_0 != -1)
 		{
-		    if (reinitAll2SubVar1[counter2].field_15 & 4)
+		    if (extraList[counter2].field_14 & 0x400)
 			{
-			    if (time - reinitAll2SubVar1[counter2].field_18 > 35)
+			    if (time - extraList[counter2].time > 35)
 				{
-				    reinitAll2SubVar1[counter2].field_18 = time;
-				    reinitAll2SubVar1[counter2].field_15 &= 0xFB;
-				    fullRedrawS3(11, 0x1000, 1, reinitAll2SubVar1[counter2].field_2,
-						 reinitAll2SubVar1[counter2].field_4,
-						 reinitAll2SubVar1[counter2].field_6);
+				    extraList[counter2].time = time;
+				    extraList[counter2].field_14 &= 0xFBFF;
+				    HQ_3D_MixSample(11, 0x1000, 1, extraList[counter2].X, extraList[counter2].Z, extraList[counter2].Y);
 				}
 			}
 		    else
 			{
-			    if ((reinitAll2SubVar1[counter2].field_14 & 1)
-				|| (reinitAll2SubVar1[counter2].field_14 & 0x40)
-				|| (reinitAll2SubVar1[counter2].field_1E +
-				    reinitAll2SubVar1[counter2].field_18 - 0x96 > time)
-				|| (!(time + reinitAll2SubVar1[counter2].field_18 & 8)))
+			    if ((extraList[counter2].field_14 & 1) || (extraList[counter2].field_14 & 0x40) || (extraList[counter2].field_1C + extraList[counter2].time - 150 < time) || (!((time + extraList[counter2].time) & 8)))
 				{
-				    fullRedrawS2S1(reinitAll2SubVar1[counter2].field_2 - cameraX,
-						   reinitAll2SubVar1[counter2].field_4 - cameraZ,
-						   reinitAll2SubVar1[counter2].field_6 - cameraY);
+				    projectPositionOnScreen(extraList[counter2].X - cameraX, extraList[counter2].Z - cameraZ, extraList[counter2].Y - cameraY);
 
-				    if (fullRedrawVar3 > -50 && fullRedrawVar3 < 680
-					&& fullRedrawVar4 > -30 && fullRedrawVar4 < 580)
+				    if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
 					{
-					    fullRedrawVar6[a12].field_0 = reinitAll2SubVar1[counter2].field_2 - cameraX + reinitAll2SubVar1[counter2].field_6 - cameraY;
-					    fullRedrawVar6[a12].field_2 = counter;
+					    drawList[a12].field_0 = extraList[counter2].X - cameraX + extraList[counter2].Y - cameraY;
+					    drawList[a12].field_2 = counter;
 					    a12++;
 
-					    if (shadowMode == 2 && reinitAll2SubVar1[counter2].field_0 & 0x8000)	// cast shadow
+					    if (shadowMode == 2 && extraList[counter2].field_0 & 0x8000)	// cast shadow
 						{
-						   // addShadowActorToCube(reinitAll2SubVar1[counter2].field_2,reinitAll2SubVar1[counter2].field_4,reinitAll2SubVar1[counter2].field_6);
-						    fullRedrawVar6[a12].field_0 = reinitAll2SubVar1[counter2].field_2 - cameraX + reinitAll2SubVar1[counter2].field_6 - cameraY - 1;
-						    fullRedrawVar6[a12].field_2 = 0xC00;
-						    fullRedrawVar6[a12].X = shadowX;
-						    fullRedrawVar6[a12].Z = shadowZ;
-						    fullRedrawVar6[a12].Y = shadowY;
+						    GetShadow(extraList[counter2].X,extraList[counter2].Z,extraList[counter2].Y);
+						    drawList[a12].field_0 = extraList[counter2].X - cameraX + extraList[counter2].Y - cameraY - 1;
+						    drawList[a12].field_2 = 0xC00;
+						    drawList[a12].X = shadowX;
+						    drawList[a12].Z = shadowZ;
+						    drawList[a12].Y = shadowY;
 
 						    a12++;
 						}
@@ -224,21 +208,49 @@ void LBA_engine::fullRedraw(int param)
 	}
     while (arg_1A < 50);
 
-    sortRenderList(fullRedrawVar6,a12,12);
+    SmallSort(drawList,a12,12); 
 
    
-    /*  if(twinsen->costumeIndex != -1 && !(twinsen->field_60 & 0x200)) {// -> visible
-      arg_46=twinsen->X+twinsen->field_26; arg_36=twinsen->Z+twinsen->field_2E;
-      arg_52=twinsen->X+twinsen->field_28; arg_4A=twinsen->Z+twinsen->field_30; arg_1A=0;
-      result=-1;
+  /*  if(twinsen->costumeIndex != -1 && !(twinsen->staticFlagsBF.bNoDisplay))
+    {
+        int arg_32;
+        int arg_36;
+        int arg_52;
+        int arg_4A;
+        int arg_1A;
+        int result;
+        int result2;
 
-      //loop3 while(arg_1A<a12) { if(fullRedrawVar6[arg_1A].field_2 == 0) { result=arg_1A;
-      result2=fullRedrawVar6[arg_1A].field_0; break; } arg_1A++; }
+        arg_32=twinsen->X+twinsen->boudingBox.X.bottomLeft;
+        arg_36=twinsen->Y+twinsen->boudingBox.Z.bottomLeft;
+        arg_52=twinsen->X+twinsen->boudingBox.X.topRight;
+        arg_4A=twinsen->Y+twinsen->boudingBox.Z.topRight;
+        arg_1A=0;
+        result=-1;
 
-      if(result!=-1) { printf("Special draw in fullRedraw!\n"); exit(1); arg_1A=0; // loop 4
-      while(arg_1A<a12) { } }
+      //loop3 
+        while(arg_1A<a12)
+        {
+            if(drawList[arg_1A].field_2 == 0)
+            {
+                result=arg_1A;
+                result2=drawList[arg_1A].field_0;
+                break;
+            }
+            arg_1A++;
+        }
 
-      }*/
+        if(result!=-1)
+        {
+            printf("Special draw in fullRedraw!\n");
+            exit(1);
+            arg_1A=0; // loop 4
+            while(arg_1A<a12)
+            {
+            }
+        }
+
+    } */
     
 
     a0E = 0;
@@ -255,9 +267,9 @@ void LBA_engine::fullRedraw(int param)
 
 	    do
 		{
-		    actorNumber = fullRedrawVar6[arg_1E].field_2 & 0x3FF;
+		    actorNumber = drawList[arg_1E].field_2 & 0x3FF;
 		    lactor = &actors[actorNumber];
-		    flags = ((unsigned int) fullRedrawVar6[arg_1E].field_2) & 0xFC00;
+		    flags = ((unsigned int) drawList[arg_1E].field_2) & 0xFC00;
 
 		    if (flags < 0xC00)	// actor
 			{
@@ -266,13 +278,17 @@ void LBA_engine::fullRedraw(int param)
 				    if (!actorNumber)
 					{
 					}
-				   // printf("Draw poly actor %d\n",actorNumber);
 
-					applyAnim(lactor->animPosition,(char*)getHqrdataPtr(HQRanims,lactor->currentAnim),(char*)bodyPtrTab[lactor->costumeIndex]);
+					SetInterAnimObjet2(lactor->animPosition,(char*)HQR_Get(HQR_Anims,lactor->previousAnimIndex),(char*)bodyPtrTab[lactor->costumeIndex]);
 
-				    if (!startRenderer(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
+					if(_debugger.bShowBoundingBoxes)
+						MDL_DrawBoundingBoxHiddenPart(lactor);
+				    if (!AffObjetIso(lactor->X - cameraX, lactor->Z - cameraZ,lactor->Y - cameraY, 0, lactor->angle, 0,bodyPtrTab[lactor->costumeIndex]))
 					{
-					    setTextWindowSize(renderLeft, renderTop, renderRight,renderBottom);
+						if(_debugger.bShowBoundingBoxes)  
+							MDL_DrawBoundingBoxShownPart(lactor);
+
+					    SetClip(renderLeft, renderTop, renderRight,renderBottom);
 
 					    if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
 						{
@@ -280,23 +296,23 @@ void LBA_engine::fullRedraw(int param)
 						    int tempZ;
 						    int tempY;
 
-						    lactor->field_62 |= 0x10;
+						    lactor->dynamicFlagsMask |= 0x10;
 
-						    tempX = lactor->X >> 9;
+						    tempX = (lactor->X + 0x100 )>> 9;
 						    tempZ = lactor->Z >> 8;
 
 						    if (lactor->field_3 & 0x7F)
 								tempZ++;
 
-						    tempY = lactor->Y >> 9;
+						    tempY = (lactor->Y + 0x100) >> 9;
 
-						    refreshUpperBricks3d(tempX, tempZ, tempY);
+						    DrawOverBrick(tempX, tempZ, tempY);
 
-						    addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight, renderBottom);
+						    AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
 
-						    if (lactor->field_60 & 0x2000 && param == 1)
+						    if ((lactor->staticFlagsMask & 0x2000) && param == 1) // the actor is in background. Copy it to the back buffer
 							{
-							    blitRectangle(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (char *) videoBuffer1, textWindowLeft, textWindowTop, (char *) videoBuffer2);
+							    blitRectangle(textWindowLeft, textWindowTop, textWindowRight, textWindowBottom, (char *) frontVideoBuffer, textWindowLeft, textWindowTop, (char *) workVideoBuffer);
 							}
 						}
 					}
@@ -309,94 +325,95 @@ void LBA_engine::fullRedraw(int param)
 
 				    positionInDebugBox++;
 
-					
-				   /* {
+					if(_debugger.bShowActorNumbers)
+				    {
 						char stringTemp[256];
 
 						sprintf(stringTemp, "%d", actorNumber);
-						setTextColor(57);
+						CoulFont(57);
 
-						fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ,
+						projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ,
 								lactor->Y - cameraY);
 
-						if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600
-							&& fullRedrawVar4 > 40 && fullRedrawVar4 < 440)
-							printStringSimple(fullRedrawVar3, fullRedrawVar4,
+						if (projectedPositionX > 40 && projectedPositionX < 600
+							&& projectedPositionY > 40 && projectedPositionY < 440)
+							Font(projectedPositionX, projectedPositionY,
 									stringTemp);
 
-						addToRedrawBoxMain(fullRedrawVar3, fullRedrawVar4, fullRedrawVar3 + 50, fullRedrawVar4 + 50);
-				    }*/
+						AddPhysBox(projectedPositionX, projectedPositionY, projectedPositionX + 50, projectedPositionY + 50);
+				    }
 
 				}
 			}
 		    else if (flags == 0xC00)	// shadows
 			{
 			   
-			/*     if(!(fullRedrawVar6[arg_1E].field_2&0x3FF))
+			     if(!(drawList[arg_1E].field_2&0x3FF))
 				 {
 				//	arg_0E=1;
 				 }
 			     
-			     fullRedrawS2S1(fullRedrawVar6[arg_1E].X-cameraX,fullRedrawVar6[arg_1E].Z-cameraZ,fullRedrawVar6[arg_1E].Y-cameraY);
-			     getSpriteSize(0,&spriteWidth,&spriteHeight,(char*)shadowSprite);
-			     
-			     renderLeft=fullRedrawVar3-spriteWidth; // calculate center renderRight=fullRedrawVar3+spriteWidth;
-			     
-			     renderTop=fullRedrawVar4-spriteHeight;
+			     projectPositionOnScreen(drawList[arg_1E].X-cameraX,drawList[arg_1E].Z-cameraZ,drawList[arg_1E].Y-cameraY);
+                 GetDxDyGraph(drawList[arg_1E].field_A,&spriteWidth,&spriteHeight,(char*)shadowSprite);
 
-				 renderBottom=fullRedrawVar4+spriteHeight;
-			     renderRight=fullRedrawVar3+spriteWidth;
+			     renderLeft=projectedPositionX-(spriteWidth - drawList[arg_1E].field_2&0x3FF)/2; 			     
+			     renderTop=projectedPositionY-(spriteHeight - drawList[arg_1E].field_2&0x3FF)/2;
 
-			     setTextWindowSize(renderLeft,renderTop,renderRight,renderBottom);
+				 renderBottom=projectedPositionY+(spriteHeight - drawList[arg_1E].field_2&0x3FF)/2;
+			     renderRight=projectedPositionX+(spriteWidth - drawList[arg_1E].field_2&0x3FF)/2;
+
+			     SetClip(renderLeft,renderTop,renderRight,renderBottom);
 			     
 			     if(textWindowLeft<=textWindowRight && textWindowTop<=textWindowBottom)
 				 {
-					drawSprite(fullRedrawVar6[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
+					AffGraph(drawList[arg_1E].field_A,renderLeft,renderTop,shadowSprite);
 				 }
 
-				 refreshUpperBricks3d(fullRedrawVar6[arg_1E].X, fullRedrawVar6[arg_1E].Z, fullRedrawVar6[arg_1E].Y);
+				 DrawOverBrick(drawList[arg_1E].X, drawList[arg_1E].Z, drawList[arg_1E].Y);
 
-				 addToRedrawBoxMain(textWindowLeft,textWindowTop,renderRight, renderBottom);*/
+				 AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
 			    
 			}
 		    else if (flags < 0x1000)
 			{
 			    printf("Draw actor <0x1000 %d\n",
-				   fullRedrawVar6[arg_1E].field_2 & 0x3FF);
+				   drawList[arg_1E].field_2 & 0x3FF);
 			}
 		    else if (flags == 0x1000)	// sprite actor
 			{
+			    projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+			    GetDxDyGraph(0, &spriteWidth, &spriteHeight,(char *) HQR_Get(HQR_Sprites,lactor->costumeIndex));
 
-			   // printf("Draw sprite actor %d\n",actorNumber);
-
-			    fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
-			    getSpriteSize(0, &spriteWidth, &spriteHeight,(char *) getHqrdataPtr(HQRPtrSpriteExtra,lactor->costumeIndex));
-
-			    renderLeft = fullRedrawVar3 + *(short int *) (HQRess3 + lactor->costumeIndex * 16);	// calculate center
-			    renderTop = fullRedrawVar4 + *(short int *) (HQRess3 + lactor->costumeIndex * 16 + 2);
+			    renderLeft = projectedPositionX + *(short int *) (spriteActorData + lactor->costumeIndex * 16);	// calculate center
+			    renderTop = projectedPositionY + *(short int *) (spriteActorData + lactor->costumeIndex * 16 + 2);
 
 			    renderRight = renderLeft + spriteWidth;
 			    renderBottom = renderTop + spriteHeight;
 
-			    if (lactor->field_60 & 8)
+			    if (lactor->staticFlagsBF.bIsUsingClipping)
 				{
 					// if sprite actor use croping
-				    setTextWindowSize(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
+				    SetClip(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
 				}
 			    else
 				{
-				    setTextWindowSize(renderLeft, renderTop, renderRight, renderBottom);
+				    SetClip(renderLeft, renderTop, renderRight, renderBottom);
 				}
 
 			    if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
 				{
-				    drawSprite(0, renderLeft, renderTop, getHqrdataPtr(HQRPtrSpriteExtra, lactor->costumeIndex));
-
-				    lactor->field_62 |= 0x10;
-
-				    if (lactor->field_60 & 8)
+				    AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
+					if(_debugger.bShowBoundingBoxes)
 					{
-					    refreshUpperBricks(lactor->lastX >> 9,lactor->lastZ >> 8,lactor->lastY >> 9);
+						MDL_DrawBoundingBoxHiddenPart(lactor);
+						MDL_DrawBoundingBoxShownPart(lactor);
+					}
+
+				    lactor->dynamicFlagsMask |= 0x10;
+
+				    if (lactor->staticFlagsMask & 8)
+					{
+					    DrawOverBrick3((lactor->lastX+0x100)>> 9,lactor->lastZ >> 8,(lactor->lastY+0x100) >> 9);
 					}
 				    else
 					{
@@ -404,20 +421,20 @@ void LBA_engine::fullRedraw(int param)
 					    int tempZ;
 					    int tempY;
 
-					    tempX = (lactor->X + lactor->field_28) >> 9;
+					    tempX = (lactor->X + lactor->boudingBox.X.topRight +0x100) >> 9;
 					    tempZ = lactor->Z >> 8;
 					    if (lactor->field_3 & 0x7F)
 						tempZ++;
-					    tempY = (lactor->Y + lactor->field_30) >> 9;
+					    tempY = (lactor->Y + lactor->boudingBox.Z.topRight +0x100) >> 9;
 
-					    refreshUpperBricks(tempX, tempZ, tempY);
+					    DrawOverBrick3(tempX, tempZ, tempY);
 					}
 
-				    addToRedrawBoxMain(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom);
+				    AddPhysBox(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom);
 
-				    if (lactor->field_60 & 0x2000 && param != 1)
+				    if (lactor->staticFlagsMask & 0x2000 && param == 1)
 					{
-					    blitRectangle(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom,(char *) videoBuffer1, textWindowLeft,textWindowTop, (char *) videoBuffer2);
+					    blitRectangle(textWindowLeft, textWindowTop,textWindowRight, textWindowBottom,(char *) frontVideoBuffer, textWindowLeft,textWindowTop, (char *) workVideoBuffer);
 					}
 				}
 
@@ -431,28 +448,60 @@ void LBA_engine::fullRedraw(int param)
 					positionInDebugBox++;
 				}
 
+				if(_debugger.bShowActorNumbers)
 				{ // print the actor number
-				/*	char stringTemp[256];
+					char stringTemp[256];
 
 					sprintf(stringTemp, "%d", actorNumber);
-					setTextColor(157);
+					CoulFont(157);
 
-					fullRedrawS2S1(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
+					projectPositionOnScreen(lactor->X - cameraX, lactor->Z - cameraZ, lactor->Y - cameraY);
 
-					if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 && fullRedrawVar4 < 440)
-						printStringSimple(fullRedrawVar3, fullRedrawVar4, stringTemp);
+					if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
+						Font(projectedPositionX, projectedPositionY, stringTemp);
 
-					addToRedrawBoxMain(fullRedrawVar3, fullRedrawVar4, fullRedrawVar3 + 50, fullRedrawVar4 + 50);*/
+					AddPhysBox(projectedPositionX, projectedPositionY, projectedPositionX + 50, projectedPositionY + 50);
 				}
 
 			}
-		    else if (flags == 0x1800)
+		    else if (flags == 0x1800) // extras
 			{
-			    printf("Draw actor ==0x1800 %d\n", fullRedrawVar6[arg_1E].field_2 & 0x3FF);
+				int extraFlag;
+			    extraListStruct* extraEntry = &extraList[actorNumber];
+
+				projectPositionOnScreen(extraEntry->X-cameraX,extraEntry->Z-cameraZ,extraEntry->Y-cameraY);
+
+				extraFlag = extraEntry->field_0;
+
+				if(extraFlag & 0x8000)
+				{
+					AffSpecial(actorNumber,projectedPositionX,projectedPositionY);
+				}
+				else
+				{
+                    GetDxDyGraph(0,&spriteWidth,&spriteHeight,(char*)HQR_Get(HQR_Sprites,extraEntry->field_0));
+
+                    renderLeft = (*(short int*)(((extraEntry->field_0*8)*2)+spriteActorData))+projectedPositionX;
+                    renderTop = (*(short int*)(((extraEntry->field_0*8)*2)+spriteActorData)+2)+projectedPositionY;
+
+                    renderRight = renderLeft + spriteWidth;
+                    renderBottom = renderTop + spriteHeight;
+
+                    AffGraph(0,renderLeft,renderTop,HQR_Get(HQR_Sprites,extraEntry->field_0));
+
+				}
+
+				SetClip(renderLeft,renderTop,renderRight,renderBottom);
+
+				if((textWindowLeft <= textWindowRight) && (textWindowTop <= textWindowBottom))
+				{
+					DrawOverBrick(drawList[arg_1E].X, drawList[arg_1E].Z, drawList[arg_1E].Y);
+					AddPhysBox(textWindowLeft,textWindowTop,renderRight, renderBottom);
+				}
 			}
 
 		    arg_1A++;
-		    maximizeTextWindow();
+		    UnSetClip();
 		    arg_1E++;
 		}
 	    while (arg_1A < a12);
@@ -464,27 +513,34 @@ void LBA_engine::fullRedraw(int param)
 	   // loop5
 	}
 
- /*   for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags { char stringTemp[256];
+#ifdef PCLIKE
+    ZONE_DrawZones();
+
+	if(_debugger.bShowFlags)
 	{
-	    char stringTemp[256];
+		for(arg_1A = 0; arg_1A < numFlags; arg_1A++)	// affichage des flags 
+		{
+			char stringTemp[256];
 
-	    startRenderer(flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y - cameraY, 0, 0, 0, flagModelPtr);
+			AffObjetIso(flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y - cameraY, 0, 0, 0, flagModelPtr);
 
-	    sprintf(stringTemp, "%d", arg_1A);
-	    setTextColor(255);
+			sprintf(stringTemp, "%d", arg_1A);
+			CoulFont(255);
 
-	    fullRedrawS2S1(flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y - cameraY);
+			projectPositionOnScreen(flagData[arg_1A].x - cameraX, flagData[arg_1A].z - cameraZ, flagData[arg_1A].y - cameraY);
 
-	    if (fullRedrawVar3 > 40 && fullRedrawVar3 < 600 && fullRedrawVar4 > 40 && fullRedrawVar4 < 440)
-			printStringSimple(fullRedrawVar3, fullRedrawVar4, stringTemp);
-	}*/
+			if (projectedPositionX > 40 && projectedPositionX < 600 && projectedPositionY > 40 && projectedPositionY < 440)
+				Font(projectedPositionX, projectedPositionY, stringTemp);
+		}
+	}
+#endif
 
     counter2 = 0;
 
    // loop7
     do
 	{
-	    if (roomData2[counter2].field_0 != -1)
+	    if (overlayObjectList[counter2].field_0 != -1)
 		{
 		   // another process
 		}
@@ -493,9 +549,9 @@ void LBA_engine::fullRedraw(int param)
 	}
     while (arg_1A < 10);
 
-    maximizeTextWindow();
+    UnSetClip();
 
-   // if(fullRedrawVar9!=0)
+   // if(waitVSync!=0)
    // waitRetrace();
 
     if (drawInGameTransBox != 0)
@@ -509,46 +565,50 @@ void LBA_engine::fullRedraw(int param)
 	{
 	    if (param == 0)
 		{
-		    fullRedrawSub11();	// draw all to screen
+		    FlipBoxes();	// update dirtyBox to screen and move all the nextDirtyBox to dirtyBox
 		}
 	    else
 		{
-		    if (!mainLoopVar3)
-			osystem->drawBufferToScreen(videoBuffer1);
-		    fullRedrawSub5();	// 
+            if(!lockPalette)
+			    osystem->Flip(frontVideoBuffer);
+		    fullRedrawSub5();	// move all the nextDirtyBox to dirtyBox
 		    unfreezeTime();
 		}
 	}
 
-    if (!mainLoopVar3)
+	osystem->updateImage();
+
+    if (!lockPalette)
 	return;
 
-    loadImageToPtr("ress.hqr", (byte *) & palette, 0);
+    Load_HQR("ress.hqr", (byte *) & palette, 0);
     convertPalToRGBA(palette, paletteRGBA);
 
    /*
-    * if(isMenuDisplayed) fadeIn2((char*)menuPalRGBA); else fadeIn2((char*)paletteRGBA); 
+    * if(useAlternatePalette) FadeToPal((char*)menuPalRGBA); else FadeToPal((char*)paletteRGBA); 
     */
 
-    if (isMenuDisplayed)
+    if (useAlternatePalette)
 	{
-	    osystem->crossFade((char *) videoBuffer1, (char *) menuPalRGBA);
+	    osystem->crossFade((char *) frontVideoBuffer, (char *) menuPalRGBA);
 	}
     else
 	{
-	    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
+	    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 	}
 
     osystem->setPalette((byte *) & paletteRGBA);
 
     readKeyboard();
 
-    mainLoopVar3 = 0;
+    lockPalette = 0;
+
+	osystem->updateImage();
 
     return;
 }
 
-void LBA_engine::fullRedrawSub3(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
+void updateOverlayObjectsPosition(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
 {
     int i;
     short int var1;
@@ -559,28 +619,30 @@ void LBA_engine::fullRedrawSub3(short int arg_0, short int arg_4, short int arg_
 
     for (i = 0; i < 10; i++)
 	{
-	    if (roomData2[i].field_6 == 1)
+	    if (overlayObjectList[i].field_6 == 1)
 		{
-		    roomData2[i].field_2 = var1;
-		    roomData2[i].field_4 = var2;
+		    overlayObjectList[i].field_2 = var1;
+		    overlayObjectList[i].field_4 = var2;
 		}
 	}
 }
 
-void LBA_engine::fullRedrawSub1(void)
+void blitBackgroundOnDirtyBoxes(void)
 {
     int i;
+    currentDirtyBoxListStruct* currentBox;
+
+    currentBox = currentDirtyBoxList;
 
     for (i = 0; i < numOfRedrawBox; i++)
 	{
-	    blitRectangle(refreshBoxList[i].field_0, refreshBoxList[i].field_2,
-			 refreshBoxList[i].field_4, refreshBoxList[i].field_6,
-			 (char *) videoBuffer2, refreshBoxList[i].field_0,
-			 refreshBoxList[i].field_2, (char *) videoBuffer1);
+	    blitRectangle(currentBox->left, currentBox->top, currentBox->right, currentBox->bottom,
+			 (char *) workVideoBuffer, currentBox->left, currentBox->top, (char *) frontVideoBuffer);
+        currentBox++;
 	}
 }
 
-void LBA_engine::fullRedrawSub5(void)
+void fullRedrawSub5(void)
 {
     int i;
 
@@ -588,12 +650,12 @@ void LBA_engine::fullRedrawSub5(void)
 
     for (i = 0; i < fullRedrawVar8; i++)
 	{
-	    addToRedrawBox(refreshBoxList2[i].field_0, refreshBoxList2[i].field_2,
-			   refreshBoxList2[i].field_4, refreshBoxList2[i].field_6);
+	    addToRedrawBox(nextDirtyBoxList[i].left, nextDirtyBoxList[i].top,
+			   nextDirtyBoxList[i].right, nextDirtyBoxList[i].bottom);
 	}
 }
 
-void LBA_engine::addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
+void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int arg_C)
 {
     int var1;
     int i = 0;
@@ -606,65 +668,77 @@ void LBA_engine::addToRedrawBox(short int arg_0, short int arg_4, short int arg_
 
     while (i < numOfRedrawBox)
 	{
-	    if (refreshBoxList[i].field_0 >= arg_0)
+	    if (currentDirtyBoxList[i].left >= arg_0)
 		var_C = arg_0;
 	    else
-		var_C = refreshBoxList[i].field_0;
+		var_C = currentDirtyBoxList[i].left;
 
-	    if (refreshBoxList[i].field_4 <= arg_8)
+	    if (currentDirtyBoxList[i].right <= arg_8)
 		var_8 = arg_8;
 	    else
-		var_8 = refreshBoxList[i].field_4;
+		var_8 = currentDirtyBoxList[i].right;
 
-	    if (refreshBoxList[i].field_2 >= arg_4)
+	    if (currentDirtyBoxList[i].top >= arg_4)
 		var_10 = arg_4;
 	    else
-		var_10 = refreshBoxList[i].field_2;
+		var_10 = currentDirtyBoxList[i].top;
 
-	    if (refreshBoxList[i].field_6 <= arg_C)
+	    if (currentDirtyBoxList[i].bottom <= arg_C)
 		var_4 = arg_C;
 	    else
-		var_4 = refreshBoxList[i].field_6;
+		var_4 = currentDirtyBoxList[i].bottom;
 
 	    if ((var_8 - var_C) * (var_4 - var_10) <
-		((refreshBoxList[i].field_6 -
-		  refreshBoxList[i].field_2) * (refreshBoxList[i].field_4 -
-						refreshBoxList[i].field_0) + var1))
+		((currentDirtyBoxList[i].bottom -
+		  currentDirtyBoxList[i].top) * (currentDirtyBoxList[i].right -
+						currentDirtyBoxList[i].left) + var1))
 		{
-		    refreshBoxList[i].field_0 = var_C;
-		    refreshBoxList[i].field_2 = var_10;
-		    refreshBoxList[i].field_4 = var_8;
-		    refreshBoxList[i].field_6 = var_4;
+		    currentDirtyBoxList[i].left = var_C;
+		    currentDirtyBoxList[i].top = var_10;
+		    currentDirtyBoxList[i].right = var_8;
+		    currentDirtyBoxList[i].bottom = var_4;
+
+            assert(currentDirtyBoxList[i].bottom < 480);
 		    return;
 		}
 
 	    i++;
 	};
 
-    refreshBoxList[i].field_0 = arg_0;
-    refreshBoxList[i].field_2 = arg_4;
-    refreshBoxList[i].field_4 = arg_8;
-    refreshBoxList[i].field_6 = arg_C;
+    currentDirtyBoxList[i].left = arg_0;
+    currentDirtyBoxList[i].top = arg_4;
+    currentDirtyBoxList[i].right = arg_8;
+    currentDirtyBoxList[i].bottom = arg_C;
+
+    assert(currentDirtyBoxList[i].bottom < 480);
 
     numOfRedrawBox++;
 }
 
-void LBA_engine::redrawCube(void)
+struct cubeEntry
+{
+    unsigned char brickType1;
+    unsigned char brickType2;
+};
+typedef cubeEntry cubeType[64][64][25];
+
+void redrawCube(void)
 {
 
     int i;
     int x, y, z;
     unsigned char *localBufCube = bufCube;
     unsigned char val;
+    cubeType* cube = (cubeType*)bufCube;
 
     cameraX = newCameraX << 9;
     cameraZ = newCameraZ << 8;
     cameraY = newCameraY << 9;
 
-    fullRedrawS2S1(-cameraX, -cameraZ, -cameraY);
+    projectPositionOnScreen(-cameraX, -cameraZ, -cameraY);
 
-    fullRedrawVar1 = fullRedrawVar3;
-    fullRedrawVar2 = fullRedrawVar4;
+    fullRedrawVar1 = projectedPositionX;
+    fullRedrawVar2 = projectedPositionY;
 
     for (i = 0; i < 28; i++)
 	{
@@ -672,26 +746,45 @@ void LBA_engine::redrawCube(void)
 	}
 
     if (changeRoomVar10 == 0)
-	return;
+	    return;
 
-    for (y = 0; y < 64; y++)
-	{
-	    for (x = 0; x < 64; x++)
-		{
-		    for (z = 0; z < 25; z++)
-			{
-			    val = *(localBufCube++);
-			    if (val)
-				{
-				    zbuffer(--val, *(localBufCube), x, z, y);
-				}
-			    localBufCube++;
-			}
-		}
-	}
+    if( _debugger.cubeClipEnabled )
+    {
+        for (z= 0; z < _debugger.cubeClipZ; z++)
+        {
+            for (x = 0; x < _debugger.cubeClipX; x++)
+		    {
+                for (y = 0; y < _debugger.cubeClipY; y++)
+			    {
+                    val = (*cube)[z][x][y].brickType1;
+                    if(val)
+                    {
+                        zbuffer(val-1, (*cube)[z][x][y].brickType2,x,y,z);
+                    }
+			    }
+		    }
+        }
+    }
+    else
+    {
+        for (z = 0; z < 64; z++)
+	    {
+	        for (x = 0; x < 64; x++)
+		    {
+		        for (y = 0; y < 25; y++)
+			    {
+                    val = (*cube)[z][x][y].brickType1;
+                    if(val)
+                    {
+                        zbuffer(val-1, (*cube)[z][x][y].brickType2,x,y,z);
+                    }
+			    }
+		    }
+	    }
+    }
 }
 
-void LBA_engine::zbuffer(int var1, int var2, int x, int z, int y)
+void zbuffer(int var1, int var2, int x, int z, int y)
 {
     unsigned char *ptr;
     unsigned short int bx;
@@ -700,7 +793,7 @@ void LBA_engine::zbuffer(int var1, int var2, int x, int z, int y)
 
     ptr = zbufferSub1(var1) + 3 + var2 * 4 + 2;
 
-    bx = *(unsigned short int *) ptr;
+    bx = READ_LE_U16(ptr);
 
     if (!bx)
 	return;
@@ -717,7 +810,7 @@ void LBA_engine::zbuffer(int var1, int var2, int x, int z, int y)
 	return;
 
 	// draw the background brick
-    drawSprite(bx-1, zbufferVar1, zbufferVar2, bufferBrick);
+    AffGraph(bx-1, zbufferVar1, zbufferVar2, bufferBrick);
 
     zbufferIndex = (zbufferVar1 + 24) / 24;
 
@@ -732,24 +825,25 @@ void LBA_engine::zbuffer(int var1, int var2, int x, int z, int y)
     currentZbufferData->y = y;
     currentZbufferData->z = z;
     currentZbufferData->x = x;
+	currentZbufferData->drawX = zbufferVar1;
     currentZbufferData->drawY = zbufferVar2;
     currentZbufferData->spriteNum = bx - 1;
 
     zbufferTab[zbufferIndex]++;
 }
 
-unsigned char *LBA_engine::zbufferSub1(int var)
+unsigned char *zbufferSub1(int var)
 {
     return (currentBll + *(unsigned int *) (currentBll + 4 * var));
 }
 
-void LBA_engine::zbufferSub2(int x, int z, int y)
+void zbufferSub2(int x, int z, int y)
 {
     zbufferVar1 = ((x - y) * 16) + (x - y) * 8 + 288;	// x pos
     zbufferVar2 = (((x + y) * 8 + (x + y) * 4) - ((z * 16) - z)) + 215;	// y pos
 }
 
-void LBA_engine::drawSprite(int num, int var1, int var2, unsigned char *localBufferBrick)
+void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
 {
     unsigned char *ptr;
     int top;
@@ -767,7 +861,12 @@ void LBA_engine::drawSprite(int num, int var1, int var2, unsigned char *localBuf
     int iteration;
     int i;
 
-    ptr = localBufferBrick + *(unsigned int *) (localBufferBrick + num * 4);
+    assert( textWindowLeft >= 0 );
+    assert( textWindowRight <= 639 );
+    assert( textWindowTop >= 0 );
+    assert( textWindowBottom <= 479 );
+
+    ptr = localBufferBrick + READ_LE_U32(localBufferBrick + num * 4);
 
     left = var1 + *(ptr + 2);
     top = var2 + *(ptr + 3);
@@ -778,17 +877,11 @@ void LBA_engine::drawSprite(int num, int var1, int var2, unsigned char *localBuf
 
     if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight
 	&& bottom <= textWindowBottom)
-	{			// no 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // 
-	   // crop
+	{			// no crop
 	    right++;
 	    bottom++;
 
-	    outPtr = videoBuffer1 + screenLockupTable[top] + left;
+	    outPtr = frontVideoBuffer + screenLockupTable[top] + left;
 
 	    offset = -((right - left) - largeurEcran);
 
@@ -864,7 +957,7 @@ void LBA_engine::drawSprite(int num, int var1, int var2, unsigned char *localBuf
 		    if (right > 0)
 			offset -= right;
 
-		    outPtr2 = screenLockupTable[top] + videoBuffer1;
+		    outPtr2 = screenLockupTable[top] + frontVideoBuffer;
 		    if (left >= 0)
 			outPtr2 += left;
 		    outPtr = outBuffer;
@@ -914,7 +1007,7 @@ void LBA_engine::drawSprite(int num, int var1, int var2, unsigned char *localBuf
 	}
 }
 
-void LBA_engine::drawSprite2(int num, int var1, int var2, unsigned char *localBufferBrick)
+void drawSprite2(int num, int var1, int var2, unsigned char *localBufferBrick)
 {
     unsigned char *ptr;
     int top;
@@ -949,7 +1042,7 @@ void LBA_engine::drawSprite2(int num, int var1, int var2, unsigned char *localBu
 	    right++;
 	    bottom++;
 
-	    outPtr = videoBuffer2 + screenLockupTable[top] + left;
+	    outPtr = workVideoBuffer + screenLockupTable[top] + left;
 
 	    offset = -((right - left) - largeurEcran);
 
@@ -1025,7 +1118,7 @@ void LBA_engine::drawSprite2(int num, int var1, int var2, unsigned char *localBu
 		    if (right > 0)
 			offset -= right;
 
-		    outPtr2 = screenLockupTable[top] + videoBuffer2;
+		    outPtr2 = screenLockupTable[top] + workVideoBuffer;
 		    if (left >= 0)
 			outPtr2 += left;
 		    outPtr = outBuffer;
@@ -1076,129 +1169,150 @@ void LBA_engine::drawSprite2(int num, int var1, int var2, unsigned char *localBu
 	}
 }
 
-int LBA_engine::fullRedrawS2S1(int coX, int coZ, int coY)
+int projectPositionOnScreen(int coX, int coZ, int coY)
 {
-    if (setSomethingVar4 != 1)
+    if (!isUsingOrhoProjection)
 	{
-	    printf("Unimplemented fullRedrawS2S1\n");
-	    exit(1);
+        coX -= setSomething3Var12;
+        coZ -= setSomething3Var14;
+        coY -= setSomething3Var16;
+
+        if(coY >= 0)
+        {
+            int bp = coY + cameraVar1;
+
+            if(bp <0)
+                bp = 0x7FFF;
+
+            projectedPositionX = (coX * cameraVar2)/bp + setSomethingVar1;
+            projectedPositionY = (-coZ * cameraVar3)/bp + setSomethingVar2;
+
+            return(-1);
+        }
+        else
+        {
+            projectedPositionX = 0;
+            projectedPositionY = 0;
+            return(0);
+        }
 	}
     else
 	{
-	    fullRedrawVar3 = (((coX - coY) * 8 + (coX - coY) * 16) >> 9) + setSomethingVar1;
-	    fullRedrawVar4 =
-		((((coX + coY) * 4 + (coX + coY) * 8) + (2 * coZ - (coZ << 5))) >> 9) +
-		setSomethingVar2;
+	    projectedPositionX = (coX - coY) * 24 / 512 + setSomethingVar1;
+	    projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512 + setSomethingVar2;
 	    return (-1);
 	}
     return (-1);
 }
 
-int LBA_engine::fullRedrawS3(int param0, int param1, int param2, int param3, int param4, int param5)
+int HQ_3D_MixSample(int param0, int param1, int param2, int param3, int param4, int param5)
 {
     if (samplesLoaded != 0)
 	{
-	    printf("sampleLoaded != 0 in fullRedrawS3!\n");
+	    printf("sampleLoaded != 0 in HQ_3D_MixSample!\n");
 	   // exit(1);
 	}
     return (0);
 }
 
-void LBA_engine::getSpriteSize(int arg_0, int *arg_4, int *arg_8, char *ptr)
+void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, char *ptr)
 {
-    ptr += *(int *) (ptr + arg_0 * 4);
+    ptr += READ_LE_S32(ptr + arg_0 * 4);
 
     *arg_4 = *ptr;
     *arg_8 = *(ptr + 1);
 }
 
-void LBA_engine::refreshUpperBricks3d(int X, int Z, int Y)
+void DrawOverBrick(int X, int Z, int Y)
 {
-    int refreshLeft;
-    int refreshRight;
+    int CopyBlockPhysLeft;
+    int CopyBlockPhysRight;
     int i;
 	int j;
     zbufferDataStruct *currentZbufferData;
 
-    refreshLeft = (textWindowLeft + 24) / 24 - 1;
-    refreshRight = (textWindowRight + 24) / 24;
+    CopyBlockPhysLeft = ((textWindowLeft + 24) / 24 ) - 1;
+    CopyBlockPhysRight = ((textWindowRight + 24) / 24);
 
-//	printf("left: %d right: %d X:%d Y:%d Z:%d\n",refreshLeft,refreshRight,X,Y,Z);
+	for( j = CopyBlockPhysLeft; j <= CopyBlockPhysRight; j++ )
+	{
+		for (i = 0; i < zbufferTab[j]; i++)
+		{
+			currentZbufferData = &zbufferData[j][i];
 
-	for(j=refreshLeft;j<refreshRight;j++)
+			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
+			{
+				if (currentZbufferData->x + currentZbufferData->y > Y + X)
+				{
+					CopyMask(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,workVideoBuffer);
+				}
+			}
+		}
+	}
+}
+
+void DrawOverBrick3(int X, int Z, int Y)
+{
+    int CopyBlockPhysLeft;
+    int CopyBlockPhysRight;
+    int i;
+    int j;
+    zbufferDataStruct *currentZbufferData;
+
+    CopyBlockPhysLeft = (textWindowLeft + 24) / 24 - 1;
+    CopyBlockPhysRight = (textWindowRight + 24) / 24;
+
+	for(j = CopyBlockPhysLeft; j <= CopyBlockPhysRight; j++)
 	{
 		currentZbufferData = zbufferData[j];
 
 		for (i = 0; i < zbufferTab[j]; i++)
-		{			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
+		{
+			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
 			{
-				if (currentZbufferData->x + currentZbufferData->y > Y + X)
+				if (currentZbufferData->x == Y && currentZbufferData->y == X)
 				{
-					redrawBrick(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,videoBuffer2);
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
+				}
+
+				if (currentZbufferData->x > Y || currentZbufferData->y > X)
+				{
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,	currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
 				}
 			}
 			currentZbufferData++;
 		}
+
 	}
 }
 
-void LBA_engine::refreshUpperBricks(int X, int Z, int Y)
-{
-    int refreshLeft;
-    int refreshRight;
-    int i;
-    zbufferDataStruct *currentZbufferData;
-
-	return;
-
-    refreshLeft = (textWindowLeft + 24) / 24 - 1;
-    refreshRight = (textWindowRight + 24) / 24;
-
-    if (refreshLeft <= refreshRight)
-	{
-	    do
-		{
-		    currentZbufferData = zbufferData[refreshLeft];
-
-		    for (i = 0; i < zbufferTab[refreshLeft]; i++)
-			{
-			    if (currentZbufferData->drawY + 38 > textWindowTop
-				&& currentZbufferData->drawY <= textWindowBottom
-				&& currentZbufferData->z >= Z)
-				{
-				    if (currentZbufferData->x == Y && currentZbufferData->y == X)
-					{
-					    redrawBrick(currentZbufferData->spriteNum,
-							(refreshLeft * 24) - 24,
-							currentZbufferData->drawY, bufferBrick2,
-							videoBuffer2);
-					}
-
-				    if (currentZbufferData->x > Y || currentZbufferData->y > X)
-					{
-					    redrawBrick(currentZbufferData->spriteNum,
-							(refreshLeft * 24) - 24,
-							currentZbufferData->drawY, bufferBrick2,
-							videoBuffer2);
-					}
-				}
-			    currentZbufferData++;
-			}
-
-		}
-	    while (++refreshLeft <= refreshRight);
-	}
-}
-
-void LBA_engine::redrawBrick(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
+void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
 {
     unsigned char *ptr;
-    unsigned char *sourcePtr;
-
     int top;
     int bottom;
     int left;
     int right;
+    unsigned char *outPtr;
+    unsigned char *inPtr;
+    unsigned char *outPtr2;
+    int offset;
+    int c1;
+    int c2;
+    int vc3;
+
+    int temp;
+    int iteration;
+    int i;
+    int j;
+
+
+    UnSetClip();
+
+    assert( textWindowLeft >= 0 );
+    assert( textWindowRight <= 639 );
+    assert( textWindowTop >= 0 );
+    assert( textWindowBottom <= 479 );
 
     ptr = localBufferBrick + *(unsigned int *) (localBufferBrick + spriteNum * 4);
 
@@ -1207,12 +1321,121 @@ void LBA_engine::redrawBrick(int spriteNum, int x, int y, byte * localBufferBric
     right = *ptr + left - 1;
     bottom = *(ptr + 1) + top - 1;
 
-    sourcePtr = ptr + 4;
+    ptr += 4;
 
-    drawSprite(spriteNum, x, y, bufferBrick);
+    if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight && bottom <= textWindowBottom)
+    {			// no crop
+	    right++;
+	    bottom++;
+
+	    outPtr = frontVideoBuffer + screenLockupTable[top] + left;
+        inPtr = buffer + screenLockupTable[top] + left;
+
+	    offset = -((right - left) - largeurEcran);
+
+	    for (c1 = 0; c1 < bottom - top; c1++)
+		{
+		    vc3 = *(ptr++);
+            do
+			{
+			    temp = *(ptr++); // skip size
+                outPtr += temp;
+                inPtr += temp;
+
+                vc3--;
+                if(!vc3)
+                    break;
+                
+                temp = *(ptr++); // copy size
+
+                for(j=0;j<temp;j++)
+                {
+                    *(outPtr++) = *(inPtr++);
+                }
+			}
+            while(--vc3);
+		    outPtr += offset;
+            inPtr += offset;
+		}
+	}
+    else
+	{
+        return;
+	    if (left <= textWindowRight && top <= textWindowBottom && right >= textWindowLeft && bottom >= textWindowTop)
+		{
+		    if (top < textWindowTop)	// si il manque un bout du haut de la brique
+			{
+                top -= textWindowTop;
+                top =- top;
+
+			}
+
+		    if (bottom > textWindowBottom)
+			bottom = textWindowBottom;
+
+		    if (left < textWindowLeft)
+			cropLeft = textWindowLeft - left;
+		    else
+			cropLeft = 0;
+
+		    offset = -(left + cropLeft - 1 - right);
+
+		    right -= textWindowRight;
+		    if (right > 0)
+			offset -= right;
+
+		    outPtr2 = screenLockupTable[top] + frontVideoBuffer;
+		    if (left >= 0)
+			outPtr2 += left;
+		    outPtr = outBuffer;
+
+		    for (c1 = 0; c1 <= (bottom - top); c1++)
+			{
+			    outPtr = outBuffer;
+
+			    for (i = 0; i < 512; i++)
+				outBuffer[i] = 0;
+
+			    vc3 = *(ptr++);
+			    for (c2 = 0; c2 < vc3; c2++)
+				{
+				    temp = *(ptr++);
+				    iteration = temp & 0x3F;
+				    if (temp & 0xC0)
+					{
+					    iteration++;
+					    if (!(temp & 0x40))
+						{
+						    temp = *(ptr++);
+						    for (i = 0; i < iteration; i++)
+							*(outPtr++) = temp;
+						}
+					    else
+						{
+						    for (i = 0; i < iteration; i++)
+							*(outPtr++) = *(ptr++);
+						}
+					}
+				    else
+					{
+					    outPtr += iteration + 1;
+					}
+				}
+
+			    for (i = 0; i < offset; i++)
+				{
+				    if (outBuffer[cropLeft + i] != 0)
+					*(outPtr2) = outBuffer[cropLeft + i];
+				    outPtr2++;
+				}
+			    outPtr2 += 640 - offset;
+			}
+		}
+	}
+
 }
 
-void LBA_engine::addToRedrawBoxMain(int left, int top, int right, int bottom)
+void AddPhysBox(int left, int top, int right, int bottom)
 {
     if (left < 0)
 	left = 0;
@@ -1220,18 +1443,18 @@ void LBA_engine::addToRedrawBoxMain(int left, int top, int right, int bottom)
 	top = 0;
     if (right >= 640)
 	right = 639;
-    if (bottom > 480)
+    if (bottom >= 480)
 	bottom = 479;
 
     if (left > right || top > bottom)
-	return;
+    	return;
 
-   // drawBoxOutLine (left, top, right, bottom);
+   // DrawCadre (left, top, right, bottom);
 
-    refreshBoxList2[fullRedrawVar8].field_0 = left;
-    refreshBoxList2[fullRedrawVar8].field_2 = top;
-    refreshBoxList2[fullRedrawVar8].field_4 = right;
-    refreshBoxList2[fullRedrawVar8].field_6 = bottom;
+    nextDirtyBoxList[fullRedrawVar8].left = left;
+    nextDirtyBoxList[fullRedrawVar8].top = top;
+    nextDirtyBoxList[fullRedrawVar8].right = right;
+    nextDirtyBoxList[fullRedrawVar8].bottom = bottom;
 
     fullRedrawVar8++;
 
@@ -1240,12 +1463,12 @@ void LBA_engine::addToRedrawBoxMain(int left, int top, int right, int bottom)
 
 //sort character list using bubble-sort
 //TODO: make real use of stepSize to tell the scructure size
-void LBA_engine::sortRenderList(fullRedrawVar6Struct *list, int listSize, int stepSize)
+void SmallSort(drawListStruct *list, int listSize, int stepSize)
 {
 	int i;
 	int j;
 
-	fullRedrawVar6Struct tempStruct;
+	drawListStruct tempStruct;
 
 	for(i=0;i<listSize-1;i++)
 	{
@@ -1253,29 +1476,29 @@ void LBA_engine::sortRenderList(fullRedrawVar6Struct *list, int listSize, int st
 		{
 			if(list[j+1].field_0<list[j].field_0)
 			{
-				memcpy(&tempStruct,&list[j+1],sizeof(fullRedrawVar6Struct));
-				memcpy(&list[j+1],&list[j],sizeof(fullRedrawVar6Struct));
-				memcpy(&list[j],&tempStruct,sizeof(fullRedrawVar6Struct));
+				memcpy(&tempStruct,&list[j+1],sizeof(drawListStruct));
+				memcpy(&list[j+1],&list[j],sizeof(drawListStruct));
+				memcpy(&list[j],&tempStruct,sizeof(drawListStruct));
 			}
 		}
 	}
 }
 
-void LBA_engine::fullRedrawSub11(void)
+void FlipBoxes(void)
 {
     int i;
 
-    for (i = 0; i < numOfRedrawBox; i++)
+    for (i = 0; i < numOfRedrawBox; i++) //draw the dirty box on screen
 	{
-	    osystem->refresh(videoBuffer1, refreshBoxList[i].field_0, refreshBoxList[i].field_2,
-			     refreshBoxList[i].field_4, refreshBoxList[i].field_6);
+	    osystem->CopyBlockPhys(frontVideoBuffer, currentDirtyBoxList[i].left, currentDirtyBoxList[i].top,
+			     currentDirtyBoxList[i].right, currentDirtyBoxList[i].bottom);
 	}
 
     numOfRedrawBox = 0;
 
-    for (i = 0; i < fullRedrawVar8; i++)
+    for (i = 0; i < fullRedrawVar8; i++) //setup the dirty box for next display
 	{
-	    addToRedrawBox(refreshBoxList2[i].field_0, refreshBoxList2[i].field_2,
-			   refreshBoxList2[i].field_4, refreshBoxList2[i].field_6);
+	    addToRedrawBox(nextDirtyBoxList[i].left, nextDirtyBoxList[i].top,
+			   nextDirtyBoxList[i].right, nextDirtyBoxList[i].bottom);
 	}
 }

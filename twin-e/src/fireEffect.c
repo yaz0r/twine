@@ -2,7 +2,7 @@
 
 int lastFireTime=0;
 
-void LBA_engine::makeFireEffect(int top, int param)
+void makeFireEffect(int top, int param)
 {
     unsigned char *temp;
     unsigned char *out;
@@ -10,9 +10,10 @@ void LBA_engine::makeFireEffect(int top, int param)
     unsigned char temp3;
     unsigned char bh, bl;
 
-	while(lastFireTime==time)
+	/*while(lastFireTime==time) // loop to wait next frame
 	{
-	};
+        osystem->delay(5);
+	};*/
 
 	lastFireTime=time;
 
@@ -20,7 +21,7 @@ void LBA_engine::makeFireEffect(int top, int param)
 
     temp = fireEffectVar1 + 1600;
 
-    out = videoBuffer1 + screenLockupTable[top];
+    out = frontVideoBuffer + screenLockupTable[top];
 
     bl = param;
     bh = bl + 15;
@@ -48,7 +49,7 @@ void LBA_engine::makeFireEffect(int top, int param)
 
 }
 
-void LBA_engine::makeFireEffectInit(void)
+void makeFireEffectInit(void)
 {
     unsigned char *temp1;
     unsigned char *temp2;

@@ -1,11 +1,11 @@
 #include "lba.h"
 
-void LBA_engine::changeActorAngle(actor * ptr)
+void ClearRealAngle(actor * ptr)
 {
     setActorAngleSafe(ptr->angle, ptr->angle, 0, &ptr->time);
 }
 
-void LBA_engine::setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct * ptr)
+void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct * ptr)
 {
     ptr->from = arg0;
     ptr->to = arg4;
@@ -13,7 +13,7 @@ void LBA_engine::setActorAngle(short int arg0, short int arg4, short int arg8, t
     ptr->timeOfChange = time;
 }
 
-void LBA_engine::setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8,
+void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8,
 				   timeStruct * timePtr)
 {
     timePtr->from = arg_0 & 0x3FF;
@@ -22,7 +22,7 @@ void LBA_engine::setActorAngleSafe(short int arg_0, short int arg_4, short int a
     timePtr->timeOfChange = time;
 }
 
-int LBA_engine::processActorAngle(timeStruct * angleData)
+int GetRealAngle(timeStruct * angleData)
 {
     int timePassed;
     int remainingAngle;
@@ -60,7 +60,7 @@ int LBA_engine::processActorAngle(timeStruct * angleData)
 
 }
 
-int LBA_engine::mainLoopSub17(timeStruct * angleData)
+int GetRealValue(timeStruct * angleData)
 {
     int tempAngle;
 

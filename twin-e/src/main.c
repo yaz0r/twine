@@ -1,161 +1,248 @@
+#ifdef MEM_DEBUG
+
+#include<windows.h>
+#include<Psapi.h>
+#pragma comment(lib,"Psapi.lib")
+
+#endif // MEM_DEBUG
+
 #include "lba.h"
 
-void test(void)
+#ifndef PCLIKE
+#include <shinobi.h>    /* Shinobi system routines. */
+#include <kamui2.h>     /* Kamui2 low-level graphics HAL. */
+#include <sn_fcntl.h>   /* LibCross file types. */
+#include <usrsnasm.h>   /* LibCross I/O routines. */
+#include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
+
+VOID STATIC	PALExtCallbackFunc(PVOID pCallbackArguments)
 {
-	printf("Quit !\n");
+PKMPALEXTINFO	pInfo;
+
+	pInfo = (PKMPALEXTINFO)pCallbackArguments;
+	pInfo->nPALExtMode = KM_PALEXT_HEIGHT_RATIO_1_133;	
+	return;
 }
+
+
+void DCinit(void)
+{
+#ifdef __GNUC__
+	shinobi_workaround();
+#endif
+
+    /* Tell the user about this app. */
+    debug_write (SNASM_STDOUT, "LBA_DC", 6);
+
+    /* Check the cable for NTSC/PAL or VGA.. works properly for SCART. */
+    switch (syCblCheck())
+	{
+        /* Initialize the display device and set the frame buffer based on the video mode. */
+        case SYE_CBL_NTSC:  /* U.S./North America NTSC (60Hz) and Brazil PAL-M (60Hz). */
+            sbInitSystem (KM_DSPMODE_NTSCNI640x480, KM_DSPBPP_RGB565, 1);
+            break;
+        case SYE_CBL_PAL:   /* Europe PAL (50Hz) and Argentina PAL-N (50Hz). */
+			sbInitSystem((int)KM_DSPMODE_PALNI640x480EXT, (int)KM_DSPBPP_RGB565, 1);
+
+			/*	Change the PAL height ratio */
+			kmSetPALEXTCallback(PALExtCallbackFunc,NULL);
+			kmSetDisplayMode (KM_DSPMODE_PALNI640x480EXT, KM_DSPBPP_RGB565, TRUE, FALSE);
+ 			break;
+        case SYE_CBL_VGA:   /* Standard VGA. */
+            sbInitSystem (KM_DSPMODE_VGA, KM_DSPBPP_RGB565, 1);
+            break;
+        default:
+            syBtExit();     /* Unknown video type, return to Dreamcast BootROM. */
+	}
+
+    /* Check malloc alignment. */
+   // Init32Malloc();
+}
+
+#endif
 
 /**
 fonction main
 */
 
-int main(int argc, char *argv[])
+extern "C" int main(int argc, char *argv[])
 {
     LBA_engine *engine;
-    OSystem *osystem;
 
-    printf("Creation of the system dependant OSystem object\n");
+#ifdef MEM_DEBUG
+	PROCESS_MEMORY_COUNTERS memInfo;
+	GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(PROCESS_MEMORY_COUNTERS));
+
+	staticMemoryUsage = memInfo.WorkingSetSize;
+#endif //MEM_DEBUG
+
+#ifndef PCLIKE
+	DCinit();
+#endif
+
+	printf("Creation of the system dependant OSystem object\n");
     osystem = new OSystem(argc, argv);
     printf("Success !\n");
 
-    printf("LBA_engine object size is: %d\n", sizeof(LBA_engine));
+/*    printf("LBA_engine object size is: %d\n", sizeof(LBA_engine));
     engine = (LBA_engine *) malloc(sizeof(LBA_engine));	// creation of the LBA_engine
 
-    if (!engine)		// if the allocation failed
+    if (!engine) // if the allocation failed
 	{
 	    printf("Failed to create the LBA_engine object !!!\n");
-	    printf("Please check your free memory !\n");
+	    printf("Please check your free memory ! (how can you be that low on memory ??!!?)\n");
 	    exit(1);
 	}
     else
-	{
-	    printf("LBA_engine creation succeed !\n");
+	{*/
+	//    printf("LBA_engine creation succeed !\n");
 
-	    memset(engine, 0, sizeof(LBA_engine));
+	//    memset(engine, 0, sizeof(LBA_engine));
 
-	    engine->osystem = osystem;
-	    engine->_debugger.osystem = osystem;
-	    engine->_debugger.engine = engine;
-	    engine->initVars();	// init the vars (move to the object creator ?)
+       _debugger.init();
 
-	    startThreadTimer(engine);
+	  //  engine->osystem = osystem;
+	  //  engine->_debugger.osystem = osystem;
+	  //  engine->_debugger.engine = engine;
+	_debugger.osystem = osystem;
+	    initVars();	// init the vars (move to the object constructor ?)
 
-		atexit(&test);
+#ifdef PCLIKE
+	    startThreadTimer(); // the little trouble maker ! This one is responsible for the game timming
+#endif
 
-		try
-		{
-			engine->init();	// startup the game engine !
-		}
-		catch(char * str)
-		{
-			printf("Exception :%s\n",str);
-		}
-	}
+			init();	// startup the game engine !
+//	}
 
-    delete(osystem);
+//    delete(osystem);
 
-    return 0;
+    return(0); // that's all folks !
 }
 
-void LBA_engine::init(void)
+void init(void)
 {
-   // getPath
-    loadCFG();
-   // setupMixer
-   // setup_lst=loadSetup_lst(setup.lst,Version_US);
-   // loadLanguage
+#ifdef MEM_DEBUG
+	initMemorySystem();
+#endif
+
+   // GetDiskEnv
+    InitProgram();
+   // ReadVolumeSettings
+   // setup_lst=Def_ReadValue(setup.lst,Version_US);
+   // InitLanguage
+
    /*
-    * if(useSound) { if(useSB) loadMidiResult=load_hqr("midi_sb.hqr",32000,2); else
-    * loadMidiResult=load_hqr("midi_mi.hqr",32000,2);
+    * if(useSound) { if(useSB) HQR_Midi=HQR_Init_Ressource("midi_sb.hqr",32000,2); else
+    * HQR_Midi=HQR_Init_Ressource("midi_mi.hqr",32000,2);
     * 
-    * if(!loadMidiResult) useSound=0; }
+    * if(!HQR_Midi) useSound=0; }
     */
 
-    loadDataFileToPtr("body.hqr", 121, &flagModelPtr);
-    loadGfxSub(flagModelPtr);
-
-    videoBuffer2 = (byte *) malloc(307700 * sizeof(byte));
+    workVideoBuffer = (byte *) Malloc(307700 * sizeof(byte));
 
    // check screenPtr
 
-    osystem->drawBufferToScreen(videoBuffer1);
+    osystem->Flip(frontVideoBuffer);
 
 #ifndef FASTDEBUG
 
-    displayAdelineLogo();
+    AdelineLogo();
 
 #endif
 
-    checkCD("CD_LBA");
+    InitCDR("CD_LBA");
 
    // todo: mettre les detection de problemes d'allocations...
 
-    bufSpeak = allocateBuf(262176);	// Mmm, pas 100% correct je pense
+    bufSpeak = (byte*)Malloc( BUF_SPEAK_SIZE );	// was allocated in dos memory
 
-    bufMemoSeek = allocateBuf(2048);
+    bufMemoSeek = (byte*)Malloc( BUF_MEMOSEEK_SIZE );
 
-    bufText = (char *) allocateBuf(25000);
+    bufText = (char *) Malloc( BUF_TEXT_SIZE );
 
-    bufOrder = (char *) allocateBuf(1024);
+    bufOrder = (char *) Malloc( BUF_ORDER_SIZE );
 
-    bufAni1 = bufAni2 = allocateBuf(5000);
+    bufAni1 = bufAni2 = (byte*)Malloc( BUF_ANIM_SIZE );
 
-    allocBufCube();
+    InitBufferCube();
 
-    HQRInventory = load_hqr("invobj.hqr", 20000, 30);
+//#ifndef PRELOAD_ALL
+  //  HQM_Init_Memory( BUF_HQM_SIZE );
+//#endif
 
-    allocHQMemory(400000);
-
-    menuPal = loadImageToMemory("ress.hqr", 0);
+    menuPal = LoadMalloc_HQR("ress.hqr", 0);
     convertPalToRGBA(menuPal, menuPalRGBA);
 
-    shadowSprite = loadImageToMemory("ress.hqr", 4);
-    HQRess3 = loadImageToMemory("ress.hqr", 3);
-    lbaFont = loadImageToMemory("ress.hqr", 1);
+    shadowSprite = LoadMalloc_HQR("ress.hqr", 4);
+    spriteActorData = LoadMalloc_HQR("ress.hqr", 3);
 
-    fontInit(lbaFont, 2, 8);
+    lbaFont = LoadMalloc_HQR("ress.hqr", 1);
+    SetFont(lbaFont, 2, 8);
+    CoulFont(14);
+    CoulDial(136, 143, 2);
 
-    setTextColor(14);
+#ifdef PRELOAD_ALL
+	HQR_Fic =			HQR_Init_RessourcePreload("file3d.hqr");
+	HQR_Inventory =		HQR_Init_RessourcePreload("invobj.hqr");
+//	HQR_Text =			HQR_Init_RessourcePreload("text.hqr");
+	HQR_Scenes =		HQR_Init_RessourcePreload("scene.hqr");
+	HQR_Sprites =		HQR_Init_RessourcePreload("sprites.hqr");
+	HQR_Anims =			HQR_Init_RessourcePreload("anim.hqr");
+	HQR_Bodies =		HQR_Init_RessourcePreload("body.hqr");
+	HQR_Samples =		HQR_Init_RessourcePreload("samples.hqr");
+	/*HQR_Grids =			HQR_Init_RessourcePreload("lba_gri.hqr");
+	HQR_Bll =			HQR_Init_RessourcePreload("lba_bll.hqr");*/
+#else
+	HQR_Inventory =		HQR_Init_Ressource("invobj.hqr", BUF_INVENTORY_SIZE, 30);
+    HQR_Sprites =		HQR_Init_Ressource("sprites.hqr", 300000, 120); // enough to hold all the sprites in mem
+    HQR_Samples =		HQR_Init_Ressource("samples.hqr", 4500000, 4500000 / 5000);
+    HQR_Anims =			HQR_Init_Ressource("anim.hqr", 450000, 600); // should be able to hold all the anims of the game
+#endif //PRELOAD_ALL
 
-    setInitVars(136, 143, 2);
+#ifdef _DEBUG
+#ifdef PRELOAD_ALL
+	flagModelPtr = HQR_GetCopy( HQR_Bodies, 121 );
+	HQRM_Load("body.hqr", 121, &flagModelPtr); // load the flag model used to display tracks
+#else
+    HQRM_Load("body.hqr", 121, &flagModelPtr); // load the flag model used to display tracks
+#endif
+    loadGfxSub(flagModelPtr);
+#endif
 
-    HQRPtrSpriteExtra = load_hqr("sprites.hqr", 4500000, 4500000 / 1000);
-    HQRSamples = load_hqr("samples.hqr", 4500000, 4500000 / 5000);
-    samplesLoaded = 1;
-    HQRanims = load_hqr("anim.hqr", 4500000, 4500000 / 800);
+	samplesLoaded = 1;
 
-    fadeOut((char *) paletteRGBA);
+    FadeToBlack((char *) paletteRGBA);
 
     if (setup_lst == 0)		// switch pour les 2 version de l'ecran titre de LBA
-	loadImageAndPalette(49);
+	RessPict(49);
     else
-	loadImageAndPalette(12);
+	RessPict(12);
 
    // now unused since we cross fade the video !
-   // waitFor();
+   // TimerPause();
 
-   // fadeOut((char*)paletteRGBA);
+   // FadeToBlack((char*)paletteRGBA);
 
     loadImageCrossFade(52);	// Electronic Arts Logo
 
-    waitFor();
+    TimerPause();
 
-    fadeOut((char *) paletteRGBA);
+    FadeToBlack((char *) paletteRGBA);
 
-    playFLA("DRAGON3");
+    PlayAnimFla("DRAGON3");
 
-    loadImageToPtr("ress.hqr", videoBuffer2, 14);
+    Load_HQR("ress.hqr", workVideoBuffer, 14);
 
-    copyToBuffer(videoBuffer2, videoBuffer1);
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
 
-    osystem->drawBufferToScreen(videoBuffer1);
+    osystem->Flip(frontVideoBuffer);
 
-    fadeIn2((char *) menuPalRGBA);
+    FadeToPal((char *) menuPalRGBA);
 
-    mainMenu();
+    MainGameMenu();
 }
 
-void LBA_engine::newGame(void)
+void newGame(void)
 {
     int flagDisplayTextSave;
 
@@ -169,66 +256,55 @@ void LBA_engine::newGame(void)
 
     flagDisplayText = 1;
 
-    loadImageToPtr("ress.hqr", videoBuffer2, 15);	// Ecran de Twinsun (ecran 1 de l'intro)
-    copyToBuffer(videoBuffer2, videoBuffer1);
-    loadImageToPtr("ress.hqr", palette, 16);
+    Load_HQR("ress.hqr", workVideoBuffer, 15);	// Ecran de Twinsun (ecran 1 de l'intro)
+    CopyScreen(workVideoBuffer, frontVideoBuffer);
+    Load_HQR("ress.hqr", palette, 16);
     convertPalToRGBA(palette, paletteRGBA);
 
-    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
+    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
     osystem->setPalette(paletteRGBA);
-   // osystem->drawBufferToScreen(videoBuffer1);
-   // fadeIn2((char*)paletteRGBA);
+   // osystem->Flip(frontVideoBuffer);
+   // FadeToPal((char*)paletteRGBA);
 
     newGameVar4 = 0;
     newGameVar5 = 1;
-    loadTextBank(2);
+    InitDial(2);
     newGame2();
-    setNewTextColor(15);
+    TestCoulDial(15);
 
     printTextFullScreen(150);
     readKeyboard();
 
     if (skipIntro != 1)
 	{
-	   // resetPalette();
-	    loadImageToPtr("ress.hqr", videoBuffer2, 17);	// Ecran de la citadelle (ecran 2 de
+	   // SetBackPal();
+	    Load_HQR("ress.hqr", workVideoBuffer, 17);	// Ecran de la citadelle (ecran 2 de
 	   // l'intro)
-	    copyToBuffer(videoBuffer2, videoBuffer1);
-	    loadImageToPtr("ress.hqr", palette, 18);
+	    CopyScreen(workVideoBuffer, frontVideoBuffer);
+	    Load_HQR("ress.hqr", palette, 18);
 	    convertPalToRGBA(palette, paletteRGBA);
 
-	    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
+	    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 	    osystem->setPalette(paletteRGBA);
 
-	   // osystem->drawBufferToScreen(videoBuffer1);
+	   // osystem->Flip(frontVideoBuffer);
 	   // osystem->setPalette(paletteRGBA);
 	    printTextFullScreen(151);
 
 	    readKeyboard();
 	    if (skipIntro != 1)
 		{
-		   // resetPalette();
-		    loadImageToPtr("ress.hqr", videoBuffer2, 19);	// Ecran du reve de Twisen (ecran 3 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // 
-		   // de l'intro)
-		    copyToBuffer(videoBuffer2, videoBuffer1);
-		    loadImageToPtr("ress.hqr", palette, 20);
+		   // SetBackPal();
+		    Load_HQR("ress.hqr", workVideoBuffer, 19);	// Ecran du reve de Twisen (ecran 3 de l'intro)
+		    CopyScreen(workVideoBuffer, frontVideoBuffer);
+		    Load_HQR("ress.hqr", palette, 20);
 
 		    convertPalToRGBA(palette, paletteRGBA);
 
-		    osystem->crossFade((char *) videoBuffer1, (char *) paletteRGBA);
+		    osystem->crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 		    osystem->setPalette(paletteRGBA);
 
-		   // osystem->drawBufferToScreen(videoBuffer1);
+		   // osystem->Flip(frontVideoBuffer);
 		   // osystem->setPalette(paletteRGBA);
 
 		    printTextFullScreen(152);
@@ -238,21 +314,21 @@ void LBA_engine::newGame(void)
     newGameVar5 = 0;
     newGame4();
     newGameVar4 = 1;
-    fadeOut((char *) paletteRGBA);
-    resetVideoBuffer1();
-    osystem->drawBufferToScreen(videoBuffer1);
+    FadeToBlack((char *) paletteRGBA);
+    Cls();
+    osystem->Flip(frontVideoBuffer);
     playMidi(1);
 
-    playFLA("INTROD");
-    resetPalette();
-    resetVideoBuffer1();
-    osystem->drawBufferToScreen(videoBuffer1);
+    PlayAnimFla("INTROD");
+    SetBackPal();
+    Cls();
+    osystem->Flip(frontVideoBuffer);
 
     flagDisplayText = flagDisplayTextSave;	// on remet le flag comme il était au debut
 
 }
 
-void LBA_engine::newGame2(void)
+void newGame2(void)
 {				/* ok */
     dialogueBoxLeft = 8;
     dialogueBoxTop = 8;
@@ -263,7 +339,7 @@ void LBA_engine::newGame2(void)
     dialogueBoxParam2 = 607;
 }
 
-void LBA_engine::newGame4(void)
+void newGame4(void)
 {				/* ok */
     dialogueBoxLeft = 16;
     dialogueBoxTop = 334;
@@ -273,10 +349,10 @@ void LBA_engine::newGame4(void)
     dialogueBoxParam2 = 591;
 }
 
-void LBA_engine::setNewTextColor(short int param)
+void TestCoulDial(short int param)
 {
-    initVar4 = -1;
-    initVar5 = 14;
-    initVar2 = param << 4;
-    initVar3 = (param << 4) + 12;
+    progressiveTextStepSize = -1;
+    progressiveTextBufferSize = 14;
+    progressiveTextStartColor = param << 4;
+    progressiveTextStopColor = (param << 4) + 12;
 }

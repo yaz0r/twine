@@ -1,34 +1,832 @@
 #include "lba.h"
 #include "tab.h"
 
-void LBA_engine::initVars(void)
+int baseMatrixRotationX;
+int baseMatrixRotationY;
+int baseMatrixRotationZ;
+
+int setSomething3Var12;
+int setSomething3Var14;
+int setSomething3Var16;
+
+int setSomething2Var1;
+int setSomething2Var2;
+int setSomething2Var3;
+
+int destX;
+int destY;
+int destZ;
+
+int cameraVar1;
+int cameraVar2;
+int cameraVar3;
+
+
+short int *tab1;
+short int *tab2;
+short int *tab3;
+
+int _angleX;
+int _angleY;
+int _angleZ;
+
+int _cameraAngleX;
+int _cameraAngleY;
+int _cameraAngleZ;
+
+int renderLeft;
+int renderRight;
+int renderTop;
+int renderBottom;
+
+int _X;
+int _Y;
+int _Z;
+
+short int polyTab[960];
+short int polyTab2[960];
+
+int _numOfPrimitives;
+
+int isUsingOrhoProjection;
+
+pointTab _projectedPointTable[800];
+pointTab _flattenPointTable[800];
+short int shadeTable[500];
+
+int setSomethingVar1;
+int setSomethingVar2;
+short int setSomethingVar3;
+
+unsigned char *frontVideoBuffer;
+OSystem *osystem;
+
+int _baseMatrix[3 * 3];
+
+int _numOfPoints;
+int _numOfParts;
+unsigned char *_pointsPtr;
+unsigned char *_partsPtr;
+
+int _matrixTable[271];	// should be matrixes
+unsigned char *_currentMatrixTableEntry;
+
+int *_shadePtr;
+
+int _shadeMatrix[9];
+int _lightX;
+int _lightY;
+int _lightZ;
+
+short int primitiveCounter;
+renderTabEntry *renderTabEntryPtr;
+renderTabEntry *renderTabEntryPtr2;
+renderTabEntry *renderTabSortedPtr;
+
+renderTabEntry renderTab[1000];
+renderTabEntry renderTabSorted[1000];
+unsigned char renderTab7[10000];
+
+/*int renderBottom;
+int renderLeft;
+int renderRight;
+int renderTop; */
+
+int renderLoop;
+
+short int vertexCoordinates[193];
+
+int numOfVertex;
+
+unsigned char *renderV19;
+
+short int FillVertic_AType;
+
+short int pRenderV3[96];
+short int *pRenderV1;
+short int *pRenderV2;
+short int numOfVertexRemaining;
+short int polyCropped;
+
+short int vleft;
+short int vtop;
+short int vright;
+short int vbottom;
+
+unsigned char oldVertexParam;
+unsigned char vertexParam1;
+unsigned char vertexParam2;
+
+int textWindowTop;
+int textWindowLeftSave;
+int textWindowLeft;
+int textWindowTopSave;
+int textWindowRight;
+int textWindowRightSave;
+int textWindowBottom;
+int textWindowBottomSave;
+
+unsigned char *_partsPtr2;
+
+debugger _debugger;
+
+int useFlaPCX;
+int flaTime;
+short int flaVar2;
+int numOfFrameInFLA;
+char flaPalette[256*3];
+char flaPaletteRGBA[256*4];
+FLAheaderStruct flaHeaderData;
+byte* workVideoBufferCopy;
+FILE* dataFileHandle;
+int flahVar2;
+int flahVar3;
+int flaSpeed;
+int samplesInFla;
+frameDataStruct frameData;
+int runFLAscriptVar0;
+int lastNumOfColor;
+int lastStartColor;
+char flaBuffer[320*200];
+
+#ifdef PCLIKE
+SDL_CD* cdrom;
+#endif //PCLIKE
+
+short int key;
+uint16 useSound;
+byte useSB;
+uint32 HQR_Midi;
+uint32 unkPtr;		// recheck
+uint32 cfg_file;
+
+byte *workVideoBuffer;
+//    byte *frontVideoBuffer;
+byte *frontVideoBufferbis;
+
+byte *videoPtr1;
+byte *videoPtr2;
+byte *videoPtr3;
+byte *videoPtr4;
+byte *videoPtr5;
+byte *videoPtr6;
+byte *videoPtr7;
+byte *videoPtr8;
+byte *videoPtr9;
+byte *videoPtr10;
+byte *videoPtr11;
+byte *videoPtr12;
+byte *videoPtr13;
+
+byte palette[256 * 3];	// tempvalue
+byte palette2[256 * 3];	// tempvalue
+byte paletteRGBA[256 * 4];
+
+unsigned char outBuffer[512000];
+
+int cropLeft;
+
+byte *bufSpeak;
+byte *bufMemoSeek;
+char *bufText;
+char *bufOrder;
+byte *bufAni1;
+byte *bufAni2;
+byte *menuPal;
+byte menuPalRGBA[1024];
+byte *shadowSprite;
+byte *spriteActorData;
+byte *lbaFont;
+
+#ifdef PRELOAD_ALL
+hqr_entry *HQR_Fic;
+hqr_entry *HQR_Bodies;
+hqr_entry *HQR_Scenes;
+hqr_entry *HQR_Text;
+hqr_entry *HQR_Grids;
+hqr_entry *HQR_Bll;
+#endif
+hqr_entry *HQR_Inventory;
+hqr_entry *HQR_Sprites;
+hqr_entry *HQR_Anims;
+hqr_entry *HQR_Samples;
+
+byte *bufCube;
+byte *bufferBrick;
+byte *bufferBrick2;
+
+byte *fntFont;
+
+int interCharSpace;		// espace inter lettre
+
+int spaceLenght;		// largeur d'un espace
+
+int textColor;
+int progressiveTextStartColor;
+int progressiveTextStopColor;
+int progressiveTextStepSize;
+int progressiveTextBufferSize;
+
+int setup_lst;
+
+int samplesLoaded;
+
+int textVar1;		// current text bank
+
+byte textVar2[256];
+
+byte textVar3;
+
+int language;
+
+int languageCD1;
+
+int mainMenu3Var1;
+int mainMenu3Var2;
+
+char mainMenu3Var3[256];
+
+FILE *voxFileHandle;
+int printTextVar5;
+
+/*    int textWindowTop;
+int textWindowLeftSave;
+int textWindowLeft;
+int textWindowTopSave;
+int textWindowRight;
+int textWindowRightSave;
+int textWindowBottom;
+int textWindowBottomSave;*/
+
+int dialogueBoxLeft;
+int dialogueBoxTop;
+int dialogueBoxRight;
+int dialogueBoxBottom;
+
+short int key1;
+short int printTextVar12;
+int printTextVar13;
+
+int largeurEcran;
+int hauteurEcran;
+
+int flagDisplayText;
+
+short int skipIntro;
+short int palReseted;
+
+short int buttonDrawVar1;
+
+char saveGameFileName[143];
+
+short int currentRoom;
+char mainMenuVar3;
+int gameStaffIsDisplayed;
+short int shadowMode;
+
+char mainMenuVar1[60];
+
+///////////////////////////////////////////////////////////
+// MENU DATA
+
+short int mainMenuData[]={
+	0,					// unk
+	4,					// num of buttons
+	200,				// unk
+	0,					// unk
+	0,					// unk
+//---------------------------- exit points
+	20,					// new game
+	0,
+	21,					// continue game
+	0,
+	23,					// options
+	0,
+	22,					// quit
+};
+
+short int subMenu2Data[]={
+	0,
+	2,
+	240,
+	0,
+	0,
+	28,
+	0,
+	27,
+};
+
+short int soundMenuData[]={
+	0,
+	4,
+	0,
+	0,
+	0,
+	24,
+	0,
+	30,
+	0,
+	46,
+	0,
+	47,
+};
+
+short int subMenuData[]={
+	0,
+	5,
+	0,
+	0,
+	0,
+	26,
+	0,
+	4,
+	6,
+	31,
+	7,
+	32,
+	8,
+	33,
+};
+
+/////////////////////////////////////////////
+
+short int needChangeRoom;
+short int chapter;
+short int newGameVar4;
+
+int newGameVar5;
+
+int screenLockupTable[2000];	// valeur temporaire...
+
+int initVideoVar1;
+
+// int reinitVar1;
+// int progressiveTextStartColor;
+short int newTwinsenX;
+short int newTwinsenZ;
+short int newTwinsenY;
+short int brutalExit;
+short int numClover;
+short int numCloverBox;
+short int currentPingouin;
+short int magicLevel;
+short int magicPoint;
+short int numCoin;
+short int numKey;
+short int usingSword;
+
+short int currentTextBank;
+short int fuel;
+short int cropBottomScreen;
+short int currentlyFollowedActor;
+short int startupAngleInCube;
+
+short int comportementHero;
+
+short int startupComportementHeroInCube;
+
+short int numTextEntry;	// nombre d'entree de text dans la bank actuelle
+
+int currentTextLength;
+char *currentTextPtr;
+
+int stringLenght;
+
+short int useAlternatePalette;
+short int drawInGameTransBox;
+
+// SDL_CD *cdrom;
+
+// short int isUsingOrhoProjection;
+
+// int setSomething2Var1;
+// int setSomething2Var2;
+// int setSomething2Var3;
+
+char buf1[256];
+
+char buf2[256];		// check size
+
+char *printText8Ptr1;
+char *printText8Ptr2;
+
+int printText8Var1;
+int printText8Var2;
+int printText8Var3;
+
+int TEXT_CurrentLetterX;
+int printText8Var5;
+int printText8Var6;
+int TEXT_CurrentLetterY;
+char *printText8Var8;
+
+int printText10Var1;
+int spaceLength;
+
+int dialogueBoxParam1;
+int dialogueBoxParam2;
+
+short int playMusciVar1;
+
+int currentlyPlayingCDTrack;
+
+int playMusicFlag;
+
+char playerName[30];
+
+char enterPlayerNameVar1;
+
+char allowedCharIndex[71];
+
+short int currentKey;
+
+short int enterPlayerNameVar2;
+
+int addLineBreakX;
+int printText8PrepareBufferVar2;
+
+int wordSizeChar;
+int wordSizePixel;
+
+char spaceChar;
+char talkingActor;
+
+/*
+* short int backInitVar3; short int backDialogueBoxRight; short int backDialogueBoxBottom;
+* short int back2InitVar3; short int back2DialogueBoxRight; short int back2DialogueBoxBottom;
+* short int backInitVar2;
+* 
+* short int back3DialogueBoxRight;
+*/
+
+
+
+//    short int FillVertic_AType;
+
+//    short int vertexCoordinates[193];
+
+//    short int pRenderV3[96];
+//    short int *pRenderV1;
+//    short int *pRenderV2;
+//    short int numOfVertexRemaining;
+//    short int polyCropped;
+
+/*    short int vleft;
+short int vtop;
+short int vright;
+short int vbottom;
+
+unsigned char oldVertexParam;
+unsigned char vertexParam1;
+unsigned char vertexParam2;*/
+
+//    short int numOfVertex;
+// short int back3DialogueBoxBottom;
+
+short int pt8s4var1[96];
+short int *pt8s4var2;
+short int *pt8s4var3;
+short int *pt8s4var4;
+short int *pt8s4var5;
+short int *pt8s4var6;
+
+int printText8PrepareBufferVar3;
+
+/*    short int *tab1;
+short int *tab2;
+short int *tab3; */
+
+actor actors[100];		// yeah, can use up to 100 actor !
+actor *twinsen;
+
+short int holomapTraj;
+
+short int roomMusic;
+short int currentlyPlayingMidi;
+short int twinsenPositionModeInNewCube;
+
+short int newTwinsenXByZone;
+short int newTwinsenZByZone;
+
+short int newTwinsenYByZone;
+
+short int twinsenZBeforeFall;
+
+timeStruct mainLoopVar1;
+short int mainLoopVar4;
+short int disableScreenRecenter;
+
+int timeToNextRoomSample;
+int newCameraX;
+int newCameraZ;
+int newCameraY;
+
+short int magicBallIdx;
+short int twinsenMoved;
+short int useAnotherGrm;
+
+short int currentGrid2;
+short int requestBackgroundRedraw;
+short int lockPalette;
+short int changeRoomVar10;
+short int changeRoomVar11;
+
+int numActorInRoom;
+
+extraListStruct extraList[50];
+
+byte cubeFlags[80];
+overlayObjectListStruct overlayObjectList[10];
+byte itemUsed[28];
+
+int currentPositionInBodyPtrTab;
+short int numOfZones;
+short int numFlags;
+
+byte *file3D0;
+byte *file3D1;
+byte *file3D2;
+byte *file3D3;
+byte *file3D4;
+
+short int TCos0Init;
+short int TCos1Init;
+short int TCos2Init;
+short int TCos3Init;
+short int TCos4Init;
+
+unsigned char *loadTwinsenCostumesVar1;
+
+unsigned char *fireEffectVar1;
+
+unsigned char *fireEffectVar2;
+
+unsigned char *scenePtr;
+unsigned char *localScenePtr;
+
+short int sceneRoomNumber;
+sceneStruct sceneVar2;
+sceneStruct sceneVar3;
+sceneStruct sceneVar4;
+short int sceneVar14;
+short int sceneVar15;
+short int newTwinsenXByScene;
+short int newTwinsenZByScene;
+short int newTwinsenYByScene;
+//flagDataStruct *flagData;
+flagDataStruct flagData[NUM_MAX_FLAGS];
+ZONE_Box zoneData[NUM_MAX_ZONES];
+
+unsigned char *currentGrid;
+unsigned char *currentBll = NULL;
+
+int numberOfBll;
+short int autoAgressivity;
+
+short int mainLoopVar5;
+short int mainLoopVar6;
+short int mainLoopVar7;
+
+int musicPosition;
+int musicLength;
+
+int useSamples;
+
+int time1;
+int time3;
+
+unsigned char vars[256];
+byte GV14[150];
+int counter;
+
+short int fullRedrawVar1;
+short int fullRedrawVar2;
+
+int numOfRedrawBox;
+
+currentDirtyBoxListStruct currentDirtyBoxList[300];
+currentDirtyBoxListStruct nextDirtyBoxList[300];
+
+short int fullRedrawVar8;
+
+unsigned char scanCodeTab1[29];
+unsigned short int scanCodeTab2[31];
+
+unsigned char *actorScriptPtr;
+
+int cameraX;
+int cameraZ;
+int cameraY;
+
+short int projectedPositionX;
+short int projectedPositionY;
+
+int zbufferVar1;
+int zbufferVar2;
+
+short int manipActorVar1;
+
+short int manipActorResult;
+
+short int mainLoopVar9;
+
+unsigned char *bodyPtrTab[200];
+
+short int loadCostumeVar;
+short int loadCostumeVar2;
+short int loadCostumeVar3;
+short int loadCostumeVar4;
+short int loadCostumeVar5;
+short int loadCostumeVar6;
+
+drawListStruct drawList[150];
+
+unsigned char *menuCostumeIndex;
+short int TCOS[4];
+
+timeStruct timeVar;
+
+short int winTab[4];
+
+char dataString[256];
+
+short int currentLineColor;
+
+unsigned char *pri2Ptr2;
+
+int renderV9;
+int renderV11;
+int renderV10;
+
+short int numOfPrimitives;
+//    renderTabEntry *renderTabEntryPtr;
+//    renderTabEntry *renderTabEntryPtr2;
+//  renderTabEntry *renderTabSortedPtr;
+unsigned short int costumeHeader;
+
+//    renderTabEntry renderTab[1000];
+//    renderTabEntry renderTabSorted[1000];
+//    short int polyTab[960];
+//    short int polyTab2[960];
+
+short int numOfPri1;
+unsigned char *pri1Ptr;
+
+short int numOfPri2;
+unsigned char *pri2Ptr;
+
+int renderTab2[271];
+int *renderTab3;
+
+//    unsigned char *renderV19;
+
+pointTab renderTab5[800];
+pointTab renderTab6[800];
+//    short int shadeTable[500];
+
+int *renderV21;
+
+int rs1v1;
+int rs1v2;
+
+short int rs1s2v1;
+unsigned char *rs1s2v2;
+
+//    short int primitiveCounter;
+
+//    unsigned char renderTab7[10000];
+
+unsigned char *render23;
+
+short int render25;
+
+unsigned char *render24;
+
+//    int renderLoop;
+
+int action;
+
+int shadowX;
+int shadowZ;
+int shadowY;
+
+int renderV1;
+int renderV2;
+int renderV3;
+
+unsigned char *flagModelPtr;
+
+zbufferDataStruct zbufferData[28][150];
+short int zbufferTab[28];
+
+char *keyFramePtr;
+char *animVar1;
+char *lastKeyFramePtr;
+
+short int processActorSub2Var0;
+short int processActorSub2Var1;
+
+int DoTrackVar1;
+
+int mainLoopVar17;
+
+short int currentlyProcessedActorNum;
+
+actor *processActorVar1;
+short int processActorVar2;
+short int processActorVar3;
+short int processActorVar4;
+
+short int fieldCauseDamage;
+short int processActorX;
+short int processActorY;
+short int processActorZ;
+
+short int processActorVar5;
+short int processActorVar6;
+short int currentY;
+short int currentX;
+short int currentZ;
+
+int getPosVar1;
+int getPosVar2;
+int getPosVar3;
+
+short int processActorVar11;
+short int processActorVar12;
+short int processActorVar13;
+
+short int animVar4;
+
+int drawVar1;
+
+//    int renderLeft;
+//  int renderRight;
+//  int renderTop;
+//  int renderBottom;
+
+int currentActorInZoneProcess;
+
+short int twinsenKey;
+short int twinsenKey2;
+
+short int moveVar1;
+
+int showTalkVar;
+
+int numOfOptionsInChoice;
+short int inGameMenuData[10];
+
+short int choiceTab[18];
+int inGameMenuAnswer;
+
+int magicBallNumBounce;
+int magicBallParam;
+
+char shadowVar;
+
+short int objectRotation[255];
+char inventorySelectedColor;
+char currentSelectedObjectInInventory;
+
+// order important !
+
+int reinitVar1;
+int reinitVar2;
+int reinitVar12;
+int renderV22;
+int renderV23;
+int renderV24;
+/*    int destX;
+int destZ;
+int destY; */
+
+int bufRotate0[9];
+int bufRotate1[9];
+
+
+void initVars(void)
 {
     useSound = 0;
     useSB = 1;
-    loadMidiResult = 0;
+    HQR_Midi = 0;
     unkPtr = 0;			// recheck
 
-    videoBuffer2 = 0;
-    videoBuffer1 = 0;
-    videoBuffer1bis = 0;
+    workVideoBuffer = 0;
+    frontVideoBuffer = NULL;
+    frontVideoBufferbis = 0;
 
     bufMemoSeek = 0;
     bufText = 0;
     bufOrder = 0;
     bufAni1 = 0;
     bufAni2 = 0;
-    HQRInventory = 0;
     menuPal = 0;
     shadowSprite = 0;
-    HQRess3 = 0;
+    spriteActorData = 0;
     lbaFont = 0;
 
     bufCube = NULL;
-
-    HQMemory = 0;
-    HQMemory2 = 0;
-    HQMemorySize = 0;
-    HQMemorySize2 = 0;
 
     fntFont = 0;
     interCharSpace = 1;
@@ -75,60 +873,10 @@ void LBA_engine::initVars(void)
 
     currentRoom = 0;
     mainMenuVar3 = 'S';
-    mainMenuVar4 = 0;
+    gameStaffIsDisplayed = 0;
     shadowMode = 2;
     time = 0;
     key = 0;
-
-    mainMenuData[0] = 0;	// 0
-    mainMenuData[1] = 4;	// nombre de boutons //2
-    mainMenuData[2] = 200;	// 4
-    mainMenuData[3] = 0;	// 6
-    mainMenuData[4] = 0;	// 8
-    mainMenuData[5] = 20;	// Exit point 1 //10 -> debut des points de sortie // 20->newGame
-    mainMenuData[6] = 0;
-    mainMenuData[7] = 21;	// Exit point 2 // 21->continueGame
-    mainMenuData[8] = 0;
-    mainMenuData[9] = 23;	// Exit point 3 // 23->options
-    mainMenuData[10] = 0;
-    mainMenuData[11] = 22;	// Exit point 4 // 22->quit
-
-    subMenu2Data[0] = 0;
-    subMenu2Data[1] = 2;
-    subMenu2Data[2] = 240;
-    subMenu2Data[3] = 0;
-    subMenu2Data[4] = 0;
-    subMenu2Data[5] = 28;
-    subMenu2Data[6] = 0;
-    subMenu2Data[7] = 27;
-
-    soundMenuData[0] = 0;
-    soundMenuData[1] = 4;
-    soundMenuData[2] = 0;
-    soundMenuData[3] = 0;
-    soundMenuData[4] = 0;
-    soundMenuData[5] = 24;
-    soundMenuData[6] = 0;
-    soundMenuData[7] = 30;
-    soundMenuData[8] = 0;
-    soundMenuData[9] = 46;
-    soundMenuData[10] = 0;
-    soundMenuData[11] = 47;
-
-    subMenuData[0] = 0;
-    subMenuData[1] = 5;
-    subMenuData[2] = 0;
-    subMenuData[3] = 0;
-    subMenuData[4] = 0;
-    subMenuData[5] = 26;
-    subMenuData[6] = 0;
-    subMenuData[7] = 4;
-    subMenuData[8] = 6;
-    subMenuData[9] = 31;
-    subMenuData[10] = 7;
-    subMenuData[11] = 32;
-    subMenuData[12] = 8;
-    subMenuData[13] = 33;
 
     buttonDrawVar1 = 550;
 
@@ -143,15 +891,14 @@ void LBA_engine::initVars(void)
     mainMenu3Var1 = -1;
     mainMenu3Var2 = -1;
 
-    needChangeRoomVar1[0] = 0;
-    isMenuDisplayed = 0;
+    useAlternatePalette = 0;
     drawInGameTransBox = 0;
 
     setSomethingVar1 = 320;
     setSomethingVar2 = 200;
     setSomethingVar3 = 500;
-    renderer.setSomethingVar4 = 0;
-    setSomethingVar4 = 0;
+    isUsingOrhoProjection = 0;
+    isUsingOrhoProjection = 0;
 
    // setSomething2Var1=0;
    // setSomething2Var2=0;
@@ -162,7 +909,7 @@ void LBA_engine::initVars(void)
 
     playMusciVar1 = -2;
 
-    currentlyPlayingMusic = -1;
+    currentlyPlayingCDTrack = -1;
 
     playMusicFlag = 0;
 
@@ -264,43 +1011,43 @@ void LBA_engine::initVars(void)
 
     twinsen = &actors[0];
 
-    changeRoomVar1 = -1;
+    holomapTraj = -1;
     roomMusic = -1;
-    playMusicVar1 = -2;
+    currentlyPlayingMidi = -2;
 
-    reinitVar11 = 0;
+    twinsenPositionModeInNewCube = 0;
 
-    GV9dup = 0;
-    GV10dup = 0;
-    GV11dup = 0;
+    newTwinsenXByZone = 0;
+    newTwinsenZByZone = 0;
+    newTwinsenYByZone = 0;
 
-    sceneVar16 = 0;
-    sceneVar17 = 0;
-    sceneVar18 = 0;
+    newTwinsenXByScene = 0;
+    newTwinsenZByScene = 0;
+    newTwinsenYByScene = 0;
 
-    changeRoomVar2 = 0;
+    twinsenZBeforeFall = 0;
 
     numActorInRoom = 0;
 
-    mainLoopVar10 = 0;
+    disableScreenRecenter = 0;
 
-    changeRoomVar3 = 0;
+    timeToNextRoomSample = 0;
     newCameraX = 0;
     newCameraZ = 0;
     newCameraY = 0;
 
-    changeRoomVar7= -1;
-    changeRoomVar8 = 0;
-    changeRoomVar9 = -1;
+    magicBallIdx= -1;
+    twinsenMoved = 0;
+    useAnotherGrm = -1;
     currentGrid2 = -1;
-    mainLoopVar2 = 1;
-    mainLoopVar3 = 0;
+    requestBackgroundRedraw = 1;
+    lockPalette = 0;
 
     changeRoomVar10 = 1;
     changeRoomVar11 = 0;
 
-    reinitAll2Var3 = 0;
-    reinitAll2Var4 = 0;
+    currentPositionInBodyPtrTab = 0;
+    numOfZones = 0;
     numFlags = 0;
 
     file3D0 = NULL;
@@ -338,14 +1085,12 @@ void LBA_engine::initVars(void)
 
     sceneVar14 = 0;
     sceneVar15 = 0;
-    sceneVar16 = 0;
-    sceneVar17 = 0;
-    sceneVar18 = 0;
-    sceneVarPtr = 0;
-    flagData = 0;
+    newTwinsenXByScene = 0;
+    newTwinsenZByScene = 0;
+    newTwinsenYByScene = 0;
 
     mainLoopVar4 = 0;
-    agressivity = 1;
+    autoAgressivity = 1;
 
     mainLoopVar5 = 0;
     mainLoopVar6 = 0;
@@ -381,6 +1126,7 @@ void LBA_engine::initVars(void)
     scanCodeTab1[12] = 0x53;
     scanCodeTab1[13] = 0x2A;
     scanCodeTab1[14] = 0x36;
+
     scanCodeTab1[15] = 0x3B;
     scanCodeTab1[16] = 0x3C;
     scanCodeTab1[17] = 0x3D;
@@ -433,7 +1179,7 @@ void LBA_engine::initVars(void)
 
     loadCostumeVar = -32000;
 
-    drawInventoryVar = 0;
+    HQR_Flag = 0;
 
     renderTab3 = &renderTab2[9];
 
@@ -444,37 +1190,28 @@ void LBA_engine::initVars(void)
 
 	showTalkVar=1;
 
-   /*
-    * setSomething2Var1; setSomething2Var2; setSomething2Var3; setSomething3Var12;
-    * setSomething3Var14; setSeomthing3Var16; reinitVar1; reinitVar2; reinitVar12;
-    * setSomething3Var1; setSomething3Var8; setSomething3Var17; renderV1; renderV2; renderV3;
-    * renderV22; renderV23; renderV24; destX; destZ; destY; rmv0; rmv1; rmv2; rmv3; rmv4; rmv5;
-    * rmv6; rmv7; rmv8; rmv9; rmv10; rm2v0; m2v1; m2v2; m2v3; m2v4; m2v5; m2v6; m2v7;
-    * setSomething3Var2; int setSomething3Var3; int setSomething3Var18; int setSomething3Var4; int
-    * setSomething3Var5; int setSomething3Var9; int setSomething3Var6; int setSomething3Var7; int
-    * setSomething3Var10; 
-    */
-
+    magicBallNumBounce = 1;
+    magicBallParam = 1;
 }
 
-void LBA_engine::setTextColor(byte i)
+void CoulFont(byte i)
 {
     int a = i;
 
     setTextColorSub(a);
 }
 
-void LBA_engine::setTextColorSub(int i)
+void setTextColorSub(int i)
 {
     textColor = i;
 }
 
-void LBA_engine::setInitVars(int a, int b, int c)
+void CoulDial(int a, int b, int c)
 {
-    initVar2 = b;
-    initVar3 = a;
-    initVar4 = c;
+    progressiveTextStartColor = b;
+    progressiveTextStopColor = a;
+    progressiveTextStepSize = c;
 
-    initVar5 = ((b - a) + 1) / c;
+    progressiveTextBufferSize = ((b - a) + 1) / c;
 
 }

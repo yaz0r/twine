@@ -1,8 +1,17 @@
 #include "lba.h"
 
-void LBA_engine::playFLA(char *flaName)
+streamReader fla_streamReader;
+
+void PlayAnimFla(char *flaName)
 {
-    printf("playFLA: %s\n", flaName);
+#ifdef FASTDEBUG
+	return;
+#endif
+
+#ifndef PCLIKE
+	return;
+#endif
+    printf("PlayAnimFla: %s\n", flaName);
 
 	int var66=0; //quitFla
 	int currentFrame;
@@ -10,9 +19,9 @@ void LBA_engine::playFLA(char *flaName)
 	int esi;
 	char buffer[256];
 
-	//TODO: remove
+    todo("remove");
 
-	resetVideoBuffer1();
+	Cls();
 
 	if(useFlaPCX==0)
 	{
@@ -21,7 +30,7 @@ void LBA_engine::playFLA(char *flaName)
 	}
 	else
 	{
-		int i;
+		unsigned int i;
 		for(i=0;i<strlen(flaName);i++)
 		{
 			if(flaName[i]=='.')
@@ -30,18 +39,22 @@ void LBA_engine::playFLA(char *flaName)
 
 
 		stopMusic();
+#ifdef PCLIKE
 		strcpy(buffer,"fla/");
 		strcat(buffer,flaName);
-		makeExtention(buffer,".FLA");
-		if(loadFlaSample(buffer))
+#else
+		strcpy(buffer,flaName);
+#endif
+		AddExt(buffer,".FLA");
+		if(InitFla(buffer))
 		{
 			if(!strcmp(flaHeaderData.version,"V1.3"))
 			{
-				enterZoom();
-				resetPalette();
-				flaResetVideoBuffer1();
-				copyToFlaVideoBuffer();
-				flaResetVideoBuffer1();
+				ExtInitMcga();
+				SetBackPal();
+				Mcga_Cls();
+				Mcga_Flip();
+				Mcga_Cls();
 				flaVar2=1;
 				currentFrame=0;
 
@@ -53,17 +66,14 @@ void LBA_engine::playFLA(char *flaName)
 							var66=1;
 
 						esi=time;
-						runFLAscript();
-						copyToFlaVideoBuffer();
-						updateFlaPalette();
+						DrawNextFrameFla();
+						Mcga_Flip();
+						GestionPalette();
 
 						{
-							int i;
-							int j;
-
 							/*char* source=(char*)flaBuffer;
 							char* source2;
-							char* dest=(char*)videoBuffer1;
+							char* dest=(char*)frontVideoBuffer;
 							
 							for(i=0;i<200;i++)
 							{
@@ -88,7 +98,10 @@ void LBA_engine::playFLA(char *flaName)
 							{
 								osystem->delay(5);
 							}while(time<esi+2);
+
+							
 */
+							osystem->updateImage();
 							readKeyboard();
 						}
 
@@ -104,45 +117,48 @@ void LBA_engine::playFLA(char *flaName)
 					}while(!var66);
 				}
 
-				fadeOut(flaPalette);
-				flaResetVideoBuffer1();
-				copyToFlaVideoBuffer();
-				mainMenu2();
-				FLAsamples();
-				exitZoom();
-				resetPalette();
-				resetVideoBuffer1();
+				FadeToBlack(flaPalette);
+				Mcga_Cls();
+				Mcga_Flip();
+				HQ_StopSample();
+				ClearFla();
+				ExtInitSvga();
+				SetBackPal();
+				Cls();
 			}
 		}
 
 	}
+
+//    Close(dataFileHandle);
 }
 
-void LBA_engine::makeExtention(char* file, char* extention)
+void AddExt(char* file, char* extention)
 {
 	// TODO: make real implementation
 	strcat(file,extention);
 }
 
-int LBA_engine::loadFlaSample(char* file)
+int InitFla(char* file)
 {
 	int i;
 
-	videoBuffer2Copy=videoBuffer2;
-	dataFileHandle=openResource(file);
+	streamReader_open(&fla_streamReader, (const int8*)file);
+
+	workVideoBufferCopy=workVideoBuffer;
 
 	if(samplesLoaded)
 	{
-		printf("Sample loaded in loadFlaSample\n");
+		printf("Sample loaded in InitFla\n");
 		//exit(1);
 	}
 
-	readResourceData(dataFileHandle,(char*)&(flaHeaderData.version),6);
-	readResourceData(dataFileHandle,(char*)&(flaHeaderData.numOfFrames),4);
-	readResourceData(dataFileHandle,(char*)&(flaHeaderData.speed),1);
-	readResourceData(dataFileHandle,(char*)&(flaHeaderData.var1),1);
-	readResourceData(dataFileHandle,(char*)&(flaHeaderData.var2),2);
-	readResourceData(dataFileHandle,(char*)&(flaHeaderData.var3),2);
+	streamReader_get(&fla_streamReader, &flaHeaderData.version, 6);
+	streamReader_get(&fla_streamReader, &flaHeaderData.numOfFrames, 4);
+	streamReader_get(&fla_streamReader, &flaHeaderData.speed, 1);
+	streamReader_get(&fla_streamReader, &flaHeaderData.var1, 1);
+	streamReader_get(&fla_streamReader, &flaHeaderData.var2, 2);
+	streamReader_get(&fla_streamReader, &flaHeaderData.var3, 2);
 
 	numOfFrameInFLA=flaHeaderData.numOfFrames;
 
@@ -152,7 +168,7 @@ int LBA_engine::loadFlaSample(char* file)
 	flahVar3=flaHeaderData.var3;
 	flaSpeed=flaHeaderData.speed;
 
-	readResourceData(dataFileHandle,(char*)&samplesInFla,4);
+	streamReader_get(&fla_streamReader, &samplesInFla, 4);
 
 	samplesInFla&=0xFFFF; // TODO: remove this cheat
 
@@ -163,46 +179,47 @@ int LBA_engine::loadFlaSample(char* file)
 		short int var0;
 		short int var1;
 		
-		readResourceData(dataFileHandle,(char*)&var0,2);
-		readResourceData(dataFileHandle,(char*)&var1,2);
+		streamReader_get(&fla_streamReader, &var0, 2);
+		streamReader_get(&fla_streamReader, &var1, 2);
 	}
 
     return(1);
 }
 
-void LBA_engine::enterZoom()
+void ExtInitMcga()
+{
+	osystem->set320x200Mode(true);
+}
+
+void Mcga_Cls()
 {
 }
 
-void LBA_engine::flaResetVideoBuffer1()
+void Mcga_Flip()
 {
 }
 
-void LBA_engine::copyToFlaVideoBuffer()
-{
-}
-
-void LBA_engine::runFLAscript()
+void DrawNextFrameFla()
 {
 	char* ptr;
 	unsigned int currentOpcodeGlob;
 	unsigned char currentOpcode;
 
 	int var_C;
-	readResourceData(dataFileHandle,(char*)&(frameData.videoSize),1);
-	readResourceData(dataFileHandle,(char*)&(frameData.dummy),1);
-	readResourceData(dataFileHandle,(char*)&(frameData.frameVar0),4);
+	streamReader_get(&fla_streamReader, &frameData.videoSize, 1);
+	streamReader_get(&fla_streamReader, &frameData.dummy, 1);
+	streamReader_get(&fla_streamReader, &frameData.frameVar0, 4);
 
 	var_C=0;
 
 	runFLAscriptVar0=frameData.videoSize;
 
-	readResourceData(dataFileHandle,(char*)videoBuffer2Copy,frameData.frameVar0);
+	streamReader_get(&fla_streamReader, workVideoBufferCopy, frameData.frameVar0);
 
 	if(var_C>=runFLAscriptVar0)
 		return;
 
-	ptr=(char*)videoBuffer2Copy;
+	ptr=(char*)workVideoBufferCopy;
 
 	do
 	{
@@ -219,8 +236,8 @@ void LBA_engine::runFLAscript()
 		{
 		case 0: // load palette
 			{
-				short int numOfColor=*(short int*)ptr;
-				short int startColor=*(short int*)(ptr+2);
+				short int numOfColor=READ_LE_S16(ptr);
+				short int startColor=READ_LE_S16((ptr+2));
 
 				copyStringToString(ptr+4,flaPalette+startColor*3,numOfColor*3);
 				
@@ -247,12 +264,12 @@ void LBA_engine::runFLAscript()
 			}
 		case 5: // draw delat frame
 			{
-				flaUnpackFrame2(ptr,320);
+				UpdateFrame(ptr,320);
 				break;
 			}
 		case 7: // draw key frame
 			{
-				flaUnpackFrame1(ptr,320,flahVar3);
+				DrawFrame(ptr,320,flahVar3);
 				break;
 			}
 		default:
@@ -270,7 +287,7 @@ void LBA_engine::runFLAscript()
 
 }
 
-void LBA_engine::flaUnpackFrame1(char* ptr, int width, int height)
+void DrawFrame(char* ptr, int width, int height)
 {
 	char* destPtr=(char*)flaBuffer;
 	char* startOfLine=destPtr;
@@ -313,18 +330,18 @@ void LBA_engine::flaUnpackFrame1(char* ptr, int width, int height)
 	}while(--height);
 }
 
-void LBA_engine::flaUnpackFrame2(char* ptr, int width)
+void UpdateFrame(char* ptr, int width)
 {
 	unsigned short int skip;
 	char* destPtr;
 	char* startOfLine;
 	int height;
 
-	skip=*(unsigned short int*)ptr;
+	skip=READ_LE_U16(ptr);
 	ptr+=2;
 	skip*=width;
 	startOfLine=destPtr=(char*)flaBuffer+skip;
-	height=*(short int*)ptr;
+	height=READ_LE_S16(ptr);
 	ptr+=2;
 
 	char flag1;
@@ -368,14 +385,15 @@ void LBA_engine::flaUnpackFrame2(char* ptr, int width)
 	}while(--height);
 }
 
-void LBA_engine::updateFlaPalette()
+void GestionPalette()
 {
 }
 
-void LBA_engine::FLAsamples()
+void ClearFla()
 {
 }
 
-void LBA_engine::exitZoom()
+void ExtInitSvga()
 {
+	osystem->set320x200Mode(false);
 }
