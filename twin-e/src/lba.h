@@ -24,12 +24,13 @@
 #endif // PCLIKE
 
 #ifndef PCLIKE
+#ifndef PS2
 #include <shinobi.h>    /* Shinobi system routines. */
 #include <kamui2.h>     /* Kamui2 low-level graphics HAL. */
 #include <sn_fcntl.h>   /* LibCross file types. */
 #include <usrsnasm.h>   /* LibCross I/O routines. */
 #include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
-
+#endif
 #define PRELOAD_ALL
 #define USE_GL
 

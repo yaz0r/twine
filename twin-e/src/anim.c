@@ -43,7 +43,7 @@ int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body)
     ptrToBodyData = (char *) (body + 14);
 
 	WRITE_LE_U32(ptrToBodyData + 2, (uint32)ptrToData); // ptr to current keyframe
-    WRITE_LE_S32(ptrToBodyData + 6, time ); // start of keyframe time
+    WRITE_LE_S32(ptrToBodyData + 6, lba_time ); // start of keyframe time
 
     ptrToBodyData = ptrToBodyData + READ_LE_S16(ptrToBodyData) + 2; // Skip ?
 
@@ -159,7 +159,7 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 	    numOfPointInAnim = numOfPointInBody;
 	}
 
-    eax = time - ebp;
+    eax = lba_time - ebp;
 
     if (eax >= keyFrameLength)
 	{
@@ -180,7 +180,7 @@ int SetInterAnimObjet2(int animState, char *animData, char *body)
 	    while (--numOfPointInAnim);
 
 		WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-	    WRITE_LE_U32(animVar1 + 4, time);
+	    WRITE_LE_U32(animVar1 + 4, lba_time);
 
 	    currentX = READ_LE_S16(keyFramePtr + 2);
 	    currentZ = READ_LE_S16(keyFramePtr + 4);
@@ -355,7 +355,7 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 	    numOfPointInAnim = numOfPointInBody;
 	}
 
-    eax = time - ebp;
+    eax = lba_time - ebp;
 
     if (eax >= keyFrameLength)
 	{
@@ -376,7 +376,7 @@ int SetInterAnimObjet(int animState, char *animData, char *body)
 	    while (--numOfPointInAnim);
 
 	    WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-	    WRITE_LE_S32(animVar1 + 4, time);
+	    WRITE_LE_S32(animVar1 + 4, lba_time);
 
 	    currentX = READ_LE_S16(keyFramePtr + 2);
 	    currentZ = READ_LE_S16(keyFramePtr + 4);
@@ -556,7 +556,7 @@ int StockInterAnim(char *lBufAnim, char *lBody)	// copy the next keyFrame from a
 
         todo("remove hack to prevent time warp in anim");
 
-        WRITE_LE_S32(ptr + 4, time);
+        WRITE_LE_S32(ptr + 4, lba_time);
 		WRITE_LE_U32(ptr,(uint32)lBufAnim);
 
 	    var0 = READ_LE_S16(ptr - 2);
@@ -722,14 +722,14 @@ int SetInterDepObjet(int position, char *anim, char *body)
 
 	    lastKeyFramePtr = ebx;
 
-	    eax = time - ebp;
+	    eax = lba_time - ebp;
 
 	    //printf("delta=%d / %d  -> time=%d -> ebp=%d\n", eax, keyFrameLength, time, ebp);
 
 	    if (eax >= keyFrameLength)
 		{
 		    WRITE_LE_U32(animVar1, (uint32)keyFramePtr);
-		    WRITE_LE_S32(animVar1 + 4, time);
+		    WRITE_LE_S32(animVar1 + 4, lba_time);
 
 		    currentX = READ_LE_S16(keyFramePtr + 2);
 		    currentZ = READ_LE_S16(keyFramePtr + 4);

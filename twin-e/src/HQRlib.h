@@ -46,7 +46,7 @@ struct subHqr
 };
 
 extern short int HQR_Flag;
-extern volatile int time;
+extern volatile int lba_time;
 
 void HQR_Destroy_Ressource(hqr_entry* resource);
 int Load_HQR(char *resourceName, unsigned char *ptr, int imageNumber);

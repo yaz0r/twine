@@ -10,7 +10,7 @@ void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct * 
     ptr->from = arg0;
     ptr->to = arg4;
     ptr->numOfStep = arg8;
-    ptr->timeOfChange = time;
+    ptr->timeOfChange = lba_time;
 }
 
 void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8,
@@ -19,7 +19,7 @@ void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8,
     timePtr->from = arg_0 & 0x3FF;
     timePtr->to = arg_4 & 0x3FF;
     timePtr->numOfStep = arg_8 & 0x3FF;
-    timePtr->timeOfChange = time;
+    timePtr->timeOfChange = lba_time;
 }
 
 int GetRealAngle(timeStruct * angleData)
@@ -29,7 +29,7 @@ int GetRealAngle(timeStruct * angleData)
 
     if (angleData->numOfStep)
 	{
-	    timePassed = time - angleData->timeOfChange;
+	    timePassed = lba_time - angleData->timeOfChange;
 
 	    if (timePassed >= angleData->numOfStep)	// rotation is finished
 		{
@@ -67,14 +67,14 @@ int GetRealValue(timeStruct * angleData)
     if (!angleData->numOfStep)
 	return (angleData->to);
 
-    if (!(time - angleData->timeOfChange < angleData->numOfStep))
+    if (!(lba_time - angleData->timeOfChange < angleData->numOfStep))
 	{
 	    angleData->numOfStep = 0;
 	    return (angleData->to);
 	}
 
     tempAngle = angleData->to - angleData->from;
-    tempAngle *= time - angleData->timeOfChange;
+    tempAngle *= lba_time - angleData->timeOfChange;
     tempAngle /= angleData->numOfStep;
 
     return (tempAngle + angleData->from);

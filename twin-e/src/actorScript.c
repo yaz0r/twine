@@ -400,7 +400,7 @@ void runActorScript(short int actorNumber)
 					   {
 					      //                                                      edi->field_0=BoundRegleTrois(edi->field_8,edi->field_0,100,edi->field_C-time-50);
 					       edi->field_8 = numCoin;
-					       edi->field_C = time + 150;
+					       edi->field_C = lba_time + 150;
 					       ecx = 1;
 					       break;
 					   }
@@ -1414,7 +1414,7 @@ int doCalc(void)
 {
     unsigned char *localActorScript = actorScriptPtr;
     unsigned char opcode;
-    int opcode2;
+    int opcode2 = -1;
     int localManipActorResult = manipActorResult;
     unsigned char result = 0;
 
@@ -1675,7 +1675,7 @@ void processInGameMenu(int index)
 void MyDial(int index)
 {
     int textStatus = 1;
-    int digitStatus;
+    //int digitStatus;
 
     if(languageCD1 != 0)
     {

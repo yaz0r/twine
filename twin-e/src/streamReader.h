@@ -8,7 +8,9 @@
 #include "lba.h"
 
 #ifndef PCLIKE
+#ifndef PS2
 #include <shinobi.h>
+#endif
 #endif
 
 #define NUM_SECTOR_IN_BUFFER (3)
@@ -19,8 +21,13 @@ struct streamReader
 #ifdef PCLIKE
 	FILE* fileHandle;
 #else
+#ifndef PS2
 	// DC
 	GDFS fileHandle;
+#endif
+#ifdef PS2
+	FILE* fileHandle;
+#endif
 #endif
 
 	unsigned char buffer[BUFFER_SIZE];
