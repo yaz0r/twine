@@ -7,8 +7,12 @@
 #include "SDL.h"
 #endif //PCLIKE
 
+#ifdef PCLIKE
 #ifdef WIN32
 #define PACKED
+#else
+#define PACKED __attribute__((packed))
+#endif
 #else
 //#define PACKED __attribute__((packed))
 #define PACKED
