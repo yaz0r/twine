@@ -30,7 +30,8 @@ LBA_engine::load_hqr (char *fileName, int a, int b)
   return (hqr_ptr);
 }
 
-byte LBA_engine::allocHQMemory (int size)
+byte
+LBA_engine::allocHQMemory (int size)
 {
   if (HQMemory)
     return (0);

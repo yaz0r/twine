@@ -454,9 +454,9 @@ LBA_engine::playAnim (char costume, short int arg_4, unsigned char arg_8,
   if (arg_4 == 4)
     arg_4 = 2;
 
-  if (lactor->currentAnim == -1)
+  if (lactor->currentAnim == -1)	//if no previous animation
     {
-      setAnimAtKeyFrame (0, getHqrdataPtr (HQRanims, var_4),
+      setAnimAtKeyFrame (0, getHqrdataPtr (HQRanims, var_4),	//set animation directly to first keyFrame
 			 bodyPtrTab[lactor->costumeIndex]);
     }
   else
@@ -490,7 +490,7 @@ LBA_engine::playAnim (char costume, short int arg_4, unsigned char arg_8,
 }
 
 int
-LBA_engine::increaseAnim (char *lBufAnim, char *lBody)
+LBA_engine::increaseAnim (char *lBufAnim, char *lBody)	//copy the next keyFrame from a different buffer
 {
   int temp;
   char *ptr;
@@ -506,6 +506,7 @@ LBA_engine::increaseAnim (char *lBufAnim, char *lBody)
   if (temp & 2)
     {
       ptr = (lBody + 0x10);
+
       *(int *) (ptr + 4) = time;
       *(char **) (ptr) = lBufAnim;
 
@@ -519,7 +520,7 @@ LBA_engine::increaseAnim (char *lBufAnim, char *lBody)
 
       var2 = *(short int *) (ptr);
       counter = var2;
-      var2 = var2 * 8;
+      var2 = (var2 * 8) + 8;
 
       edi = (int *) (lBufAnim + 8);
       esi = (int *) (ptr + 10);
@@ -529,8 +530,13 @@ LBA_engine::increaseAnim (char *lBufAnim, char *lBody)
 	  *(edi++) = *(esi++);
 	  *(edi++) = *(esi++);
 
+	  esi = (int *) (((char *) esi) + 30);
+
 	}
       while (--counter);
+
+      return (var2);
+
     }
 
   return (0);

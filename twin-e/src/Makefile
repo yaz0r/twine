@@ -15,8 +15,9 @@ LDFLAGS = `sdl-config --libs`
 
 EFENCEFLAGS = -lefence
 
+release: CPPFLAGS += -O3
 release: $(OBJECTS)
-	$(CXX) $(LDFLAGS) -O3 $(OBJECTS) -o lbarecode
+	$(CXX) $(LDFLAGS) $(OBJECTS) -o lbarecode
 
 efence: $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(EFENCEFLAGS) $(OBJECTS) -o lbaefence
