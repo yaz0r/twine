@@ -19,6 +19,35 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 #include "extraData.h"
 
+void makeMagicBallBounce(extraListStruct* pExtra, int X, int Y, int Z)
+{ 
+  if(WorldColBrick(X, pExtra->Z, Z))
+  {
+    pExtra->field_10 = -pExtra->field_10;
+  }
+
+  if(WorldColBrick(pExtra->X, Y, Z))
+  {
+    pExtra->field_E = -pExtra->field_E;
+  }
+
+  if(WorldColBrick(X, Y, pExtra->Y))
+  {
+    pExtra->field_12 = -pExtra->field_12;
+  }
+
+  pExtra->X = X;
+  pExtra->timeUnion.timeStruct.field_8 = X;
+
+  pExtra->Z = Y;
+  pExtra->timeUnion.timeStruct.field_A = Y;
+
+  pExtra->Y = Z;
+  pExtra->field_C = Z;
+
+  pExtra->time = lba_time;
+}
+
 void reinitExtraObjectList(void)
 {
   int counter;
@@ -482,7 +511,7 @@ void GereExtras(void)
 
         if(var_40)
         {
-          if(extraList[i].field_14 & 0x100) // extra create damage star in dying
+          if(extraList[i].field_14 & 0x100) // bounce generate a little smoke while touching ground
           {
             InitSpecial(currentExtraX, currentExtraZ, currentExtraY, 1);
           }
@@ -491,7 +520,7 @@ void GereExtras(void)
           {
             HQ_3D_MixSample(86, (rand()%300) + 3946, 1, extraList[i].X, extraList[i].Z, extraList[i].Y);
 
-            if(magicBallNumBounce<=0)
+            if(magicBallNumBounce<=0) // No magic, the ball can't bounce at all
             {
               int magicBallSprite;
 
@@ -509,7 +538,7 @@ void GereExtras(void)
               continue;
             }
 
-            if(magicBallNumBounce == 1)
+            if(magicBallNumBounce == 1) // there is a bit of magic
             {
               if(!magicBallParam--) // can the magic ball bounce more ?
               {
@@ -530,11 +559,9 @@ void GereExtras(void)
               }
               else
               {
+                makeMagicBallBounce(&extraList[i], currentExtraX, currentExtraZ, currentExtraY);
               }
             }
-
-            printf("Magic ball hit ground. Implement ! \n");
-            //    exit(1);
           }
           else
           {
