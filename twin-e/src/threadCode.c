@@ -8,7 +8,7 @@ int threadTimer(void* test)
 {
 	while(1)
 	{
-		SDL_Delay(40);
+		SDL_Delay(10);
 		tempEngine->musicPosition++;
 		tempEngine->time++;
 	}

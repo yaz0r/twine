@@ -16,45 +16,65 @@ void LBA_engine::setActorAngleSafe(short int arg_0, short int arg_4, short int a
   timePtr->timeOfChange = time;
 }
 
-int LBA_engine::processActorAngle(timeStruct* arg_0)
+int LBA_engine::processActorAngle(timeStruct* angleData)
 {
 	int edx;
 	int eax;
+	int timePassed;
+	int remainingAngle;
 
-	eax=arg_0->to;
 
-	if(arg_0->numOfStep)
+	if(angleData->numOfStep)
 	{
-		edx=time-arg_0->timeOfChange;
+		timePassed=time-angleData->timeOfChange;
 
-		if(edx>=arg_0->numOfStep)
+		if(timePassed>=angleData->numOfStep) // rotation is finished
 		{
-			arg_0->numOfStep=0;
-			return(eax);
+			angleData->numOfStep=0;
+			return(angleData->to);
 		}
 
-		eax-=arg_0->from;
-		if(eax<-0x200)
+		remainingAngle=angleData->to-angleData->from;
+
+		if(remainingAngle<-0x200)
 		{
-			eax+=0x400;
-			eax*=edx;
-			eax/=arg_0->numOfStep;
-			return(eax+arg_0->from);
+			remainingAngle+=0x400;
 		}
-		if(eax<=0x200)
+		else
+		if(remainingAngle>0x200)
 		{
-			eax*=edx;
-			eax/=arg_0->numOfStep;
-			return(eax+arg_0->from);
+			remainingAngle-=0x800;
+			remainingAngle+=0x400;
 		}
 
-		eax-=0x800;
-		eax+=0x400;
-		eax*=edx;
-		eax/=arg_0->numOfStep;
-		return(eax+arg_0->from);
+		remainingAngle*=timePassed;
+		remainingAngle/=angleData->numOfStep;
+		remainingAngle+=angleData->from;
+
+		return(remainingAngle);
 
 	}
 
-	return(eax);
+	return(angleData->to);
+
+}
+
+int LBA_engine::mainLoopSub17(timeStruct* angleData)
+{
+	int tempAngle;
+
+	if(!angleData->numOfStep)
+		return(angleData->to);
+
+	if(!(time-angleData->timeOfChange<angleData->numOfStep))
+	{
+		angleData->numOfStep=0;
+		return(angleData->to);
+	}
+
+	tempAngle=angleData->to-angleData->from;
+	tempAngle*=time-angleData->timeOfChange;
+	tempAngle/=angleData->numOfStep;
+
+	return(tempAngle+angleData->from);
 }

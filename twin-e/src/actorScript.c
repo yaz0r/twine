@@ -249,6 +249,23 @@ void LBA_engine::runActorScript(short int actorNumber)
 		lactor->field_34=0;
 		actorScriptPtr+=2;
 		break;
+	case 51:
+		{
+			char temp;
+
+			if(lactor->field_10&0x1F0)
+			{
+				addObject(lactor);
+			}
+
+			temp=*actorScriptPtr;
+
+			actorScriptPtr++;
+			if(temp!=0)
+			{
+				lactor->field_10|=1;
+			}
+		}
 	case 53:
 		if(*(actorScriptPtr++)!=0)
 		{
@@ -548,7 +565,10 @@ void LBA_engine::manipActor(actor* lactor)
     actorScriptPtr=localScriptPtr;
     if(!(lactor2->field_62&0x20))
     {
-     printf("Unhandled manip actor opcode 22...\n");
+		manipActorResult=anotherSqrt(lactor->X,lactor->Z,lactor->Y,lactor2->X,lactor2->Z,lactor2->Y);
+
+		if(manipActorResult>32000)
+			manipActorResult=32000;
     }
     else
     {
@@ -783,4 +803,22 @@ endCalc:
 	return(eax);
 
 
+}
+
+int LBA_engine::anotherSqrt(int X1,int Z1,int Y1,int X2,int Z2,int Y2)
+{
+	int newX;
+	int newZ;
+	int newY;
+
+	newX=X2-X1;
+	newX*=newX;
+
+	newZ=Z2-Z1;
+	newZ*=newZ;
+
+	newY=Y2-Y1;
+	newY*=newY;
+
+	return(sqrt(newX+newZ+newY));
 }

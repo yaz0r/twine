@@ -111,15 +111,64 @@ void LBA_engine::moveActor(int actorNumber)
 			continueMove=0;
 			lactor->positionInMoveScript=-1;
 			break;
+		case 12:
+			lactor->positionInMoveScript++;
+			manipActorResult=*scriptPtr;
+
+			setSomething3Var11=flagData[manipActorResult].x;
+			setSomething3Var13=flagData[manipActorResult].z;
+			setSomething3Var15=flagData[manipActorResult].y;
+
+			newAngle=calcAngleToward(lactor->X,lactor->Y,setSomething3Var11,setSomething3Var15);
+
+			newAngle+=0x200;
+
+			if(lactor->field_60&0x400)
+			{
+				lactor->angle=newAngle;
+			}
+			else
+			{
+				updateActorAngle(lactor->angle,newAngle,lactor->field_34,timePtr);
+			}
+
+			if(moveActorVar1>500)
+			{
+				continueMove=0;
+				lactor->positionInMoveScript-=2;
+			}
+
+			break;
 		case 13:
-			printf("skipping actor move opcode 13\n");
 			lactor->positionInMoveScript+=2;
+			if(lactor->field_62&4)
+			{
+				(*(scriptPtr+1))++;
+
+				if(*(scriptPtr+1)==*scriptPtr)
+				{
+					(*(scriptPtr+1))=0;
+				}
+				else
+				{
+					continueMove=0;
+				}
+			}
+			else
+			{
+				continueMove=0;
+			}
+
+			if(continueMove==0)
+			{
+				lactor->positionInActorScript-=3;
+			}
 			break;
 		case 14:
 			fullRedrawS3(*(short int*)scriptPtr,0x1000,1,lactor->X,lactor->Z,lactor->Y);
 			lactor->positionInMoveScript+=2;
 			break;
-		case 15:
+		case 15: // move to ?
 			lactor->positionInMoveScript++;
 			if(lactor->field_60&0x400)
 			{
@@ -143,7 +192,6 @@ void LBA_engine::moveActor(int actorNumber)
 					lactor->Z=setSomething3Var13;
 					lactor->Y=setSomething3Var15;
 				}
-
 			}
 			break;
 		case 16:
@@ -155,8 +203,29 @@ void LBA_engine::moveActor(int actorNumber)
 			}
 			break;
 		case 17:
-			printf("skipping actor move opcode 17\n");
 			lactor->positionInMoveScript+=1;
+			if(*scriptPtr!=0)
+			{
+				if(!(lactor->field_60&0x2000))
+				{
+					lactor->field_60|=0x2000;
+					if(lactor->field_60&0x1000)
+					{
+						mainLoopVar2=1;
+					}
+				}
+			}
+			else
+			{
+				if(lactor->field_60&0x2000)
+				{
+					lactor->field_60&=0xDFFF;
+					if(lactor->field_60&0x1000)
+					{
+						mainLoopVar2=1;
+					}
+				}
+			}
 			break;
 		case 18:
 			printf("skipping actor move opcode 18\n");
@@ -199,7 +268,7 @@ void LBA_engine::moveActor(int actorNumber)
 			lactor->positionInMoveScript+=2;
 			break;
 		case 29:
-			printf("skipping actor move opcode 29\n");
+			printf("skipping actor move opcode 29 (playSound)\n");
 			lactor->positionInMoveScript+=2;
 			break;
 		default:

@@ -729,8 +729,22 @@ class LBA_engine
  int setSomething3Var15;
 
  int moveActorVar1;
+
+ int mainLoopVar17;
 	
 //----------------------------------------------------------------------------------------
+
+void addObject(actor* lactor);
+int anotherSqrt(int X1,int Z1,int Y1,int X2,int Z2,int Y2);
+int increaseAnim(char* lBufAnim,char* lBody);
+void initNewCSub(actor* lactor,int actorNum);
+
+int draw3D2(char* ptr);
+int draw3D3(char* ptr);
+
+int mainLoopSub17(timeStruct* angleData);
+
+ void processActor(int actorNum);
 
 void updateActorAngle(int angleFrom,int angleTo,int angleSpeed,timeStruct* angleStruct);
 
@@ -739,6 +753,7 @@ int calcAngleToward(int X1,int Y1,int X2,int Y2);
 void updateActors(int actorNum);
 
 int applyAnim(int animState,char* animData,char* body);
+int draw3D1(int animState,char* animData,char* body);
 
 void fullRedrawSub11(void);
 
@@ -799,7 +814,7 @@ void moveActor(int actorNumber);
 
 	void loadActorCostumeSub(unsigned char *arg_0, unsigned char* arg_4);
 
-	void drawInGameMenuEntry(int anim, int arg, int costume);
+	void drawComportementEntry(int anim, int arg, int costume);
 
 	void drawBlackBox(int a,int b,int c,int d, unsigned char e);
 
@@ -818,7 +833,7 @@ void moveActor(int actorNumber);
 
 	void drawMenuWin(short int var);
 
-	void drawInGameMenu(void);
+	void processComportementMenu(void);
 
 	int fullRedrawS2S1(int arg_0, int arg_4, int arg_8);
 
@@ -847,7 +862,7 @@ void moveActor(int actorNumber);
 
 	void zbuffer(int var1, int var2, int y, int z, int x);
 
-	void fullRedrawSub2(void);
+	void redrawCube(void);
 
 	void runActorScript(short int actorNumber);
 

@@ -41,6 +41,12 @@ void LBA_engine::fullRedraw(int param)
 	int spriteWidth;
 	int spriteHeight;
 
+	//////////////////
+
+	param=1;
+
+	/////////////////
+
 	temp1=fullRedrawVar1;
 	temp2=fullRedrawVar2;
 
@@ -54,7 +60,7 @@ void LBA_engine::fullRedraw(int param)
 	{
 		freezeTime();
 		resetVideoBuffer1();
-		fullRedrawSub2();
+		redrawCube();
 		fullRedrawSub3(temp1,temp2,fullRedrawVar1,fullRedrawVar2);
 //		fullRedrawSub4();
 		copyToBuffer(videoBuffer1,videoBuffer2);
@@ -271,7 +277,7 @@ void LBA_engine::fullRedraw(int param)
 				{
 				}
 
-				applyAnim(lactor->field_76,(char*)getHqrdataPtr(HQRanims,lactor->field_74),(char*)bodyPtrTab[lactor->costumeIndex]);
+				//applyAnim(lactor->field_76,(char*)getHqrdataPtr(HQRanims,lactor->field_74),(char*)bodyPtrTab[lactor->costumeIndex]);
 
 				if(!startRenderer(lactor->X-cameraX,lactor->Z-cameraZ,lactor->Y-cameraY,0,lactor->angle,0,bodyPtrTab[lactor->costumeIndex]))
 				{
@@ -568,46 +574,46 @@ void LBA_engine::addToRedrawBox(short int arg_0, short int arg_4, short int arg_
  numOfRedrawBox++;
 }
 
-void LBA_engine::fullRedrawSub2(void)
+void LBA_engine::redrawCube(void)
 {
 
-  int i;
- int x,y,z;
- unsigned char *localBufCube=bufCube;
- unsigned char val;
+	int i;
+	int x,y,z;
+	unsigned char *localBufCube=bufCube;
+	unsigned char val;
 
-  cameraX=newCameraX<<9;
- cameraZ=newCameraZ<<8;
- cameraY=changeRoomVar6<<9;
+	cameraX=newCameraX<<9;
+	cameraZ=newCameraZ<<8;
+	cameraY=changeRoomVar6<<9;
 
- fullRedrawS2S1(-cameraX,-cameraZ,-cameraY);
+	fullRedrawS2S1(-cameraX,-cameraZ,-cameraY);
 
- fullRedrawVar1=fullRedrawVar3;
- fullRedrawVar2=fullRedrawVar4;
+	fullRedrawVar1=fullRedrawVar3;
+	fullRedrawVar2=fullRedrawVar4;
 
- for(i=0;i<28;i++)
- {
-  zbufferTab[i]=0;
- }
+	for(i=0;i<28;i++)
+	{
+		zbufferTab[i]=0;
+	}
 
-  if(changeRoomVar10 == 0)
-   return;
+	if(changeRoomVar10 == 0)
+		return;
 
- for(x=0;x<64;x++)
- {
-  for(y=0;y<64;y++)
-  {
-   for(z=0;z<25;z++)
-   {
-     val=*(localBufCube++);
-     if(val)
-    {
-       zbuffer(--val,*(localBufCube),y,z,x);
-    }
-    localBufCube++;
-   }
-  }
- }
+	for(y=0;y<64;y++)
+	{
+		for(x=0;x<64;x++)
+		{
+			for(z=0;z<25;z++)
+			{
+				val=*(localBufCube++);
+				if(val)
+				{
+					zbuffer(--val,*(localBufCube),x,z,y);
+				}
+				localBufCube++;
+			}
+		}
+	}
 }
 
 
@@ -1169,54 +1175,4 @@ void LBA_engine::fullRedrawSub11(void)
 	{
 		addToRedrawBox(refreshBoxList2[i].field_0,refreshBoxList2[i].field_2,refreshBoxList2[i].field_4,refreshBoxList2[i].field_6);
 	}
-}
-
-int LBA_engine::applyAnim(int animState,char* animData,char* body)
-{
-	short int animOpcode;
-
-	short int var0;
-	short int var1;
-
-	return(0);
-
-	var1=*(short int*)(animData+2);
-
-	animVar0=(var1*8)*animState+animData+8;
-
-	var0=*(short int*)body;
-
-	if(var0&2)
-	{
-		return(0);
-	}
-
-	animVar1=body+16;
-
-/*	while(--animVar4)
-	{
-		animOpcode=getAnimOpcode();
-		if(animOpcode==0)
-		{
-			applyAnimMode0();
-			applyAnimMode0();
-			applyAnimMode0();
-		}
-		else
-		if(animOpcode==1)
-		{
-			applyAnimMode1();
-			applyAnimMode1();
-			applyAnimMode1();
-		}
-		else
-		if(animOpcode==2)
-		{
-			applyAnimMode2();
-			applyAnimMode2();
-			applyAnimMode2();
-		}
-		edi+=30;
-	}*/
-	return(0);
 }
