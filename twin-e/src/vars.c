@@ -905,7 +905,7 @@ void initVars(void)
   buttonDrawVar1 = 550;
 
 #ifdef ENGLISH_LANG
-  language = 0;
+  language = 1;
 #else
   language = 1;   // langue ecrite
 #endif

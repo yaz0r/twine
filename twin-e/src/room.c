@@ -816,6 +816,7 @@ void LoadScene(int sceneNumber)
     actors[currentActor].cropTop = READ_LE_S16(temp); temp+=2;
     actors[currentActor].cropRight = READ_LE_S16(temp); temp+=2;
     actors[currentActor].cropBottom = READ_LE_S16(temp); temp+=2;
+    actors[currentActor].followedActor = actors[currentActor].cropBottom;
 
     actors[currentActor].field_12 = READ_LE_BYTE(temp); temp++;
     actors[currentActor].talkColor = READ_LE_BYTE(temp); temp++;
@@ -847,10 +848,10 @@ void LoadScene(int sceneNumber)
 
     zoneData[i].zoneType = READ_LE_S16(temp); temp+=2;
 
-    zoneData[i].generic.data1 = READ_LE_S16(temp); temp+=2;
-    zoneData[i].generic.data2 = READ_LE_S16(temp); temp+=2;
-    zoneData[i].generic.data3 = READ_LE_S16(temp); temp+=2;
-    zoneData[i].generic.data4 = READ_LE_S16(temp); temp+=2;
+    zoneData[i].data.generic.data1 = READ_LE_S16(temp); temp+=2;
+    zoneData[i].data.generic.data2 = READ_LE_S16(temp); temp+=2;
+    zoneData[i].data.generic.data3 = READ_LE_S16(temp); temp+=2;
+    zoneData[i].data.generic.data4 = READ_LE_S16(temp); temp+=2;
 
     zoneData[i].dummy = READ_LE_S16(temp); temp+=2;
   }

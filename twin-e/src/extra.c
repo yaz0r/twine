@@ -111,8 +111,8 @@ void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4
 {
   extraEntry->field_14 |= 2;
 
-  extraEntry->field_8 = extraEntry->X;
-  extraEntry->field_A = extraEntry->Z;
+  extraEntry->timeUnion.timeStruct.field_8 = extraEntry->X;
+  extraEntry->timeUnion.timeStruct.field_A = extraEntry->Z;
   extraEntry->field_C = extraEntry->Y;
 
   Rotate(var3, 0, var1);
@@ -323,10 +323,10 @@ void GereExtras(void)
         currentExtraY = extraList[i].Y;
 
         currentExtraSpeedX = extraList[i].field_E * (lba_time - extraList[i].time);
-        extraList[i].X = currentExtraSpeedX + extraList[i].field_8;
+        extraList[i].X = currentExtraSpeedX + extraList[i].timeUnion.timeStruct.field_8;
 
         currentExtraSpeedZ = extraList[i].field_10 * (lba_time - extraList[i].time);
-        currentExtraSpeedZ += extraList[i].field_A;
+        currentExtraSpeedZ += extraList[i].timeUnion.timeStruct.field_A;
         extraList[i].Z = currentExtraSpeedZ - abs(((extraList[i].field_16 * (lba_time - extraList[i].time))* (lba_time - extraList[i].time))>>4);
 
         extraList[i].Y = extraList[i].field_12 * (lba_time - extraList[i].time) + extraList[i].field_C;
@@ -407,7 +407,7 @@ void GereExtras(void)
           int dx;
 
           verticalAngle = GetAngle( extraList[i].Z, 0, currentExtraZ, DoTrackVar1 );
-          dx = GetRealValue( &extraList[i].rotationSpeed );
+          dx = GetRealValue( &extraList[i].timeUnion.rotationSpeed );
 
           if( !dx )
           {
@@ -423,7 +423,7 @@ void GereExtras(void)
           extraList[i].X += destX;
           extraList[i].Y += destZ;
 
-          setActorAngle( 0, extraList[i].field_12, 50, &extraList[i].rotationSpeed );
+          setActorAngle( 0, extraList[i].field_12, 50, &extraList[i].timeUnion.rotationSpeed );
 
           if( targetedActor == ExtraCheckObjCol( &extraList[i], var_1C ) )
           {
@@ -729,7 +729,7 @@ int ExtraSearch(int actorNum, int X, int Y, int Z, int spriteIdx, int targetActo
       extraList[i].time = targetActor;
       extraList[i].field_12 = maxSpeed;
       extraList[i].field_1E = param4;
-      setActorAngle(0,maxSpeed,50,&extraList[i].rotationSpeed);
+      setActorAngle(0,maxSpeed,50,&extraList[i].timeUnion.rotationSpeed);
       extraList[i].field_16 = GetAngle(X,Z,actors[targetActor].X,actors[targetActor].Z);
       return(i);
     }

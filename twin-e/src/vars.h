@@ -350,8 +350,8 @@ struct extraListStruct
     {
       short int field_8;
       short int field_A;
-    };
-  };
+    }timeStruct;
+  }timeUnion;
   short int field_C;
   short int field_E;
   short int field_10;

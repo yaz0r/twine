@@ -81,11 +81,9 @@ struct actor
 	int cropLeft; 
 	int cropTop;
 	int cropRight;
+	int cropBottom; 
 
-	union{
-		int cropBottom; 
-		int followedActor;
-	};
+	int followedActor;
 
 	int collision;
 	int standOn;

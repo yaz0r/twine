@@ -68,7 +68,7 @@ struct ZONE_Box
       short int data3;
       short int data4;
     } generic;
-  };
+  }data;
   short int dummy;
 };
 

@@ -49,10 +49,10 @@ void CheckZoneSce(actor * lactor, int actorNumber)
           {
             if (lactor->life > 0) // if not dead
             {
-              needChangeRoom = pZone->ZONE_ChangeRoom.newRoomNumber;
-              newTwinsenXByZone = lactor->X - pZone->bottomLeft.X + pZone->ZONE_ChangeRoom.positionX;
-              newTwinsenZByZone = lactor->Y - pZone->bottomLeft.Y + pZone->ZONE_ChangeRoom.positionY;
-              newTwinsenYByZone = lactor->Z - pZone->bottomLeft.Z + pZone->ZONE_ChangeRoom.positionZ;
+              needChangeRoom = pZone->data.ZONE_ChangeRoom.newRoomNumber;
+              newTwinsenXByZone = lactor->X - pZone->bottomLeft.X + pZone->data.ZONE_ChangeRoom.positionX;
+              newTwinsenZByZone = lactor->Y - pZone->bottomLeft.Y + pZone->data.ZONE_ChangeRoom.positionY;
+              newTwinsenYByZone = lactor->Z - pZone->bottomLeft.Z + pZone->data.ZONE_ChangeRoom.positionZ;
               twinsenPositionModeInNewCube = 1;
             }
           }
@@ -63,13 +63,13 @@ void CheckZoneSce(actor * lactor, int actorNumber)
           if (currentlyFollowedActor == actorNumber)
           {
             disableScreenRecenter = 1;
-            if (newCameraX != pZone->ZONE_ForceCamera.newCameraX
-            || newCameraZ != pZone->ZONE_ForceCamera.newCameraY
-            || newCameraY != pZone->ZONE_ForceCamera.newCameraZ)
+            if (newCameraX != pZone->data.ZONE_ForceCamera.newCameraX
+            || newCameraZ != pZone->data.ZONE_ForceCamera.newCameraY
+            || newCameraY != pZone->data.ZONE_ForceCamera.newCameraZ)
             {
-              newCameraX = pZone->ZONE_ForceCamera.newCameraX;
-              newCameraZ = pZone->ZONE_ForceCamera.newCameraY;
-              newCameraY = pZone->ZONE_ForceCamera.newCameraZ;
+              newCameraX = pZone->data.ZONE_ForceCamera.newCameraX;
+              newCameraZ = pZone->data.ZONE_ForceCamera.newCameraY;
+              newCameraY = pZone->data.ZONE_ForceCamera.newCameraZ;
               requestBackgroundRedraw = 1;
             }
           }
@@ -77,7 +77,7 @@ void CheckZoneSce(actor * lactor, int actorNumber)
         }
         case 2: // set zone
         {
-          lactor->zone = pZone->ZONE_SetActorZone.zoneNumber;
+          lactor->zone = pZone->data.ZONE_SetActorZone.zoneNumber;
           break;
         }
         case 3: // cube clip
@@ -85,17 +85,17 @@ void CheckZoneSce(actor * lactor, int actorNumber)
           if (currentlyFollowedActor == actorNumber)
           {
             var_C=1;
-            if(useAnotherGrm != pZone->ZONE_PatchCube.newGrid)
+            if(useAnotherGrm != pZone->data.ZONE_PatchCube.newGrid)
             {
-              if(pZone->ZONE_PatchCube.newGrid != -1)
+              if(pZone->data.ZONE_PatchCube.newGrid != -1)
               {
                 createCube();
               }
 
-              useAnotherGrm = pZone->ZONE_PatchCube.newGrid;
+              useAnotherGrm = pZone->data.ZONE_PatchCube.newGrid;
               currentGrid2 = i;
               freezeTime();
-              IncrustGrm(pZone->ZONE_PatchCube.newGrid);
+              IncrustGrm(pZone->data.ZONE_PatchCube.newGrid);
               unfreezeTime();
             }
           }
@@ -119,9 +119,9 @@ void CheckZoneSce(actor * lactor, int actorNumber)
           {
             freezeTime();
             TestRestoreModeSVGA(1);
-            TestCoulDial(pZone->ZONE_DisplayText.textColor);
+            TestCoulDial(pZone->data.ZONE_DisplayText.textColor);
             talkingActor=actorNumber;
-            printTextFullScreen(pZone->ZONE_DisplayText.textIndex);
+            printTextFullScreen(pZone->data.ZONE_DisplayText.textIndex);
             unfreezeTime();
             fullRedraw(1);
 //          waitForKey();

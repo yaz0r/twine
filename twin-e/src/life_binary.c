@@ -512,7 +512,7 @@ void runActorScript(short int actorNumber)
       case 49:
          {
              lactor->angle = 0x200;
-             lactor->Y = lactor->lastY - READ_LE_S16(actorScriptPtr);
+             lactor->Z = lactor->lastY - READ_LE_S16(actorScriptPtr);
              lactor->dynamicFlagsBF.bIsMoving = 0;
              lactor->speed = 0;
              actorScriptPtr += 2;
@@ -521,7 +521,7 @@ void runActorScript(short int actorNumber)
       case 50:
          {
              lactor->angle = 0;
-             lactor->Y = lactor->lastY + READ_LE_S16(actorScriptPtr);
+             lactor->Z = lactor->lastY + READ_LE_S16(actorScriptPtr);
              lactor->dynamicFlagsBF.bIsMoving = 0;
              lactor->speed = 0;
              actorScriptPtr += 2;
@@ -1237,7 +1237,7 @@ void manipActor(actor * lactor)
     {
         if (lactor2->Z - lactor->Z < 1500)
       {
-          angle = GetAngle(lactor->X, lactor->Y, lactor2->X, lactor2->Y);
+          angle = GetAngle(lactor->X, lactor->Z, lactor2->X, lactor2->Z);
           if (DoTrackVar1 > 32000)
         DoTrackVar1 = 32000;
       }
