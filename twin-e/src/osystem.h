@@ -31,6 +31,7 @@ int mouseLeft;
   void setPalette (byte * palette);
   void drawBufferToScreen (unsigned char *videoBuffer);
   void refresh (unsigned char *videoBuffer, int left, int top, int right,int bottom);
+  void drawText (int X,int Y,char* text);
 
   void getMouseStatus(mouseStatusStruct* mouseData);
 

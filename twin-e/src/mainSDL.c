@@ -18,12 +18,14 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "lba.h"
+#include "SDL_ttf.h"
 
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
 SDL_Surface *sdl_screen;	// that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
+TTF_Font *font;
 
 void OSystem::getMouseStatus(mouseStatusStruct* mouseData)
 {
@@ -65,6 +67,28 @@ OSystem::OSystem (int argc, char *argv[])	// that's the creator of the system de
     }
 
   atexit (SDL_Quit);
+
+	if ( TTF_Init() < 0 ) {
+		fprintf(stderr, "Couldn't initialize TTF: %s\n",SDL_GetError());
+		exit(1);
+	}
+	atexit(TTF_Quit);
+
+	int rendersolid = 0;
+	int renderstyle = 0;
+	int rendertype = 0;
+
+	int ptsize=11;
+
+	font = TTF_OpenFont("verdana.ttf", ptsize);
+
+	if ( font == NULL ) {
+		fprintf(stderr, "Couldn't load %d pt font from %s: %s\n",ptsize, "verdana.ttf", SDL_GetError());
+		exit(2);
+	}
+
+	TTF_SetFontStyle(font, renderstyle);
+
 
   SDL_WM_SetCaption ("Little Big Adventure", "LBA");
 
@@ -236,3 +260,22 @@ OSystem::crossFade (char *buffer, char *palette)
   SDL_FreeSurface (newSurface);
   SDL_FreeSurface (tempSurface);
 }
+
+void OSystem::drawText (int X,int Y,char* string)
+{
+	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
+	SDL_Color black = { 0x00, 0x00, 0x00, 0 };
+	SDL_Color *forecol=&black;
+	SDL_Rect rectangle;
+
+	SDL_Surface *text;
+	text = TTF_RenderText_Solid(font, string, *forecol);
+
+	rectangle.x=X;
+	rectangle.y=Y-2;
+	rectangle.w=text->w;
+	rectangle.h=text->h;
+
+	SDL_BlitSurface(text,NULL,sdl_buffer,&rectangle);
+}
+
