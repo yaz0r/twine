@@ -73,8 +73,6 @@ void LBA_engine::init(void)
 
 	bufOrder=(char*)allocateBuf(1024);
 
-
-
 	bufAni1=bufAni2=allocateBuf(5000);
 
 	allocBufCube();

@@ -10,10 +10,19 @@ void LBA_engine::allocBufCube(void)
 
 byte* LBA_engine::allocateBuf(int size)
 {
+	byte* ptr;
 	// normalement, on a tout un code en fonction du DPMI pour la gestion des pages...
 	// C'est maintenant completement obsolete
 
-	return((byte*)malloc(size));
+	ptr=(byte*)malloc(size);
+
+	if(!ptr)
+	{
+		printf("Can't alloc %d!\n",size);
+		exit(1);
+	}
+
+	return(ptr);
 }
 
 int LBA_engine::allocHQRMemory(int dataSize, byte** ptr)
