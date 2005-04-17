@@ -616,7 +616,11 @@ void debugger_debugActor(int num)
       debugger_addButtonNoColor(2, 0, 15, 640, 15, "OK", BUTTON_OK);
 
       debugger_addWin(3, 0, 0, 527, 80);  // status win
+#ifdef TXT_SCRIPTS
+      debugger_addButtonNoColor(3, 0, 0, 90, 15, actors[num].name, BUTTON_GEN);
+#else
       debugger_addButtonNoColor(3, 0, 0, 90, 15, "Name", BUTTON_GEN);
+#endif
 
       debugger_addButtonNoColor(3, 0, 16, 15, 15, "-", BUTTON_GEN);
       sprintf(string, "X: %d", actors[num].X);

@@ -468,25 +468,28 @@ void osystem_drawText(int X, int Y, char *string)
 
 void osystem_drawTextColor(int X, int Y, char *string, unsigned char r, unsigned char g, unsigned char b)
 {
-  SDL_Surface *text;
-  SDL_Color forecol;
-  SDL_Color white = { 0, 0, 0xFF, 0 };
-  SDL_Rect rectangle;
+  if(strcmp(string,""))
+  {
+    SDL_Surface *text;
+    SDL_Color forecol;
+    SDL_Color white = { 0, 0, 0xFF, 0 };
+    SDL_Rect rectangle;
 
-  forecol.r = r;
-  forecol.g = g;
-  forecol.b = b;
-  forecol.unused = 0;
+    forecol.r = r;
+    forecol.g = g;
+    forecol.b = b;
+    forecol.unused = 0;
 
-  text = TTF_RenderText_Solid(font, string, forecol);
+    text = TTF_RenderText_Solid(font, string, forecol);
 
-  rectangle.x = X;
-  rectangle.y = Y - 2;
-  rectangle.w = text->w;
-  rectangle.h = text->h;
+    rectangle.x = X;
+    rectangle.y = Y - 2;
+    rectangle.w = text->w;
+    rectangle.h = text->h;
 
-  SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
-  //SDL_FreeSurface(text);
+    SDL_BlitSurface(text, NULL, sdl_buffer, &rectangle);
+    //SDL_FreeSurface(text);
+  }
 }
 #endif
 

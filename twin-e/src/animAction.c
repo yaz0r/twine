@@ -334,8 +334,47 @@ void GereAnimAction(actor * lactor, int actorNum)
         }
       case 13:
         {
-          ebx= eax;
-          printf("Skipping GereAnimAction opcode 13 (Send projectile)\n");
+					if(*ebx == lactor->animPosition)
+					{
+            int throwX;
+            int throwY;
+            int throwZ;
+
+            int distanceX;
+            int distanceY;
+            int distanceZ;
+
+            int spriteIdx;
+
+            int param1;
+            int param2;
+            int param3;
+            int param4;
+
+            int strength;
+						
+            distanceX = READ_LE_S16(edi);
+            distanceY = READ_LE_S16(edi+2);
+            distanceZ = READ_LE_S16(edi+4);
+
+						Rotate(distanceX, distanceZ, lactor->angle);
+
+            throwX = destX + lactor->X;
+            throwY = distanceY + lactor->Y;
+            throwZ = destZ + lactor->Z;
+
+            spriteIdx = *(edi+6);
+
+            param1 = READ_LE_S16(edi+7);
+            param2 = READ_LE_S16(edi+9) + lactor->angle;
+            param3 = READ_LE_S16(edi+11);
+            param4 = *(edi+13);
+
+            strength = *(edi+14);
+
+						ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
+					}
+					ebx = edx;
           break;
         }
       case 14: 

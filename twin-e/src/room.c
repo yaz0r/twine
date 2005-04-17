@@ -385,6 +385,8 @@ void LoadScene(int sceneNumber)
     *strchr(buffer,0xA) = 0;
     verify(sscanf(buffer,"Z: %d",&newTwinsenZByScene) == 1);
 
+    strcpy(actors[0].name,"Twinsen");
+
     twinsen->moveScript = readTextMoveScript(fHandle);
     twinsen->actorScript = readTextLifeScript(fHandle);
 
