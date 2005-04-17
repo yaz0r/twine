@@ -19,10 +19,13 @@
 #   s = file name
 #   V = old version number (pre-checkin)
 #   v = new version number (post-checkin)
+#   t = tag or branch name
 #
 # For example:
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
 
-DEFAULT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} twin-e-cvs@lists.sourceforge.net
+CVSROOT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} cine-admin@lists.sourceforge.net
+
+DEFAULT /cvsroot/sitedocs/CVSROOT/cvstools/syncmail %{sVv} cine-cvs@lists.sourceforge.net
