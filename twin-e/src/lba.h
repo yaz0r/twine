@@ -19,6 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _LBA_
 #define _LBA_
 
+#ifndef WIN32
+#include "config.h"
+#endif
+
 #include"type.h"
 
 #include<stdio.h>
