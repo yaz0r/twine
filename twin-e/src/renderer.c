@@ -1249,7 +1249,7 @@ void FillVertic_A(int ecx, int edi)
     }
     case 6: // trame (buggé)
     {
-      unsigned char bl=color;
+//      unsigned char bl=color;
       unsigned char bh=0;
 
       do
@@ -1397,7 +1397,7 @@ void FillVertic_A(int ecx, int edi)
               *(out2) = currentColor>>8;
               currentColor&=0xFF;
               startColor+=colorSize;
-              currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+              currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
               currentColor +=startColor;
               *(out2+1) = currentColor>>8;
             }
@@ -1409,7 +1409,7 @@ void FillVertic_A(int ecx, int edi)
                             
               currentColor&=0xFF;
               colorSize/=2;
-              currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+              currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
               currentColor +=startColor;
               *(out2++) = currentColor>>8;
               startColor+=colorSize;
@@ -1419,7 +1419,7 @@ void FillVertic_A(int ecx, int edi)
               *(out2) = currentColor>>8;
               currentColor&=0xFF;
               startColor+=colorSize;
-              currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+              currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
               currentColor +=startColor;
               *(out2+1) = currentColor>>8;
             }
@@ -1434,7 +1434,7 @@ void FillVertic_A(int ecx, int edi)
               {
                 hsize/=2;
                 currentColor&=0xFF;
-                currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
                 currentColor +=startColor;
                 *(out2++) = currentColor>>8;
               }
@@ -1450,7 +1450,7 @@ void FillVertic_A(int ecx, int edi)
                 *(out2) = currentColor>>8;
                 currentColor&=0xFF;
                 startColor+=colorSize;
-                currentColor = currentColor &0xFF00 | ((currentColor&0xFF)<<(hsize&0xFF))&0xFF;
+                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
                 currentColor +=startColor;
                 *(out2+1) = currentColor>>8;
 

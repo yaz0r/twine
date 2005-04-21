@@ -71,7 +71,7 @@ void fullStopMusic(void)
 #ifdef PCLIKE
   if(cdrom!=NULL)
   {
-    int status = SDL_CDStatus(cdrom);
+//    int status = SDL_CDStatus(cdrom);
 //    if(status == CD_PLAYING)
     {
       SDL_CDStop(cdrom);

@@ -54,7 +54,7 @@ void playSampleFla(int sampleNum, int freq, int repeat, int x, int y)
 void soundInit()
 {
 #ifdef PCLIKE
-  int audio_buffers=512;
+//  int audio_buffers=512;
 
 //  Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,audio_buffers);
 //  Mix_AllocateChannels(8);

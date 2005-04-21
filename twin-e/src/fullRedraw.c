@@ -326,7 +326,7 @@ void fullRedraw(int param)
   {
     unsigned int flags;
     int actorNumber;
-    int positionInDebugBox = 0;
+//    int positionInDebugBox = 0;
 
     do
     {
@@ -1041,7 +1041,7 @@ void redrawCube(void)
 
   int i;
   int x, y, z;
-  unsigned char *localBufCube = bufCube;
+  // unsigned char *localBufCube = bufCube;
   unsigned char val;
   cubeType* cube = (cubeType*)bufCube;
 
