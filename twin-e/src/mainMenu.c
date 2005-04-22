@@ -18,9 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+short int var4 = 0;
+
 void MainGameMenu(void)
 {
-    short int var4;
+//    short int var4; // disabled to be able to quit the game without problems
     int temp;
     int temp2;
     int temp3;
@@ -28,7 +30,7 @@ void MainGameMenu(void)
    // FILE* SaveGame;
 
     HQ_StopSample();
-    var4 = 0;
+//    var4 = 0; // disabled to be able to quit the game without problems
     CopyScreen(frontVideoBuffer, workVideoBuffer);
 
     if (var4 != 0)
@@ -42,7 +44,7 @@ void MainGameMenu(void)
       GetMultiText(49, mainMenuVar1);
       temp = processMenu(mainMenuData);
 
-      if (temp == 20)
+      if (temp == 20) // New Game
   //  if( 1)
     {
         if (enterPlayerName(42))
@@ -93,7 +95,7 @@ void MainGameMenu(void)
           while (skipIntro != 0);
       }
     }
-      else if (temp == 21)
+    else if (temp == 21) // Continue Game
     {
         if (chooseSave(21))
       {
@@ -135,13 +137,15 @@ void MainGameMenu(void)
           while (skipIntro != 0);
       }
     }
-      else if (temp == 22)
+      else if (temp == 22) // Quit
     {
-        var4 = 1;
+        printf("\nLBA/Relentless TwinEngine < %s / %s >\n\nOK.\n",__DATE__,__TIME__);
+		var4 = 1;
+		//	breakmainLoop =  true;
     }
-      else if (temp == 23)
+      else if (temp == 23) // Options
     {
-        CopyScreen(workVideoBuffer, frontVideoBuffer);
+       	CopyScreen(workVideoBuffer, frontVideoBuffer);
         osystem_Flip(frontVideoBuffer);
         soundMenuData[5] = 26;
         optionMenu();
@@ -158,7 +162,7 @@ void MainGameMenu(void)
         FadeToPal((char *) menuPalRGBA);
     }
   }
-    while (!var4);
+  while (!var4); // once var4 is set it will imediatly quit the game
 }
 
 void HQ_StopSample(void)
@@ -191,7 +195,7 @@ int chooseSave(int param)
 
 char *GetMultiText(int a, char *b)
 {
-    if (a == mainMenu3Var1)
+  if (a == mainMenu3Var1)
   {
       if (mainMenu3Var2 == currentTextBank)
     {
@@ -199,7 +203,7 @@ char *GetMultiText(int a, char *b)
         return (b);
     }
   }
-    if (!findString(a))
+  if (!findString(a))
   {
       b[0] = 0;   // si on a pas trouve le text...
       return (0);
@@ -217,7 +221,6 @@ char *GetMultiText(int a, char *b)
     mainMenu3Var2 = currentTextBank;
 
     return (b);
-
 }
 
 int processMenu(short int *menuData)
@@ -356,7 +359,7 @@ void drawSelectableLetters(void)
 {
     char x, y;
 
-    for (x = 0; x < 5; x++)
+ for (x = 0; x < 5; x++)
   for (y = 0; y < 14; y++)
       drawSelectableLetter(x, y, 0);
 }
@@ -971,7 +974,7 @@ void copyStringToString(char *a, char *b, int c)
   *(b++) = *(a++);
 }
 
-int optionMenu(void)
+int optionMenu(void) // Options menu
 {
     byte temp;
     byte temp2 = 0;
@@ -985,17 +988,17 @@ int optionMenu(void)
   {
       temp = processMenu(soundMenuData);
 
-      if (temp == 15 || temp == 26)
+      if (temp == 15 || temp == 26) // Return to Game
     {
         temp2 = 1;
     }
-      else if (temp == 30)
+      else if (temp == 30) // Volume Settings
     {
         CopyScreen(workVideoBuffer, frontVideoBuffer);
         osystem_Flip(frontVideoBuffer);
        // volumeMenu();
     }
-      else if (temp == 46)
+      else if (temp == 46) // Saved Gamee Management
     {
 
         CopyScreen(workVideoBuffer, frontVideoBuffer);
@@ -1003,7 +1006,7 @@ int optionMenu(void)
        // saveManipMenu();
 
     }
-      else if (temp == 47)
+      else if (temp == 47) // Advenced Options
     {
         CopyScreen(workVideoBuffer, frontVideoBuffer);
         osystem_Flip(frontVideoBuffer);
@@ -1018,7 +1021,7 @@ int optionMenu(void)
     return (0);
 }
 
-void optionMenu2(void)
+void optionMenu2(void) // Advanced Options
 {
     byte temp;
     byte quit = 0;
@@ -1029,35 +1032,35 @@ void optionMenu2(void)
   {
       temp = processMenu(subMenuData);
 
-      if (temp == 33)
+    if (temp == 33) // No Scenery Zoom
     {
         subMenuData[13] = 233;
-       // zoomMode=0;
+      //  zoomMode=0;
     }
       else if (temp == 231)
     {
         subMenuData[9] = 31;
     }
-      else if (temp == 232)
+      else if (temp == 232) // Shadows for all animated objects
     {
         subMenuData[11] = 32;
         shadowMode = 2;
     }
-      else if (temp == 233)
+      else if (temp == 233) // Scenery Zoom On
     {
         subMenuData[13] = 33;
-       // zoomMode=1;
+      //  zoomMode=1;
     }
       else if (temp == 131)
     {
         subMenuData[9] = 231;
     }
-      else if (temp == 132)
+      else if (temp == 132) // No Shadows
     {
         subMenuData[11] = 232;
         shadowMode = 0;
     }
-      else if (temp == 26)
+      else if (temp == 26) // Back to previous menu
     {
         quit = 1;
 
@@ -1066,22 +1069,22 @@ void optionMenu2(void)
     {
         subMenuData[9] = 131;
     }
-      else if (temp == 32)
+      else if (temp == 32) // Character shadows
     {
         subMenuData[11] = 132;
         shadowMode = 1;
     }
-      else if (temp == 2)
+      else if (temp == 2) // Aggressive Manual
     {
         subMenuData[7] = 4;
         autoAgressivity = 0;
     }
-      else if (temp == 4)
+      else if (temp == 4) // Aggressive Auto
     {
         subMenuData[7] = 2;
         autoAgressivity = 1;
     }
-
+    
   }
     while (!quit);
 
