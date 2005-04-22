@@ -1049,6 +1049,12 @@ int destY; */
 
 extern int bufRotate0[9];
 extern int bufRotate1[9];
+
+// ADDED ------------------
+extern byte fkeys;
+extern boolean breakmainLoop;
+//-------------------------
+
 // ---------------------------------------------------------------------------------------
 
 int mainLoopInteration(void);

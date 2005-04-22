@@ -827,6 +827,8 @@ int destY; */
 int bufRotate0[9];
 int bufRotate1[9];
 
+byte fkeys;
+boolean breakmainLoop; 
 
 void initVars(void)
 {
@@ -906,7 +908,11 @@ void initVars(void)
 #ifdef ENGLISH_LANG
   language = 0;
 #else
-  language = 1;   // langue ecrite
+  #ifdef PORTUGUESE_LANG
+	language = 5;   // Portuguese - especial Text/Ress.hqr to use it (not an original game translation)
+  #else
+    language = 1; // French
+  #endif
 #endif
 
   languageCD1 = 0;
@@ -1215,6 +1221,10 @@ void initVars(void)
 
   magicBallNumBounce = 1;
   magicBallParam = 1;
+
+  // ADDED
+  fkeys = 0;
+  breakmainLoop = false;
 }
 
 void CoulFont(byte i)
