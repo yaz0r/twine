@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "sdl.h"
 #endif
 
+int cptime=0;
+
 int mainLoop(void)
 {
     requestBackgroundRedraw = 1;
@@ -39,6 +41,7 @@ int mainLoopInteration(void)
     int i;
     int currentTime;
     int frameTime;
+	int textBank;
 
 //    do
   {
@@ -75,26 +78,27 @@ int mainLoopInteration(void)
       {
          // debut des inputs
 
-                if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) // press ESC
+         if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) // press ESC
         {
             TestRestoreModeSVGA(1);
             freezeTime();
             if (!makeGiveUpMenu())
-          {
-              unfreezeTime();
+            {          
+			   unfreezeTime();
               fullRedraw(1);
-          }
+            }
             else
-          {
+            {
               unfreezeTime();
               fullRedraw(1);
               freezeTime();
               SaveGame();
-              unfreezeTime();
+              breakmainLoop = true;
+	          unfreezeTime();
               return (0);
-          }
+            }
         }
-          if (mainLoopVar7 == 64) // F6
+          if (fkeys == 6) // F6
         {
             temp = languageCD1;
             freezeTime();
@@ -119,6 +123,7 @@ int mainLoopInteration(void)
           }
             unfreezeTime();
             fullRedraw(1);
+	    fkeys = 0;
         }
         mainLoopVar9 = -1;
         if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->comportement == 1)  // inventory menu
@@ -226,16 +231,87 @@ int mainLoopInteration(void)
             unfreezeTime();
             fullRedraw(1);
         }
-          if (mainLoopVar7 >= 59 && mainLoopVar7 <= 62 && twinsen->costumeIndex != -1 && twinsen->comportement == 1)  // F1-F4
+	
+        if (fkeys >= 1  && fkeys <= 4  && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys==comportementHero+1))  // F1-F4 - only if set a diferent behaviour than the current one
         {
-            freezeTime();
+ //           freezeTime();
             TestRestoreModeSVGA(1);
-            SetComportement(mainLoopVar7 - 59);
-            processComportementMenu();
-            unfreezeTime();
-            fullRedraw(1);
+  	    
+			if(cptime != 0){ // clear if have something already writed in the screen
+				blitRectangle(5,446,165,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
+				osystem_CopyBlockPhys(frontVideoBuffer,5,446,165,479);	  
+			}
+			// ADDED: Implemented with translations --------------
+			// Like LBA2 -----------------------------------------
+			CoulFont(15);    
+			textBank = currentTextBank;
+			currentTextBank = -1;
+            InitDial(0);
+			GetMultiText(fkeys-1,dataString);
+			Font(5,446,dataString);
+			osystem_CopyBlockPhys(frontVideoBuffer,5,446,220,479);
+            currentTextBank = textBank;
+			InitDial(currentTextBank+3);
+			// ---------------------------------------------------
+			cptime = currentTime;
+			SetComportement(fkeys-1);
+			// LBA1 type ----- Disabled
+			//
+			// processComportementMenu();
+			// unfreezeTime();
+			fkeys = 0;
         }
-          if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0)  // recenter screen
+       
+	// Time to display the behaviour text showed in the previous condition.
+	if((lba_time - cptime) > 100 && cptime){
+	    blitRectangle(5,446,165,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
+	    osystem_CopyBlockPhys(frontVideoBuffer,5,446,165,479);
+	    cptime = 0;
+	}
+
+ 	if(fkeys == 12) // F12 for FullScreen
+	{
+	   // TODO: Full Screen
+	   //SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
+	   fkeys = 0;
+	}
+
+	// Using J to Enable Proto-Pack
+	if(mainLoopVar7=='j' && vars[12]==1) // only if its in the inventory
+	{
+		// Not implemented in the origianl version ---------------
+		CoulFont(15);
+                Font(5,446,"Proto-Pack");
+                osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 200, 479);
+		// -------------------------------------------------------
+
+		if(vars[6])
+                {
+                  twinsen->body = 0;
+                }
+                else
+                {
+                  twinsen->body = 1;
+                }
+
+                if(comportementHero == 4)
+                {
+                  	#ifdef GAME_DEBUG
+						printf("Stop using Proto-Pack!");
+					#endif
+					SetComportement(0);
+                }
+                else
+                {
+					#ifdef GAME_DEBUG
+						printf("Now using Proto-Pack!");
+					#endif
+                  	SetComportement(4);
+                }
+		fullRedraw(1);
+	}
+
+        if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0)  // recenter screen
         {
             newCameraX = actors[currentlyFollowedActor].X >> 9;
             newCameraZ = actors[currentlyFollowedActor].Y >> 8;
@@ -245,17 +321,18 @@ int mainLoopInteration(void)
            //needChangeRoom=currentRoom+1;
         }
 
-#ifdef GAME_DEBUG
-          if (mainLoopVar7 == 'u')
+	
+	#ifdef GAME_DEBUG
+          if (mainLoopVar7 == 'r') // changed because proto-pack key
         {
             needChangeRoom = currentRoom + 1;
         }
-          if (mainLoopVar7 == 'j')
+          if (mainLoopVar7 == 'f') // changed because prto-pack key
         {
             needChangeRoom = currentRoom - 1;
         }
 
-          if (mainLoopVar7 == 'h')
+        if (mainLoopVar7 == 'h')
         {
             actors[0].life = 50;
             InitAnim(ANIM_static, 0, 255, 0);
@@ -325,34 +402,40 @@ int mainLoopInteration(void)
            // pauseSound();
             freezeTime();
             if (!drawInGameTransBox)
-          {
-              CoulFont(15);
-              Font(5, 446, "Pause");
-              osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
-          }
+            {
+				#ifdef GAME_DEBUG
+					prinft("Game in Pause...");
+				#endif
+	      		CoulFont(15);
+              	Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
+              	osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
+            }
             readKeyboard();
             while (skipIntro)
-          {
+            {
               readKeyboard();
-          };
+            };
             while (!skipIntro)
-          {
+            {
               readKeyboard();
-          };
+            };
             do
-          {
+            {
               readKeyboard();
-          }
+            }
             while (!skipIntro && !printTextVar12 && key1);
             while (skipIntro)
-          {
+            {
               readKeyboard();
-          };
+            };
             if (!drawInGameTransBox)
-          {
+            {
               blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
               osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
-          }
+            }
+			#ifdef GAME_DEBUG
+				printf("Game Resumed!");
+			#endif
             unfreezeTime();
            // resumeSound();
         }
@@ -369,7 +452,7 @@ int mainLoopInteration(void)
       disableScreenRecenter = 0;
      // playRoomSamples();
 
-      for (i = 0; i < numActorInRoom; i++)
+    for (i = 0; i < numActorInRoom; i++)
     {
         actors[i].hitBy = -1;
     }
@@ -383,7 +466,7 @@ int mainLoopInteration(void)
       if (!(actors[i].dynamicFlagsBF.bUnk0020))
       {
          // printf("Processing actor %d...\n",i);
-          if (actors[i].life == 0)
+        if (actors[i].life == 0)
         {
             if (i == 0)
           {
@@ -432,7 +515,7 @@ int mainLoopInteration(void)
          //if(brutalExit==-1)
          //      return(-1);
 
-                if (actors[i].staticFlagsBF.bCanDrown) // drown
+        if (actors[i].staticFlagsBF.bCanDrown) // drown
         {
            // implementer
         }
@@ -468,7 +551,9 @@ int mainLoopInteration(void)
               }
               else // game over ...
               {
-                printf("Game over...\n");
+					// TODO: play Game Over anim. Model 20 in Ress file
+					breakmainLoop = true;
+					printf("Game over...\n");
               }
             }
           }
@@ -542,7 +627,7 @@ void reinitAll(int save)
     newTwinsenY = 0x2000;
     currentRoom = -1;
     brutalExit = -1;
-    numClover = 2;
+    numClover = 0;
     numCloverBox = 2;
     currentPingouin = -1;
     needChangeRoom = 0;
@@ -917,11 +1002,19 @@ void DoDir(int actorNum)
         if (!actorNum)  // if it's twinsen
       {
           action = 0;
+
+	  // ADDED: Like LBA2 ----
+          if(mainLoopVar7 == 'w'){
+		action = 1;
+		break;
+	  }
+          //----------------------
+
           switch (comportementHero)
         {
         case 0: // normal
            {
-               if (mainLoopVar5 & 1)  // action button
+             if (mainLoopVar5 & 1)  // action button
              {
                  action = 1;
              }
@@ -1167,7 +1260,7 @@ void DoDir(int actorNum)
                {
                    if( lactor->field_3 & 0x80)
                    {
-                       ManualRealAngle( lactor->angle, (rand()&0x100 + lactor->angle - 0x100)&0x3FF, lactor ->speed, &lactor->time );
+                       ManualRealAngle( lactor->angle, (((rand() & 0x100) + (lactor->angle - 0x100)) & 0x3FF ), lactor ->speed, &lactor->time );
                        
                        lactor->cropLeft = rand()%300 + lba_time + 300;
 
@@ -1180,7 +1273,7 @@ void DoDir(int actorNum)
 
                         if( lba_time > lactor->cropLeft )
                         {
-                            ManualRealAngle( lactor->angle, (rand()&0x100 + lactor->angle - 0x100)&0x3FF, lactor->speed, &lactor->time );
+                            ManualRealAngle( lactor->angle, (((rand() & 0x100) + (lactor->angle - 0x100)) & 0x3FF) , lactor->speed, &lactor->time );
 
                             lactor->cropLeft = rand()%300 + lba_time + 300;
                         }
@@ -1551,7 +1644,7 @@ void DoAnim(int actorNum)
               InitSpecial(lactor->X, lactor->Y + 1000,lactor->Z, 0);
               InitAnim(ANIM_hitBig, 2, 0, currentlyProcessedActorNum);
 
-            printf("Wall hit !\n");
+			  printf("Wall hit !\n");
 
               if (!actorNum)
             {
@@ -2389,7 +2482,7 @@ int CheckZvOnZv(int var0, int var1) // is actor still standing on object ?
 
 void HitObj(int actorAttacking, int actorAttacked, int param, int angle)
 {
-    actor* pActorAttacking = &actors[actorAttacking];
+    //actor* pActorAttacking = &actors[actorAttacking];
     actor* pActorAttacked = &actors[actorAttacked];
 
     if(pActorAttacked->life <= 0)
