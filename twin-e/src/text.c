@@ -31,7 +31,7 @@ void InitDial(int index)
   textVar1 = index;
   textVar2[0] = textVar3;
 
-  bundleEntryPoint = (language * 14) * 2 + index * 2;
+  bundleEntryPoint = (language * 14) * 2  + index * 2;
 
   size = Load_HQR("text.hqr", (byte *) bufOrder, bundleEntryPoint);
 
@@ -100,7 +100,7 @@ void printTextFullScreen(int textIndex)
     isVoxSet = temp2 = printText10(); // on doit player le son ?
     printText4(voxFileHandle);
 
-    /*  if (isVoxSet == 2)
+      if (isVoxSet == 2)
     {
         do
       {
@@ -119,7 +119,7 @@ void printTextFullScreen(int textIndex)
           printText4(voxFileHandle);
       }
         while (1);
-    }*/
+    }
 
     if (skipIntro == 1)
     {
@@ -163,7 +163,10 @@ void printTextFullScreen(int textIndex)
     readKeyboard();
   }while (skipIntro || key1 || printTextVar12);
 
-    /*do
+ 
+  // now enabled ----------------------------------
+  // wait a key to continue the displaying the text
+  do
   {
       readKeyboard();
       if (skipIntro != 0)
@@ -178,7 +181,8 @@ void printTextFullScreen(int textIndex)
         return;
     }
   }
-    while (!printTextVar12);*/
+    while (!printTextVar12);
+  //-------------------------------------------------
 
   loadSavedTextWindow();
   return;
@@ -254,7 +258,6 @@ int printText7(int var)
   // todo: implement this
   // sound function
   return (0);
-
 }
 
 int initText(int var)
@@ -770,15 +773,15 @@ int ComputePoly(void)
 
             if (temp4 >= 0)
           {
-             /*
-              * temp5=temp4/oldVertexX; temp6=temp4%oldVertexX;
-              */
+            //  *
+           //   * temp5=temp4/oldVertexX; temp6=temp4%oldVertexX;
+            //  */
 
         /*      vcfloat = ((float) (temp4)) / ((float) oldVertexX);
 
-             /*
-              * (*(unsigned char*)&temp6)>>=1; (*(unsigned char*)&temp6)+=0x7F;
-              */
+            //  *
+            //  * (*(unsigned char*)&temp6)>>=1; (*(unsigned char*)&temp6)+=0x7F;
+            //  */
 
              // temp6=(temp6&0xFF) | (oldVertexParam)<<8;
 
