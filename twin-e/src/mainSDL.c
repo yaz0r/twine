@@ -95,12 +95,12 @@ void osystem_mainLoop(void)
 #define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
 #define SLEEP_GRAN 1         /* Granularity of sleep */
 
-int frames=0;                   /* Number of frames displayed */
+//int frames=0;                   /* Number of frames displayed */
 long int t_start,t_left;
 long unsigned int t_end;
 long int q=0;                     /* Dummy */
 
-  while(1)
+  while(!breakmainLoop) // To be able to quit the game ;)
   {
     t_start=SDL_GetTicks();
     /*
@@ -167,11 +167,11 @@ void osystem_getMouseStatus(mouseStatusStruct * mouseData)
 int osystem_init(int argc, char *argv[])  // that's the constructor of the system dependent
                       // object used for the SDL port
 {
-    int rendersolid = 0;
+    /*int rendersolid = 0;
     int renderstyle = 0;
     int rendertype = 0;
 
-    int ptsize = 11;
+    int ptsize = 11;*/
     unsigned char *keyboard;
     int size;
     int i;
@@ -220,7 +220,7 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
 
 #endif
 
-    SDL_WM_SetCaption("Little Big Adventure", "LBA");
+    SDL_WM_SetCaption("Little Big Adventure: TwinEngine", "LBA");
 
    // SDL_ShowCursor (SDL_DISABLE);
 
