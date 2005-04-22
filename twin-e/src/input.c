@@ -92,17 +92,19 @@ void readKeyboard(void)
           localKey = 0x1C;
           break;
         }
-      case SDLK_LSHIFT:
+/*      case SDLK_LSHIFT:
         {
           localKey = 0x2A;
           break;
-        }
+        }*/
+      case SDLK_LSHIFT:
       case SDLK_RSHIFT:
         {
           localKey = 0x36;
           break;
         }
       case SDLK_LALT:
+      case SDLK_RALT:
         {
           localKey = 0x38;
           break;
@@ -113,27 +115,32 @@ void readKeyboard(void)
           break;
         }
       case SDLK_UP:
-        {
+      case SDLK_KP8:
+	  {
           localKey = 0x48;
           break;
         }
       case SDLK_DOWN:
+      case SDLK_KP2:
         {
           localKey = 0x50;
           break;
         }
       case SDLK_LEFT:
+      case SDLK_KP4:
         {
           localKey = 0x4B;
           break;
         }
       case SDLK_RIGHT:
+      case SDLK_KP6:
         {
           localKey = 0x4D;
           break;
         }
       case SDLK_LCTRL:
-        {
+      case SDLK_RCTRL:      
+	 {
           localKey = 0x1D;
           break;
         }
@@ -152,15 +159,56 @@ void readKeyboard(void)
           localKey = 'h';
           break;
         }
-#ifdef GAME_DEBUG
-      case SDLK_u:  // next room
+      case SDLK_j:
+	{
+	  localKey = 'j';
+	  break;
+	}
+      case SDLK_w: // Especial key to do the action
+	{
+	  localKey = 'w';
+	  break;
+	}
+      case SDLK_F1:
+	{
+	  fkeys = 1; // F1
+	  break;
+	}
+      case SDLK_F2:
         {
-          localKey = 'u';
+	  fkeys = 2; // F2
+          break;
+	}
+      case SDLK_F3:
+	{
+	  fkeys = 3; // F3
+	  break;
+	}
+      case SDLK_F4:
+	{
+	  fkeys = 4; // F4
+	  break;
+	}
+      case SDLK_F6:
+        {
+	  fkeys = 6; // F6
+	  break;
+	}
+      case SDLK_F12: 
+	{
+	  fkeys = 12; // F12
+          break;
+	}
+
+#ifdef GAME_DEBUG
+      case SDLK_r:  // next room
+        {
+          localKey = 'r';
           break;
         }
-      case SDLK_j:  // previous room
+      case SDLK_f:  // previous room
         {
-          localKey = 'j';
+          localKey = 'f';
           break;
         }
       case SDLK_t:  // increase story state
