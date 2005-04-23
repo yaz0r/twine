@@ -84,7 +84,7 @@ int mainLoopInteration(void)
             freezeTime();
             if (!makeGiveUpMenu())
             {          
-			   unfreezeTime();
+			   			unfreezeTime();
               fullRedraw(1);
             }
             else
@@ -234,83 +234,92 @@ int mainLoopInteration(void)
 	
         if (fkeys >= 1  && fkeys <= 4  && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys==comportementHero+1))  // F1-F4 - only if set a diferent behaviour than the current one
         {
- //           freezeTime();
+ //           freezeTime(); // don-t need to freeze the time
             TestRestoreModeSVGA(1);
   	    
-			if(cptime != 0){ // clear if have something already writed in the screen
-				blitRectangle(5,446,165,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
-				osystem_CopyBlockPhys(frontVideoBuffer,5,446,165,479);	  
-			}
-			// ADDED: Implemented with translations --------------
-			// Like LBA2 -----------------------------------------
-			CoulFont(15);    
-			textBank = currentTextBank;
-			currentTextBank = -1;
+						if(cptime != 0){ // clear if have something already writed in the screen
+							blitRectangle(5,446,350,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
+							osystem_CopyBlockPhys(frontVideoBuffer,5,446,350,479);	  
+						}
+						// Added: Implemented with translations like LBA2 -----
+						CoulFont(15);    
+						textBank = currentTextBank;
+						currentTextBank = -1;
             InitDial(0);
-			GetMultiText(fkeys-1,dataString);
-			Font(5,446,dataString);
-			osystem_CopyBlockPhys(frontVideoBuffer,5,446,220,479);
+						GetMultiText(fkeys-1,dataString);
+						Font(5,446,dataString);
+						osystem_CopyBlockPhys(frontVideoBuffer,5,446,350,479);
             currentTextBank = textBank;
-			InitDial(currentTextBank+3);
-			// ---------------------------------------------------
-			cptime = currentTime;
-			SetComportement(fkeys-1);
-			// LBA1 type ----- Disabled
-			//
-			// processComportementMenu();
-			// unfreezeTime();
-			fkeys = 0;
+						InitDial(currentTextBank+3);
+						// ---------------------------------------------------
+						cptime = currentTime;
+						SetComportement(fkeys-1);
+						
+						// LBA1 type ----- Disabled
+						//
+						// processComportementMenu();
+						// unfreezeTime();
+						
+						fkeys = 0;
         }
-       
-	// Time to display the behaviour text showed in the previous condition.
-	if((lba_time - cptime) > 100 && cptime){
-	    blitRectangle(5,446,165,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
-	    osystem_CopyBlockPhys(frontVideoBuffer,5,446,165,479);
-	    cptime = 0;
+  		   
+	// Using J to Enable Proto-Pack
+	if(mainLoopVar7=='j' && vars[12]==1) // only if its in the inventory
+	{
+		// Not implemented in the origianl version ---------------
+		
+		if(cptime != 0){ // clear if have something already writed in the screen
+			blitRectangle(5,446,350,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
+			osystem_CopyBlockPhys(frontVideoBuffer,5,446,350,479);	  
+		}
+		
+		CoulFont(15);
+    Font(5,446,"Proto-Pack");
+    osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 200, 479);
+		// -------------------------------------------------------
+    cptime = currentTime;
+		
+		if(vars[6])
+    {
+			twinsen->body = 0;
+    }
+    else
+    {
+    	twinsen->body = 1;
+    }
+
+    if(comportementHero == 4)
+    {
+			#ifdef GAME_DEBUG
+				printf("Stop using Proto-Pack!");
+			#endif
+			SetComportement(0);
+    }
+    else
+    {
+			#ifdef GAME_DEBUG
+				printf("Now using Proto-Pack!");
+			#endif
+    	SetComportement(4);
+    }
 	}
 
- 	if(fkeys == 12) // F12 for FullScreen
+	// Time to display the behaviour text showed in the previous condition.
+	if((lba_time - cptime) > 100 && cptime){
+	    blitRectangle(5,446,350,479,(char*)workVideoBuffer,5,446,(char*)frontVideoBuffer);
+	    osystem_CopyBlockPhys(frontVideoBuffer,5,446,350,479);
+	    cptime = 0;
+	}
+	
+	
+	if(fkeys == 12) // F12 for FullScreen
 	{
 	   // TODO: Full Screen
 	   //SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
 	   fkeys = 0;
 	}
-
-	// Using J to Enable Proto-Pack
-	if(mainLoopVar7=='j' && vars[12]==1) // only if its in the inventory
-	{
-		// Not implemented in the origianl version ---------------
-		CoulFont(15);
-                Font(5,446,"Proto-Pack");
-                osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 200, 479);
-		// -------------------------------------------------------
-
-		if(vars[6])
-                {
-                  twinsen->body = 0;
-                }
-                else
-                {
-                  twinsen->body = 1;
-                }
-
-                if(comportementHero == 4)
-                {
-                  	#ifdef GAME_DEBUG
-						printf("Stop using Proto-Pack!");
-					#endif
-					SetComportement(0);
-                }
-                else
-                {
-					#ifdef GAME_DEBUG
-						printf("Now using Proto-Pack!");
-					#endif
-                  	SetComportement(4);
-                }
-		fullRedraw(1);
-	}
-
+	
+	
         if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0)  // recenter screen
         {
             newCameraX = actors[currentlyFollowedActor].X >> 9;
@@ -322,7 +331,7 @@ int mainLoopInteration(void)
         }
 
 	
-	#ifdef GAME_DEBUG
+#ifdef GAME_DEBUG
           if (mainLoopVar7 == 'r') // changed because proto-pack key
         {
             needChangeRoom = currentRoom + 1;
@@ -334,7 +343,6 @@ int mainLoopInteration(void)
 
         if (mainLoopVar7 == 'h')
         {
-            actors[0].life = 50;
             InitAnim(ANIM_static, 0, 255, 0);
         }
 
@@ -404,7 +412,7 @@ int mainLoopInteration(void)
             if (!drawInGameTransBox)
             {
 				#ifdef GAME_DEBUG
-					prinft("Game in Pause...");
+					printf("Game in Pause...");
 				#endif
 	      		CoulFont(15);
               	Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
@@ -468,12 +476,12 @@ int mainLoopInteration(void)
          // printf("Processing actor %d...\n",i);
         if (actors[i].life == 0)
         {
-            if (i == 0)
+          if (i == 0)
           {
               InitAnim(ANIM_landDeath, 4, 0, 0);  // play twinsen death anim
               actors[i].comportement = 0;
           }
-            else
+          else
           {
               HQ_3D_MixSample(37, rand()%2000 + 3096, 1, actors[i].X, actors[i].Y, actors[i].Z);
 
@@ -484,7 +492,7 @@ int mainLoopInteration(void)
               }
           }
 
-            if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1))
+          if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1))
           {
               GiveExtraBonus(&actors[i]);
           }
@@ -517,7 +525,7 @@ int mainLoopInteration(void)
 
         if (actors[i].staticFlagsBF.bCanDrown) // drown
         {
-           // implementer
+           
         }
 
         if (actors[i].life <= 0)  // if actor dead...
@@ -1000,17 +1008,17 @@ void DoDir(int actorNum)
         break;
     case 1: // MOVE_MANUAL
         if (!actorNum)  // if it's twinsen
-      {
+        {
           action = 0;
 
-	  // ADDED: Like LBA2 ----
-          if(mainLoopVar7 == 'w'){
-		action = 1;
-		break;
-	  }
-          //----------------------
+	  			// ADDED: Like LBA2 ----
+					if(mainLoopVar7 == 'w'){
+						action = 1;
+						break;
+	  			}
+				//----------------------
 
-          switch (comportementHero)
+        switch (comportementHero)
         {
         case 0: // normal
            {
@@ -1032,14 +1040,14 @@ void DoDir(int actorNum)
            {
              if(mainLoopVar5 & 1)
              {
-                 if(autoAgressivity)
+               if(autoAgressivity)
                {
                    twinsenMoved = 1;
 
                    lactor->angle = GetRealAngle(&lactor->time);
 
               //   if(mainLoopVar6 == 1 || lactor->anim == 0) // TODO: figure it out. mainLoopVar6 may be related to the fact that the action key was released
-                               if(lactor->anim == 0)
+									if(lactor->anim == 0)
                  {
                    char agressivityMove=(rand()%3);
 
@@ -1047,7 +1055,7 @@ void DoDir(int actorNum)
                    {
                    case 0:
                      {
-                                           InitAnim(ANIM_kick, 1, 0, actorNum);
+                       InitAnim(ANIM_kick, 1, 0, actorNum);
                        break;
                      }
                    case 1:
@@ -1071,7 +1079,7 @@ void DoDir(int actorNum)
                }
                else
                {
-                   if(key & 8)
+                 if(key & 8)
                  {
                    InitAnim(ANIM_rightPunch, 1, 0, actorNum);
                  }
@@ -1133,13 +1141,13 @@ void DoDir(int actorNum)
 
       }
 
-          if (mainLoopVar5 == 0 || action != 0)
+      if (mainLoopVar5 == 0 || action != 0)
       {
         short int tempAngle;
           if (key & 3)  // if continue walking
             twinsenMoved = 0; // don't break animation
 
-          if (key != twinsenKey || mainLoopVar5 != twinsenKey2)
+        if (key != twinsenKey || mainLoopVar5 != twinsenKey2)
         {
             if (twinsenMoved != 0)
           {
@@ -1147,15 +1155,15 @@ void DoDir(int actorNum)
           }
         }
 
-          twinsenMoved = 0;
+        twinsenMoved = 0;
 
-          if (key & 1)  // walk forward
+        if (key & 1)  // walk forward
         {
-            if (currentActorInZoneProcess == 0)
+          if (currentActorInZoneProcess == 0)
           {
               InitAnim(ANIM_walk, 0, 255, actorNum);
           }
-            twinsenMoved = 1;
+          twinsenMoved = 1;
         }
 
           if (key & 2)  // walk backward
@@ -2482,7 +2490,7 @@ int CheckZvOnZv(int var0, int var1) // is actor still standing on object ?
 
 void HitObj(int actorAttacking, int actorAttacked, int param, int angle)
 {
-    //actor* pActorAttacking = &actors[actorAttacking];
+    actor* pActorAttacking = &actors[actorAttacking];
     actor* pActorAttacked = &actors[actorAttacked];
 
     if(pActorAttacked->life <= 0)
