@@ -191,11 +191,13 @@ int ExtraBonus(int X, int Y, int Z, int param, int angle, int type, int param2)
     if(extraList[i].field_0==-1)
     {
       extraList[i].field_0 = type;
-      extraList[i].field_14 = 0x4030;
-      if(type != 6)
+      extraList[i].field_14 = 0x4071; // old value: 0x4030 
+      
+			// This cause an incorrect movement in the Key extra
+			/*if(type != 6)
       {
         extraList[i].field_14 = 0x4071;
-      }
+      }*/
 
       extraList[i].X = X;
       extraList[i].Z = Y;
@@ -472,11 +474,11 @@ void GereExtras(void)
       {
       }
 
-      if(extraList[i].field_14 & 0x4) // extra hit actor
+		  if(extraList[i].field_14 & 0x4) // extra hit actor
       {
-        if( ExtraCheckObjCol( &extraList[i], extraList[i].field_1C ) != -1 )
+        if(ExtraCheckObjCol( &extraList[i], extraList[i].field_1C ) != -1)
         {
-          if( i == magicBallIdx ) // magic ball hit actor
+          if(i == magicBallIdx ) // magic ball hit actor
           {
             int magicBallSprite;
 
@@ -603,7 +605,7 @@ void GereExtras(void)
         {
           HQ_3D_MixSample( 97, 0x1000, 1, extraList[i].X, extraList[i].Z, extraList[i].Y );
 
-          if(extraList[i].field_20 > 1)
+          if(extraList[i].field_20 > 1 && !((byte) mainLoopVar5 & 2))
           {
             projectPositionOnScreen(extraList[i].X - cameraX, extraList[i].Z - cameraZ, extraList[i].Y - cameraY);
             addOverlayObject(1, extraList[i].field_20, projectedPositionX, projectedPositionY, 158, 0, 2);
@@ -701,7 +703,8 @@ int ExtraCheckObjCol(extraListStruct* extra, int param)
 
       if( X1 < aX2 && X2 > aX1 && Z1 < aZ2 && Z2 > aZ1 && Y1 < aY2 && Y2 > aY1)
       {
-        if(extra->field_1E != 0)
+        
+				if(extra->field_1E != 0)
         {
           HitObj( param, i, extra->field_1E, -1 );
         }
