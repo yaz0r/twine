@@ -167,11 +167,11 @@ void osystem_getMouseStatus(mouseStatusStruct * mouseData)
 int osystem_init(int argc, char *argv[])  // that's the constructor of the system dependent
                       // object used for the SDL port
 {
-    /*int rendersolid = 0;
+    int rendersolid = 0;
     int renderstyle = 0;
     int rendertype = 0;
 
-    int ptsize = 11;*/
+    int ptsize = 11;
     unsigned char *keyboard;
     int size;
     int i;

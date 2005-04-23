@@ -250,8 +250,11 @@ void fullRedraw(int param)
             drawList[a12].field_0 = extraList[counter2].X - cameraX + extraList[counter2].Y - cameraY;
             drawList[a12].field_2 = counter;
             a12++;
-
-            if (shadowMode == 2 && extraList[counter2].field_0 & 0x8000)  // cast shadow
+						
+						// to not show shadows for stars and explode clouds
+						int extraType = extraList[counter2].field_0 & 0x7FFF; // 0 - damage star | 1 - explode cloud
+						
+            if (shadowMode == 2 && (extraList[counter2].field_0 & 0x8000) && (extraType!=0) && (extraType!=1))  // cast shadow
             {
               GetShadow(extraList[counter2].X,extraList[counter2].Z,extraList[counter2].Y);
               drawList[a12].field_0 = extraList[counter2].X - cameraX + extraList[counter2].Y - cameraY - 1;
@@ -326,7 +329,7 @@ void fullRedraw(int param)
   {
     unsigned int flags;
     int actorNumber;
-//    int positionInDebugBox = 0;
+    int positionInDebugBox = 0;
 
     do
     {
