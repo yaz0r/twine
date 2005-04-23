@@ -22,9 +22,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "SDL.h"
 #endif //PCLIKE
 
-void TimerPause()
+void TimerPause(void)
 {
 #ifdef PCLIKE
   SDL_Delay(300);
 #endif //PCLIKE
+}
+
+void WaitTime(int time)
+{
+	#ifdef PCLIKE
+  		SDL_Delay(time);
+	#endif //PCLIKE
 }

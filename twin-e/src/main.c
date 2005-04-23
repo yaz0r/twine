@@ -201,13 +201,15 @@ void init(void)
     RessPict(12);
 
    // now unused since we cross fade the video !
-   // TimerPause();
+   //TimerPause();
 
    // FadeToBlack((char*)paletteRGBA);
 
+	WaitTime(3000);
+		 
   loadImageCrossFade(52); // Electronic Arts Logo
 
-  TimerPause();
+  WaitTime(1000);
 
   FadeToBlack((char *) paletteRGBA);
 

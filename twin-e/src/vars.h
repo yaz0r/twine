@@ -1443,6 +1443,7 @@ void playCDtrack(int trackNumber);
 void FadeToBlack(char *palette);
 void RessPict(int imageNumber);
 void TimerPause(void);
+void WaitTime(int time);
 void FadeToPal(char *ptr);
 
 void readKeyboard(void);
