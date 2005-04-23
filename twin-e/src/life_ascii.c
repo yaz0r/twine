@@ -1078,7 +1078,7 @@ void runActorScript(short int actorNumber)
         if (numCoin < 0)
           numCoin = 0;
 
-        addOverlayObject(0,3,10,15,0,0,3);
+        addOverlayObject(0,3,10,30,0,0,3);
 
         eax = 0;
         ecx = 0;
@@ -1100,7 +1100,7 @@ void runActorScript(short int actorNumber)
 
         if (!ecx)
         {
-          addOverlayObject(2,oldNumCoin,30,20,numCoin,ecx,3);
+          addOverlayObject(2,oldNumCoin,60,40,numCoin,ecx,3);
         }
         break;
       }

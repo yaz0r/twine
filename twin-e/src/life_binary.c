@@ -391,7 +391,7 @@ void runActorScript(short int actorNumber)
              if (numCoin < 0)
            numCoin = 0;
 
-             addOverlayObject(0,3,10,15,0,0,3); // display the coin
+             addOverlayObject(0,3,10,30,0,0,3); // display the coin
 
              eax = 0;
              ecx = 0;
@@ -412,9 +412,9 @@ void runActorScript(short int actorNumber)
            }
 
              if (!ecx)
-           {
-              addOverlayObject(2,oldNumCoin,30,20,numCoin,ecx,3);
-           }
+             {
+             		addOverlayObject(2,oldNumCoin,60,40,numCoin,ecx,3);
+           	 }
 
              break;
 
@@ -484,7 +484,6 @@ void runActorScript(short int actorNumber)
              TestRestoreModeSVGA(1);
 
              temp = *(actorScriptPtr++);
-
              foundObject(temp);
 
              unfreezeTime();
@@ -530,18 +529,19 @@ void runActorScript(short int actorNumber)
       case 51:
          {
              char temp;
-
-             if (lactor->field_10 & 0x1F0)
-           {
+						 
+			 if(lactor->field_10 & 0x1F0)
+             {
                GiveExtraBonus(lactor);
-           }
-
-             temp = *(actorScriptPtr++);
+             }
+						 
+						 temp = *(actorScriptPtr++);
 
              if (temp != 0)
-           {
+             {
                lactor->field_10 |= 1;
-           }
+             }
+						
              break;
          }
       case 52:
@@ -1121,10 +1121,10 @@ void runActorScript(short int actorNumber)
            {
                temp = READ_LE_S16(actorScriptPtr);
                if (setup_lst != 0)
-             {
+               {
                  if (!temp)
-               temp = 16;
-             }
+                 		temp = 16;
+               }
 
                GetMultiText(temp, string);
 
