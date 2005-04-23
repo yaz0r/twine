@@ -333,7 +333,7 @@ else*/
 
     objectRotation[objectNumber] += 8;
 
-    //Draw3dObject(projectedPositionX, projectedPositionY, objectPtr, objectRotation[objectNumber], 10000);
+    Draw3dObject(projectedPositionX, projectedPositionY, objectPtr, objectRotation[objectNumber], 10000);
 
     DrawCadre(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
     AddPhysBox(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
