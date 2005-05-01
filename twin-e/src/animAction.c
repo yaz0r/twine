@@ -419,7 +419,6 @@ void GereAnimAction(actor * lactor, int actorNum)
             strength = *(edi+14);
 
             ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
-            ebx = edx;
           }
           ebx = eax;
           break;
