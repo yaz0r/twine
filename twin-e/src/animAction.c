@@ -283,10 +283,7 @@ void GereAnimAction(actor * lactor, int actorNum)
 
             ThrowExtra(actorNum,lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, cx, var_24, var_14, temp);
           }
-          else
-          {
-            ebx = edi + 11;
-          }
+          ebx = edx;
           break;
         }
       case 8:
@@ -334,8 +331,8 @@ void GereAnimAction(actor * lactor, int actorNum)
         }
       case 13:
         {
-					if(*ebx == lactor->animPosition)
-					{
+		  if(*ebx == lactor->animPosition)
+		  {
             int throwX;
             int throwY;
             int throwZ;
@@ -357,7 +354,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             distanceY = READ_LE_S16(edi+2);
             distanceZ = READ_LE_S16(edi+4);
 
-						Rotate(distanceX, distanceZ, lactor->angle);
+		    Rotate(distanceX, distanceZ, lactor->angle);
 
             throwX = destX + lactor->X;
             throwY = distanceY + lactor->Y;
@@ -372,9 +369,9 @@ void GereAnimAction(actor * lactor, int actorNum)
 
             strength = *(edi+14);
 
-						ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
-					}
-					ebx = edx;
+			ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
+		  }
+		  ebx = eax;
           break;
         }
       case 14: 
@@ -424,10 +421,7 @@ void GereAnimAction(actor * lactor, int actorNum)
             ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
             ebx = edx;
           }
-          else
-          {
-            ebx = edx;
-          }
+          ebx = eax;
           break;
         }
       case 15: // shoot slightly aiming
@@ -456,13 +450,8 @@ void GereAnimAction(actor * lactor, int actorNum)
             param4 = *(edi+10);
 
             ExtraSearch( actorNum, lactor->X + destX, lactor->Y + distanceY, lactor->Z + distanceZ, spriteIdx, targetActor, param3, param4);
-
-            ebx = edx;
           }
-          else
-          {
-            ebx = edx;
-          }
+          ebx = edx;
           break;
         }
       default:
