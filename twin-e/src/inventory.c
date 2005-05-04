@@ -97,7 +97,7 @@ void Inventory(void)
     {
       currentSelectedObjectInInventory--;
 
-      if(currentSelectedObjectInInventory< 0)
+      if(currentSelectedObjectInInventory < 0)
           currentSelectedObjectInInventory = 27;
 
       DrawOneInventory(previouslySelectedObject);
@@ -109,7 +109,7 @@ void Inventory(void)
     {
       currentSelectedObjectInInventory-=4;
 
-      if(currentSelectedObjectInInventory< 0)
+      if(currentSelectedObjectInInventory < 0)
         currentSelectedObjectInInventory += 28;
 
       DrawOneInventory(previouslySelectedObject);
@@ -133,7 +133,7 @@ void Inventory(void)
     {
       SecondInitDialWindow();
 
-      if(vars[currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
+      if(vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
       {
         OpenDialNoWindow(currentSelectedObjectInInventory + 100);
       }
@@ -159,7 +159,7 @@ void Inventory(void)
       }
       else
       {
-        if(vars[currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
+        if(vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
         {
           SecondInitDialWindow();
           OpenDialNoWindow(currentSelectedObjectInInventory+100);
@@ -171,7 +171,7 @@ void Inventory(void)
 
     DrawOneInventory(currentSelectedObjectInInventory);
 
-    if((mainLoopVar5 & 2) && vars[currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
+    if((mainLoopVar5 & 2) && vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
     {
       mainLoopVar9 = currentSelectedObjectInInventory;
       inventorySelectedColor = 91;

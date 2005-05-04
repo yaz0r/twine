@@ -665,7 +665,7 @@ void runActorScript(short int actorNumber)
          }
       case 61:
          {
-             char temp1;
+             unsigned char temp1;
              char temp2;
 
              temp1 = *(actorScriptPtr++);
@@ -676,7 +676,7 @@ void runActorScript(short int actorNumber)
          }
       case 62:  // LM_SUB_LIFE_POINT_OBJ
          {
-             char localActorNumber;
+             unsigned char localActorNumber;
              char subLife;
 
              localActorNumber = *(actorScriptPtr++);
@@ -685,12 +685,12 @@ void runActorScript(short int actorNumber)
              actors[localActorNumber].life -= subLife;
 
              if (actors[localActorNumber].life < 0)
-           actors[localActorNumber].life = 0;
+               actors[localActorNumber].life = 0;
 
          }
       case 63:  //LM_HIT_OBJ
          {
-                   char tempActorNumber;
+                   unsigned char tempActorNumber;
                    char temp;
 
                    tempActorNumber = *(actorScriptPtr++);
@@ -959,7 +959,7 @@ void runActorScript(short int actorNumber)
         }
       case 91: //LM_ASK_CHOICE_OBJ
         {
-          char currentTalkingActor;
+          unsigned char currentTalkingActor;
           short int choiceNumber;
 
           freezeTime();

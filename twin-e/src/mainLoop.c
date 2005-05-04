@@ -2490,7 +2490,7 @@ int CheckZvOnZv(int var0, int var1) // is actor still standing on object ?
 
 void HitObj(int actorAttacking, int actorAttacked, int param, int angle)
 {
-    actor* pActorAttacking = &actors[actorAttacking];
+//    actor* pActorAttacking = &actors[actorAttacking];
     actor* pActorAttacked = &actors[actorAttacked];
 
     if(pActorAttacked->life <= 0)

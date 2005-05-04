@@ -1269,7 +1269,7 @@ void FillVertic_A(int ecx, int edi)
           {
             unsigned short int ax;
             bh ^= 1;
-            ax = (unsigned short int) out2;
+            ax = (unsigned short int)(int) out2;
             ax &= 1;
             if(ax ^ bh)
             {

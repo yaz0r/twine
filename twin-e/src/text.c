@@ -49,7 +49,7 @@ void InitDial(int index)
 
 void printTextFullScreen(int textIndex)
 {
-  int isVoxSet;
+  int isVoxSet = 0;
   int temp2;
   int temp3 = 0;
 

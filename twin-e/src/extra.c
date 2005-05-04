@@ -313,11 +313,11 @@ void GereExtras(void)
 {
   int i;
 
-  int currentExtraX;
-  int currentExtraZ;
-  int currentExtraY;
-  int currentExtraSpeedX;
-  int currentExtraSpeedZ;
+  int currentExtraX = 0;
+  int currentExtraZ = 0;
+  int currentExtraY = 0;
+  int currentExtraSpeedX = 0;
+  int currentExtraSpeedZ = 0;
 
   int var_40;
   int var_30;
@@ -771,8 +771,8 @@ int ExtraSearch(int actorNum, int X, int Y, int Z, int spriteIdx, int targetActo
 
 void ThrowMagicBall(int X, int Z, int Y, int param1, int angle, int param2, int param3)
 {
-  int ballSprite;
-  int ballStrength;
+  int ballSprite = -1;
+  int ballStrength = 0;
 
   switch(magicLevel)
   {

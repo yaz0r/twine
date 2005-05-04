@@ -329,7 +329,7 @@ void fullRedraw(int param)
   {
     unsigned int flags;
     int actorNumber;
-    int positionInDebugBox = 0;
+    //int positionInDebugBox = 0;
 
     do
     {
