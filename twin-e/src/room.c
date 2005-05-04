@@ -1454,7 +1454,7 @@ int loadBrk(int gridSize)
 
   outPtr4 = (outPtr2 + firstBrick*2);
 
-#ifndef PCLIKE
+#ifdef DREAMCAST 
   //DC special
 {
   int handler;

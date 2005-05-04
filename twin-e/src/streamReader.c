@@ -103,7 +103,7 @@ FILE * ifopen(const char * path, const char * mode) {
 
 boolean streamReader_open(streamReader* pThis, const int8* fileName)
 {
-#ifdef PCLIKE
+#ifndef DREAMCAST
 #ifdef USE_IFOPEN
   pThis->fileHandle = ifopen((const char*)fileName,"rb");
 #else
@@ -127,7 +127,7 @@ boolean streamReader_open(streamReader* pThis, const int8* fileName)
 
 void streamReader_feedBuffer(streamReader* pThis)
 {
-#ifdef PCLIKE
+#ifndef DREAMCAST
   fread(pThis->buffer, BUFFER_SIZE, 1, pThis->fileHandle);
 #else
   gdFsRead(pThis->fileHandle, NUM_SECTOR_IN_BUFFER, pThis->buffer);
@@ -203,7 +203,7 @@ void streamReader_seek(streamReader* pThis, uint32 seekPosition)
   {
   } */
 
-#ifdef PCLIKE
+#ifndef DREAMCAST
   fseek(pThis->fileHandle, sectorToSeek * 2048, SEEK_SET );
 #else
   gdFsSeek(pThis->fileHandle, sectorToSeek, GDD_SEEK_SET );
@@ -218,7 +218,7 @@ void streamReader_close(streamReader* pThis)
 {
   if(pThis->fileHandle)
   {
-#ifdef PCLIKE
+#ifndef DREAMCAST
     fclose( pThis->fileHandle );
 #else
     gdFsClose( pThis->fileHandle );

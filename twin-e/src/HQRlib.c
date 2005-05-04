@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "type.h"
 #include "streamReader.h"
 
-#ifndef PCLIKE 
+#ifdef DREAMCAST 
 #include <shinobi.h>
 #endif
 
@@ -37,7 +37,7 @@ streamReader fileReader;
 
 int HQR_File_checkIfFileExist(char *fileName)
 {
-#ifdef PCLIKE
+#ifndef DREAMCAST
   FILE *fileHandle;
 
   fileHandle = fopen(fileName, "rb");
@@ -68,7 +68,7 @@ int HQR_File_checkIfFileExist(char *fileName)
 FILE * ifopen(const char *, const char *);
 #endif
 
-#ifdef PCLIKE 
+#ifndef DREAMCAST 
 FILE* HQR_File_OpenRead(char *fileName)
 {
   FILE *fileHandle;
@@ -108,7 +108,7 @@ GDFS HQR_File_OpenRead(char *fileName)
 }
 #endif
 
-#ifdef PCLIKE 
+#ifndef DREAMCAST 
 int HQR_File_Read(FILE * resourceFile, char *ptr, int length)
 {
   if (!resourceFile)
@@ -145,7 +145,7 @@ int HQR_File_Read(GDFS resourceFile, char *ptr, int length)
 }
 #endif
 
-#ifdef PCLIKE 
+#ifndef DREAMCAST  
 void HQR_File_Close(FILE * resourceFile)
 {
   fclose(resourceFile);
@@ -196,7 +196,7 @@ hqr_entry* HQR_Init_Ressource(char *fileName, int sizeOfBuffer, int numOfEntries
 
 long int getFileSize(char* resourceName)
 {
-#ifdef PCLIKE
+#ifndef DREAMCAST
   FILE* fHandle;
   int size;
 
@@ -217,7 +217,7 @@ long int getFileSize(char* resourceName)
 
 void fileRead(char* resourceName, long int size, unsigned char* buffer)
 {
-#ifdef PCLIKE
+#ifndef DREAMCAST
   FILE* fHandle;
   fHandle = fopen(resourceName, "rb");
   fread(buffer,size,1,fHandle);
@@ -348,7 +348,7 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
 
 int HQR_GetNumEntry(char* fileName)
 {
-#ifdef PCLIKE 
+#ifndef DREAMCAST 
   FILE *resourceFile = NULL;
 #else
   //DC
@@ -367,7 +367,7 @@ int HQR_GetNumEntry(char* fileName)
 
 unsigned char *LoadMalloc_HQR(char *fileName, short int imageNumber)
 {
-#ifdef PCLIKE 
+#ifndef DREAMCAST 
   FILE *resourceFile;
   int headerSize;
   int offToImage;
