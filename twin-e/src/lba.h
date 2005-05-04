@@ -39,6 +39,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define PCLIKE
 #endif
 
+#ifdef _EE
+#define PCLIKE
+#endif
+
 #ifdef PCLIKE
 #include<malloc.h>
 #ifdef USE_GL
@@ -50,13 +54,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif // PCLIKE
 
 #ifndef PCLIKE
-#ifndef _EE 
 #include <shinobi.h>    /* Shinobi system routines. */
 #include <kamui2.h>     /* Kamui2 low-level graphics HAL. */
 #include <sn_fcntl.h>   /* LibCross file types. */
 #include <usrsnasm.h>   /* LibCross I/O routines. */
 #include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
-#endif
 #define PRELOAD_ALL
 #define USE_GL
 
