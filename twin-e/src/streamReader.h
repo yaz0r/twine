@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #ifndef PCLIKE
-#ifndef PS2
+#ifndef _EE 
 #include <shinobi.h>
 #endif
 #endif
@@ -39,11 +39,11 @@ struct streamReader
 #ifdef PCLIKE
   FILE* fileHandle;
 #else
-#ifndef PS2
+#ifndef _EE 
   // DC
   GDFS fileHandle;
 #endif
-#ifdef PS2
+#ifdef _EE 
   FILE* fileHandle;
 #endif
 #endif
