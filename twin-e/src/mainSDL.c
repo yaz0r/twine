@@ -40,7 +40,7 @@ typedef unsigned _int64 uTime_t;
 #include <sys/time.h>
 typedef unsigned long long uTime_t;
 #endif
-
+#ifndef _EE
 uTime_t origin;
 
 uTime_t fetch_time()
@@ -68,6 +68,7 @@ uTime_t diff_time(uTime_t origin)
 
   return current - origin;
 }
+#endif
 
 #endif
 
@@ -102,6 +103,7 @@ long int q=0;                     /* Dummy */
 
   while(!breakmainLoop) // To be able to quit the game ;)
   {
+#ifndef _EE
     t_start=SDL_GetTicks();
     /*
 #ifdef WTIME
@@ -117,9 +119,10 @@ long int q=0;                     /* Dummy */
   }
     origin = fetch_time();
 #endif*/
+#endif
 
     mainLoopInteration();
-
+#ifndef _EE
     t_end=t_start+SPEED;
     t_left=t_start-SDL_GetTicks()+SPEED;
 
@@ -138,7 +141,7 @@ long int q=0;                     /* Dummy */
     {
        // printf("CPU to slow by %d ticks/round\n",-t_left);
     };
-
+#endif
     lba_time++;
   }
 }

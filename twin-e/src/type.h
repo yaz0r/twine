@@ -30,7 +30,9 @@ typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
 
+#ifndef _TAMTYPES_H_
 typedef unsigned char u8;
+#endif
 typedef unsigned short U16;
 typedef unsigned long U32;
 typedef signed char S8;

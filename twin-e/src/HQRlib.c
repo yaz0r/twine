@@ -29,6 +29,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define USE_IFOPEN
 #endif
 
+#ifdef _EE
+#undef USE_IFOPEN
+#endif
+
 streamReader fileReader;
 
 int HQR_File_checkIfFileExist(char *fileName)
