@@ -19,8 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _LBA_
 #define _LBA_
 
+#ifndef _EE
 #ifndef WIN32
 #include "config.h"
+#endif
 #endif
 
 #include<stdio.h>
@@ -48,7 +50,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif // PCLIKE
 
 #ifndef PCLIKE
-#ifndef PS2
+#ifndef _EE 
 #include <shinobi.h>    /* Shinobi system routines. */
 #include <kamui2.h>     /* Kamui2 low-level graphics HAL. */
 #include <sn_fcntl.h>   /* LibCross file types. */
