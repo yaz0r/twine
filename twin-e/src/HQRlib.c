@@ -298,16 +298,17 @@ hqr_entry* HQR_Init_RessourcePreload(char *resourceName)
 
 int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
 {
-  int headerSize;
-  int offToImage;
-  int dataSize;
-  int compressedSize;
-  short int mode;
+  unsigned int headerSize;
+  unsigned int offToImage;
+  unsigned int dataSize;
+  unsigned int compressedSize;
+  unsigned short int mode;
 
   if(!streamReader_open( &fileReader, (int8*) resourceName ))
     return 0;
 
   streamReader_get( &fileReader, &headerSize, 4 );
+  headerSize = convertDWFromLE(headerSize);
 
   if(imageNumber >= headerSize /4)
   {
@@ -317,11 +318,15 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
 
   streamReader_seek( &fileReader, imageNumber * 4 );
   streamReader_get( &fileReader, &offToImage, 4 );
+  offToImage = convertDWFromLE(offToImage);
 
   streamReader_seek( &fileReader, offToImage );
   streamReader_get( &fileReader, &dataSize , 4 );
+  dataSize = convertDWFromLE(dataSize);
   streamReader_get( &fileReader, &compressedSize , 4 );
+  compressedSize = convertDWFromLE(compressedSize);
   streamReader_get( &fileReader, &mode , 2 );
+  mode = convertWFromLE(mode);
 
   if( mode <= 0 )
   {
@@ -367,66 +372,10 @@ int HQR_GetNumEntry(char* fileName)
 
 unsigned char *LoadMalloc_HQR(char *fileName, short int imageNumber)
 {
-#ifndef DREAMCAST 
-  FILE *resourceFile;
-  int headerSize;
-  int offToImage;
-  int dataSize;
-  int compressedSize;
-  short int mode;
-  unsigned char *ptr;
-
-  resourceFile = HQR_File_OpenRead(fileName);
-
-  if (!resourceFile)
-    return (0);
-
-  HQR_File_Read(resourceFile, (char *) &headerSize, 4);
-
-  if (imageNumber >= headerSize / 4)
-  {
-    HQR_File_Close(resourceFile);
-    return (0);
-  }
-
-  fseek(resourceFile, imageNumber * 4, SEEK_SET);
-  HQR_File_Read(resourceFile, (char *) &offToImage, 4);
-
-  fseek(resourceFile, offToImage, SEEK_SET);
-  HQR_File_Read(resourceFile, (char *) &dataSize, 4);
-  HQR_File_Read(resourceFile, (char *) &compressedSize, 4);
-  HQR_File_Read(resourceFile, (char *) &mode, 2);
-
-  ptr = (unsigned char *) Malloc(dataSize + 500);
-  if (mode <= 0)    // uncompressed Image
-  {
-    HQR_File_Read(resourceFile, (char *) ptr, dataSize);
-  }
-  else
-  {
-    if (mode == 1)  // compressed Image
-    {
-      HQR_File_Read(resourceFile, (char *) (ptr + dataSize - compressedSize + 500), compressedSize);
-      HQR_Expand(dataSize, ptr, (ptr + dataSize - compressedSize + 500));
-    }
-    else
-    {
-      MemFree(ptr);
-      HQR_File_Close(resourceFile);
-      return (0);
-    }
-  }
-
-  HQR_File_Close(resourceFile);
-
-  return (ptr);
-#else
-  //DC
   unsigned char* ptr;
   HQRM_Load(fileName,imageNumber, &ptr);
 
   return (ptr);
-#endif
 }
 
 subHqr *findSubHqr(int arg_0, int arg_4, subHqr * arg_8)
@@ -628,17 +577,18 @@ int HQR_RemoveEntryFromHQR(hqr_entry * hqrPtr, int var)
 
 int HQRM_Load(char *fileName, short int arg_4, unsigned char ** ptr)  // recheck
 {
-  int headerSize;
-  int offToData;
-  int dataSize;
-  int compressedSize;
-  short int mode;
+  unsigned int headerSize;
+  unsigned int offToData;
+  unsigned int dataSize;
+  unsigned int compressedSize;
+  unsigned short int mode;
   unsigned char *temp;
 
   if(!streamReader_open( &fileReader, (int8*)fileName ))
     return(-1);
 
   streamReader_get( &fileReader, &headerSize, 4);
+  headerSize = convertDWFromLE(headerSize);
   
   if(arg_4 >= headerSize /4)
   {
@@ -648,11 +598,15 @@ int HQRM_Load(char *fileName, short int arg_4, unsigned char ** ptr)  // recheck
 
   streamReader_seek( &fileReader, arg_4 * 4 );
   streamReader_get( &fileReader, &offToData, 4 );
+  offToData = convertDWFromLE(offToData);
 
   streamReader_seek( &fileReader, offToData );
   streamReader_get( &fileReader, &dataSize, 4 );
+  dataSize = convertDWFromLE(dataSize);
   streamReader_get( &fileReader, &compressedSize, 4 );
+  compressedSize = convertDWFromLE(compressedSize);
   streamReader_get( &fileReader, &mode , 2 );
+  mode = convertWFromLE(mode);
 
   (*ptr) = (unsigned char*)Malloc(dataSize);
 

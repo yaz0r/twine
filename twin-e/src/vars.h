@@ -1183,7 +1183,8 @@ int HQ_3D_MixSample(int param0, int param1, int param2, int param3, int param4, 
 
 int GetRealAngle(timeStruct * arg_0);
 
-void SetClip(int left, int top, int right, int bottom);
+void SetClipLBA(int left, int top, int right, int bottom);
+#define SetClip SetClipLBA
 
 //void TranslateGroupeS2(short int eax, short int ebx, short int ecx);
 
@@ -1389,7 +1390,8 @@ int findString(int index);
 
 void drawLine(int a, int b, int c, int d, int e);
 
-void Line(int a, int b, int c, int d, int e);
+void LineLBA(int a, int b, int c, int d, int e);
+#define Line LineLBA
 
 void CoulDial(int a, int b, int c);
 

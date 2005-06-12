@@ -60,7 +60,7 @@ int InitGrille(short int roomNumber)
 
   HQM_Shrink_Last(bufferBrick2, size);
 
-  numberOfBll = (*(unsigned int *) (currentBll)) >> 2;
+  numberOfBll = (READ_LE_U32(currentBll)) >> 2;
 
   createCube();
 

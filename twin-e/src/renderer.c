@@ -35,6 +35,9 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
   _angleY = angleY;
   _angleZ = angleZ;
 
+#ifdef MACOSX
+ return 0;
+#endif
  /*
   * Those 4 vars are used to know the size of the rendered model. They are resetted to their
   * maximum value at the begining of the renderer 

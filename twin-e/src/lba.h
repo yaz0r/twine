@@ -40,7 +40,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #ifdef PCLIKE
+#ifdef MACOSX
+#include<malloc/malloc.h>
+#else
 #include<malloc.h>
+#endif
 #ifdef USE_GL
 #include <windows.h>    // Header File For Windows
 #include <gl\gl.h>      // Header File For The OpenGL32 Library
@@ -97,6 +101,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifndef PCLIKE
 #define exit(string) printf("Exit required\n")
+#endif
+
+#ifdef MACOSX
+#define convertDWFromLE(x) ((x >> 24) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | (x << 24)) 
+#define convertWFromLE(x) (((x>>8)&0xFF)|((x<<8)&0xFF00))
+#else
+#define convertDWFromLE(x) (x)
+#define convertWFromLE(x) (x)
 #endif
 
 struct mouseStatusStruct

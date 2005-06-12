@@ -1668,7 +1668,7 @@ void DrawOverBrick(int X, int Z, int Y)
       {
         if (currentZbufferData->x + currentZbufferData->y > Y + X)
         {
-          CopyMask(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,workVideoBuffer);
+          CopyMaskLBA(currentZbufferData->spriteNum,(j * 24) - 24,currentZbufferData->drawY, bufferBrick2,workVideoBuffer);
         }
       }
     }
@@ -1696,12 +1696,12 @@ void DrawOverBrick3(int X, int Z, int Y)
       {
         if ((currentZbufferData->x == X) && (currentZbufferData->y == Y))
         {
-          CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
+          CopyMaskLBA(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
         }
 
         if ((currentZbufferData->x > X) || (currentZbufferData->y > Y))
         {
-          CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
+          CopyMaskLBA(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
         }
       }
     }
@@ -1739,7 +1739,7 @@ void DrawOverBrick3(int X, int Y, int Z)
       {
       //  if((currentZbufferData->x == Z) && (currentZbufferData->y == X))
         {
-          CopyMask(currentZbufferData->spriteNum, (CopyBlockPhysLeft*24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
+          CopyMaskLBA(currentZbufferData->spriteNum, (CopyBlockPhysLeft*24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
         }
       }
 
@@ -1750,7 +1750,7 @@ void DrawOverBrick3(int X, int Y, int Z)
   }while(++CopyBlockPhysLeft <= CopyBlockPhysRight);
 }
 */
-void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
+void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
 {
   unsigned char *ptr;
   int top;
@@ -1871,7 +1871,7 @@ void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffe
 
 
 /*
-void CopyMask(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
+void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer)
 {
   unsigned char *ptr;
   int top;

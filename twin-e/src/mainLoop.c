@@ -905,7 +905,7 @@ void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_
 
 }
 
-void SetClip(int left, int top, int right, int bottom)
+void SetClipLBA(int left, int top, int right, int bottom)
 {
     if (left < 0)
       left = 0;

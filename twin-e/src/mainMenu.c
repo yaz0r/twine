@@ -740,7 +740,7 @@ void DrawCadre(int left, int top, int right, int bottom)
     Line(++left, bottom, right, bottom, 73);  // ligne du bas
 }
 
-void Line(int a, int b, int c, int d, int e)
+void LineLBA(int a, int b, int c, int d, int e)
 {
     drawLine(a, b, c, d, e);
 }
@@ -958,7 +958,7 @@ int SizeFont(char *string)
       else
     {
         stringLenght += interCharSpace; // espace inter lettre
-        stringLenght += *(fntFont + *((short int *) (fntFont + caractere * 4)));
+        stringLenght += *(fntFont + convertWFromLE(*((short int *) (fntFont + caractere * 4))));
     }
   }
     while (1);

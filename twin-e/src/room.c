@@ -1177,7 +1177,7 @@ int loadBrk(int gridSize)
             if (val4 > lastBrick)
           lastBrick = val4;
 
-            *(outPtr2 + val4) = 1;
+            WRITE_LE_U16(outPtr2 + val4) = 1;
         }
 
           ptr2 += 4;
@@ -1197,7 +1197,7 @@ int loadBrk(int gridSize)
 
     while (currentBrick <= lastBrick)
   {
-      if (*outPtr3 != 0)
+      if (READ_LE_U16(outPtr3) != 0)
     counter3++;
       outPtr3++;
       currentBrick++;
@@ -1393,7 +1393,7 @@ int loadBrk(int gridSize)
 
     if (temp & temp3)
     {
-      temp4 = *(int *) (currentBll + offset - 4);
+      temp4 = READ_LE_U32(currentBll + offset - 4);
       ptr1 = currentBll + temp4;
 
       val1 = *ptr1;

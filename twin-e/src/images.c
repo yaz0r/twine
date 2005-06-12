@@ -197,7 +197,7 @@ void convertPalToRGBA(byte * palSource, byte * palDest)
 
   int *colorDest = (int *) palDest;
 
-#ifdef PCLIKE
+#if 0
   for (i = 0; i < 256; i++)
   {
     *(colorDest++) = (*(int *) palSource);  // little optimisation trick

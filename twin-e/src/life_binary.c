@@ -31,6 +31,10 @@ void runActorScript(short int actorNumber)
     unsigned char *opcodePtr;
     int temp;
 
+#ifdef MACOSX
+return;
+#endif
+
     lactor = &actors[actorNumber];
 
     OPbreak = 0;

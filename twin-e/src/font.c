@@ -48,7 +48,7 @@ void drawCharacter(int X, int Y, unsigned char caractere)
   int tempX;
   int tempY;
 
-  data = fntFont + *((short int *) (fntFont + caractere * 4));
+  data = fntFont + convertWFromLE(*((short int *) (fntFont + caractere * 4)));
 
   sizeX = *(data++);
   sizeY = *(data++);
@@ -131,10 +131,11 @@ void Font(int X, int Y, char *string)
       X += spaceLenght;
     else
     {
-      stringLenght = *(fntFont + *((short int *) (fntFont + character * 4))); // get the length of the character
+      stringLenght = *(fntFont + convertWFromLE(*((short int *) (fntFont + character * 4)))); // get the length of the character
       drawCharacter(X, Y, character); // draw the character on screen
       X += interCharSpace;  // add the length of the space between 2 characters
       X += stringLenght;  // add the length of the current character
     }
   }while (1);
 }
+

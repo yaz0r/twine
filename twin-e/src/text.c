@@ -481,7 +481,7 @@ void TEXT_GetLetterSize(byte character, int *pLetterWidth, int *pLetterHeight, b
 {
   byte *temp;
 
-  temp = pFont + *((short int *) (pFont + character * 4));
+  temp = pFont + convertWFromLE(*((short int *) (pFont + character * 4)));
   *pLetterWidth = *(temp);
   *pLetterHeight = *(temp + 1);
 }
@@ -979,7 +979,7 @@ int findString(int index)
 e1:
 
   temp2 = 0;
-  temp2 = *(localOrderBuf);
+  temp2 = convertWFromLE(*(localOrderBuf));
   localOrderBuf++;
   if (temp2 == index)
     goto e3;
@@ -1004,8 +1004,8 @@ e3:
 
 ex:
 
-  ptrCurrentEntry = localTextBuf[temp]; // entrée courante
-  ptrNextEntry = localTextBuf[temp + 1];  // entrée d'apres
+  ptrCurrentEntry = convertWFromLE(localTextBuf[temp]); // entrée courante
+  ptrNextEntry = convertWFromLE(localTextBuf[temp + 1]);  // entrée d'apres
 
   currentTextPtr = (bufText + ptrCurrentEntry);
 
