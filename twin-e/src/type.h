@@ -86,7 +86,7 @@ typedef unsigned char boolean;
 
 FORCEINLINE uint16 READ_LE_U16(void *ptr)
 {
-#ifdef MACOSX
+#ifdef MACOSX2
   return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 #else
   return (((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
@@ -95,7 +95,7 @@ FORCEINLINE uint16 READ_LE_U16(void *ptr)
 
 FORCEINLINE int16 READ_LE_S16(void *ptr)
 {
-#ifdef MACOSX
+#ifdef MACOSX2
   return (((byte*)ptr)[0]<<8)|((byte*)ptr)[1];
 #else
   return (((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
@@ -104,7 +104,7 @@ FORCEINLINE int16 READ_LE_S16(void *ptr)
 
 FORCEINLINE uint32 READ_LE_U32(void *ptr)
 {
-#ifdef MACOSX
+#ifdef MACOSX2
   return (((byte*)ptr)[0]<<24)|(((byte*)ptr)[1]<<16)|(((byte*)ptr)[2]<<8)|((byte*)ptr)[3];
 #else
   return (((byte*)ptr)[3]<<24)|(((byte*)ptr)[2]<<16)|(((byte*)ptr)[1]<<8)|((byte*)ptr)[0];
@@ -113,7 +113,7 @@ FORCEINLINE uint32 READ_LE_U32(void *ptr)
 
 FORCEINLINE int32 READ_LE_S32(void *ptr)
 {
-#ifdef MACOSX
+#ifdef MACOSX2
   return (((byte*)ptr)[0]<<24)|(((byte*)ptr)[1]<<16)|(((byte*)ptr)[2]<<8)|((byte*)ptr)[3];
 #else
   return (((byte*)ptr)[3]<<24)|(((byte*)ptr)[2]<<16)|(((byte*)ptr)[1]<<8)|((byte*)ptr)[0];

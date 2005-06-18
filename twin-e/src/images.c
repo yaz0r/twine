@@ -204,10 +204,21 @@ void convertPalToRGBA(byte * palSource, byte * palDest)
     palSource += 3;
   }
 #else
+#ifdef MACOSX
+  for (i = 0; i < 256; i++)
+  {
+    palDest[0] = palSource[0];
+    palDest[1] = palSource[1];
+    palDest[2] = palSource[2];
+    palDest+=4;
+    palSource+=3;
+  }
+#else
   for (i = 0; i < 256*3; i++)
   {
     *(palDest++) = *(palSource++);  // little optimisation trick
   }
+#endif
 #endif
 
 }

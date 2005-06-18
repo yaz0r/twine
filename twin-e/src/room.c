@@ -1079,254 +1079,86 @@ void HQM_Free_All(void)
 
   Ptr_HQM_Memory = temp;
 }
-/*
+
 int loadBrk(int gridSize)
 {
-    int firstBrick;
-    int lastBrick;
-    int currentBrick;
+  unsigned int firstBrick = 60000; // should be MAX_UINT
+  unsigned int lastBrick = 0; // should be MIN_UINT
+  unsigned char* bufferPtr;
+  unsigned char* currentPositionInBuffer;
+  unsigned char* ptrToBllBits;
+  unsigned int i;
+  unsigned int j;
+  unsigned int numUsedBricks;
+  unsigned int currentBllEntryIdx = 0;
+  
+  printf("GridSize=%d\n", gridSize);
 
-   // int tempSize2;
-    int counter;
-    int counter2;
-    int counter3;
-    int counter6;
-    int counter7;
-    int offset;
-    int offset2;
+  bufferPtr = workVideoBuffer + 153800;
 
-    unsigned char *endOfGridPtr;
-    unsigned char *endOfGridPtr2;
-    unsigned char *endOfGridPtr3;
-    unsigned char *outPtr;
-    unsigned short int *outPtr2;
-    unsigned short int *outPtr3;
-    unsigned short int *outPtr4;
-    unsigned char *destPtr;
-    unsigned char *compressedPtr;
-    unsigned int *ptrUnk;
+  RazMem(bufferPtr, 20000);
 
-    byte temp;
-    byte temp2;
-    int temp3;
-    int temp4;
-    unsigned char *ptr1;
-    unsigned char *ptr2;
-    int val1;
-    int val2;
-    int val3;
-    unsigned short int val4;
-    int finalSize;
-    unsigned int *localBufferBrick;
-
-    FILE *file;
-    int headerSize;
-    int dataSize;
-    int compressedSize;
-
-    short int mode;
-
-    firstBrick = 60000;
-    lastBrick = 0;
-    counter = 1;
-
-    outPtr = workVideoBuffer + 153800;
-    outPtr2 = (unsigned short int *) outPtr;
-
-    RazMem(outPtr, 20000);
-
-    offset = 4;
-
-    endOfGridPtr2 = endOfGridPtr = currentGrid + (gridSize - 32);
-
-    do
+  ptrToBllBits = currentGrid + (gridSize - 32);
+  
+  // build up a map of all used bricks in the room
+  for(i=1;i<256;i++)
   {
-      temp = *(endOfGridPtr2 + (counter >> 3));
-      temp2 = 7 - (counter & 7);
-
-      temp3 = 1 << temp2;
-
-      if (temp & temp3)
+    unsigned char currentBitByte = *(ptrToBllBits + (i/8));
+    unsigned char currentBitMask = 1 << (7-(i&7));
+	
+    if(currentBitByte & currentBitMask)
     {
-        temp4 = *(int *) (currentBll + offset - 4);
-        ptr1 = currentBll + temp4;
+      unsigned int currentBllOffset = READ_LE_U32(currentBll + currentBllEntryIdx);
+      unsigned char* currentBllPtr = currentBll + currentBllOffset;
 
-        val1 = *ptr1;
-        val2 = *(ptr1 + 1);
-
-        val2 *= val1;
-
-        val3 = *(char *) (ptr1 + 2);
-
-        val3 *= val2;
-
-        ptr2 = ptr1 + 5;
-
-        counter2 = 0;
-
-        while (counter2++ < val3)
+      unsigned int bllSizeX = currentBllPtr[0];
+      unsigned int bllSizeY = currentBllPtr[1];
+      unsigned int bllSizeZ = currentBllPtr[2];
+	  
+      unsigned int bllSize = bllSizeX * bllSizeY * bllSizeZ;
+	  
+      unsigned char* bllDataPtr = currentBllPtr + 5;
+	         
+      for(j=0;j<bllSize;j++)
       {
-          val4 = READ_LE_U16( ptr2 );
-          if (val4 != 0)
+        unsigned int brickIdx = READ_LE_U16(bllDataPtr);
+		
+        if(brickIdx)
         {
-            val4--;
+          brickIdx--;
 
-            if (val4 <= firstBrick)
-          firstBrick = val4;
+          if (brickIdx <= firstBrick)
+            firstBrick = brickIdx;
 
-            if (val4 > lastBrick)
-          lastBrick = val4;
+          if (brickIdx > lastBrick)
+            lastBrick = brickIdx;
 
-            WRITE_LE_U16(outPtr2 + val4) = 1;
+          WRITE_LE_U16(bufferPtr + brickIdx*2,1);
         }
-
-          ptr2 += 4;
+        bllDataPtr += 4;
       }
-
     }
-
-      offset += 4;
+    currentBllEntryIdx += 4;
   }
-    while (++counter < 256);
-
-    outPtr3 = outPtr2 + firstBrick;
-
-    currentBrick = firstBrick;
-
-    counter3 = 0;
-
-    while (currentBrick <= lastBrick)
+  
+  // compute the number of bricks to load
+  currentPositionInBuffer = bufferPtr + firstBrick*2;
+  numUsedBricks = 0;
+  for(i=firstBrick;i<=lastBrick;i++)
   {
-      if (READ_LE_U16(outPtr3) != 0)
-    counter3++;
-      outPtr3++;
-      currentBrick++;
+    if(READ_LE_U16(currentPositionInBuffer)) // was brick noted as used ?
+	{
+	  numUsedBricks++;
+	}
+	
+	currentPositionInBuffer+=2;
   }
+  
+  printf("Need to load %d bricks\n", numUsedBricks);
 
-    printf("Need to load %d bricks\n", counter3);
-
-    file = OpenRead("lba_brk.hqr");
-
-    if (!file)
-  return (0);
-
-    Read(file, (char *) &headerSize, 4);
-
-    fseek(file, 0, 0);
-
-    Read(file, (char *) workVideoBuffer, headerSize);
-
-    counter3 *= 4;
-    counter3 += 4;
-
-    finalSize = counter3; // car on doit au moins avoir 1 ptr par brique
-
-    headerSize = headerSize >> 2;
-
-    outPtr4 = outPtr2 + firstBrick;
-
-    localBufferBrick = (unsigned int *) bufferBrick;
-
-    destPtr = bufferBrick + counter3;
-
-    *(int *) localBufferBrick = counter3;
-
-    localBufferBrick++;
-
-    currentBrick = firstBrick;
-
-    ptrUnk = (unsigned int *) (firstBrick * 4 + workVideoBuffer);
-
-    counter6 = 0;
-
-    while (currentBrick <= lastBrick)
-  {
-      if (*outPtr4)
-    {
-        counter6++;
-        *outPtr4 = counter6;
-        fseek(file, *ptrUnk, 0);
-
-        Read(file, (char *) &dataSize, 4);
-        Read(file, (char *) &compressedSize, 4);
-
-        Read(file, (char *) &mode, 2);
-
-        if (mode == 0)
-      {
-          Read(file, (char *) destPtr, dataSize);
-      }
-        else if (mode == 1)
-      {
-          compressedPtr = dataSize + destPtr - compressedSize + 500;
-          Read(file, (char *) compressedPtr, compressedSize);
-          Expand(dataSize, destPtr, compressedPtr);
-      }
-        finalSize += dataSize;
-        destPtr += dataSize;
-        *localBufferBrick = finalSize;
-        localBufferBrick++;
-    }
-
-      outPtr4++;
-      ptrUnk++;
-      currentBrick++;
-  }
-
-    counter6 = 1;
-
-    offset2 = 4;
-
-    endOfGridPtr3 = endOfGridPtr = currentGrid + (gridSize - 32);
-
-    do
-  {
-      temp = *(endOfGridPtr3 + (counter6 >> 3));
-      temp2 = 7 - (counter6 & 7);
-
-      temp3 = 1 << temp2;
-
-      if (temp & temp3)
-    {
-        temp4 = *(int *) (currentBll + offset2 - 4);
-        ptr1 = currentBll + temp4;
-
-        val1 = *ptr1;
-        val2 = *(ptr1 + 1);
-
-        val2 *= val1;
-
-        val3 = *(char *) (ptr1 + 2);
-
-        val3 *= val2;
-
-        ptr2 = ptr1 + 5;
-
-        counter7 = 0;
-
-        while (counter7++ < val3)
-      {
-          val4 = *(unsigned short int *) ptr2;
-          if (val4 != 0)
-        {
-            *(unsigned short int *) ptr2 = *(unsigned short int *) (outPtr + val4 * 2 - 2);
-
-        }
-          ptr2 += 4;
-      }
-
-    }
-
-      offset2 += 4;
-  }
-    while (++counter6 < 256);
-
-    Close(file);
-
-    return (finalSize);
-} */
-
-int loadBrk(int gridSize)
+}
+/*
+loadBrk(int gridSize)
 {
   int firstBrick;
   int lastBrick;
@@ -1370,6 +1202,8 @@ int loadBrk(int gridSize)
 //    int compressedSize;
 
 //    short int mode;
+
+  printf("GridSize=%d\n", gridSize);
 
   firstBrick = 60000;
   lastBrick = 0;
@@ -1454,88 +1288,6 @@ int loadBrk(int gridSize)
 
   outPtr4 = (outPtr2 + firstBrick*2);
 
-#ifdef DREAMCAST 
-  //DC special
-{
-  int handler;
-  char name[256];
-
-  sprintf(name,"brick%d", currentRoom );
-
-  handler = debug_open( name, SNASM_O_RDONLY | SNASM_O_BINARY );
-
-  if(handler==-1)
-  { // brick not dumped yet, need to build
-    localBufferBrick = bufferBrick;
-
-    destPtr = bufferBrick + counter3;
-
-    WRITE_LE_U32(localBufferBrick,counter3);
-
-    localBufferBrick+=4;
-
-    currentBrick = firstBrick;
-
-    ptrUnk = (firstBrick * 4 + workVideoBuffer);
-
-    counter6 = 0;
-
-    while (currentBrick <= lastBrick)
-    {
-      if (READ_LE_U16(outPtr4))
-      {
-        counter6++;
-        WRITE_LE_U16(outPtr4, counter6);
-
-        Load_HQR("LBA_BRK.HQR",destPtr,currentBrick);
-        dataSize = Size_HQR("LBA_BRK.HQR",currentBrick);
-
-        finalSize += dataSize;
-        destPtr += dataSize;
-        WRITE_LE_U32(localBufferBrick,finalSize);
-        localBufferBrick+=4;
-      }
-
-      outPtr4+=2;
-      ptrUnk+=4;
-      currentBrick++;
-    }
-
-    handler = debug_open( name, SNASM_O_CREAT | SNASM_O_BINARY | SNASM_O_WRONLY );
-
-    debug_write( handler, (char*)&outPtr4, 4 );
-    debug_write( handler, (char*)&finalSize, 4 );
-    debug_write( handler, (char*)bufferBrick, 361472 );
-    debug_write( handler, (char*)workVideoBuffer + 153800, 307700 - 153800 );
-    
-  }
-  else
-  {
-    localBufferBrick = bufferBrick;
-
-    destPtr = bufferBrick + counter3;
-
-    WRITE_LE_U32(localBufferBrick,counter3);
-
-    localBufferBrick+=4;
-
-    currentBrick = firstBrick;
-
-    ptrUnk = (firstBrick * 4 + workVideoBuffer);
-
-    counter6 = 0;
-
-    debug_read( handler, (char*)&outPtr4, 4 );
-    debug_read( handler, (char*)&finalSize, 4 );
-    debug_read( handler, (char*)bufferBrick, 361472 );
-    debug_read( handler, (char*)workVideoBuffer + 153800, 307700 - 153800 );
-  }
-
-  debug_close( handler );
-  }
-
-#else
-
   localBufferBrick = bufferBrick;
 
   destPtr = bufferBrick + counter3;
@@ -1580,7 +1332,6 @@ int loadBrk(int gridSize)
   }
 #ifdef USE_GL
   osystem_finishBricks();
-#endif
 #endif
 
   counter6 = 1;
@@ -1629,7 +1380,7 @@ int loadBrk(int gridSize)
 
  return (finalSize);
 }
-
+*/
 void RazMem(unsigned char *ptr, int size)
 {
   int i;

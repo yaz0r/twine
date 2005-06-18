@@ -341,6 +341,7 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
     compressedDataPtr = (unsigned char*) malloc(compressedSize + 500);
 
     streamReader_get( &fileReader, compressedDataPtr, compressedSize);
+    printf("DataSize: %d", dataSize);
     HQR_Expand(dataSize, (unsigned char*)ptr, compressedDataPtr);
 
     free(compressedDataPtr);
@@ -637,9 +638,9 @@ int HQRM_Load(char *fileName, short int arg_4, unsigned char ** ptr)  // recheck
 
 int Size_HQR(char *fileName, int index)
 {
-  int headerSize;
-  int dataSize;
-  int offToData;
+  unsigned int headerSize;
+  unsigned int dataSize;
+  unsigned int offToData;
 
   if(!streamReader_open( &fileReader, (int8*)fileName ))
   {
@@ -647,6 +648,7 @@ int Size_HQR(char *fileName, int index)
   }
 
   streamReader_get( &fileReader, &headerSize, 4 );
+  headerSize = convertDWFromLE(headerSize);
 
   if(index >= headerSize /4 )
   {
@@ -656,8 +658,10 @@ int Size_HQR(char *fileName, int index)
 
   streamReader_seek( &fileReader, index * 4 );
   streamReader_get( &fileReader, &offToData, 4 );
+  offToData = convertDWFromLE(offToData);
   streamReader_seek( &fileReader, offToData );
   streamReader_get( &fileReader, &dataSize, 4);
+  dataSize = convertDWFromLE(dataSize);
   streamReader_close( &fileReader );
 
   return (dataSize);

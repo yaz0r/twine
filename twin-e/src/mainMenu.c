@@ -172,6 +172,16 @@ void HQ_StopSample(void)
 
 int chooseSave(int param)
 {
+  FILE* fHandle;
+
+  fHandle = fopen("SAVE.LBA","rb");
+  if(!fHandle)
+  {
+    return 0;
+  }
+
+  fclose(fHandle);
+
   /*  var_14 = 1;
     var_0C = 50;
 
