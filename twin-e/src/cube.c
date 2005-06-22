@@ -241,9 +241,9 @@ int CreateMaskGph(unsigned int *buffer1, unsigned int *destBuffer)
   int startOffset;
   unsigned int firstBrickOffset;
 
-  firstBrickOffset = *buffer1;
+  firstBrickOffset = READ_LE_U32(buffer1);
   destPtr = (unsigned char *) ((unsigned char*)destBuffer + firstBrickOffset);
-  numOfBricks = (*buffer1) >> 2;
+  numOfBricks = READ_LE_U32(buffer1) >> 2;
 
   *(destBuffer++) = startOffset = *buffer1;
 

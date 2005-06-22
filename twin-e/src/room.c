@@ -1091,6 +1091,12 @@ int loadBrk(int gridSize)
   unsigned int j;
   unsigned int numUsedBricks;
   unsigned int currentBllEntryIdx = 0;
+  unsigned char* destinationBrickPtr;
+  unsigned char* localBufferBrick;
+  unsigned char* ptrTempDecompression;
+  unsigned int currentBrickIdx;
+  unsigned int brickSize;
+  unsigned int finalSize = 0;
   
   printf("GridSize=%d\n", gridSize);
 
@@ -1142,7 +1148,7 @@ int loadBrk(int gridSize)
   }
   
   // compute the number of bricks to load
-  currentPositionInBuffer = bufferPtr + firstBrick*2;
+  currentPositionInBuffer = bufferPtr + firstBrick * 2;
   numUsedBricks = 0;
   for(i=firstBrick;i<=lastBrick;i++)
   {
@@ -1155,6 +1161,73 @@ int loadBrk(int gridSize)
   }
   
   printf("Need to load %d bricks\n", numUsedBricks);
+  
+  currentPositionInBuffer = bufferPtr + firstBrick * 2;
+  
+  destinationBrickPtr = bufferBrick + (numUsedBricks+1)*4;
+  
+  localBufferBrick = bufferBrick;
+  
+  WRITE_LE_U32(localBufferBrick, (numUsedBricks+1)*4);
+  localBufferBrick+=4;
+
+  ptrTempDecompression = (firstBrick * 4 + workVideoBuffer);
+  
+  currentBrickIdx = 0;
+  
+  for(i=firstBrick;i<=lastBrick;i++)
+  {
+    if(READ_LE_U16(currentPositionInBuffer))
+	{
+	  WRITE_LE_U16(currentPositionInBuffer, currentBrickIdx);
+	  
+	  Load_HQR("LBA_BRK.HQR", destinationBrickPtr, i);
+	  brickSize = Size_HQR("LBA_BRK.HQR",i);
+	  
+      finalSize += brickSize;
+      destinationBrickPtr += brickSize;
+      WRITE_LE_U32(localBufferBrick,brickSize);
+      localBufferBrick+=4;
+	}
+	
+	ptrTempDecompression+=4;
+	currentPositionInBuffer+=2;
+  }
+  
+  currentBllEntryIdx = 0;
+  for(i=1;i<256;i++)
+  {
+    unsigned char currentBitByte = *(ptrToBllBits + (i/8));
+    unsigned char currentBitMask = 1 << (7-(i&7));
+	
+    if(currentBitByte & currentBitMask)
+    {
+      unsigned int currentBllOffset = READ_LE_U32(currentBll + currentBllEntryIdx);
+      unsigned char* currentBllPtr = currentBll + currentBllOffset;
+
+      unsigned int bllSizeX = currentBllPtr[0];
+      unsigned int bllSizeY = currentBllPtr[1];
+      unsigned int bllSizeZ = currentBllPtr[2];
+	  
+      unsigned int bllSize = bllSizeX * bllSizeY * bllSizeZ;
+	  
+      unsigned char* bllDataPtr = currentBllPtr + 5;
+	         
+      for(j=0;j<bllSize;j++)
+      {
+        unsigned int brickIdx = READ_LE_U16(bllDataPtr);
+		
+        if(brickIdx)
+        {
+          WRITE_LE_U16(bllDataPtr, READ_LE_U16(bufferPtr + brickIdx * 2 - 2));
+        }
+        bllDataPtr += 4;
+      }
+    }
+    currentBllEntryIdx += 4;
+  }
+
+ return (finalSize);
 
 }
 /*
