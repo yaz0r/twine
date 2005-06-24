@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "decomp.h"
 
 #ifdef PCLIKE
-#include "SDL.h"
+#include <SDL/SDL.h>
 #endif //PCLIKE
 
 #ifdef PCLIKE
