@@ -22,7 +22,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "decomp.h"
 
 #ifdef PCLIKE
+#ifdef WIN32
+#include <SDL.h>
+#else
 #include <SDL/SDL.h>
+#endif
 #endif //PCLIKE
 
 #ifdef PCLIKE
@@ -1297,9 +1301,9 @@ void addCubeEntry(unsigned char *gridEntry, unsigned char *dest);
 
 void HQM_Shrink_Last(unsigned char *bufferBrick2, int size);
 
-int CalcGraphMsk(int var, unsigned int *ptr1, unsigned int *ptr2);
+int CalcGraphMsk(int var, unsigned char *ptr1, unsigned char *ptr2);
 
-int CreateMaskGph(unsigned int *buffer1, unsigned int *buffer2);
+int CreateMaskGph(void);
 
 void RazMem(unsigned char *ptr, int size);
 
@@ -1517,6 +1521,8 @@ void drawSelectableLetter(int y, int x, int arg);
 int chooseSave(int param);
 
 void processTextLine(void);
+
+void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer);
 
 //};
 #endif

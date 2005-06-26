@@ -18,9 +18,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void studioTick(void);
 
+#define USE_SDL_MIXER true
+#define USE_OPENAL false
+
+#define playSounds true
+
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "lba.h"
+
+#ifdef USE_SDL_MIXER
+#include "SDL_Mixer.h"
+#endif
 
 #ifdef GAME_DEBUG
 #include <SDL_ttf.h>
@@ -173,88 +182,137 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
                       // object used for the SDL port
 {
 /*    int rendersolid = 0;
-    int renderstyle = 0;
+    
     int rendertype = 0; */
 
-    //int ptsize = 11;
-    unsigned char *keyboard;
-    int size;
-    int i;
+#ifdef GAME_DEBUG
+  int renderstyle = 0;
+  int ptsize = 11;
+#endif
+  unsigned char *keyboard;
+  int size;
+  int i;
 
-    Uint32 rmask, gmask, bmask, amask;
+  Uint32 rmask, gmask, bmask, amask;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-    rmask = 0xff000000;
-    gmask = 0x00ff0000;
-    bmask = 0x0000ff00;
-    amask = 0x000000ff;
+  rmask = 0xff000000;
+  gmask = 0x00ff0000;
+  bmask = 0x0000ff00;
+  amask = 0x000000ff;
 #else
-    rmask = 0x000000ff;
-    gmask = 0x0000ff00;
-    bmask = 0x00ff0000;
-    amask = 0xff000000;
+  rmask = 0x000000ff;
+  gmask = 0x0000ff00;
+  bmask = 0x00ff0000;
+  amask = 0xff000000;
 #endif
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+  if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
   {
-      fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-      exit(1);
+    fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+    exit(1);
   }
 
-    atexit(SDL_Quit);
+  {
+    SDL_version compile_version, *link_version;
+    SDL_VERSION(&compile_version);
+    printf("compiled with SDL version: %d.%d.%d\n", 
+            compile_version.major,
+            compile_version.minor,
+            compile_version.patch);
+    link_version=SDL_Linked_Version();
+    printf("running with SDL version: %d.%d.%d\n", 
+            link_version->major,
+            link_version->minor,
+            link_version->patch);
+  }
+
+  atexit(SDL_Quit);
 
 #ifdef GAME_DEBUG
 
-    if (TTF_Init() < 0)
+  if (TTF_Init() < 0)
   {
-      fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
-      exit(1);
+    fprintf(stderr, "Couldn't initialize TTF: %s\n", SDL_GetError());
+    exit(1);
   }
-    atexit(TTF_Quit);
+  atexit(TTF_Quit);
 
-    font = TTF_OpenFont("verdana.ttf", ptsize);
+  font = TTF_OpenFont("verdana.ttf", ptsize);
 
-    if (font == NULL)
+  if (font == NULL)
   {
-      fprintf(stderr, "Couldn't load %d pt font from %s: %s\n", ptsize, "verdana.ttf",
-        SDL_GetError());
-      exit(2);
+    fprintf(stderr, "Couldn't load %d pt font from %s: %s\n", ptsize, "verdana.ttf", SDL_GetError());
+    exit(2);
   }
 
-    TTF_SetFontStyle(font, renderstyle);
+  TTF_SetFontStyle(font, renderstyle);
 
 #endif
 
-    SDL_WM_SetCaption("Little Big Adventure: TwinEngine", "LBA");
-
-   // SDL_ShowCursor (SDL_DISABLE);
-
-   // SDL_EnableUNICODE (SDL_ENABLE); // not much used in fact
-
-    SDL_PumpEvents();
-
-    keyboard = SDL_GetKeyState(&size);
-
-    keyboard[SDLK_RETURN] = 0;
-
-    sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE/*|SDL_FULLSCREEN*/);
-
-    if (sdl_screen == NULL)
+  if(playSounds)
   {
-      fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
+#ifdef USE_SDL_MIXER
+    SDL_version compile_version, *link_version;
+    MIX_VERSION(&compile_version);
+    printf("compiled with SDL_mixer version: %d.%d.%d\n", 
+            compile_version.major,
+            compile_version.minor,
+            compile_version.patch);
+    link_version=Mix_Linked_Version();
+    printf("running with SDL_mixer version: %d.%d.%d\n", 
+            link_version->major,
+            link_version->minor,
+            link_version->patch);
+
+    // start SDL with audio support
+    if(SDL_Init(SDL_INIT_AUDIO)==-1)
+    {
+      printf("SDL_Init: %s\n", SDL_GetError());
       exit(1);
+    }
+    // open 44.1KHz, signed 16bit, system byte order,
+    //      stereo audio, using 1024 byte chunks
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)==-1)
+    {
+      printf("Mix_OpenAudio: %s\n", Mix_GetError());
+      exit(2);
+    }
+
+    Mix_AllocateChannels(16);
+#endif
   }
 
-    for (i = 0; i < 16; i++)
+  SDL_WM_SetCaption("Little Big Adventure: TwinEngine", "LBA");
+
+  // SDL_ShowCursor (SDL_DISABLE);
+
+  // SDL_EnableUNICODE (SDL_ENABLE); // not much used in fact
+
+  SDL_PumpEvents();
+
+  keyboard = SDL_GetKeyState(&size);
+
+  keyboard[SDLK_RETURN] = 0;
+
+  sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE/*|SDL_FULLSCREEN*/);
+
+  if (sdl_screen == NULL)
   {
-      surfaceTable[i] =
+    fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
+    exit(1);
+  }
+
+  for (i = 0; i < 16; i++)
+  {
+    surfaceTable[i] =
     SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
   }
 
-    osystem_mouseLeft = 0;
-    osystem_mouseRight = 0;
+  osystem_mouseLeft = 0;
+  osystem_mouseRight = 0;
 
-    return 0;
+  return 0;
 }
 
 void osystem_putpixel(int x, int y, int pixel)

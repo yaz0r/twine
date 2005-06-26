@@ -18,6 +18,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#define NUM_MAX_BRICKS 9000
+
+unsigned char* brickTable[NUM_MAX_BRICKS];
+unsigned char* brickMaskTable[NUM_MAX_BRICKS];
+unsigned int brickSizeTable[NUM_MAX_BRICKS];
+unsigned char brickUsageTable[NUM_MAX_BRICKS];
+
 void ChangeCube(void)
 {
   int i;
@@ -1098,11 +1105,9 @@ int loadBrk(int gridSize)
   unsigned int brickSize;
   unsigned int finalSize = 0;
   
-  printf("GridSize=%d\n", gridSize);
-
-  bufferPtr = workVideoBuffer + 153800;
-
-  RazMem(bufferPtr, 20000);
+  memset(brickTable, 0, sizeof(brickTable));
+  memset(brickSizeTable, 0, sizeof(brickSizeTable));
+  memset(brickUsageTable, 0, sizeof(brickUsageTable));
 
   ptrToBllBits = currentGrid + (gridSize - 32);
   
@@ -1139,7 +1144,7 @@ int loadBrk(int gridSize)
           if (brickIdx > lastBrick)
             lastBrick = brickIdx;
 
-          WRITE_LE_U16(bufferPtr + brickIdx*2,1);
+          brickUsageTable[brickIdx] = 1;
         }
         bllDataPtr += 4;
       }
@@ -1152,48 +1157,22 @@ int loadBrk(int gridSize)
   numUsedBricks = 0;
   for(i=firstBrick;i<=lastBrick;i++)
   {
-    if(READ_LE_U16(currentPositionInBuffer)) // was brick noted as used ?
-	{
-	  numUsedBricks++;
-	}
-	
-	currentPositionInBuffer+=2;
+    if(brickUsageTable[i]) // was brick noted as used ?
+    {
+	    numUsedBricks++;
+    }
   }
-  
-  printf("Need to load %d bricks\n", numUsedBricks);
-  
-  currentPositionInBuffer = bufferPtr + firstBrick * 2;
-  
-  destinationBrickPtr = bufferBrick + (numUsedBricks+1)*4;
-  
-  localBufferBrick = bufferBrick;
-  
-  WRITE_LE_U32(localBufferBrick, (numUsedBricks+1)*4);
-  localBufferBrick+=4;
-
-  ptrTempDecompression = (firstBrick * 4 + workVideoBuffer);
-  
-  currentBrickIdx = 0;
-  
+    
   for(i=firstBrick;i<=lastBrick;i++)
   {
-    if(READ_LE_U16(currentPositionInBuffer))
-	{
-	  WRITE_LE_U16(currentPositionInBuffer, currentBrickIdx);
-	  
-	  Load_HQR("LBA_BRK.HQR", destinationBrickPtr, i);
-	  brickSize = Size_HQR("LBA_BRK.HQR",i);
-	  
-      finalSize += brickSize;
-      destinationBrickPtr += brickSize;
-      WRITE_LE_U32(localBufferBrick,brickSize);
-      localBufferBrick+=4;
-	}
-	
-	ptrTempDecompression+=4;
-	currentPositionInBuffer+=2;
+    if(brickUsageTable[i])
+    {
+      brickSizeTable[i] = Size_HQR("LBA_BRK.HQR",i);
+      brickTable[i] = (unsigned char*)malloc(brickSizeTable[i]);
+      Load_HQR("LBA_BRK.HQR", brickTable[i], i);
+    }
   }
-  
+  /*
   currentBllEntryIdx = 0;
   for(i=1;i<256;i++)
   {
@@ -1225,10 +1204,9 @@ int loadBrk(int gridSize)
       }
     }
     currentBllEntryIdx += 4;
-  }
+  }*/
 
- return (finalSize);
-
+ return (0);
 }
 /*
 loadBrk(int gridSize)
@@ -1454,6 +1432,23 @@ loadBrk(int gridSize)
  return (finalSize);
 }
 */
+
+int CreateMaskGph()
+{
+  int i;
+
+  for(i=0;i<NUM_MAX_BRICKS;i++)
+  {
+    if(brickUsageTable[i])
+    {
+      brickMaskTable[i] = (unsigned char*)malloc(brickSizeTable[i]);
+
+      CalcGraphMsk(i, brickTable[i], brickMaskTable[i]);
+    }
+  }
+}
+
+
 void RazMem(unsigned char *ptr, int size)
 {
   int i;

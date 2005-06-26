@@ -58,9 +58,15 @@ void playCDtrack(int trackNumber)
   }
   currentlyPlayingCDTrack = -1;
 
-  if(cdrom!=NULL)  
+  if(cdrom!=NULL)
+  {
     if(CD_INDRIVE(SDL_CDStatus(cdrom)))
       SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
+  }
+  else
+  {
+    playMidi(trackNumber);
+  }
 
   unfreezeTime();
 #endif //PCLIKE 

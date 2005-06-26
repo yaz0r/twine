@@ -50,15 +50,17 @@ int InitGrille(short int roomNumber)
 #endif
 
   brickDataSize = loadBrk(gridSize);
-
+/*
   if (!brickDataSize)
-    return (0);
+    return (0);*/
 
-  HQM_Alloc(brickDataSize, &bufferBrick2);
+  //HQM_Alloc(brickDataSize, &bufferBrick2);
 
-  size = CreateMaskGph((unsigned int *) bufferBrick, (unsigned int *) bufferBrick2);
+  //size = CreateMaskGph((unsigned int *) bufferBrick, (unsigned int *) bufferBrick2);
 
-  HQM_Shrink_Last(bufferBrick2, size);
+  CreateMaskGph();
+
+  //HQM_Shrink_Last(bufferBrick2, size);
 
   numberOfBll = (READ_LE_U32(currentBll)) >> 2;
 
@@ -231,7 +233,7 @@ void addCubeEntry(unsigned char *gridEntry, unsigned char *dest)
 
   }while (--temp1);
 }
-
+/*
 int CreateMaskGph(unsigned int *buffer1, unsigned int *destBuffer)
 {
   unsigned char *destPtr;
@@ -261,9 +263,11 @@ int CreateMaskGph(unsigned int *buffer1, unsigned int *destBuffer)
 
   return (startOffset);
 }
+*/
+
 
 // build the masks for the bricks
-int CalcGraphMsk(int var, unsigned int *buffer, unsigned int *ptr)
+int CalcGraphMsk(int var, unsigned char *buffer, unsigned char *ptr)
 {
   unsigned int *ptrSave = ptr;
   unsigned char *ptr2;
@@ -272,10 +276,12 @@ int CalcGraphMsk(int var, unsigned int *buffer, unsigned int *ptr)
   byte iteration, ch, numOfBlock, ah, bl, al, bh;
   int ebx;
 
-  buffer = (unsigned int *) (READ_LE_U32(buffer + var) + (unsigned char *) buffer);
+  //buffer = (unsigned int *) (READ_LE_U32(buffer + var) + (unsigned char *) buffer);
 
-  ebx = READ_LE_U32( buffer++ ); // on ecrit le flag de la brique
-  WRITE_LE_U32( ptr++, ebx );
+  ebx = READ_LE_U32( buffer ); // on ecrit le flag de la brique
+  buffer+=4;
+  WRITE_LE_U32( ptr, ebx );
+  ptr+=4;
 
   bh = (ebx & 0x0000FF00) >> 8;
 

@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+extern unsigned char* brickTable[];
+extern unsigned char* brickMaskTable[];
+
 #ifdef GAME_DEBUG
 actor* pCurrentActorRender;
 #endif
@@ -247,13 +250,15 @@ void fullRedraw(int param)
 
           if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
           {
+            int extraType;
+
             drawList[a12].field_0 = extraList[counter2].X - cameraX + extraList[counter2].Y - cameraY;
             drawList[a12].field_2 = counter;
             a12++;
-						
-						// to not show shadows for stars and explode clouds
-						int extraType = extraList[counter2].field_0 & 0x7FFF; // 0 - damage star | 1 - explode cloud
-						
+
+            // to not show shadows for stars and explode clouds
+            extraType = extraList[counter2].field_0 & 0x7FFF; // 0 - damage star | 1 - explode cloud
+
             if (shadowMode == 2 && (extraList[counter2].field_0 & 0x8000) && (extraType!=0) && (extraType!=1))  // cast shadow
             {
               GetShadow(extraList[counter2].X,extraList[counter2].Z,extraList[counter2].Y);
@@ -329,7 +334,9 @@ void fullRedraw(int param)
   {
     unsigned int flags;
     int actorNumber;
-    //int positionInDebugBox = 0;
+#ifdef GAME_DEBUG
+    int positionInDebugBox = 0;
+#endif
 
     do
     {
@@ -1015,7 +1022,8 @@ void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int
       currentDirtyBoxList[i].right = var_8;
       currentDirtyBoxList[i].bottom = var_4;
 
-      assert(currentDirtyBoxList[i].bottom < 480);
+      if(currentDirtyBoxList[i].bottom >= 480)
+        currentDirtyBoxList[i].bottom = 479;
       return;
     }
 
@@ -1027,7 +1035,8 @@ void addToRedrawBox(short int arg_0, short int arg_4, short int arg_8, short int
   currentDirtyBoxList[i].right = arg_8;
   currentDirtyBoxList[i].bottom = arg_C;
 
-  assert(currentDirtyBoxList[i].bottom < 480);
+  if(currentDirtyBoxList[i].bottom >= 480)
+    currentDirtyBoxList[i].bottom = 479;
 
   numOfRedrawBox++;
 }
@@ -1132,7 +1141,7 @@ void zbuffer(int var1, int var2, int x, int z, int y)
   osystem_drawBrick(bx-1,x - newCameraX, z - newCameraZ, y - newCameraY);
 #else
   // draw the background brick
-  AffGraph(bx-1, zbufferVar1, zbufferVar2, bufferBrick);
+  AffGraph(bx-1, zbufferVar1, zbufferVar2, brickTable);
 #endif
 
   zbufferIndex = (zbufferVar1 + 24) / 24;
@@ -1354,7 +1363,14 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick)
   assert( textWindowTop >= 0 );
   assert( textWindowBottom <= 479 );
 
-  ptr = localBufferBrick + READ_LE_U32(localBufferBrick + num * 4);
+  if(localBufferBrick != brickTable)
+  {
+    ptr = localBufferBrick + READ_LE_U32(localBufferBrick + num * 4);
+  }
+  else
+  {
+    ptr = brickTable[num];
+  }
 
   left = var1 + *(ptr + 2);
   top = var2 + *(ptr + 3);
@@ -1775,7 +1791,9 @@ void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * bu
   assert( textWindowTop >= 0 );
   assert( textWindowBottom <= 479 );
 
-  ptr = localBufferBrick + *(unsigned int *) (localBufferBrick + spriteNum * 4);
+  //ptr = localBufferBrick + *(unsigned int *) (localBufferBrick + spriteNum * 4);
+
+  ptr = brickMaskTable[spriteNum];
 
   left = x + *(ptr + 2);
   top = y + *(ptr + 3);

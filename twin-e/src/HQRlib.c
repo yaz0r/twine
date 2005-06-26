@@ -341,7 +341,6 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
     compressedDataPtr = (unsigned char*) malloc(compressedSize + 500);
 
     streamReader_get( &fileReader, compressedDataPtr, compressedSize);
-    printf("DataSize: %d", dataSize);
     HQR_Expand(dataSize, (unsigned char*)ptr, compressedDataPtr);
 
     free(compressedDataPtr);

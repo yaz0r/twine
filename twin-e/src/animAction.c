@@ -303,18 +303,16 @@ void GereAnimAction(actor * lactor, int actorNum)
         }
       case 10:
         {
+          temp = *(ebx++);
+
           ebx = edi;
-#ifdef GAME_DEBUG
-          printf("Skipping GereAnimAction opcode 10 (sound)\n");
-#endif
           break;
         }
       case 11:
         {
+          temp = *(ebx++);
+
           ebx = edi;
-#ifdef GAME_DEBUG
-          printf("Skipping GereAnimAction opcode 11 (sound)\n");
-#endif
           break;
         }
        case 12: // twinsen attacking
@@ -331,8 +329,8 @@ void GereAnimAction(actor * lactor, int actorNum)
         }
       case 13:
         {
-		  if(*ebx == lactor->animPosition)
-		  {
+          if(*ebx == lactor->animPosition)
+          {
             int throwX;
             int throwY;
             int throwZ;
@@ -349,12 +347,12 @@ void GereAnimAction(actor * lactor, int actorNum)
             int param4;
 
             int strength;
-						
+
             distanceX = READ_LE_S16(edi);
             distanceY = READ_LE_S16(edi+2);
             distanceZ = READ_LE_S16(edi+4);
 
-		    Rotate(distanceX, distanceZ, lactor->angle);
+            Rotate(distanceX, distanceZ, lactor->angle);
 
             throwX = destX + lactor->X;
             throwY = distanceY + lactor->Y;
@@ -369,12 +367,12 @@ void GereAnimAction(actor * lactor, int actorNum)
 
             strength = *(edi+14);
 
-			ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
-		  }
-		  ebx = eax;
+            ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
+          }
+          ebx = eax;
           break;
         }
-      case 14: 
+        case 14: 
         {
           if(*ebx == lactor->animPosition)
           {

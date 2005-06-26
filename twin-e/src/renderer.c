@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+#include "math.h"
 
 #ifdef GAME_DEBUG
 extern actor* pCurrentActorRender;
@@ -678,6 +679,34 @@ struct computedVertex
 
 typedef struct computedVertex computedVertex;
 
+void circle_fill(int x,int y, int radius, byte color)
+{
+  int currentLine;
+
+  radius+=1;
+
+  for(currentLine = -radius; currentLine <= radius; currentLine++)
+  {
+    double width;
+
+    if(abs(currentLine) != radius)
+    {
+      width = sin(acos((float)currentLine/(float)radius));
+    }
+    else
+    {
+      width = 0;
+    }
+
+    width *= radius;
+
+    if(width < 0)
+      width = - width;
+
+    drawLine(x-width/2,currentLine + y, x+width/2, currentLine+y, color);
+  }
+}
+
 int finishRender(unsigned char *esi)
 {
   unsigned char *edi;
@@ -969,7 +998,7 @@ int finishRender(unsigned char *esi)
   esi += 2;
   if (temp)     // pour les cercles (2)
   {
-     // numOfPrimitives+=temp;
+    _numOfPrimitives+=temp;
     do
     {
       unsigned char color = *(esi+1);
@@ -978,7 +1007,18 @@ int finishRender(unsigned char *esi)
 
       osystem_addSphere( _flattenPointTable[center/6].x, _flattenPointTable[center/6].y, _flattenPointTable[center/6].z, size, color);
 
+      *(unsigned char*)edi = color;
+      WRITE_LE_S16(edi+1, _flattenPointTable[center/6].x);
+      WRITE_LE_S16(edi+3, _flattenPointTable[center/6].y);
+      WRITE_LE_S16(edi+5, size);
+
+      renderTabEntryPtr->depth = _flattenPointTable[center/6].z;
+      renderTabEntryPtr->renderType = 2;
+      renderTabEntryPtr->dataPtr = edi;
+      renderTabEntryPtr++;
+
       esi += 8;
+      edi += 7;
     }while (--temp);
   }
 
@@ -1065,14 +1105,20 @@ int finishRender(unsigned char *esi)
           //  int circleSize;
           //  char circleColor;
 
-/*
           int circleParam1;
           int circleParam2;
           int circleParam3;
+          int circleParam4;
+          int circleParam5;
 
           eax = *(int*) esi;
 
-          circleParam1 = eax & 0xFF;
+          circleParam1 = *(unsigned char*)esi;
+          circleParam4 = READ_LE_S16(esi+1);
+          circleParam5 = READ_LE_S16(esi+3);
+          circleParam3 = READ_LE_S16(esi+5);
+
+         /* circleParam1 = eax & 0xFF;
           circleParam2 = (eax & 0xFFFF00) >> 8;
           esi += 4;
           eax = *(int*) esi;
@@ -1080,7 +1126,7 @@ int finishRender(unsigned char *esi)
           circleParam4 = (eax & 0xFFFF0000) >> 16;
           esi += 4;
           circleParam5 = *(short int*)esi;
-          esi += 2;
+          esi += 2; */
 
           if(!isUsingOrhoProjection)
           {
@@ -1101,9 +1147,10 @@ int finishRender(unsigned char *esi)
             renderBottom = circleParam5 + circleParam3;
 
           if(circleParam5 - circleParam3 < renderTop)
-            renderTop = circileParam5 - circleParam3;
+            renderTop = circleParam5 - circleParam3;
 
-          prepareCircle(circleParam3*/
+          circle_fill(circleParam4, circleParam5, circleParam3, circleParam1);
+          /*prepareCircle(circleParam3*/
 
         }
         default:
@@ -1136,6 +1183,7 @@ void FillVertic_A(int ecx, int edi)
   int vsize, hsize;
   int color;
   int j;
+  int currentLine;
 
  // char borrow;
   short int start, stop;
@@ -1144,7 +1192,7 @@ void FillVertic_A(int ecx, int edi)
   float varf3;
   float varf4;
 
-  if (vtop <= 0 || vbottom <= 0)
+ /* if (vtop <= 0 || vbottom <= 0)
     return;
   if (vleft <= 0 || vright <= 0)
     return;
@@ -1153,9 +1201,9 @@ void FillVertic_A(int ecx, int edi)
   // if(vright>=640)
     // return;
   if (vtop >= 480 || vbottom >= 480)
-    return;
+    return;*/
 
-  out = frontVideoBuffer + screenLockupTable[vtop];
+  out = frontVideoBuffer + 640*vtop;
 
   ptr1 = &polyTab[vtop];
   ptr2 = &polyTab2[vtop];
@@ -1171,82 +1219,113 @@ void FillVertic_A(int ecx, int edi)
   {
     case 0:   // flat polygon
     {
+      currentLine = vtop;
       do
       {
-        stop = ptr1[480];
-        start = ptr1[0];
-
-        ptr1++;
-        hsize = stop - start;
-
-        if (hsize >= 0)
+        if(currentLine >=0 && currentLine <480)
         {
-          hsize++;
-          out2 = start + out;
-          for (j = 0; j < hsize; j++)
+          stop = ptr1[480];
+          start = ptr1[0];
+
+          ptr1++;
+          hsize = stop - start;
+
+          if (hsize >= 0)
           {
-            *(out2++) = color;
+            hsize++;
+            out2 = start + out;
+
+            for(j = start; j < hsize+start; j++)
+            {
+              if(j>=0 && j<640)
+                out[j] = color;
+            }
           }
         }
         out += 640;
+        currentLine++;
       }while(--vsize);
       break;
+
     }
     case 1:     // copper
     {
+      currentLine = vtop;
       do
       {
-        start = ptr1[0];
-        stop = ptr1[480];
-
-        ptr1++;
-        hsize = stop - start;
-
-        if(hsize>=0)
+        if(currentLine >=0 && currentLine <480)
         {
-          unsigned short int mask = 0x43DB;
-          unsigned short int dx;
-        
-          dx = (unsigned char)color;
-          dx |= 0x300;
+          start = ptr1[0];
+          stop = ptr1[480];
 
-          hsize++;
-          out2 = start + out;
-          for(j = 0; j< hsize; j++)
+          ptr1++;
+          hsize = stop - start;
+
+          if(hsize>=0)
           {
-            start += mask;
-            start = (start &0xFF00) | ((start&0xFF) & (unsigned char)(dx>>8)) ;
-            start = (start &0xFF00) | ((start&0xFF) + (dx&0xFF));
-            *(out2++) = start&0xFF;
-            mask = (mask << 2) | (mask >> 14);
-            mask++;
+            unsigned short int mask = 0x43DB;
+            unsigned short int dx;
+            int startCopy;
+          
+            dx = (unsigned char)color;
+            dx |= 0x300;
+
+            hsize++;
+            out2 = start + out;
+            startCopy = start;
+
+            for(j = startCopy; j< hsize+startCopy; j++)
+            {
+              start += mask;
+              start = (start &0xFF00) | ((start&0xFF) & (unsigned char)(dx>>8)) ;
+              start = (start &0xFF00) | ((start&0xFF) + (dx&0xFF));
+              if(j>=0 && j<640)
+              {
+                out[j] = start&0xFF;
+              }
+              mask = (mask << 2) | (mask >> 14);
+              mask++;
+            }
           }
+          
         }
         out += 640;
+        currentLine++;
       }while(--vsize);
       break;
     }
     case 2: // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine // BUGGYYYY !
     {
+      currentLine = vtop;
       do
       {
-        start = ptr1[0];
-        stop = ptr1[480];
-        ptr1++;
-        hsize = stop - start;
-
-        if(hsize >= 0)
+        if(currentLine >=0 && currentLine <480)
         {
-          hsize++;
-          out2 = start + out;
-          for (j = 0; j < hsize; j++)
+          start = ptr1[0];
+          stop = ptr1[480];
+          ptr1++;
+          hsize = stop - start;
+
+          if(hsize >= 0)
           {
-            if((int)out2&1)
-              *(out2) = color;
-            out2++;
+            hsize++;
+            out2 = start + out;
+            for (j = start; j < hsize+start; j++)
+            {
+              if((start+(vtop%1))&1)
+              {
+                if(j>=0&&j<640)
+                {
+                  out[j] = color;
+                }
+              }
+              out2++;
+            }
           }
+          
         }
         out += 640;
+        currentLine++;
       }while(--vsize);
       break;
     }
@@ -1255,191 +1334,112 @@ void FillVertic_A(int ecx, int edi)
 //      unsigned char bl=color;
       unsigned char bh=0;
 
+      currentLine = vtop;
       do
       {
-        start = ptr1[0];
-        stop = ptr1[480];
-        ptr1++;
-        hsize = stop - start;
-
-        if(hsize >= 0)
+        if(currentLine >=0 && currentLine <480)
         {
-          hsize++;
-          out2 = start + out;
-        
-          hsize/=2;
-          if(hsize>1)
-          {
-            unsigned short int ax;
-            bh ^= 1;
-            ax = (unsigned short int)(int) out2;
-            ax &= 1;
-            if(ax ^ bh)
-            {
-              out2++;
-            }
+          start = ptr1[0];
+          stop = ptr1[480];
+          ptr1++;
+          hsize = stop - start;
 
-            for (j = 0; j < hsize; j++)
+          if(hsize >= 0)
+          {
+            hsize++;
+            out2 = start + out;
+          
+            hsize/=2;
+            if(hsize>1)
             {
-              *(out2) = (unsigned char)color;
-              out2+=2;
+              unsigned short int ax;
+              bh ^= 1;
+              ax = (unsigned short int)(int) out2;
+              ax &= 1;
+              if(ax ^ bh)
+              {
+                out2++;
+              }
+
+              for (j = 0; j < hsize; j++)
+              {
+                *(out2) = (unsigned char)color;
+                out2+=2;
+              }
             }
           }
+          
         }
         out+=640;
-
+        currentLine++;
       }while(--vsize);
       break;
     }
     case 7:   // gouraud
     {
       renderLoop = vsize;
+      currentLine = vtop;
       do
       {
-        unsigned short int startColor = ptr2[0];
-        unsigned short int stopColor = ptr2[480];
-
-        short int colorSize = stopColor - startColor;
-
-        stop = ptr1[480];  // stop
-        start = ptr1[0]; // start
-
-        ptr1++;
-        out2 = start + out;
-        hsize = stop - start;
-
-        varf2 = ptr2[480];
-        varf3 = ptr2[0];
-
-        ptr2++;
-
-        varf4 = (float)((int)varf2 - (int)varf3);
-
-        if (hsize == 0)
-        {
-          *out2 = ((startColor + stopColor) / 2)>>8; // moyenne des 2 couleurs
-        }
-        else if (hsize > 0)
-        {
-          if (hsize == 1)
-          {
-            *(out2 + 1) = stopColor>>8;
-            *(out2) = startColor>>8;
-          }
-          else if (hsize == 2)
-          {
-            *(out2 + 2) = stopColor>>8;
-            *(out2 + 1) = ((startColor + stopColor) / 2)>>8;
-            *(out2) = startColor>>8;
-          }
-          else
-          {
-            colorSize /= hsize;
-            hsize++;
-
-            if(hsize%2)
-            {
-              hsize/=2;
-              *(out2++)=startColor>>8;
-              startColor+=colorSize;
-            }
-            else
-            {
-              hsize/=2;
-            }
-
-            do
-            {
-              *(out2)=startColor>>8;
-              startColor+=colorSize;
-              *(out2+1)=startColor>>8;
-              out2+=2;
-              startColor+=colorSize;
-            }while(--hsize);
-          }
-        }
-        out += 640;
-      }while (--renderLoop);
-
-      break;
-    }
-    case 8: // dithering
-    {
-      renderLoop = vsize;
-
-      do
-      {
-        stop = ptr1[480]; // stop
-        start = ptr1[0];  // start
-        ptr1++;
-        hsize = stop - start;
-
-        if(hsize>=0)
+        if(currentLine >=0 && currentLine <480)
         {
           unsigned short int startColor = ptr2[0];
           unsigned short int stopColor = ptr2[480];
 
+          short int colorSize = stopColor - startColor;
+
+          stop = ptr1[480];  // stop
+          start = ptr1[0]; // start
+
+          ptr1++;
           out2 = start + out;
+          hsize = stop - start;
+
+          varf2 = ptr2[480];
+          varf3 = ptr2[0];
+
           ptr2++;
 
-          if(hsize==0)
+          varf4 = (float)((int)varf2 - (int)varf3);
+
+          if (hsize == 0)
           {
-            *(out2)=(unsigned char)(((startColor + stopColor)/2)>>8);
+            if(start>=0 && start <640)
+              *out2 = ((startColor + stopColor) / 2)>>8; // moyenne des 2 couleurs
           }
-          else
+          else if (hsize > 0)
           {
-            short int colorSize = stopColor - startColor;
-            if(hsize==1)
+            if (hsize == 1)
             {
-              unsigned short int currentColor = startColor;
-              hsize++;
-              hsize/=2;
+              if(start>=-1 && start <640-1)
+                *(out2 + 1) = stopColor>>8;
 
-              currentColor&=0xFF;
-              currentColor+=startColor;
-              *(out2) = currentColor>>8;
-              currentColor&=0xFF;
-              startColor+=colorSize;
-              currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-              currentColor +=startColor;
-              *(out2+1) = currentColor>>8;
+              if(start>=0 && start <640)
+                *(out2) = startColor>>8;
             }
-            else if(hsize==2)
+            else if (hsize == 2)
             {
-              unsigned short int currentColor = startColor;
-              hsize++;
-              hsize/=2;
-                            
-              currentColor&=0xFF;
-              colorSize/=2;
-              currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-              currentColor +=startColor;
-              *(out2++) = currentColor>>8;
-              startColor+=colorSize;
-
-              currentColor&=0xFF;
-              currentColor+=startColor;
-              *(out2) = currentColor>>8;
-              currentColor&=0xFF;
-              startColor+=colorSize;
-              currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-              currentColor +=startColor;
-              *(out2+1) = currentColor>>8;
+              if(start>=-2 && start<640-2)
+                *(out2 + 2) = stopColor>>8;
+              if(start>=-1 && start<640-1)
+                *(out2 + 1) = ((startColor + stopColor) / 2)>>8;
+              if(start>=0 && start<640)
+                *(out2) = startColor>>8;
             }
             else
             {
-              unsigned short int currentColor = startColor;
-              colorSize/=hsize;
+              int currentXPos = start;
+              colorSize /= hsize;
               hsize++;
-              
 
               if(hsize%2)
               {
                 hsize/=2;
-                currentColor&=0xFF;
-                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-                currentColor +=startColor;
-                *(out2++) = currentColor>>8;
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2)=startColor>>8;
+                out2++;
+                currentXPos++;
+                startColor+=colorSize;
               }
               else
               {
@@ -1448,15 +1448,16 @@ void FillVertic_A(int ecx, int edi)
 
               do
               {
-                currentColor&=0xFF;
-                currentColor+=startColor;
-                *(out2) = currentColor>>8;
-                currentColor&=0xFF;
-                startColor+=colorSize;
-                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-                currentColor +=startColor;
-                *(out2+1) = currentColor>>8;
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2)=startColor>>8;
 
+                currentXPos++;
+                startColor+=colorSize;
+
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2+1)=startColor>>8;
+
+                currentXPos++;
                 out2+=2;
                 startColor+=colorSize;
               }while(--hsize);
@@ -1464,6 +1465,139 @@ void FillVertic_A(int ecx, int edi)
           }
         }
         out += 640;
+        currentLine++;
+      }while (--renderLoop);
+
+      break;
+    }
+    case 8: // dithering
+    {
+      renderLoop = vsize;
+
+      currentLine = vtop;
+      do
+      {
+        if(currentLine >=0 && currentLine <480)
+        {
+          stop = ptr1[480]; // stop
+          start = ptr1[0];  // start
+          ptr1++;
+          hsize = stop - start;
+
+          if(hsize>=0)
+          {
+            unsigned short int startColor = ptr2[0];
+            unsigned short int stopColor = ptr2[480];
+            int currentXPos = start;
+
+            out2 = start + out;
+            ptr2++;
+
+            if(hsize==0)
+            {
+              if(currentXPos>=0 && currentXPos<640)
+                *(out2)=(unsigned char)(((startColor + stopColor)/2)>>8);
+            }
+            else
+            {
+              short int colorSize = stopColor - startColor;
+              if(hsize==1)
+              {
+                unsigned short int currentColor = startColor;
+                hsize++;
+                hsize/=2;
+
+                currentColor&=0xFF;
+                currentColor+=startColor;
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2) = currentColor>>8;
+                currentColor&=0xFF;
+                startColor+=colorSize;
+                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+                currentColor +=startColor;
+                currentXPos++;
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2+1) = currentColor>>8;
+              }
+              else if(hsize==2)
+              {
+                unsigned short int currentColor = startColor;
+                hsize++;
+                hsize/=2;
+                              
+                currentColor&=0xFF;
+                colorSize/=2;
+                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+                currentColor +=startColor;
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2) = currentColor>>8;
+
+                out2++;
+                currentXPos++;
+                startColor+=colorSize;
+
+                currentColor&=0xFF;
+                currentColor+=startColor;
+
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2) = currentColor>>8;
+
+                currentColor&=0xFF;
+                startColor+=colorSize;
+                currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+                currentColor +=startColor;
+
+                currentXPos++;
+                if(currentXPos>=0 && currentXPos<640)
+                  *(out2+1) = currentColor>>8;
+              }
+              else
+              {
+                unsigned short int currentColor = startColor;
+                colorSize/=hsize;
+                hsize++;
+                
+
+                if(hsize%2)
+                {
+                  hsize/=2;
+                  currentColor&=0xFF;
+                  currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+                  currentColor +=startColor;
+                  if(currentXPos>=0 && currentXPos<640)
+                    *(out2) = currentColor>>8;
+                  out2++;
+                  currentXPos++;
+                }
+                else
+                {
+                  hsize/=2;
+                }
+
+                do
+                {
+                  currentColor&=0xFF;
+                  currentColor+=startColor;
+                  if(currentXPos>=0 && currentXPos<640)
+                    *(out2) = currentColor>>8;
+                  currentXPos++;
+                  currentColor&=0xFF;
+                  startColor+=colorSize;
+                  currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+                  currentColor +=startColor;
+                  if(currentXPos>=0 && currentXPos<640)
+                    *(out2+1) = currentColor>>8;
+
+                  currentXPos++;
+                  out2+=2;
+                  startColor+=colorSize;
+                }while(--hsize);
+              }
+            }
+          }
+         }
+        out += 640;
+        currentLine++;
       }while(--renderLoop);
       break;
     }
@@ -1527,7 +1661,7 @@ int ComputePoly_A(void)
 
   if (vbottom < vtop)
     return (0);
-
+/*
   if (vleft < textWindowLeft)
   {
     if (vright < textWindowLeft)
@@ -1576,7 +1710,7 @@ int ComputePoly_A(void)
   {
     printf("ComputePoly_A-> cropped poly !\n");
     exit(1);
-  }
+  }*/
 
   ptr1 = pRenderV1;   // on retourne au debut de la liste
 

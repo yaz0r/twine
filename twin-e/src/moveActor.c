@@ -304,7 +304,7 @@ void DoTrack(int actorNumber)
         short int beta;
 
         beta = READ_LE_S16(scriptPtr);
-        scriptPtr += 2;
+        lactor->positionInMoveScript += 2;
 
         lactor->angle = beta;
 
@@ -382,7 +382,7 @@ void DoTrack(int actorNumber)
         lactor->positionInMoveScript += 2;
         break;
       case 29:
-        printf("skipping actor move opcode 29 (playSound)\n");
+        HQ_3D_MixSample(READ_LE_S16(scriptPtr), 0x1000, 0, lactor->X, lactor->Z, lactor->Y);
         lactor->positionInMoveScript += 2;
         break;
       case 31:
