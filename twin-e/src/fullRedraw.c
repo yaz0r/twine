@@ -368,6 +368,18 @@ void fullRedraw(int param)
               MDL_DrawBoundingBoxShownPart(lactor);
 #endif
 
+            if(renderLeft<0)
+              renderLeft = 0;
+
+            if(renderTop<0)
+              renderTop = 0;
+
+            if(renderRight >= 640)
+              renderRight = 639;
+
+            if(renderBottom >= 480)
+              renderBottom = 479;
+  
             SetClip(renderLeft, renderTop, renderRight,renderBottom);
 
             if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
@@ -604,6 +616,18 @@ void fullRedraw(int param)
 
         AffObjetIso(drawList[arg_1E].X - cameraX, drawList[arg_1E].Y - cameraZ, drawList[arg_1E].Z - cameraY, 0, 0, 0, flagModelPtr);
 
+        if(renderLeft<0)
+          renderLeft = 0;
+
+        if(renderTop<0)
+          renderTop = 0;
+
+        if(renderRight >= 640)
+          renderRight = 639;
+
+        if(renderBottom >= 480)
+          renderBottom = 479;
+  
         SetClip(renderLeft, renderTop, renderRight,renderBottom);
 
         if (textWindowLeft <= textWindowRight && textWindowTop <= textWindowBottom)
@@ -843,6 +867,18 @@ void fullRedraw(int param)
 
           AffObjetIso(0,0,0,0,overlay3dObect,0,pObject);
 
+          if(renderLeft<0)
+            renderLeft = 0;
+
+          if(renderTop<0)
+            renderTop = 0;
+
+          if(renderRight >= 640)
+            renderRight = 639;
+
+          if(renderBottom >= 480)
+            renderBottom = 479;
+  
           DrawCadre(10,10,69,69);
           AddPhysBox(10,10,69,69);
 
