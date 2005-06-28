@@ -402,10 +402,10 @@ subHqr *findSubHqr(int arg_0, int arg_4, subHqr * arg_8)
 
 unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
 {
-  int headerSize;
-  int offToData;
-  int dataSize;
-  int compressedSize;
+  unsigned int headerSize;
+  unsigned int offToData;
+  unsigned int dataSize;
+  unsigned int compressedSize;
   short int mode;
 
   short int var_4;
@@ -445,6 +445,7 @@ unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
     return 0;
 
   streamReader_get( &fileReader, &headerSize, 4 );
+  headerSize = convertDWFromLE(headerSize);
 
   if( arg_4 >= headerSize / 4 )
   {
@@ -454,11 +455,15 @@ unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
 
   streamReader_seek( &fileReader, arg_4 * 4 );
   streamReader_get( &fileReader, &offToData, 4 );
+  offToData = convertDWFromLE(offToData);
 
   streamReader_seek( &fileReader, offToData );
   streamReader_get( &fileReader, &dataSize, 4) ;
+  dataSize = convertDWFromLE(dataSize);
   streamReader_get( &fileReader, &compressedSize, 4) ;
+  compressedSize = convertDWFromLE(compressedSize);
   streamReader_get( &fileReader, &mode, 2) ;
+  mode = convertWFromLE(mode);
 
   dataSize2 = dataSize;
 

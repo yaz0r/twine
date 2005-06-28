@@ -112,12 +112,12 @@ void InitBody(char bodyNum, short int actorNumber)
       ptr = (unsigned short int *) bodyPtrTab[lactor->costumeIndex];
       ptr++;
 
-      var1 = *(ptr++);
-      var2 = *(ptr++);
-      lactor->boudingBox.Y.bottomLeft = *(ptr++);
-      lactor->boudingBox.Y.topRight = *(ptr++);
-      var3 = *(ptr++);
-      var4 = *ptr;
+      var1 = READ_LE_S16(ptr++);
+      var2 = READ_LE_S16(ptr++);
+      lactor->boudingBox.Y.bottomLeft = READ_LE_S16(ptr++);
+      lactor->boudingBox.Y.topRight = READ_LE_S16(ptr++);
+      var3 = READ_LE_S16(ptr++);
+      var4 = READ_LE_S16(ptr);
 
       if (lactor->staticFlagsBF.bIsUsingMiniZv)
       {

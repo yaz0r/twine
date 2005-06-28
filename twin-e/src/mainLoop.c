@@ -2286,7 +2286,7 @@ int WorldColBrickFull(int var0, int var1, int var2, int var3)
 
       ptr2 = (char *) currentBll;
 
-      ptr2 += *(int *) (ptr2 + temp0 * 4 - 4);
+      ptr2 += READ_LE_U32(ptr2 + temp0 * 4 - 4);
       ptr2 += 3;
 
       temp3 = *(ptr + 1);
@@ -2386,7 +2386,7 @@ int WorldColBrick(int var0, int var1, int var2)
   {
       ptr2 = (char *) currentBll;
 
-      ptr2 += *(int *) (ptr2 + temp0 * 4 - 4);
+      ptr2 += READ_LE_U32(ptr2 + temp0 * 4 - 4);
       ptr2 += 3;
 
       temp3 = *(ptr + 1);

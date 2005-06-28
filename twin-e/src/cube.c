@@ -178,7 +178,7 @@ void createCube(void)
 
     for(i=0;i<64;i++)
     {
-      addCubeEntry(currentGrid + *(unsigned short int *) (currentGrid + 2 * (i + ptr2)), bufCube + ptr1);
+      addCubeEntry(currentGrid +  READ_LE_U16(currentGrid + 2 * (i + ptr2)), bufCube + ptr1);
       ptr1 += 50;
     }
 

@@ -18,13 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void studioTick(void);
 
-#define USE_SDL_MIXER true
-#define USE_OPENAL false
 
 #define playSounds true
 
-#include "SDL.h"
-#include "SDL_thread.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_thread.h"
 #include "lba.h"
 
 #ifdef USE_SDL_MIXER

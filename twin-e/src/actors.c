@@ -132,12 +132,12 @@ void InitSprite(int imageNumber, int actorNumber)
 
     ptr = (short int *) (spriteActorData + imageNumber * 16 + 4);
 
-    lactor->boudingBox.X.bottomLeft = *(ptr++);
-    lactor->boudingBox.X.topRight = *(ptr++);
-    lactor->boudingBox.Y.bottomLeft = *(ptr++);
-    lactor->boudingBox.Y.topRight = *(ptr++);
-    lactor->boudingBox.Z.bottomLeft = *(ptr++);
-    lactor->boudingBox.Z.topRight = *(ptr++);
+    lactor->boudingBox.X.bottomLeft = READ_LE_S16(ptr++);
+    lactor->boudingBox.X.topRight = READ_LE_S16(ptr++);
+    lactor->boudingBox.Y.bottomLeft = READ_LE_S16(ptr++);
+    lactor->boudingBox.Y.topRight = READ_LE_S16(ptr++);
+    lactor->boudingBox.Z.bottomLeft = READ_LE_S16(ptr++);
+    lactor->boudingBox.Z.topRight = READ_LE_S16(ptr++);
   }
 }
 

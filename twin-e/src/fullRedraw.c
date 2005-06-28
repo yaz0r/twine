@@ -1202,7 +1202,7 @@ void zbuffer(int var1, int var2, int x, int z, int y)
 
 unsigned char *zbufferSub1(int var)
 {
-  return (currentBll + *(unsigned int *) (currentBll + 4 * var));
+  return (currentBll + READ_LE_U32(currentBll + 4 * var));
 }
 
 void zbufferSub2(int x, int y, int z)

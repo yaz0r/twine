@@ -206,7 +206,7 @@ extern int textWindowBottomSave;
 
 extern unsigned char *_partsPtr2;
 
-void loadPart(int edx, int ecx, int ebx, pointEntry * ptr);
+void loadPart(int edx, int ecx, int ebx, unsigned char * ptr);
 int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr);
 void SetLightVector(int a, int b, int c);
 int renderAnimatedModel(unsigned char *costumePtr);

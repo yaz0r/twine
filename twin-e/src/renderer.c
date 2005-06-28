@@ -28,6 +28,10 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
   unsigned char *ptr;
   short int costumeHeader;
 
+#ifdef MACOSX  
+//  return 0;
+#endif
+
   tab1 = &angleTable[0];
   tab2 = &angleTable[256];
   tab3 = &angleTable[384];
@@ -36,9 +40,6 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
   _angleY = angleY;
   _angleZ = angleZ;
 
-#ifdef MACOSX
- return 0;
-#endif
  /*
   * Those 4 vars are used to know the size of the rendered model. They are resetted to their
   * maximum value at the begining of the renderer 
@@ -69,9 +70,9 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
 
   renderTabEntryPtr = renderTab;  // we restart at the beginning of the renderTable
 
-  costumeHeader = *(short int *) costumePtr;
+  costumeHeader = READ_LE_U16(costumePtr);
 
-  ptr = costumePtr + 16 + *(short int *) (costumePtr + 14); // we jump after the header
+  ptr = costumePtr + 16 + READ_LE_U16(costumePtr + 14); // we jump after the header
 
   if (costumeHeader & 2)  // if animated
   {
@@ -174,13 +175,13 @@ int renderAnimatedModel(unsigned char *costumePtr)
   unsigned char *ptr6;
   int temp;
 
-  _numOfPoints = *(short int *) costumePtr;
+  _numOfPoints = READ_LE_U16(costumePtr);
   costumePtr += 2;
   _pointsPtr = costumePtr;
 
   costumePtr += _numOfPoints * 6;
 
-  _numOfParts = *(short int *) costumePtr;
+  _numOfParts = READ_LE_U16(costumePtr);
   costumePtr += 2;
   _partsPtr = _partsPtr2 = costumePtr;
 
@@ -199,12 +200,13 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
     do
     {
-      if (ptEntryPtr->flag == 0)
+	  int boneType = READ_LE_U16(((unsigned char*)ptEntryPtr)+8);
+      if (boneType == 0)
       {
         loadPart(ptEntryPtr->rotateX, ptEntryPtr->rotateY, ptEntryPtr->rotateZ, ptEntryPtr);  // rotation
       }
       else
-      if (ptEntryPtr->flag == 1)
+      if (boneType == 1)
       {
         TranslateGroupe(ptEntryPtr->rotateX, ptEntryPtr->rotateY, ptEntryPtr->rotateZ, ptEntryPtr); // translation
       }
@@ -310,7 +312,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
   _shadePtr = (int *) _partsPtr;
 
-  temp = *(short int *) _shadePtr;
+  temp = READ_LE_U16(_shadePtr);
 
   _shadePtr = (int *) (((unsigned char *) _shadePtr) + 2);
 
@@ -329,7 +331,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
     do
     {
-      temp = *(short int *) ptr3;
+      temp = READ_LE_U16(ptr3);
       if (temp)
       {
         int rs1s2v1 = temp;
@@ -356,9 +358,9 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
           colPtr = (short int *) _shadePtr;
 
-          col1 = *(colPtr++);
-          col2 = *(colPtr++);
-          col3 = *(colPtr++);
+          col1 = READ_LE_S16(colPtr++);
+          col2 = READ_LE_S16(colPtr++);
+          col3 = READ_LE_S16(colPtr++);
 
           eax = _shadeMatrix[0] * col1 + _shadeMatrix[1] * col2 + _shadeMatrix[2] * col3;
           eax += _shadeMatrix[3] * col1 + _shadeMatrix[4] * col2 + _shadeMatrix[5] * col3;
@@ -370,11 +372,11 @@ int renderAnimatedModel(unsigned char *costumePtr)
           {
             eax >>= 14;
             ptr6 = (unsigned char *) _shadePtr;
-            eax /= *(unsigned short int *) (ptr6 + 6);
+            eax /= READ_LE_U16(ptr6 + 6);
             edi = (unsigned short int) eax;
           }
 
-          *(short int *) _currentShadeDestination = edi;
+          WRITE_LE_U16(_currentShadeDestination,edi);
           _currentShadeDestination += 2;
           _shadePtr += 2;
 
@@ -388,16 +390,15 @@ int renderAnimatedModel(unsigned char *costumePtr)
   return (finishRender((unsigned char *) _shadePtr));
 }
 
-void loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
+void loadPart(int edx, int ecx, int ebx, unsigned char * ptr)
 {
   int *ebp;
   short int var;
 
  // int* ptr1;
 
-  int rs1v1 = ptr->data1;
-
-  int rs1v2 = ptr->data2;
+  int rs1v1 = READ_LE_S16(ptr);
+  int rs1v2 = READ_LE_S16(ptr+2);
 
   _angleX = ebx;
   _angleZ = ecx;
@@ -409,7 +410,7 @@ void loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
     exit(1);
   }
 
-  var = ptr->param;
+  var = READ_LE_U16(ptr+6);
 
   if (var == -1)    // si c'est le premier point
   {
@@ -421,11 +422,12 @@ void loadPart(int edx, int ecx, int ebx, pointEntry * ptr)
   }
   else
   {
+    int pointIdx = (READ_LE_U16(ptr+4))/6;
     ebp = (int *) ((unsigned char *) _matrixTable + var);
 
-    destX = _projectedPointTable[ptr->data3 / 6].x;
-    destY = _projectedPointTable[ptr->data3 / 6].y;
-    destZ = _projectedPointTable[ptr->data3 / 6].z;
+    destX = _projectedPointTable[pointIdx].x;
+    destY = _projectedPointTable[pointIdx].y;
+    destZ = _projectedPointTable[pointIdx].z;
   }
 
   RotMatIndex2((int *) _currentMatrixTableEntry, ebp);  // copie dans renderTab2 + application de la rotation
@@ -1002,8 +1004,8 @@ int finishRender(unsigned char *esi)
     do
     {
       unsigned char color = *(esi+1);
-      short int center = *(short int*)(esi+6);
-      short int size = *(short int*)(esi+4);
+      short int center = READ_LE_U16(esi+6);
+      short int size = READ_LE_U16(esi+4);
 
       osystem_addSphere( _flattenPointTable[center/6].x, _flattenPointTable[center/6].y, _flattenPointTable[center/6].z, size, color);
 
@@ -1063,18 +1065,31 @@ int finishRender(unsigned char *esi)
       type = renderTabEntryPtr2->renderType;
       esi = renderTabEntryPtr2->dataPtr;
       renderV19 += 8;
+
       switch (type)
       {
         case 0: // draw a line
         {
+		  unsigned int x1;
+		  unsigned int y1;
+		  unsigned int x2;
+		  unsigned int y2;
+		  
 #ifndef PCLIKE
           break;
 #endif
           lineCoordinatesPtr = (lineCoordinates *) esi;
-          color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
-          drawLine(lineCoordinatesPtr->x1,lineCoordinatesPtr->y1,lineCoordinatesPtr->x2,lineCoordinatesPtr->y2,color);
+          color = (READ_LE_S32(&lineCoordinatesPtr->data) & 0xFF00) >> 8;
+		  
+		  x1 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->x1);
+		  y1 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->y1);
+		  x2 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->x2);
+		  y2 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->y2);
+		  
+          drawLine(x1,y1,x2,y2,color);
           break;
         }
+#ifndef MACOSX
         case 1: // draw a polygon
         {
           eax = READ_LE_S32(esi);
@@ -1100,6 +1115,7 @@ int finishRender(unsigned char *esi)
 
           break;
         }
+#endif
         case 2: // draw a circle
         {
           //  int circleSize;

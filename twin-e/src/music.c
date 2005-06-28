@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #ifdef PCLIKE
 //#include <SDL_mixer.h>
-#include "SDL.h"
+#include "SDL/SDL.h"
 #endif //PCLIKE
 
 void PlayMusic(int musicNum)

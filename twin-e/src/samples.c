@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #ifdef PCLIKE
-#include <SDL_mixer.h>
+//#include <SDL_mixer.h>
 #endif
 
 struct sampleStructData
@@ -33,7 +33,7 @@ struct sampleStructData sampleTable[16];
 
 void playSample(int sampleNum, int freq, int repeat, int x, int y)
 {
-  char filename[256];
+/*  char filename[256];
   Mix_Chunk * sample;
   FILE* fhandle;
 
@@ -45,18 +45,19 @@ void playSample(int sampleNum, int freq, int repeat, int x, int y)
     printf("Mix_LoadWAV(\"%s\"): %s\n", filename, Mix_GetError());
   }
 
-  Mix_PlayChannel(0,sample,repeat-1);
+  Mix_PlayChannel(0,sample,repeat-1);*/
 }
 
 void playSampleFla(int sampleNum, int freq, int repeat, int x, int y)
 {
-  char filename[256];
+/*  char filename[256];
   Mix_Chunk * sample;
 
   sprintf(filename,"fla/flasamp/flasamp%02d.voc",sampleNum+1);
 
   sample=Mix_LoadWAV(filename);
   Mix_PlayChannel(0,sample,repeat-1);
+*/
 }
 
 void soundInit()
@@ -71,11 +72,11 @@ void soundInit()
 
 #define midiFileName "Midi_mi_win"
 
-Mix_Music * sample = NULL;
+//Mix_Music * sample = NULL;
 
 void playMidi(int musicNum)
 {
-  char filename[256];
+ /* char filename[256];
   FILE* fhandle;
 
   if(sample != NULL)
@@ -117,4 +118,5 @@ void playMidi(int musicNum)
     printf("Mix_LoadMUS(\"%s\"): %s\n", filename, Mix_GetError());
   }
   Mix_PlayMusic(sample,0);
+*/
 }
