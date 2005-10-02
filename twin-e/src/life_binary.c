@@ -198,7 +198,7 @@ return;
 
       case 23:  // SET_TRACK
          {
-             lactor->positionInMoveScript =READ_LE_U16(actorScriptPtr);
+             lactor->positionInMoveScript =READ_LE_S16(actorScriptPtr);
              actorScriptPtr += 2;
              break;
          }
