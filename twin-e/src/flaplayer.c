@@ -167,7 +167,7 @@ int InitFla(char* file)
 {
   int i;
 
-  streamReader_open(&fla_streamReader, (const int8*)file);
+  streamReader_open(&fla_streamReader, (const int8*)file,0);
 
   workVideoBufferCopy=workVideoBuffer;
 

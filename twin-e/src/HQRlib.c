@@ -304,7 +304,7 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber)
   unsigned int compressedSize;
   unsigned short int mode;
 
-  if(!streamReader_open( &fileReader, (int8*) resourceName ))
+  if(!streamReader_open( &fileReader, (int8*) resourceName, 1))
     return 0;
 
   streamReader_get( &fileReader, &headerSize, 4 );
@@ -441,7 +441,7 @@ unsigned char *HQR_Get(hqr_entry * hqrPtr, short int arg_4)
 
   Size_HQR(hqrPtr->fileName, arg_4);
 
-  if(!streamReader_open( &fileReader, (int8*) hqrPtr->fileName ))
+  if(!streamReader_open( &fileReader, (int8*) hqrPtr->fileName, 1 ))
     return 0;
 
   streamReader_get( &fileReader, &headerSize, 4 );
@@ -589,7 +589,7 @@ int HQRM_Load(char *fileName, short int arg_4, unsigned char ** ptr)  // recheck
   unsigned short int mode;
   unsigned char *temp;
 
-  if(!streamReader_open( &fileReader, (int8*)fileName ))
+  if(!streamReader_open( &fileReader, (int8*)fileName, 1 ))
     return(-1);
 
   streamReader_get( &fileReader, &headerSize, 4);
@@ -646,7 +646,7 @@ int Size_HQR(char *fileName, int index)
   unsigned int dataSize;
   unsigned int offToData;
 
-  if(!streamReader_open( &fileReader, (int8*)fileName ))
+  if(!streamReader_open( &fileReader, (int8*)fileName, 1 ))
   {
     return 0;
   }

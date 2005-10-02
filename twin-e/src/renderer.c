@@ -175,6 +175,8 @@ int renderAnimatedModel(unsigned char *costumePtr)
   unsigned char *ptr6;
   int temp;
 
+  assert(frontVideoBufferbis == frontVideoBuffer);
+
   _numOfPoints = READ_LE_U16(costumePtr);
   costumePtr += 2;
   _pointsPtr = costumePtr;
@@ -329,6 +331,8 @@ int renderAnimatedModel(unsigned char *costumePtr)
 
     ptr3 = pri2Ptr2 = _partsPtr2 + 18;
 
+    assert(frontVideoBufferbis == frontVideoBuffer);
+
     do
     {
       temp = READ_LE_U16(ptr3);
@@ -386,6 +390,7 @@ int renderAnimatedModel(unsigned char *costumePtr)
       ptr4 = renderV21 = renderV21 + 9;
     }while (--_numOfPrimitives);
   }
+  assert(frontVideoBufferbis == frontVideoBuffer);
 
   return (finishRender((unsigned char *) _shadePtr));
 }
@@ -761,6 +766,8 @@ int finishRender(unsigned char *esi)
   temp = READ_LE_S16(esi);  // we read the number of polygones
   esi += 2;
 
+  assert(frontVideoBufferbis == frontVideoBuffer);
+
   if (temp)     // if there is polygones
   {
     primitiveCounter = temp;  // the number of primitives = the number of polygones
@@ -1030,6 +1037,8 @@ int finishRender(unsigned char *esi)
 
   renderTabEntryPtr2 = renderTab;
 
+  assert(frontVideoBufferbis == frontVideoBuffer);
+
   renderTabSortedPtr = renderTabSorted;
   for (i = 0; i < _numOfPrimitives; i++)  // then we sort the polygones (FIXME: very slow !)
   {
@@ -1054,6 +1063,8 @@ int finishRender(unsigned char *esi)
 
 /*    _numOfPrimitives = 1;
     renderTabEntryPtr2++;*/
+
+  assert(frontVideoBufferbis == frontVideoBuffer);
 
   if (_numOfPrimitives)
   {
@@ -1081,12 +1092,16 @@ int finishRender(unsigned char *esi)
           lineCoordinatesPtr = (lineCoordinates *) esi;
           color = (READ_LE_S32(&lineCoordinatesPtr->data) & 0xFF00) >> 8;
 		  
-		  x1 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->x1);
-		  y1 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->y1);
-		  x2 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->x2);
-		  y2 = READ_LE_U16((unsigned short int*)&lineCoordinatesPtr->y2);
+          x1 = READ_LE_S16((unsigned short int*)&lineCoordinatesPtr->x1);
+          y1 = READ_LE_S16((unsigned short int*)&lineCoordinatesPtr->y1);
+          x2 = READ_LE_S16((unsigned short int*)&lineCoordinatesPtr->x2);
+          y2 = READ_LE_S16((unsigned short int*)&lineCoordinatesPtr->y2);
 		  
+          assert(frontVideoBufferbis == frontVideoBuffer);
+
           drawLine(x1,y1,x2,y2,color);
+
+          assert(frontVideoBufferbis == frontVideoBuffer);
           break;
         }
 #ifndef MACOSX
@@ -1110,8 +1125,15 @@ int finishRender(unsigned char *esi)
             esi += 2;
           }
 
+          assert(frontVideoBufferbis == frontVideoBuffer);
+
           if (ComputePoly_A() != 2)
+          {
+            assert(frontVideoBufferbis == frontVideoBuffer);
             FillVertic_A(FillVertic_AType, color);
+          }
+
+          assert(frontVideoBufferbis == frontVideoBuffer);
 
           break;
         }
@@ -1169,7 +1191,9 @@ int finishRender(unsigned char *esi)
 
           circleParam3-=3;
 
+          assert(frontVideoBufferbis == frontVideoBuffer);
           circle_fill(circleParam4, circleParam5, circleParam3, circleParam1);
+          assert(frontVideoBufferbis == frontVideoBuffer);
           /*prepareCircle(circleParam3*/
 
         }
@@ -1223,8 +1247,17 @@ void FillVertic_A(int ecx, int edi)
   if (vtop >= 480 || vbottom >= 480)
     return;*/
 
-  if(vbottom >= 480)
+  if(vtop<0)
+  {
     return;
+  }
+
+  if(vbottom >= 479)
+  {
+    return;
+  }
+
+  assert(frontVideoBufferbis == frontVideoBuffer);
 
   out = frontVideoBuffer + 640*vtop;
 
@@ -1537,6 +1570,8 @@ void FillVertic_A(int ecx, int edi)
               assert(out2 < frontVideoBuffer + 640*480);
               if(currentXPos>=0 && currentXPos<640)
                 *(out2)=(unsigned char)(((startColor + stopColor)/2)>>8);
+
+              assert(frontVideoBufferbis == frontVideoBuffer);
             }
             else
             {
@@ -1552,6 +1587,8 @@ void FillVertic_A(int ecx, int edi)
                 assert(out2 < frontVideoBuffer + 640*480);
                 if(currentXPos>=0 && currentXPos<640)
                   *(out2) = currentColor>>8;
+
+                assert(frontVideoBufferbis == frontVideoBuffer);
                 currentColor&=0xFF;
                 startColor+=colorSize;
                 currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
@@ -1560,6 +1597,8 @@ void FillVertic_A(int ecx, int edi)
                 assert(out2+1 < frontVideoBuffer + 640*480);
                 if(currentXPos>=0 && currentXPos<640)
                   *(out2+1) = currentColor>>8;
+
+                assert(frontVideoBufferbis == frontVideoBuffer);
               }
               else if(hsize==2)
               {
@@ -1575,6 +1614,8 @@ void FillVertic_A(int ecx, int edi)
                 if(currentXPos>=0 && currentXPos<640)
                   *(out2) = currentColor>>8;
 
+                assert(frontVideoBufferbis == frontVideoBuffer);
+
                 out2++;
                 currentXPos++;
                 startColor+=colorSize;
@@ -1586,6 +1627,8 @@ void FillVertic_A(int ecx, int edi)
                 if(currentXPos>=0 && currentXPos<640)
                   *(out2) = currentColor>>8;
 
+                assert(frontVideoBufferbis == frontVideoBuffer);
+
                 currentColor&=0xFF;
                 startColor+=colorSize;
                 currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
@@ -1595,6 +1638,8 @@ void FillVertic_A(int ecx, int edi)
                 assert(out2 +1< frontVideoBuffer + 640*480);
                 if(currentXPos>=0 && currentXPos<640)
                   *(out2+1) = currentColor>>8;
+
+                assert(frontVideoBufferbis == frontVideoBuffer);
               }
               else
               {
@@ -1612,6 +1657,8 @@ void FillVertic_A(int ecx, int edi)
                   assert(out2 < frontVideoBuffer + 640*480);
                   if(currentXPos>=0 && currentXPos<640)
                     *(out2) = currentColor>>8;
+
+                  assert(frontVideoBufferbis == frontVideoBuffer);
                   out2++;
                   currentXPos++;
                 }
@@ -1627,6 +1674,8 @@ void FillVertic_A(int ecx, int edi)
                   assert(out2 < frontVideoBuffer + 640*480);
                   if(currentXPos>=0 && currentXPos<640)
                     *(out2) = currentColor>>8;
+
+                  assert(frontVideoBufferbis == frontVideoBuffer);
                   currentXPos++;
                   currentColor&=0xFF;
                   startColor+=colorSize;
@@ -1636,6 +1685,7 @@ void FillVertic_A(int ecx, int edi)
                   if(currentXPos>=0 && currentXPos<640)
                     *(out2+1) = currentColor>>8;
 
+                  assert(frontVideoBufferbis == frontVideoBuffer);
                   currentXPos++;
                   out2+=2;
                   startColor+=colorSize;
@@ -1647,6 +1697,7 @@ void FillVertic_A(int ecx, int edi)
         out += 640;
         currentLine++;
       }while(--renderLoop);
+      assert(frontVideoBufferbis == frontVideoBuffer);
       break;
     }
     default:
@@ -1657,6 +1708,8 @@ void FillVertic_A(int ecx, int edi)
       break;
     }
   };
+
+  assert(frontVideoBufferbis == frontVideoBuffer);
 }
 
 int ComputePoly_A(void)
@@ -1706,60 +1759,16 @@ int ComputePoly_A(void)
   ptr1[0] = pRenderV1[0];
   ptr1[1] = pRenderV1[1];
   ptr1[2] = pRenderV1[2];
-
-  if (vbottom < vtop)
-    return (0);
 /*
-  if (vleft < textWindowLeft)
-  {
-    if (vright < textWindowLeft)
-      return (0);
-     // pRenderSub();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vright==textWindowLeft)
-    return (2);
-  }
-
-  if (vright > textWindowRight)
-  {
-    if (vleft > textWindowRight)
-      return (0);
-     // pRenderSub2();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vleft==textWindowRight)
-    return (2);
-  }
-
-  if (vtop < textWindowTop)
-  {
-    if (vbottom < textWindowTop)
-      return (0);
-     // pRenderSub3();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vbottom==textWindowBottom)
-    return (2);
-  }
-
-  if (vbottom > textWindowBottom)
-  {
-    if (vtop > textWindowBottom)
-      return (0);
-     // pRenderSub4();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vtop==textWindowBottom)
-    return (2);
-  }
-
-  if (polyCropped)
-  {
-    printf("ComputePoly_A-> cropped poly !\n");
-    exit(1);
-  }*/
-
+  if(vleft<0)
+    return 2;
+  if(vright>=640)
+    return 2;
+  if(vtop<0)
+    return 2;
+  if(vbottom>=480)
+    return 2;
+*/
   ptr1 = pRenderV1;   // on retourne au debut de la liste
 
   vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
@@ -1836,7 +1845,8 @@ int ComputePoly_A(void)
         for (i = 0; i < oldVertexY; i++)
         {
          // *(ptr3)=((temp7&0xFFFF0000)>>16);
-          *(ptr3) = (short int) vfloat2;
+          if((ptr3-polyTab) < 960)
+            *(ptr3) = (short int) vfloat2;
           ptr3 += direction;
          // temp7+=step;
           vfloat2 -= vfloat;
@@ -1890,7 +1900,8 @@ int ComputePoly_A(void)
 
               for (i = 0; i < oldVertexX; i++)
               {
-                *(ptr3) = reste.temp;
+                if((ptr3-polyTab2) < 960)
+                  *(ptr3) = reste.temp;
                 ptr3 += direction;
                 reste.temp += test.temp;
               }
@@ -1937,7 +1948,8 @@ int ComputePoly_A(void)
 
               for (i = 0; i <= oldVertexX; i++)
               {
-                *(ptr3) = reste.temp;
+                if((ptr3-polyTab2) < 960)
+                  *(ptr3) = reste.temp;
                 ptr3 += direction;
                 reste.temp -= test.temp;
               }
@@ -1998,7 +2010,8 @@ int ComputePoly_A(void)
           for (i = 0; i < oldVertexY; i++)
           {
             // *(ptr3)=((temp7&0xFFFF0000)>>16);
-            *(ptr3) = (short int) vfloat2;
+            if((ptr3-polyTab) < 960)
+              *(ptr3) = (short int) vfloat2;
             ptr3 += direction;
              // temp7+=step;
             vfloat2 += vfloat;
@@ -2052,7 +2065,8 @@ int ComputePoly_A(void)
 
             for (i = 0; i < oldVertexX; i++)
             {
-              *(ptr3) = reste.temp;
+              if((ptr3-polyTab2) < 960)
+                *(ptr3) = reste.temp;
               ptr3 += direction;
               reste.temp += test.temp;
             }
@@ -2099,7 +2113,8 @@ int ComputePoly_A(void)
 
             for (i = 0; i <= oldVertexX; i++)
             {
-              *(ptr3) = reste.temp;
+              if((ptr3-polyTab2) < 960)
+                *(ptr3) = reste.temp;
               ptr3 += direction;
               reste.temp -= test.temp;
             }
@@ -2191,6 +2206,7 @@ void drawLine(int a, int b, int c, int d, int e)
     d = -d;
   }
 
+  assert(frontVideoBufferbis == frontVideoBuffer);
   out = frontVideoBuffer + screenLockupTable[b] + a;
 
   color = currentLineColor;

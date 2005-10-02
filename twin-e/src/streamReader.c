@@ -101,7 +101,7 @@ FILE * ifopen(const char * path, const char * mode) {
 }
 #endif
 
-boolean streamReader_open(streamReader* pThis, const int8* fileName)
+boolean streamReader_open(streamReader* pThis, const int8* fileName, int fatal)
 {
 #ifndef DREAMCAST
 #ifdef USE_IFOPEN
@@ -121,6 +121,11 @@ boolean streamReader_open(streamReader* pThis, const int8* fileName)
   }
   else
   {
+    if(fatal)
+    {
+      printf("FATAL: Can't find %s\n", fileName);
+      exit(-1);
+    }
     return false;
   }
 }

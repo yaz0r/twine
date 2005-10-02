@@ -469,6 +469,8 @@ int mainLoopInteration(void)
 
      // 2nd boucle de process des acteurs
 
+      assert(frontVideoBufferbis == frontVideoBuffer);
+
       for (i = 0; i < numActorInRoom; i++)
     {
       if (!(actors[i].dynamicFlagsBF.bUnk0020))
@@ -585,6 +587,8 @@ int mainLoopInteration(void)
     requestBackgroundRedraw = 1;
 #endif
 #endif
+
+      assert(frontVideoBufferbis == frontVideoBuffer);
 
       if ( !disableScreenRecenter)
     {

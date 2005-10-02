@@ -55,7 +55,7 @@ struct streamReader
 
 typedef struct streamReader streamReader;
 
-boolean streamReader_open(streamReader* pThis, const int8* fileName);
+boolean streamReader_open(streamReader* pThis, const int8* fileName, int fatal);
 void streamReader_close(streamReader* pThis);
 void streamReader_feedBuffer(streamReader* pThis);
 

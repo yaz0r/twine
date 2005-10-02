@@ -403,8 +403,7 @@ void drawSelectableLetter(int x, int y, int arg)
   }
     else
   {
-      blitRectangle(left, top, right, bottom, (char *) workVideoBuffer, left, top,
-       (char *) frontVideoBuffer);
+      blitRectangle(left, top, right, bottom, (char *) workVideoBuffer, left, top,(char *)frontVideoBuffer);
       right2 = right;
       drawBoxInsideTrans(left, top, right2, bottom, 4);
   }
@@ -637,44 +636,44 @@ void drawButtonGFX(int largeur, int posY, int c, int d, int mode)
 
 void blitRectangle(int left, int top, int right, int bottom, char *source, int leftDest, int topDest, char *dest)
 {
-    int largeur;
-    int hauteur;
+  int largeur;
+  int hauteur;
 
-    char *s;
-    char *d;
+  char *s;
+  char *d;
 
-    int interligne;
-    int temp3;
-    int i;
-    int j;
+  int interligne;
+  int temp3;
+  int i;
+  int j;
 
-    assert(left >= 0);
-    assert(right < 640);
-    assert(top >= 0);
-    assert(bottom < 480);
+  assert(left >= 0);
+  assert(right < 640);
+  assert(top >= 0);
+  assert(bottom < 480);
 
-    s = screenLockupTable[top] + source + left;
-    d = screenLockupTable[topDest] + dest + leftDest;
+  s = screenLockupTable[top] + source + left;
+  d = screenLockupTable[topDest] + dest + leftDest;
 
-    largeur = right - left + 1;
+  largeur = right - left + 1;
 
-    hauteur = bottom - top + 1;
+  hauteur = bottom - top + 1;
 
-    interligne = largeurEcran - largeur;
-    temp3 = left;
+  interligne = largeurEcran - largeur;
+  temp3 = left;
 
-    left >>= 2;
-    temp3 &= 3;
+  left >>= 2;
+  temp3 &= 3;
 
-    for(j = 0; j < hauteur; j++)
+  for(j = 0; j < hauteur; j++)
   {
-      for (i = 0; i < largeur; i++)
+    for (i = 0; i < largeur; i++)
     {
-        *(d++) = *(s++);
+      *(d++) = *(s++);
     }
 
-      d += interligne;
-      s += interligne;
+    d += interligne;
+    s += interligne;
   }
 }
 
