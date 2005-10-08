@@ -565,6 +565,52 @@ void osystem_drawLine(int X1, int Y1, int X2, int Y2, unsigned char color, unsig
  // lineColor(sdl_buffer, X1, Y1, X2, Y2, colorRGBA);
 }
 
+void osystem_FlaPCXCrossFade(SDL_Surface *image)
+{
+	int i;
+	SDL_Surface *backupSurface;
+    SDL_Surface *newSurface;
+    SDL_Surface *tempSurface;
+    Uint32 rmask, gmask, bmask, amask;
+
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    rmask = 0xff000000;
+    gmask = 0x00ff0000;
+    bmask = 0x0000ff00;
+    amask = 0x000000ff;
+#else
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = 0xff000000;
+#endif
+
+    backupSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
+    newSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 640, 480, 32, rmask, gmask, bmask, 0);
+
+	SDL_SetColors(sdl_screen, image->format->palette->colors, 0, 256);
+
+	SDL_BlitSurface(sdl_screen, NULL, backupSurface, NULL);
+    SDL_BlitSurface(tempSurface, NULL, newSurface, NULL);
+
+  for (i = 0; i < 8; i++)
+  {
+      SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
+      SDL_SetAlpha(newSurface,SDL_SRCALPHA | SDL_RLEACCEL, i * 32);
+      SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
+      SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
+      SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+      SDL_Delay(20);
+  }
+
+    SDL_BlitSurface(newSurface, NULL, sdl_screen, NULL);
+    SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
+
+    SDL_FreeSurface(backupSurface);
+    SDL_FreeSurface(newSurface);
+    SDL_FreeSurface(tempSurface);
+}
+
 void osystem_set320x200Mode( boolean mode )
 {
 }
@@ -597,6 +643,27 @@ void osystem_addSphere(int x, int y, int z, int size, unsigned char color)
 {
 }
 
+void osystem_fullScreen()
+{
+	SDL_FreeSurface(sdl_screen);
+	sdl_screen = 0;
+	
+	fullscreen = 1 - fullscreen;
 
+	if (fullscreen == 0)
+	{
+		sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
+		SDL_SetColors(sdl_screen, palette, 0, 256);
+		SDL_ShowCursor(1);
+	}
+	else
+	{
+		sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
+
+		SDL_SetColors(sdl_screen, palette, 0, 256);
+		SDL_ShowCursor(0);
+	}
+	requestBackgroundRedraw = 1;
+}
 
 #endif

@@ -16,6 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "SDL.h"
+
 /*
 class OSystem
 {
@@ -28,6 +30,7 @@ class OSystem
   void osystem_mainLoop(void);
   void osystem_delay(int time);
   void osystem_crossFade(char *buffer, char *palette);
+  void osystem_FlaPCXCrossFade(SDL_Surface *image);
   void osystem_fadeBlackToWhite();
   void osystem_updateImage();
   void osystem_initBuffer(char *buffer, int width, int height);
@@ -47,6 +50,8 @@ class OSystem
   void osystem_getMouseStatus(mouseStatusStruct * mouseData);
 
   void osystem_set320x200Mode(boolean mode);
+
+  void osystem_fullScreen();  
 
 //////////////////
 
