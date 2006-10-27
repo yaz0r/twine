@@ -26,6 +26,7 @@ class OSystem
 
   extern int osystem_mouseRight;
   extern int osystem_mouseLeft;
+  extern int fullscreen; // meant to be bool, but set to int to ensure C compartibility
 
   void osystem_mainLoop(void);
   void osystem_delay(int time);

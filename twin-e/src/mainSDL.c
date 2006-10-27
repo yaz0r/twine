@@ -80,9 +80,11 @@ uTime_t diff_time(uTime_t origin)
 #endif
 
 #ifndef USE_GL
+#include "osystem.h"
 
 int osystem_mouseRight;
 int osystem_mouseLeft;
+int fullscreen;
 
 char *tempBuffer;
 SDL_Surface *sdl_buffer;
@@ -204,6 +206,8 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
   bmask = 0x00ff0000;
   amask = 0xff000000;
 #endif
+
+  fullscreen = 0;
 
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
   {

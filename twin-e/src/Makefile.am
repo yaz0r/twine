@@ -65,7 +65,6 @@ save.c \
 shadow.c \
 streamReader.c \
 streamReader.h \
-sys.c \
 text.c \
 threadCode.c \
 time.c \
