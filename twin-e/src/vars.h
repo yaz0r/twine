@@ -1416,8 +1416,6 @@ void SetFont(byte * font, int param1, int param2);
 int processMenu(short int *menuData);
 int enterPlayerName(short int param);
 
-void init(void); //* old name: main
-
 void InitDial(int index);
 
 void saveTextWindow(void);

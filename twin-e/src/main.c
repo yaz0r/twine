@@ -24,51 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-int lbaMain(int argc, char *argv[]) // hello world !
-{
-//    LBA_engine *engine;
 
-#ifdef MEM_DEBUG
-  PROCESS_MEMORY_COUNTERS memInfo;
-  GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(PROCESS_MEMORY_COUNTERS));
-
-  staticMemoryUsage = memInfo.WorkingSetSize;
-#endif //MEM_DEBUG
-
-  osystem_init(argc,argv);
-  printf("Success !\n");
-
-#ifdef GAME_DEBUG
-  debugger_init();
-#endif
-
-//  engine->osystem = osystem;
-//  engine->_debugger.osystem = osystem;
-//  engine->_debugger.engine = engine;
-//  debugger_osystem = osystem;
-  initVars(); // init the vars (move to the object constructor ?)
-
-#ifdef PCLIKE
-  startThreadTimer(); // the little trouble maker ! This one is responsible for the game timming
-#endif
-
-  init(); // startup the game engine !
-//  }
-
-//    delete(osystem);
-
-  return(0); // that's all folks !
-}
-
-// main for the SDL part
-int main(int argc, char *argv[])
-{
-  lbaMain(argc,argv);
-
-  return 0;
-}
-
-void init(void)
+static void init(void)
 {
 #ifdef MEM_DEBUG
   initMemorySystem();
@@ -227,6 +184,52 @@ void init(void)
 #endif
 #endif
 }
+
+
+static int lbaMain(int argc, char *argv[]) // hello world !
+{
+//    LBA_engine *engine;
+
+#ifdef MEM_DEBUG
+  PROCESS_MEMORY_COUNTERS memInfo;
+  GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(PROCESS_MEMORY_COUNTERS));
+
+  staticMemoryUsage = memInfo.WorkingSetSize;
+#endif //MEM_DEBUG
+
+  osystem_init(argc,argv);
+  printf("Success !\n");
+
+#ifdef GAME_DEBUG
+  debugger_init();
+#endif
+
+//  engine->osystem = osystem;
+//  engine->_debugger.osystem = osystem;
+//  engine->_debugger.engine = engine;
+//  debugger_osystem = osystem;
+  initVars(); // init the vars (move to the object constructor ?)
+
+#ifdef PCLIKE
+  startThreadTimer(); // the little trouble maker ! This one is responsible for the game timming
+#endif
+
+  init(); // startup the game engine !
+//  }
+
+//    delete(osystem);
+
+  return(0); // that's all folks !
+}
+
+// main for the SDL part
+int main(int argc, char *argv[])
+{
+  lbaMain(argc,argv);
+
+  return 0;
+}
+
 
 void newGame(void)
 {

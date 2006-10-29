@@ -191,8 +191,6 @@ typedef struct actorBoxStruct actorBoxStruct;
 // lba2 48 = use switch
 // lba2 49 = crawl
 
-int lbaMain(int argc, char *argv[]);
-
 //#include "opcodes.h"
 #include "osystem.h"
 #include "angle.h"
