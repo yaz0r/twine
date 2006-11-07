@@ -470,7 +470,7 @@ char *Itoa(int valeur)
    // toto: implement this
     char *text;
 
-    text = (char *) Malloc(256);
+    text = Malloc(256);
     sprintf(text, "%d", valeur);
 
     return (text);

@@ -20,6 +20,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _VARS_
 
 #include "decomp.h"
+#include <stdlib.h>
 
 #ifdef PCLIKE
 #ifdef WIN32
@@ -1470,7 +1471,7 @@ void InitBufferCube(void);
 // memory management functions
 #ifdef MEM_DEBUG
 void initMemorySystem();
-byte* Malloc(int size);
+void* Malloc(size_t size);
 void MemFree(void* ptr);
 #endif
 

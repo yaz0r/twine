@@ -46,7 +46,7 @@ static void init(void)
   * if(!HQR_Midi) useSound=0; }
   */
 
-  workVideoBuffer = (byte *) Malloc(307700 * sizeof(byte));
+  workVideoBuffer = Malloc(307700 * sizeof(byte));
 
    // check screenPtr
 
@@ -64,15 +64,15 @@ static void init(void)
 
  // todo: mettre les detection de problemes d'allocations...
 
-  bufSpeak = (byte*)Malloc( BUF_SPEAK_SIZE ); // was allocated in dos memory
+  bufSpeak = Malloc( BUF_SPEAK_SIZE ); // was allocated in dos memory
 
-  bufMemoSeek = (byte*)Malloc( BUF_MEMOSEEK_SIZE );
+  bufMemoSeek = Malloc( BUF_MEMOSEEK_SIZE );
 
-  bufText = (char *) Malloc( BUF_TEXT_SIZE );
+  bufText = Malloc( BUF_TEXT_SIZE );
 
-  bufOrder = (char *) Malloc( BUF_ORDER_SIZE );
+  bufOrder = Malloc( BUF_ORDER_SIZE );
 
-  bufAni1 = bufAni2 = (byte*)Malloc( BUF_ANIM_SIZE );
+  bufAni1 = bufAni2 = Malloc( BUF_ANIM_SIZE );
 
   InitBufferCube();
 

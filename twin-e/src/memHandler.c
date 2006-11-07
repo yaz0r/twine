@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+#include <stdlib.h>
 
 #ifdef MEM_DEBUG
 
@@ -44,10 +45,10 @@ void initMemorySystem()
   }
 }
 
-byte *Malloc(int size)
+void *Malloc(size_t size)
 {
   int i;
-  byte *ptr;
+  void *ptr;
 
   for(i=0;i<NUNMEMORYBLOCKS;i++)
   {
@@ -61,7 +62,7 @@ byte *Malloc(int size)
     assert(true);
   }
 
-  ptr = (byte *) malloc(size);
+  ptr = malloc(size);
 
   if (!ptr)
   {

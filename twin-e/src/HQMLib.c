@@ -26,7 +26,7 @@ int HQM_Init_Memory(int size)
   if (Ptr_HQM_Memory)
     return (0);
 
-  Ptr_HQM_Memory = (unsigned char *) Malloc(size + 500);
+  Ptr_HQM_Memory = Malloc(size + 500);
 
   if (!Ptr_HQM_Memory)
     return (0);
@@ -39,7 +39,7 @@ int HQM_Init_Memory(int size)
 
 int HQM_Alloc(int dataSize, unsigned char ** ptr)
 {
-  (*ptr) = (unsigned char*)Malloc(dataSize);
+  (*ptr) = Malloc(dataSize);
 
   return(1);
   

@@ -110,7 +110,7 @@ void initVideoStuff(void)
 {
   int i, j, k;
 
-  frontVideoBuffer = frontVideoBufferbis = (byte *) Malloc(sizeof(byte) * 307200);
+  frontVideoBuffer = frontVideoBufferbis = Malloc(sizeof(byte) * 307200);
 
   osystem_initBuffer((char *) frontVideoBuffer, 640, 480);
   osystem_initVideoBuffer(flaBuffer,320,200);
