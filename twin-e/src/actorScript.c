@@ -100,7 +100,7 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
   {
     startAngle++;
     /*
-    * if (startAngle > 256) { printf ("Can't find angle %d...\n", destVal); exit (1); } 
+    * if (startAngle > 256) { printf ("Can't find angle %d...\n", destVal); exit (1); }
     */
   }
 
@@ -117,7 +117,7 @@ int GetAngle(int X1, int Y1, int X2, int Y2)
     finalAngle = -finalAngle;
   }
 
-  if (flag & 1)		// X and Y are exchanged -> 90° rotation needed
+  if (flag & 1)		// X and Y are exchanged -> 90 degree rotation needed
   {
     finalAngle = -finalAngle + 0x100;
   }
@@ -270,7 +270,7 @@ void foundObject(int objectNumber)
   boxBottomRightX = projectedPositionX + 65;
   boxBottomRightY = projectedPositionY + 65;
 
-  playSample(41, 0x1000, 1, 0x80, 0x80); 
+  playSample(41, 0x1000, 1, 0x80, 0x80);
 
 /*    if(getFoundVox(2))
 {
