@@ -75,9 +75,11 @@ static void init(void) {
 
 	InitBufferCube();
 
-//#ifndef PRELOAD_ALL
-	//  HQM_Init_Memory( BUF_HQM_SIZE );
-//#endif
+#if 0
+#ifndef PRELOAD_ALL
+	HQM_Init_Memory(BUF_HQM_SIZE);
+#endif
+#endif
 
 	menuPal = LoadMalloc_HQR("ress.hqr", 0);
 	convertPalToRGBA(menuPal, menuPalRGBA);
@@ -91,22 +93,22 @@ static void init(void) {
 	CoulDial(136, 143, 2);
 
 #ifdef PRELOAD_ALL
-	HQR_Fic =     HQR_Init_RessourcePreload("file3d.hqr");
-	HQR_Inventory =   HQR_Init_RessourcePreload("invobj.hqr");
-	//  HQR_Text =      HQR_Init_RessourcePreload("text.hqr");
-	HQR_Scenes =    HQR_Init_RessourcePreload("scene.hqr");
-	HQR_Sprites =   HQR_Init_RessourcePreload("sprites.hqr");
-	HQR_Anims =     HQR_Init_RessourcePreload("anim.hqr");
-	HQR_Bodies =    HQR_Init_RessourcePreload("body.hqr");
-	HQR_Samples =   HQR_Init_RessourcePreload("samples.hqr");
-	/*HQR_Grids =     HQR_Init_RessourcePreload("lba_gri.hqr");
-	HQR_Bll =     HQR_Init_RessourcePreload("lba_bll.hqr");*/
+	HQR_Fic = HQR_Init_RessourcePreload("file3d.hqr");
+	HQR_Inventory = HQR_Init_RessourcePreload("invobj.hqr");
+	//  HQR_Text = HQR_Init_RessourcePreload("text.hqr");
+	HQR_Scenes = HQR_Init_RessourcePreload("scene.hqr");
+	HQR_Sprites = HQR_Init_RessourcePreload("sprites.hqr");
+	HQR_Anims = HQR_Init_RessourcePreload("anim.hqr");
+	HQR_Bodies = HQR_Init_RessourcePreload("body.hqr");
+	HQR_Samples = HQR_Init_RessourcePreload("samples.hqr");
+	/*HQR_Grids = HQR_Init_RessourcePreload("lba_gri.hqr");
+	HQR_Bll = HQR_Init_RessourcePreload("lba_bll.hqr");*/
 #else
-	HQR_Inventory =   HQR_Init_Ressource("invobj.hqr", BUF_INVENTORY_SIZE, 30);
-	HQR_Sprites =   HQR_Init_Ressource("sprites.hqr", 300000, 120); // enough to hold all the sprites in mem
-	HQR_Samples =   HQR_Init_Ressource("samples.hqr", 4500000, 4500000 / 5000);
-	HQR_Anims =     HQR_Init_Ressource("anim.hqr", 450000, 600); // should be able to hold all the anims of the game
-#endif //PRELOAD_ALL
+	HQR_Inventory = HQR_Init_Ressource("invobj.hqr", BUF_INVENTORY_SIZE, 30);
+	HQR_Sprites = HQR_Init_Ressource("sprites.hqr", 300000, 120); // enough to hold all the sprites in mem
+	HQR_Samples = HQR_Init_Ressource("samples.hqr", 4500000, 4500000 / 5000);
+	HQR_Anims = HQR_Init_Ressource("anim.hqr", 450000, 600); // should be able to hold all the anims of the game
+#endif
 
 #ifdef GAME_DEBUG
 #ifdef PRELOAD_ALL
@@ -155,11 +157,6 @@ static void init(void) {
 		RessPict(49);
 	else
 		RessPict(12);
-
-	// now unused since we cross fade the video !
-	//TimerPause();
-
-	// FadeToBlack((char*)paletteRGBA);
 
 	WaitTime(3000);
 

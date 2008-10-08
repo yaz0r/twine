@@ -25,6 +25,29 @@ unsigned char* brickMaskTable[NUM_MAX_BRICKS];
 unsigned int brickSizeTable[NUM_MAX_BRICKS];
 unsigned char brickUsageTable[NUM_MAX_BRICKS];
 
+
+static void RestartPerso(void) {
+	twinsen->comportement = 1;
+	memset(&twinsen->dynamicFlagsBF, 0, 2);
+	memset(&twinsen->staticFlagsBF, 0, 2);
+
+	twinsen->staticFlagsBF.bComputeCollisionWithObj = true;
+	twinsen->staticFlagsBF.bComputeCollisionWithBricks = true;
+	twinsen->staticFlagsBF.bIsZonable = true;
+	twinsen->staticFlagsBF.bCanDrown = true;
+	twinsen->staticFlagsBF.bIsFallable = true;
+
+	twinsen->field_14 = 1;
+	twinsen->positionInMoveScript = -1;
+	twinsen->label = -1;
+	twinsen->positionInActorScript = 0;
+	twinsen->zone = -1;
+	twinsen->angle = startupAngleInCube;
+	setActorAngleSafe(twinsen->angle, twinsen->angle, 0, &twinsen->time);
+	SetComportement(startupComportementHeroInCube);
+	cropBottomScreen = 0;
+}
+
 void ChangeCube(void) {
 	int i;
 	int oldRoom;
@@ -989,28 +1012,6 @@ void loadHolomapGFX(void) {
 // needToLoadHolomapGFX=0;
 }
 
-void RestartPerso(void) {
-	twinsen->comportement = 1;
-	memset(&twinsen->dynamicFlagsBF, 0, 2);
-	memset(&twinsen->staticFlagsBF, 0, 2);
-
-	twinsen->staticFlagsBF.bComputeCollisionWithObj = true;
-	twinsen->staticFlagsBF.bComputeCollisionWithBricks = true;
-	twinsen->staticFlagsBF.bIsZonable = true;
-	twinsen->staticFlagsBF.bCanDrown = true;
-	twinsen->staticFlagsBF.bIsFallable = true;
-
-	twinsen->field_14 = 1;
-	twinsen->positionInMoveScript = -1;
-	twinsen->label = -1;
-	twinsen->positionInActorScript = 0;
-	twinsen->zone = -1;
-	twinsen->angle = startupAngleInCube;
-	setActorAngleSafe(twinsen->angle, twinsen->angle, 0, &twinsen->time);
-	SetComportement(startupComportementHeroInCube);
-	cropBottomScreen = 0;
-}
-
 void SetComportement(int newComportement) {
 	int temp;
 
@@ -1048,39 +1049,6 @@ void SetComportement(int newComportement) {
 	twinsen->field_78 = 0;
 
 	InitAnim(ANIM_static, 0, 255, 0);
-}
-
-void HQM_Shrink_Last(unsigned char *ptr, int size) {
-	int temp;
-
-	if (!Ptr_HQM_Memory)
-		return;
-
-	ptr -= 12;
-
-	if (*((int *)(ptr)) != 0x12345678)
-		return;
-
-	temp = *(int *)(ptr + 4);
-	temp -= size;
-
-	Ptr_HQM_Next -= temp;
-	Size_HQM_Free += temp;
-
-	*(int *)(ptr + 4) -= temp;
-}
-
-void HQM_Free_All(void) {
-	byte *temp;
-
-	temp = Ptr_HQM_Memory;
-
-	if (temp) {
-		Ptr_HQM_Next = temp;
-		Size_HQM_Free = Size_HQM_Memory;
-	}
-
-	Ptr_HQM_Memory = temp;
 }
 
 int loadBrk(int gridSize) {

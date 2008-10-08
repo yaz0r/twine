@@ -19,6 +19,44 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "HQMLib.h"
 #include "lba.h"
 
+static unsigned char* Ptr_HQM_Memory;
+static long int Size_HQM_Memory;
+static long int Size_HQM_Free;
+static unsigned char* Ptr_HQM_Next;
+
+void HQM_Shrink_Last(unsigned char *ptr, int size) {
+	int temp;
+
+	if (!Ptr_HQM_Memory)
+		return;
+
+	ptr -= 12;
+
+	if (*((int *)(ptr)) != 0x12345678)
+		return;
+
+	temp = *(int *)(ptr + 4);
+	temp -= size;
+
+	Ptr_HQM_Next -= temp;
+	Size_HQM_Free += temp;
+
+	*(int *)(ptr + 4) -= temp;
+}
+
+void HQM_Free_All(void) {
+	byte *temp;
+
+	temp = Ptr_HQM_Memory;
+
+	if (temp) {
+		Ptr_HQM_Next = temp;
+		Size_HQM_Free = Size_HQM_Memory;
+	}
+
+	Ptr_HQM_Memory = temp;
+}
+
 int HQM_Init_Memory(int size) {
 	return (1);
 

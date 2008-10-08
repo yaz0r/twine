@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "stdlib.h"
-#include<assert.h>
+#include <assert.h>
 
 #ifdef GAME_DEBUG
 #define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
@@ -31,11 +31,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define assert_ptr(ptr)
 #endif // _DEBUG
 
-extern unsigned char* Ptr_HQM_Memory;
-extern long int Size_HQM_Memory;
-extern long int Size_HQM_Free;
-extern unsigned char* Ptr_HQM_Next;
-
 int HQM_Init_Memory(int size);
 int HQM_Alloc(int dataSize, unsigned char ** ptr);
+
+void HQM_Free_All(void);
+void HQM_Shrink_Last(unsigned char *bufferBrick2, int size);
 

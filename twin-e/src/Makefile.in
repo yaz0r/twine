@@ -60,9 +60,9 @@ am_twin_e_OBJECTS = actorScript.$(OBJEXT) actors.$(OBJEXT) \
 	expand.$(OBJEXT) file.$(OBJEXT) fireEffect.$(OBJEXT) \
 	fichePerso.$(OBJEXT) flaplayer.$(OBJEXT) font.$(OBJEXT) \
 	fullRedraw.$(OBJEXT) global.$(OBJEXT) hqr.$(OBJEXT) \
-	HQMGlobal.$(OBJEXT) HQMLib.$(OBJEXT) HQRlib.$(OBJEXT) \
-	images.$(OBJEXT) init.$(OBJEXT) input.$(OBJEXT) \
-	inventory.$(OBJEXT) life_ascii.$(OBJEXT) life_binary.$(OBJEXT) \
+	HQMLib.$(OBJEXT) HQRlib.$(OBJEXT) images.$(OBJEXT) \
+	init.$(OBJEXT) input.$(OBJEXT) inventory.$(OBJEXT) \
+	life_ascii.$(OBJEXT) life_binary.$(OBJEXT) \
 	life_common.$(OBJEXT) main.$(OBJEXT) mainLoop.$(OBJEXT) \
 	mainMenu.$(OBJEXT) mainSDL.$(OBJEXT) memory.$(OBJEXT) \
 	moveActor.$(OBJEXT) music.$(OBJEXT) object.$(OBJEXT) \
@@ -224,7 +224,6 @@ fullRedraw.c \
 global.c \
 global.h \
 hqr.c \
-HQMGlobal.c \
 HQMLib.c \
 HQMLib.h \
 HQRlib.c \
@@ -313,7 +312,7 @@ config.h: stamp-h1
 stamp-h1: $(srcdir)/config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h1
 	cd $(top_builddir) && $(SHELL) ./config.status src/config.h
-$(srcdir)/config.h.in:  $(am__configure_deps)
+$(srcdir)/config.h.in:  $(am__configure_deps) 
 	cd $(top_srcdir) && $(AUTOHEADER)
 	rm -f stamp-h1
 	touch $@
@@ -343,7 +342,7 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-twin-e$(EXEEXT): $(twin_e_OBJECTS) $(twin_e_DEPENDENCIES)
+twin-e$(EXEEXT): $(twin_e_OBJECTS) $(twin_e_DEPENDENCIES) 
 	@rm -f twin-e$(EXEEXT)
 	$(LINK) $(twin_e_LDFLAGS) $(twin_e_OBJECTS) $(twin_e_LDADD) $(LIBS)
 
@@ -353,7 +352,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HQMGlobal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HQMLib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HQRlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/actorScript.Po@am__quote@

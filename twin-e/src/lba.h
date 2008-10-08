@@ -62,8 +62,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #  include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
 #  define PRELOAD_ALL
 #  define USE_GL
-#endif
-
+# endif
 #endif
 
 #include <assert.h>

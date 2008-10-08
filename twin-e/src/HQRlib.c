@@ -181,7 +181,7 @@ hqr_entry* HQR_Init_Ressource(char *fileName, int sizeOfBuffer, int numOfEntries
 	return (hqr_ptr);
 }
 
-long int getFileSize(char* resourceName) {
+static long int getFileSize(const char* resourceName) {
 #ifndef DREAMCAST
 	FILE* fHandle;
 	int size;
@@ -201,7 +201,7 @@ long int getFileSize(char* resourceName) {
 #endif
 }
 
-void fileRead(char* resourceName, long int size, unsigned char* buffer) {
+static void fileRead(const char* resourceName, long int size, unsigned char* buffer) {
 #ifndef DREAMCAST
 	FILE* fHandle;
 	fHandle = fopen(resourceName, "rb");

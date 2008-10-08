@@ -41,7 +41,6 @@ int mainLoopInteration(void) {
 	int frameTime;
 	int textBank;
 
-//    do
 	{
 		currentTime = lba_time;
 mainLoopStart:
@@ -538,7 +537,6 @@ mainLoopStart:
 #endif
 
 	}
-	//  while (1);
 
 	return 0;
 }

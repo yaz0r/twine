@@ -33,7 +33,6 @@ fullRedraw.c \
 global.c \
 global.h \
 hqr.c \
-HQMGlobal.c \
 HQMLib.c \
 HQMLib.h \
 HQRlib.c \

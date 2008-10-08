@@ -46,13 +46,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define NUM_MAX_FLAGS 200
 #define NUM_MAX_ZONES 100
 
-//class LBA_engine;
-
 int threadTimer(void);
 void startThreadTimer(void);
 
-/*class LBA_renderer
-{*/
 struct pointTab {
 #ifdef USE_FLOAT
 	float x;
@@ -136,7 +132,6 @@ extern int setSomethingVar2;
 extern short int setSomethingVar3;
 
 extern unsigned char *frontVideoBuffer;
-//    extern OSystem *osystem;
 
 extern int _baseMatrix[3 * 3];
 
@@ -236,10 +231,6 @@ extern int cameraVar1;
 extern int cameraVar2;
 extern int cameraVar3;
 
-//    void drawLine(int a, int b, int c, int d, int e);
-
-//};
-
 struct zbufferDataStruct {
 	short int y;
 	short int z;
@@ -300,13 +291,6 @@ struct lineData {
 
 typedef struct lineData lineData;
 
-/*struct renderTabEntry
-    {
-  short int depth;
-  short int renderType;
-  unsigned char *dataPtr;
-    };*/
-
 struct sceneStruct {
 	short int field_0;
 	short int field_2;
@@ -364,25 +348,6 @@ struct drawListStruct {
 
 typedef struct drawListStruct drawListStruct;
 
-/*
-struct pointEntry
-    {
-  short int data1;
-  short int data2;
-  short int data3;
-  short int param;
-  short int flag;
-  short int rotate1;
-  short int rotate2;
-  short int rotate3;
-  int field_10;
-  int field_14;
-  int field_18;
-  int Y;
-  int field_20;
-  short int field_24;
-    };*/
-
 struct FLAheaderStruct {
 	char version[6];
 	int numOfFrames;
@@ -409,13 +374,6 @@ extern int staticMemoryUsage;
 
 #endif
 
-/*class LBA_engine
-{
-  public:*/
-//    OSystem * osystem;
-//    LBA_renderer renderer;
-//    extern debugger _debugger;
-
 extern int useFlaPCX;
 extern int flaTime;
 extern short int flaVar2;
@@ -437,7 +395,7 @@ extern char flaBuffer[320*200];
 
 #ifdef PCLIKE
 extern SDL_CD* cdrom;
-#endif //PCLIKE
+#endif
 
 extern short int key;
 extern uint16 useSound;
@@ -447,7 +405,6 @@ extern uint32 unkPtr;   // recheck
 extern uint32 cfg_file;
 
 extern byte *workVideoBuffer;
-//    byte *frontVideoBuffer;
 extern byte *frontVideoBufferbis;
 
 extern byte *videoPtr1;
@@ -535,15 +492,6 @@ extern char mainMenu3Var3[256];
 extern FILE *voxFileHandle;
 extern int printTextVar5;
 
-/*    int textWindowTop;
-int textWindowLeftSave;
-int textWindowLeft;
-int textWindowTopSave;
-int textWindowRight;
-int textWindowRightSave;
-int textWindowBottom;
-int textWindowBottomSave;*/
-
 extern int dialogueBoxLeft;
 extern int dialogueBoxTop;
 extern int dialogueBoxRight;
@@ -587,8 +535,6 @@ extern int screenLockupTable[2000]; // valeur temporaire...
 
 extern int initVideoVar1;
 
-// int reinitVar1;
-// int progressiveTextStartColor;
 extern short int newTwinsenX;
 extern short int newTwinsenZ;
 extern short int newTwinsenY;
@@ -621,14 +567,6 @@ extern int stringLenght;
 
 extern short int useAlternatePalette;
 extern short int drawInGameTransBox;
-
-// SDL_CD *cdrom;
-
-// short int isUsingOrhoProjection;
-
-// int setSomething2Var1;
-// int setSomething2Var2;
-// int setSomething2Var3;
 
 extern char buf1[256];
 
@@ -676,38 +614,6 @@ extern int wordSizePixel;
 extern char spaceChar;
 extern short int talkingActor;
 
-/*
-* short int backInitVar3; short int backDialogueBoxRight; short int backDialogueBoxBottom;
-* short int back2InitVar3; short int back2DialogueBoxRight; short int back2DialogueBoxBottom;
-* short int backInitVar2;
-*
-* short int back3DialogueBoxRight;
-*/
-
-
-
-//    short int FillVertic_AType;
-
-//    short int vertexCoordinates[193];
-
-//    short int pRenderV3[96];
-//    short int *pRenderV1;
-//    short int *pRenderV2;
-//    short int numOfVertexRemaining;
-//    short int polyCropped;
-
-/*    short int vleft;
-short int vtop;
-short int vright;
-short int vbottom;
-
-unsigned char oldVertexParam;
-unsigned char vertexParam1;
-unsigned char vertexParam2;*/
-
-//    short int numOfVertex;
-// short int back3DialogueBoxBottom;
-
 extern short int pt8s4var1[96];
 extern short int *pt8s4var2;
 extern short int *pt8s4var3;
@@ -716,10 +622,6 @@ extern short int *pt8s4var5;
 extern short int *pt8s4var6;
 
 extern int printText8PrepareBufferVar3;
-
-/*    short int *tab1;
-short int *tab2;
-short int *tab3; */
 
 extern actor actors[100];   // yeah, can use up to 100 actor !
 extern actor *twinsen;
@@ -889,16 +791,7 @@ extern int renderV11;
 extern int renderV10;
 
 extern short int numOfPrimitives;
-//    renderTabEntry *renderTabEntryPtr;
-//    renderTabEntry *renderTabEntryPtr2;
-//  renderTabEntry *renderTabSortedPtr;
 extern unsigned short int costumeHeader;
-
-//    renderTabEntry renderTab[1000];
-//    renderTabEntry renderTabSorted[1000];
-//    short int polyTab[960];
-//    short int polyTab2[960];
-
 extern short int numOfPri1;
 extern unsigned char *pri1Ptr;
 
@@ -908,11 +801,8 @@ extern unsigned char *pri2Ptr;
 extern int renderTab2[271];
 extern int *renderTab3;
 
-//    unsigned char *renderV19;
-
 extern pointTab renderTab5[800];
 extern pointTab renderTab6[800];
-//    short int shadeTable[500];
 
 extern int *renderV21;
 
@@ -921,18 +811,11 @@ extern int rs1v2;
 
 extern short int rs1s2v1;
 extern unsigned char *rs1s2v2;
-
-//    short int primitiveCounter;
-
-//    unsigned char renderTab7[10000];
-
 extern unsigned char *render23;
 
 extern short int render25;
 
 extern unsigned char *render24;
-
-//    int renderLoop;
 
 extern int action;
 
@@ -989,12 +872,6 @@ extern short int processActorVar13;
 extern short int animVar4;
 
 extern int drawVar1;
-
-//    int renderLeft;
-//  int renderRight;
-//  int renderTop;
-//  int renderBottom;
-
 extern int currentActorInZoneProcess;
 
 extern short int twinsenKey;
@@ -1027,31 +904,24 @@ extern int reinitVar12;
 extern int renderV22;
 extern int renderV23;
 extern int renderV24;
-/*    int destX;
-int destZ;
-int destY; */
 
 extern int bufRotate0[9];
 extern int bufRotate1[9];
 
-// ADDED ------------------
 extern byte fkeys;
 extern boolean breakmainLoop;
-//-------------------------
-
-// ---------------------------------------------------------------------------------------
 
 int mainLoopInteration(void);
 
-void MyDial(int index); //*
-void LoadGame(void); //*
-void OpenDialNoWindow(int itemNumber); //*
-void SecondInitDialWindow(void); //*
-void CloseDial(void); //*
+void MyDial(int index);
+void LoadGame(void);
+void OpenDialNoWindow(int itemNumber);
+void SecondInitDialWindow(void);
+void CloseDial(void);
 void Rect(int left, int top, int right, int bottom, int param);
 void DrawListInventory();
 void DrawOneInventory(int objectNumber);
-void Inventory(void); //*
+void Inventory(void);
 void Draw3dObject(int X, int Y, char* objectPtr, int rotation, int param);
 void OpenDial(int textNumber);
 void CheckCarrier(int actorNumber);
@@ -1099,7 +969,7 @@ void PatchInterStep(char **ptr, int bp, int bx);
 
 void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax);
 
-int PatchType(char **ptr);//*
+int PatchType(char **ptr);
 
 void DoCornerReadjustTwinkel(int var0, int var1, int var2, int var3);
 void DoCornerReajust(int var0, int var1, int var2, int var3);
@@ -1158,9 +1028,9 @@ int Distance2D(int X1, int Y1, int X2, int Y2);
 
 void DoTrack(int actorNumber);
 
-void loadImageCrossFade(int imageNumber); //!
+void loadImageCrossFade(int imageNumber);
 
-void convertPalToRGBA(byte * palSource, byte * palDest);//!
+void convertPalToRGBA(byte * palSource, byte * palDest);
 
 int HQ_3D_MixSample(int param0, int param1, int param2, int param3, int param4, int param5);
 
@@ -1169,9 +1039,7 @@ int GetRealAngle(timeStruct * arg_0);
 void SetClipLBA(int left, int top, int right, int bottom);
 #define SetClip SetClipLBA
 
-//void TranslateGroupeS2(short int eax, short int ebx, short int ecx);
-
-int finishRender(unsigned char *esi); //!
+int finishRender(unsigned char *esi);
 
 void RotList(unsigned char *esi, int ecx, pointTab * edi, int *eax);
 
@@ -1206,12 +1074,6 @@ void Box(int a, int b, int c, int d, unsigned char e);
 void DrawInfoMenu(short int arg_0, short int arg_4);
 
 int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr);
-
-//int HQR_RemoveEntryFromHQR(hqr_entry * hqrPtr, int var);
-
-//subHqr *findSubHqr(int arg_0, int arg_4, subHqr * arg_8);
-
-//unsigned char *HQR_Get(hqr_entry * arg_0, short int arg_4);
 
 void drawMenuWin(short int var);
 
@@ -1277,8 +1139,6 @@ void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct * 
 void createCube(void);
 void addCubeEntry(unsigned char *gridEntry, unsigned char *dest);
 
-void HQM_Shrink_Last(unsigned char *bufferBrick2, int size);
-
 int CalcGraphMsk(int var, unsigned char *ptr1, unsigned char *ptr2);
 
 int CreateMaskGph(void);
@@ -1287,26 +1147,14 @@ void RazMem(unsigned char *ptr, int size);
 
 int loadBrk(int gridSize);
 
-//int prepareResource(char *fileName, int index);
-
 void makeFireEffect(int top, int param);
 void makeFireEffectInit(void);
 
-//int allocHQRMemory(int dataSize, byte ** ptr);
-
-//int HQR_LoadFile(char *fileName, short int arg_4, byte ** ptr);
-
 int getAnimIndexForBody(byte arg_0, short int actorNumber);
-
-// void HQM_FlushAllEntries(hqr_entry * ptr);
-
-void HQM_Free_All(void);
 
 void reinitExtraObjectList(void);
 
 void StartInitObj(short int arg_0);
-
-void RestartPerso(void);
 
 void SaveGame(void);
 
@@ -1455,11 +1303,6 @@ void CopyScreen(byte * source, byte * destination);
 
 void AdelineLogo(void);
 
-//    int Load_HQR(char *resourceName, byte * Ptr, int imageNumber);
-//    byte HQM_Init_Memory(int size);
-
-//   hqr_entry *HQR_Init_Ressource(char *fileName, int a, int b);
-
 void InitProgram(void);
 void initAll(char *fileName, int a);
 
@@ -1483,5 +1326,4 @@ void processTextLine(void);
 
 void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer);
 
-//};
 #endif
