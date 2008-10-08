@@ -156,7 +156,7 @@ void AddExt(char* file, char* extention) {
 int InitFla(char* file) {
 	int i;
 
-	streamReader_open(&fla_streamReader, (const int8*)file, 0);
+	streamReader_open(&fla_streamReader, file, 0);
 
 	workVideoBufferCopy = workVideoBuffer;
 

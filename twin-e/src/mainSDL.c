@@ -202,19 +202,19 @@ int osystem_init(int argc, char *argv[])  // that's the constructor of the syste
 		exit(1);
 	}
 
-	{
-		SDL_version compile_version, *link_version;
-		SDL_VERSION(&compile_version);
-		printf("compiled with SDL version: %d.%d.%d\n",
-			   compile_version.major,
-			   compile_version.minor,
-			   compile_version.patch);
-		link_version = SDL_Linked_Version();
-		printf("running with SDL version: %d.%d.%d\n",
-			   link_version->major,
-			   link_version->minor,
-			   link_version->patch);
-	}
+// 	{
+// 		SDL_version compile_version, *link_version;
+// 		SDL_VERSION(&compile_version);
+// 		printf("compiled with SDL version: %d.%d.%d\n",
+// 			compile_version.major,
+// 			compile_version.minor,
+// 			compile_version.patch);
+// 		link_version = SDL_Linked_Version();
+// 		printf("running with SDL version: %d.%d.%d\n",
+// 			link_version->major,
+// 			link_version->minor,
+// 			link_version->patch);
+// 	}
 
 	atexit(SDL_Quit);
 

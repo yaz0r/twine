@@ -224,10 +224,6 @@ void setCameraPosition(int X, int Y, int param2, int param3, int param4);
 void setSomething2(int a, int b, int c);
 void setSomething3(int a, int b, int c);
 
-extern int baseMatrixRotationX;
-extern int baseMatrixRotationY;
-extern int baseMatrixRotationZ;
-
 extern int setSomething3Var12;
 extern int setSomething3Var14;
 extern int setSomething3Var16;
@@ -446,7 +442,7 @@ extern SDL_CD* cdrom;
 extern short int key;
 extern uint16 useSound;
 extern byte useSB;
-extern uint32 HQR_Midi;
+extern hqr_entry* HQR_Midi;
 extern uint32 unkPtr;   // recheck
 extern uint32 cfg_file;
 
@@ -660,8 +656,6 @@ extern int dialogueBoxParam2;
 extern short int playMusciVar1;
 
 extern int currentlyPlayingCDTrack;
-
-extern int playMusicFlag;
 
 extern char playerName[30];
 
@@ -1152,7 +1146,6 @@ void CopyMask(int spriteNum, int x, int y, byte * bufferBrick, byte * buffer);
 
 void AddPhysBox(int left, int top, int right, int bottom);
 
-void DrawOverBrick3(int X, int Z, int Y);
 void DrawOverBrick(int X, int Z, int Y);
 
 void InitSprite(int imageNumber, int actorNumber);
@@ -1277,7 +1270,6 @@ void freezeTime(void);
 
 void mainLoop2sub1(void);
 
-int getCurrentlyPlayingMusic(void);
 void fullRedraw(int param);
 void waitRetrace(void);
 void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct * ptr);
@@ -1319,10 +1311,6 @@ void RestartPerso(void);
 void SaveGame(void);
 
 int InitGrille(short int roomNumber);
-
-void FadeMusicMidi(short int arg_0);
-
-int IsMidiPlaying(void);
 
 void HoloTraj(int arg_0);
 
@@ -1385,7 +1373,7 @@ void LineLBA(int a, int b, int c, int d, int e);
 
 void CoulDial(int a, int b, int c);
 
-void CoulFont(byte i);
+void CoulFont(int i);
 void setTextColorSub(int i);
 void drawButton(short int *data, int a);
 
@@ -1428,7 +1416,6 @@ void copyStringToString(char *a, char *b, int c);
 
 void HQ_StopSample(void);
 char *GetMultiText(int a, char *b);
-void playCDtrack(int trackNumber);
 
 void FadeToBlack(char *palette);
 void RessPict(int imageNumber);
@@ -1444,12 +1431,6 @@ void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode);
 
 void blackToWhite(void);
 void newGame(void);
-
-int checkIfFileExist(char *fileName);
-FILE *OpenRead(char *fileName);
-void Close(FILE * resourceFile);
-
-int Read(FILE * resourceFile, char *ptr, int length);
 
 void InitBufferCube(void);
 
@@ -1473,8 +1454,6 @@ void initVideoStuff(void);
 void CopyScreen(byte * source, byte * destination);
 
 void AdelineLogo(void);
-void playMidi(int musicNum);
-void PlayMusic(int musicNum);
 
 //    int Load_HQR(char *resourceName, byte * Ptr, int imageNumber);
 //    byte HQM_Init_Memory(int size);
@@ -1491,10 +1470,6 @@ void MainGameMenu(void);
 void PlayAnimFla(char *flaName);
 
 void DrawCadre(int left, int top, int right, int bottom);
-
-
-void stopMusic(void);
-void fullStopMusic(void);
 
 void optionMenu2(void);
 

@@ -18,100 +18,80 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#ifdef PCLIKE
-//#include <SDL_mixer.h>
-#endif
+#ifdef USE_FMOPL_MIDI
+#include <SDL_mixer.h>
 
 struct sampleStructData {
 	int sampleIdx;
 };
 
-#ifdef PCLIKE
 struct sampleStructData sampleTable[16];
-#endif
 
 void playSample(int sampleNum, int freq, int repeat, int x, int y) {
-	/*  char filename[256];
-	  Mix_Chunk * sample;
-	  FILE* fhandle;
+	char filename[MAX_PATH];
+	Mix_Chunk * sample;
+	FILE* fhandle;
 
+	sample = Mix_LoadWAV_RW(SDL_RWFromMem(HQR_Get(HQR_Samples,sampleNum), Size_HQR("SAMPLES.HQR", sampleNum)), 0);
 
-	  sample=Mix_LoadWAV_RW(SDL_RWFromMem(HQR_Get(HQR_Samples,sampleNum), Size_HQR("SAMPLES.HQR", sampleNum)),0);
+	if (sample == NULL)
+		printf("Mix_LoadWAV(\"%s\"): %s\n", filename, Mix_GetError());
 
-	  if(sample == NULL)
-	  {
-	    printf("Mix_LoadWAV(\"%s\"): %s\n", filename, Mix_GetError());
-	  }
-
-	  Mix_PlayChannel(0,sample,repeat-1);*/
+	Mix_PlayChannel(0, sample, repeat - 1);
 }
 
 void playSampleFla(int sampleNum, int freq, int repeat, int x, int y) {
-	/*  char filename[256];
-	  Mix_Chunk * sample;
+	char filename[MAX_PATH];
+	Mix_Chunk * sample;
 
-	  sprintf(filename,"fla/flasamp/flasamp%02d.voc",sampleNum+1);
+	sprintf(filename,"fla/flasamp/flasamp%02d.voc", sampleNum + 1);
 
-	  sample=Mix_LoadWAV(filename);
-	  Mix_PlayChannel(0,sample,repeat-1);
-	*/
+	sample = Mix_LoadWAV(filename);
+	Mix_PlayChannel(0, sample, repeat - 1);
 }
 
 void soundInit() {
-#ifdef PCLIKE
-//  int audio_buffers=512;
+	const int audio_buffers = 512;
 
-//  Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,audio_buffers);
-//  Mix_AllocateChannels(8);
-#endif
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, audio_buffers);
+	Mix_AllocateChannels(8);
 }
 
-#define midiFileName "Midi_mi_win"
+static Mix_Music * sample = NULL;
 
-//Mix_Music * sample = NULL;
-
+// TODO: Use RWops
 void playMidi(int musicNum) {
-	/* char filename[256];
-	 FILE* fhandle;
+	char filename[MAX_PATH];
+	FILE* fhandle;
 
-	 if(sample != NULL)
-	 {
-	   Mix_FreeMusic(sample);
-	 }
+	if (sample != NULL)
+		Mix_FreeMusic(sample);
 
-	// if(musicNum == 9)
-	   return;
+	if (musicNum == 9)
+		return;
 
-	 sprintf(filename,"%s/%s%02d.midi",midiFileName,midiFileName,musicNum);
+	sprintf(filename, DATA_DIR"midi/%02d.midi", musicNum);
 
-	 fhandle = fopen(filename,"rb");
+	fhandle = OpenRead(filename);
 
-	 if(!fhandle)
-	 {
-	   char sourceName[256];
-	   char* temp;
-	   unsigned int midiSize;
+	if (!fhandle) {
+		hqr_entry* temp;
 
-	   mkdir(midiFileName);
-	   fhandle = fopen(filename,"wb+");
+		Mkdir(DATA_DIR"midi");
+		fhandle = OpenWrite(filename);
 
-	   sprintf(sourceName, "%s.hqr", midiFileName);
+		temp = HQR_Get(HQR_Inventory, musicNum);
+		fwrite(temp->ptr, temp->size1, 1, fhandle);
+		free(temp);
+	}
 
-	   midiSize = Size_HQR(sourceName, musicNum);
-	   temp = (char*)malloc(midiSize);
+	Close(fhandle);
 
-	   Load_HQR(sourceName, temp, musicNum);
-	   fwrite(temp, midiSize,1, fhandle);
-	   fclose(fhandle);
-	   free(temp);
-	 }
+	sample = Mix_LoadMUS(filename);
 
-	 sample=Mix_LoadMUS(filename);
-
-	 if(sample == NULL)
-	 {
-	   printf("Mix_LoadMUS(\"%s\"): %s\n", filename, Mix_GetError());
-	 }
-	 Mix_PlayMusic(sample,0);
-	*/
+	if (sample == NULL)
+		printf("Mix_LoadMUS(\"%s\"): %s\n", filename, Mix_GetError());
+	Mix_PlayMusic(sample, 0);
 }
+
+#endif

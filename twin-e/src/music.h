@@ -16,19 +16,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _SAMPLES_H_
-#define _SAMPLES_H_
+#ifndef _MUSIC_H_
+#define _MUSIC_H_
 
-void playSample(int sampleNum, int freq, int repeat, int x, int y);
-void playSampleFla(int sampleNum, int freq, int repeat, int x, int y);
-
-#ifdef USE_FMOPL_MIDI
-void soundInit();
-void playMidi(int musicNum);
-#else
-#define soundInit()
-#define playMidi(x) {}
-#endif
+void PlayMusic(int musicNum);
+void playCDtrack(int trackNumber);
+int getCurrentlyPlayingMusic(void);
+void FadeMusicMidi(short int arg_0);
+int IsMidiPlaying(void);
+void stopMusic(void);
+void fullStopMusic(void);
 
 #endif
-

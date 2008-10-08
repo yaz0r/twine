@@ -32,18 +32,18 @@ static void init(void) {
 
 	soundInit();
 
-// GetDiskEnv
 	InitProgram();
-// ReadVolumeSettings
-// setup_lst=Def_ReadValue(setup.lst,Version_US);
-// InitLanguage
 
-	/*
-	 * if(useSound) { if(useSB) HQR_Midi=HQR_Init_Ressource("midi_sb.hqr",32000,2); else
-	 * HQR_Midi=HQR_Init_Ressource("midi_mi.hqr",32000,2);
-	 *
-	 * if(!HQR_Midi) useSound=0; }
-	 */
+	if (useSound) {
+		if (useSB)
+			HQR_Midi = HQR_Init_Ressource("midi_sb.hqr",32000,2);
+		else
+			HQR_Midi = HQR_Init_Ressource("midi_mi.hqr",32000,2);
+
+		if (!HQR_Midi)
+			useSound = 0;
+	}
+
 
 	workVideoBuffer = Malloc(307700 * sizeof(byte));
 
@@ -193,7 +193,7 @@ static int lbaMain(int argc, char *argv[]) { // hello world !
 	GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(PROCESS_MEMORY_COUNTERS));
 
 	staticMemoryUsage = memInfo.WorkingSetSize;
-#endif //MEM_DEBUG
+#endif
 
 	osystem_init(argc, argv);
 	printf("Success !\n");

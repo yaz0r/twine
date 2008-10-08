@@ -20,58 +20,58 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define _LBA_
 
 #ifndef _EE
-#ifndef WIN32
-#include "config.h"
-#endif
+# ifndef WIN32
+#  include "config.h"
+# endif
 #endif
 
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "type.h"
 
 #ifdef WIN32
-#define PCLIKE
+# define PCLIKE
 #endif
 
 #ifdef UNIX
-#define PCLIKE
+# define PCLIKE
 #endif
 
 #ifdef PCLIKE
-#ifdef MACOSX
-#include<malloc/malloc.h>
-#else
-#include<malloc.h>
+# ifdef MACOSX
+#  include <malloc/malloc.h>
+# else
+#  include <malloc.h>
+# endif
+# ifdef USE_GL
+#  include <windows.h>    // Header File For Windows
+#  include <gl/gl.h>      // Header File For The OpenGL32 Library
+#  include <gl/glu.h>     // Header File For The GLu32 Library
+#  include <gl/glaux.h>   // Header File For The Glaux Library
+# endif
 #endif
-#ifdef USE_GL
-#include <windows.h>    // Header File For Windows
-#include <gl\gl.h>      // Header File For The OpenGL32 Library
-#include <gl\glu.h>     // Header File For The GLu32 Library
-#include <gl\glaux.h>   // Header File For The Glaux Library
-#endif
-#endif // PCLIKE
 
 #ifndef PCLIKE
-#ifdef DREAMCAST
-#include <shinobi.h>    /* Shinobi system routines. */
-#include <kamui2.h>     /* Kamui2 low-level graphics HAL. */
-#include <sn_fcntl.h>   /* LibCross file types. */
-#include <usrsnasm.h>   /* LibCross I/O routines. */
-#include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
-#define PRELOAD_ALL
-#define USE_GL
+# ifdef DREAMCAST
+#  include <shinobi.h>    /* Shinobi system routines. */
+#  include <kamui2.h>     /* Kamui2 low-level graphics HAL. */
+#  include <sn_fcntl.h>   /* LibCross file types. */
+#  include <usrsnasm.h>   /* LibCross I/O routines. */
+#  include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
+#  define PRELOAD_ALL
+#  define USE_GL
 #endif
 
 #endif
 
-#include<assert.h>
+#include <assert.h>
 
 #ifdef NDEBUG
-#define verify(exp)     (exp)
+# define verify(exp)     (exp)
 #else
-#define verify(exp)     (assert(exp))
+# define verify(exp)     (assert(exp))
 #endif
 
 #include "HQRlib.h"
@@ -80,35 +80,36 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "streamReader.h"
 
 #include "samples.h"
+#include "music.h"
 
 #ifndef MEM_DEBUG
-#define Malloc(size) malloc(size)
-#define MemFree(ptr) free(ptr)
+# define Malloc(size) malloc(size)
+# define MemFree(ptr) free(ptr)
 #endif
 
 
 #ifdef GAME_DEBUG
-#define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
+# define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
 #else // _DEBUG
-#define todo(string)
+# define todo(string)
 #endif // _DEBUG
 
 #ifdef GAME_DEBUG
-#define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
+# define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
 #else // _DEBUG
-#define assert_ptr(ptr)
+# define assert_ptr(ptr)
 #endif // _DEBUG
 
 #ifndef PCLIKE
-#define exit(string) printf("Exit required\n")
+# define exit(string) printf("Exit required\n")
 #endif
 
 #ifdef MACOSX
-#define convertDWFromLE(x) ((x >> 24) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | (x << 24))
-#define convertWFromLE(x) (((x>>8)&0xFF)|((x<<8)&0xFF00))
+# define convertDWFromLE(x) ((x >> 24) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | (x << 24))
+# define convertWFromLE(x) (((x>>8)&0xFF)|((x<<8)&0xFF00))
 #else
-#define convertDWFromLE(x) (x)
-#define convertWFromLE(x) (x)
+# define convertDWFromLE(x) (x)
+# define convertWFromLE(x) (x)
 #endif
 
 struct mouseStatusStruct {
@@ -198,5 +199,9 @@ typedef struct actorBoxStruct actorBoxStruct;
 #include "vars.h"
 #include "angleTable.h"
 #include "overlay.h"
+#include "file.h"
+
+#define MAX_PATH 256
+#define DATA_DIR "data/"
 
 #endif

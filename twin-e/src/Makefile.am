@@ -1,5 +1,5 @@
-bin_PROGRAMS = twin-e 
-.h.gch: 
+bin_PROGRAMS = twin-e
+.h.gch:
 	$(CXXCOMPILE) $<
 twin_e_SOURCES = \
 actorScript.c \
@@ -24,6 +24,7 @@ extra.c \
 extraData.h \
 expand.c \
 file.c \
+file.h \
 fireEffect.c \
 fichePerso.c \
 flaplayer.c \
@@ -53,6 +54,7 @@ mainSDL.c \
 memory.c \
 moveActor.c \
 music.c \
+music.h \
 object.c \
 osystem.h \
 overlay.c \

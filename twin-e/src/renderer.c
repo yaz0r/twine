@@ -26,6 +26,10 @@ extern actor* pCurrentActorRender;
 static const int videoWidth = 640;
 static const int videoHeight = 480;
 
+static int baseMatrixRotationX;
+static int baseMatrixRotationY;
+static int baseMatrixRotationZ;
+
 int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr) {
 	unsigned char *ptr;
 	short int costumeHeader;

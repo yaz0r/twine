@@ -19,9 +19,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #ifdef PCLIKE
-//#include <SDL_mixer.h>
-#include "SDL/SDL.h"
-#endif //PCLIKE
+# ifdef USE_FMOPL_MIDI
+#  include <SDL_mixer.h>
+# endif
+# include "SDL/SDL.h"
+#endif
 
 void PlayMusic(int musicNum) {
 	if (musicNum == -1) {    /* stop music */
@@ -32,7 +34,7 @@ void PlayMusic(int musicNum) {
 		return;
 	}
 
-	if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
+	if (musicNum >= 1 && musicNum <= 9)
 		playCDtrack(musicNum);
 	else
 		playMidi(musicNum);
@@ -43,7 +45,9 @@ void PlayMusic(int musicNum) {
 void playCDtrack(int trackNumber) {
 #ifdef PCLIKE
 	freezeTime();
-	//Mix_FadeOutMusic(500);
+#ifdef USE_FMOPL_MIDI
+	Mix_FadeOutMusic(500);
+#endif
 	currentlyPlayingMidi = -1;
 
 	if (cdrom != NULL) {
@@ -61,7 +65,7 @@ void playCDtrack(int trackNumber) {
 	}
 
 	unfreezeTime();
-#endif //PCLIKE
+#endif
 }
 
 void fullStopMusic(void) {

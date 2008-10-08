@@ -25,6 +25,8 @@ extern unsigned char* brickMaskTable[];
 actor* pCurrentActorRender;
 #endif
 
+static void DrawOverBrick3(int X, int Z, int Y);
+
 short int overlay3dObect = 0;
 
 #ifdef GAME_DEBUG
@@ -1551,7 +1553,7 @@ void DrawOverBrick(int X, int Z, int Y) {
 	}
 }
 
-void DrawOverBrick3(int X, int Z, int Y) {
+static void DrawOverBrick3(int X, int Z, int Y) {
 	int CopyBlockPhysLeft;
 	int CopyBlockPhysRight;
 	int i;
@@ -1578,48 +1580,6 @@ void DrawOverBrick3(int X, int Z, int Y) {
 	}
 }
 
-
-/*
-void DrawOverBrick3(int X, int Y, int Z)
-{
-  int CopyBlockPhysLeft;
-  int CopyBlockPhysRight;
-  int i;
-  int j;
-  int edi;
-  zbufferDataStruct *currentZbufferData;
-
-  CopyBlockPhysLeft = ((textWindowLeft + 24) / 24) - 1;
-  CopyBlockPhysRight = (textWindowRight + 24) / 24;
-
-  DrawOverBrick(X,Y,Z);
-  return;
-
-  if(CopyBlockPhysLeft>CopyBlockPhysRight)
-    return;
-
-  do
-  {
-    currentZbufferData = zbufferData[CopyBlockPhysLeft];
-    edi = 0;
-
-    while(zbufferTab[CopyBlockPhysLeft] < edi)
-    {
-    //  if((currentZbufferData->drawY + 38 > textWindowTop) && (currentZbufferData->drawY <= textWindowBottom) && (currentZbufferData->z >= Y))
-      {
-      //  if((currentZbufferData->x == Z) && (currentZbufferData->y == X))
-        {
-          CopyMaskLBA(currentZbufferData->spriteNum, (CopyBlockPhysLeft*24) - 24, currentZbufferData->drawY, bufferBrick2, workVideoBuffer);
-        }
-      }
-
-      edi++;
-      currentZbufferData++;
-    }
-
-  }while(++CopyBlockPhysLeft <= CopyBlockPhysRight);
-}
-*/
 void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer) {
 	unsigned char *ptr;
 	int top;

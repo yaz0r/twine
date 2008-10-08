@@ -16,19 +16,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef _SAMPLES_H_
-#define _SAMPLES_H_
+#ifndef _FILE_H_
+#define _FILE_H_
 
-void playSample(int sampleNum, int freq, int repeat, int x, int y);
-void playSampleFla(int sampleNum, int freq, int repeat, int x, int y);
-
-#ifdef USE_FMOPL_MIDI
-void soundInit();
-void playMidi(int musicNum);
-#else
-#define soundInit()
-#define playMidi(x) {}
-#endif
+int checkIfFileExist(char *fileName);
+FILE *OpenRead(char *fileName);
+FILE *OpenWrite(char *fileName);
+void Close(FILE * resourceFile);
+void Mkdir(const char *thePath);
+int Read(FILE * resourceFile, char *ptr, int length);
 
 #endif
-

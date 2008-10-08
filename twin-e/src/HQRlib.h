@@ -37,7 +37,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define assert_ptr(ptr)
 #endif // _DEBUG
 
-struct hqr_entry {
+typedef struct hqr_entry_s {
 	char fileName[12];
 	char preloadedResource;
 
@@ -52,18 +52,14 @@ struct hqr_entry {
 	unsigned char** ptrArray;
 	int* sizeArray;
 
-};
+} hqr_entry;
 
-typedef struct hqr_entry hqr_entry;
-
-struct subHqr {
+typedef struct subHqr_s {
 	short int index;
 	unsigned int offFromPtr;
 	unsigned int size;
 	int lastAccessedTime;
-};
-
-typedef struct subHqr subHqr;
+} subHqr;
 
 extern short int HQR_Flag;
 extern volatile int lba_time;

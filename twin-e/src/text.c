@@ -123,10 +123,8 @@ void printTextFullScreen(int textIndex) {
 
 	printTextVar5 = 0;
 
-	if (languageCD1 != 0)
-		if (voxFileHandle != 0)
-			if (printText6(4660) != 0)
-				printText7(4660);
+	if (languageCD1 != 0 && voxFileHandle != 0 && printText6(4660) != 0)
+		printText7(4660);
 
 	printTextVar13 = 0;
 

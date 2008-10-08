@@ -31,6 +31,21 @@ int checkIfFileExist(char *fileName) {
 	return (0);
 }
 
+FILE *OpenWrite(char *fileName) {
+	FILE *fileHandle;
+
+	if (!fileName)
+		return (NULL);
+
+	fileHandle = fopen(fileName, "wb+");
+
+	if (!fileHandle) {
+		printf("%s can't be found !\n", fileName);
+	}
+
+	return (fileHandle);
+}
+
 FILE *OpenRead(char *fileName) {
 	FILE *fileHandle;
 
@@ -66,4 +81,12 @@ void dumpFile(char *name, char *ptr, int size) {
 	fwrite(ptr, size, 1, file);
 
 	fclose(file);
+}
+
+void Mkdir (const char *thePath) {
+#ifdef UNIX
+	mkdir(thePath, 0777);
+#else
+	mkdir(thePath);
+#endif
 }

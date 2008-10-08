@@ -101,15 +101,18 @@ FILE * ifopen(const char * path, const char * mode) {
 }
 #endif
 
-boolean streamReader_open(streamReader* pThis, const int8* fileName, int fatal) {
+boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal) {
+	char fullPath[MAX_PATH];
+	snprintf(fullPath, sizeof(fullPath) - 1, DATA_DIR"%s", fileName);
+	fullPath[sizeof(fullPath) - 1] = '\0';
 #ifndef DREAMCAST
 #ifdef USE_IFOPEN
-	pThis->fileHandle = ifopen((const char*)fileName, "rb");
+	pThis->fileHandle = ifopen(fullPath, "rb");
 #else
-	pThis->fileHandle = fopen((const char*)fileName, "rb");
+	pThis->fileHandle = fopen(fullPath, "rb");
 #endif
 #else
-	pThis->fileHandle = gdFsOpen((char*)fileName, NULL);
+	pThis->fileHandle = gdFsOpen(fullPath, NULL);
 #endif
 
 	if (pThis->fileHandle) {
@@ -118,7 +121,7 @@ boolean streamReader_open(streamReader* pThis, const int8* fileName, int fatal) 
 		return true;
 	} else {
 		if (fatal) {
-			printf("FATAL: Can't find %s\n", fileName);
+			printf("FATAL: Can't find %s\n", fullPath);
 			exit(-1);
 		}
 		return false;

@@ -94,6 +94,9 @@
 /* UNIX-variant */
 #undef UNIX
 
+/* Enable FMOPL midi */
+#undef USE_FMOPL_MIDI
+
 /* use precompiled header */
 #undef USE_PRECOMPILED_HEADER
 

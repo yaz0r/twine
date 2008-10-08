@@ -18,10 +18,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-int baseMatrixRotationX;
-int baseMatrixRotationY;
-int baseMatrixRotationZ;
-
 int setSomething3Var12;
 int setSomething3Var14;
 int setSomething3Var16;
@@ -173,7 +169,7 @@ SDL_CD* cdrom;
 short int key;
 uint16 useSound;
 byte useSB;
-uint32 HQR_Midi;
+hqr_entry* HQR_Midi;
 uint32 unkPtr;    // recheck
 uint32 cfg_file;
 
@@ -446,8 +442,6 @@ int dialogueBoxParam2;
 short int playMusciVar1;
 
 int currentlyPlayingCDTrack;
-
-int playMusicFlag;
 
 char playerName[30];
 
@@ -904,14 +898,18 @@ void initVars(void) {
 
 	buttonDrawVar1 = 550;
 
-#ifdef ENGLISH_LANG
-	language = 0;
+#ifdef LANG_FRENSH
+	language = 1;
+#elif defined LANG_GERMAN
+	language = 2;
+#elif defined LANG_ESPANOL
+	language = 3;
+#elif defined LANG_ITALIANO
+	language = 4;
+#elif defined LANG_PORTUGUESE
+	language = 5;	// Portuguese - especial Text/Ress.hqr to use it (not an original game translation)
 #else
-#ifdef PORTUGUESE_LANG
-	language = 5;   // Portuguese - especial Text/Ress.hqr to use it (not an original game translation)
-#else
-	language = 1; // French
-#endif
+	language = 0;	// English
 #endif
 
 	languageCD1 = 0;
@@ -938,8 +936,6 @@ void initVars(void) {
 	playMusciVar1 = -2;
 
 	currentlyPlayingCDTrack = -1;
-
-	playMusicFlag = 0;
 
 	enterPlayerNameVar1 = 0;
 
@@ -1226,10 +1222,8 @@ void initVars(void) {
 	breakmainLoop = false;
 }
 
-void CoulFont(byte i) {
-	int a = i;
-
-	setTextColorSub(a);
+void CoulFont(int i) {
+	setTextColorSub(i);
 }
 
 void setTextColorSub(int i) {

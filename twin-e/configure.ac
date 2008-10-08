@@ -72,63 +72,63 @@ DATAPATH="$datadir/twin-e"
 
 AC_MSG_CHECKING(system)
 case "$host_os" in
-    linux*)
-        AC_DEFINE(UNIX, 1, [UNIX-variant])
-        AC_DEFINE(LINUX, 1, [Linux])
-        AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
-        AC_MSG_RESULT(UNIX (GNU/Linux))
-        ;;
-    beos*)
-        AC_DEFINE(BEOS, 1, [BeOS])
-        AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
-        AC_MSG_RESULT(BeOS)
-        LIBS="$LIBS -lbe -lmidi"
-        enable_timidity="no"
-        ;;
-    mingw32* )
-        AC_DEFINE(WIN32, 1, [Windows])
-        AC_MSG_RESULT(Win32 (mingw32))
-        LIBS="$LIBS -lwinmm -lstdc++"
-        enable_timidity="no"
-        EMPTY_FILE=nul
-        ;;
-    cygwin* )
-        AC_DEFINE(WIN32, 1, [Windows])
-        AC_DEFINE(CYGWIN, 1, [Cygwin])
-        AC_MSG_RESULT(Win32 (cygwin))
-        CXXFLAGS="$CXXFLAGS -mno-cygwin"
-        LIBS="$LIBS -lwinmm"
-        enable_timidity="no"
-        EMPTY_FILE=nul
-        ;;
-    openbsd* )
-        AC_DEFINE(UNIX, 1, [UNIX-variant])
-        AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
-        AC_DEFINE(OPENBSD, 1, [OpenBSD])
-        AC_MSG_RESULT(UNIX (OpenBSD))
-        LIBS="$LIBS -L/usr/X11R6/lib -lX11 -lXext -lXxf86vm -lXxf86dga"
-        ;;
-    solaris* )
-        AC_DEFINE(UNIX, 1, [UNIX-variant])
-        AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
-        AC_MSG_RESULT(UNIX (Solaris))
-        LIBS="$LIBS -lsocket -lX11"
-        ;;
-    darwin*)
-        dnl We have a problem here: both MacOS X and Darwin report 
-        dnl the same signature "powerpc-apple-darwin*" - so we have
-        dnl to do more to distinguish them. Plain Darwin will propably
-        dnl use X-Windows; and it is of course lacking Cocoa.
-        dnl For now I am lazy and do not add proper detection code.
-        AC_DEFINE(MACOSX, 1, [Mac OS X])
-        AC_MSG_RESULT(Mac OS X)
-        LIBS="$LIBS -framework AudioUnit"
-        DATAPATH="data"
-        ;;
-    *)
-        AC_DEFINE(UNIX, 1, [UNIX-variant])
-        AC_MSG_RESULT(not sure... guessing a unix variant)
-        ;;
+	linux*)
+		AC_DEFINE(UNIX, 1, [UNIX-variant])
+		AC_DEFINE(LINUX, 1, [Linux])
+		AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
+		AC_MSG_RESULT(UNIX (GNU/Linux))
+		;;
+	beos*)
+		AC_DEFINE(BEOS, 1, [BeOS])
+		AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
+		AC_MSG_RESULT(BeOS)
+		LIBS="$LIBS -lbe -lmidi"
+		enable_timidity="no"
+		;;
+	mingw32* )
+		AC_DEFINE(WIN32, 1, [Windows])
+		AC_MSG_RESULT(Win32 (mingw32))
+		LIBS="$LIBS -lwinmm -lstdc++"
+		enable_timidity="no"
+		EMPTY_FILE=nul
+		;;
+	cygwin* )
+		AC_DEFINE(WIN32, 1, [Windows])
+		AC_DEFINE(CYGWIN, 1, [Cygwin])
+		AC_MSG_RESULT(Win32 (cygwin))
+		CXXFLAGS="$CXXFLAGS -mno-cygwin"
+		LIBS="$LIBS -lwinmm"
+		enable_timidity="no"
+		EMPTY_FILE=nul
+		;;
+	openbsd* )
+		AC_DEFINE(UNIX, 1, [UNIX-variant])
+		AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
+		AC_DEFINE(OPENBSD, 1, [OpenBSD])
+		AC_MSG_RESULT(UNIX (OpenBSD))
+		LIBS="$LIBS -L/usr/X11R6/lib -lX11 -lXext -lXxf86vm -lXxf86dga"
+		;;
+	solaris* )
+		AC_DEFINE(UNIX, 1, [UNIX-variant])
+		AC_DEFINE(HAVE_HOME, 1, [HOME env.var exists])
+		AC_MSG_RESULT(UNIX (Solaris))
+		LIBS="$LIBS -lsocket -lX11"
+		;;
+	darwin*)
+		dnl We have a problem here: both MacOS X and Darwin report
+		dnl the same signature "powerpc-apple-darwin*" - so we have
+		dnl to do more to distinguish them. Plain Darwin will propably
+		dnl use X-Windows; and it is of course lacking Cocoa.
+		dnl For now I am lazy and do not add proper detection code.
+		AC_DEFINE(MACOSX, 1, [Mac OS X])
+		AC_MSG_RESULT(Mac OS X)
+		LIBS="$LIBS -framework AudioUnit"
+		DATAPATH="data"
+		;;
+	*)
+		AC_DEFINE(UNIX, 1, [UNIX-variant])
+		AC_MSG_RESULT(not sure... guessing a unix variant)
+		;;
 esac
 
 
@@ -157,12 +157,12 @@ dnl fi
 AC_MSG_CHECKING(if we should use GCC PCH)
 AC_ARG_ENABLE(gcc-pch, [  --enable-gcc-pch        Use GCC 3.4 precompiled headers [default no]],,enable_gcc_pch=no)
 if test x$GCC = xyes -a x$enable_gcc_pch = xyes; then
-    AC_DEFINE(USE_PRECOMPILED_HEADER, 1, [use precompiled header])
-    AC_MSG_RESULT(yes)
-    USE_PCH=yes
+	AC_DEFINE(USE_PRECOMPILED_HEADER, 1, [use precompiled header])
+	AC_MSG_RESULT(yes)
+	USE_PCH=yes
 else
-    AC_MSG_RESULT(no)
-    USE_PCH=no
+	AC_MSG_RESULT(no)
+	USE_PCH=no
 fi
 
 
@@ -197,19 +197,19 @@ AC_CHECK_SIZEOF(long long, 8)
 AC_MSG_CHECKING(if we should optimise for MMX)
 AC_ARG_ENABLE(mmx, [  --enable-mmx            Use MMX optimisations [default no]],,enable_mmx=no)
 if test x$enable_mmx = xyes; then
-    AC_MSG_RESULT(yes)
-    CXXFLAGS="$CXXFLAGS -mmmx"
+	AC_MSG_RESULT(yes)
+	CXXFLAGS="$CXXFLAGS -mmmx"
 else
-    AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 fi
 
 AC_MSG_CHECKING(if we should optimise for 3DNOW)
 AC_ARG_ENABLE(3dnow, [  --enable-3dnow          Use 3DNOW optimisations [default no]],,enable_3dnow=no)
 if test x$enable_3dnow = xyes; then
-    AC_MSG_RESULT(yes)
-    CXXFLAGS="$CXXFLAGS -m3dnow"
+	AC_MSG_RESULT(yes)
+	CXXFLAGS="$CXXFLAGS -m3dnow"
 else
-    AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 fi
 
 # ---------------------------------------------------------------------
@@ -218,8 +218,8 @@ fi
 AC_LANG_C
 SDL_VERSION=1.2.7
 AM_PATH_SDL($SDL_VERSION,
-    :,
-    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+	:,
+	AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 SDL_LIBS="$SDL_LIBS -lSDL_mixer"
@@ -245,14 +245,14 @@ LIBS="$LIBS -lz"
 # ------------------
 AC_ARG_ENABLE(paranoid-warnings, [  --enable-paranoid-warnings      Enable paranoid warnings [default no]],,enable_paranoid_warnings=no)
 if test x$enable_paranoid_warnings = xyes; then
-        WARNINGS="-Wall -W -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls -Wdisabled-optimization -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual -Wfloat-equal -Wundef -Wpointer-arith -Wcast-qual -Wcast-align"
-        # -Wshadow produces a lot of pointless warnings, don't use it.
-        # -Wunreachable-code
-#       DEBUG_FLAGS="$DEBUG_FLAGS -Wall -O -Wunused -Wuninitialized -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Winline"
-        WARNING_LEVEL="Paranoid"
+		WARNINGS="-Wall -W -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls -Wdisabled-optimization -fcheck-new -Wctor-dtor-privacy -Wnon-virtual-dtor -Wold-style-cast -Woverloaded-virtual -Wfloat-equal -Wundef -Wpointer-arith -Wcast-qual -Wcast-align"
+		# -Wshadow produces a lot of pointless warnings, don't use it.
+		# -Wunreachable-code
+#		DEBUG_FLAGS="$DEBUG_FLAGS -Wall -O -Wunused -Wuninitialized -Woverloaded-virtual -Wpointer-arith -Wcast-qual -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes -Winline"
+		WARNING_LEVEL="Paranoid"
 else
-        WARNINGS="-Wall"
-        WARNING_LEVEL="Normal"
+		WARNINGS="-Wall"
+		WARNING_LEVEL="Normal"
 fi
 
 # ------------------
@@ -261,32 +261,32 @@ fi
 AC_MSG_CHECKING(if we should include profiling information)
 AC_ARG_ENABLE(profiling, [  --enable-profiling      Enable profiling [default no]],,enable_profiling=no)
 if test x$enable_profiling = xyes; then
-    AC_MSG_RESULT(yes)
-    PROFILE="-pg"
-    # -fprofile-arcs
+	AC_MSG_RESULT(yes)
+	PROFILE="-pg"
+	# -fprofile-arcs
 else
-    AC_MSG_RESULT(no)
+	AC_MSG_RESULT(no)
 fi
 
 # ------------------
 # Features
 # ------------------
-#USESDLMIXER=no
-#AC_CHECK_LIB(SDL_mixer, Mix_QuickLoad_RAW,
-#   HAVESDLMIXER=yes,
-#   HAVESDLMIXER=no)
+USESDLMIXER=no
+AC_CHECK_LIB(SDL_mixer, Mix_QuickLoad_RAW,
+	HAVE_SDLMIXER=yes,
+	HAVE_SDLMIXER=no)
 
-#AC_ARG_ENABLE(fmopl_midi,      [  --disable-fmopl-midi    Disable built-in FMOPL midi],,enable_fmopl_midi=yes)
-#if test x$HAVESDLMIXER = xyes; then
-#    AC_MSG_CHECKING(if we want to use FMOPL midi)
-#    if test x$enable_fmopl_midi = xyes; then
-#        AC_MSG_RESULT(yes)
-#        AC_DEFINE(USE_FMOPL_MIDI, 1, [Enable FMOPL midi])
-#       USESDLMIXER=yes
-#    else
-#        AC_MSG_RESULT(no)
-#    fi
-#fi
+AC_ARG_ENABLE(fmopl_midi,      [  --disable-fmopl-midi    Disable built-in FMOPL midi],,enable_fmopl_midi=yes)
+if test x$HAVE_SDLMIXER = xyes; then
+	AC_MSG_CHECKING(if we want to use FMOPL midi)
+	if test x$enable_fmopl_midi = xyes; then
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(USE_FMOPL_MIDI, 1, [Enable FMOPL midi])
+		USESDLMIXER=yes
+	else
+		AC_MSG_RESULT(no)
+	fi
+fi
 
 #AC_ARG_ENABLE(timidity_midi,      [  --disable-timidity-midi Disable built-in timidity midi],,enable_timidity_midi=yes)
 #AC_ARG_WITH(timidity,             [  --with-timidity=path    path to timidity.cfg (optional)],,)
@@ -306,9 +306,9 @@ fi
 #    AC_MSG_RESULT(no)
 #fi
 
-#if test x$HAVESDLMIXER = xyes -a x$USESDLMIXER = xyes; then
-#   SDL_LIBS="$SDL_LIBS -lSDL_mixer"
-#fi
+if test x$HAVE_SDLMIXER = xyes -a x$USESDLMIXER = xyes; then
+SDL_LIBS="$SDL_LIBS -lSDL_mixer"
+fi
 
 #AC_CHECK_LIB(SDL_ttf, TTF_Init, HAVESDLTTF=yes, HAVESDLTTF=no)
 #BACKUPCPPFLAGS="$CPPFLAGS"
@@ -323,7 +323,7 @@ fi
 #    if test x$enable_ttf = xyes; then
 #        AC_MSG_RESULT(yes)
 #        AC_DEFINE(USE_SDLTTF, 1, [Use SDL_ttf])
-#        
+#
 #        LIBS="$LIBS -lSDL_ttf"
 #    else
 #        AC_MSG_RESULT(no)
