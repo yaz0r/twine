@@ -23,6 +23,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 extern actor* pCurrentActorRender;
 #endif
 
+static const int videoWidth = 640;
+static const int videoHeight = 480;
+
 int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr) {
 	unsigned char *ptr;
 	short int costumeHeader;
@@ -1145,24 +1148,24 @@ void FillVertic_A(int ecx, int edi) {
 	   return;
 	 if (vleft <= 0 || vright <= 0)
 	   return;
-	 if (vleft >= 640)
+	 if (vleft >= videoWidth)
 	   return;
-	 // if(vright>=640)
+	 // if(vright>=videoWidth)
 	   // return;
-	 if (vtop >= 480 || vbottom >= 480)
+	 if (vtop >= videoHeight || vbottom >= videoHeight)
 	   return;*/
 
 	if (vtop < 0) {
 		return;
 	}
 
-	if (vbottom >= 479) {
+	if (vbottom >= videoHeight - 1) {
 		return;
 	}
 
 	assert(frontVideoBufferbis == frontVideoBuffer);
 
-	out = frontVideoBuffer + 640 * vtop;
+	out = frontVideoBuffer + videoWidth * vtop;
 
 	ptr1 = &polyTab[vtop];
 	ptr2 = &polyTab2[vtop];
@@ -1178,8 +1181,8 @@ void FillVertic_A(int ecx, int edi) {
 	case 0: { // flat polygon
 			currentLine = vtop;
 			do {
-				if (currentLine >= 0 && currentLine < 480) {
-					stop = ptr1[480];
+				if (currentLine >= 0 && currentLine < videoHeight) {
+					stop = ptr1[videoHeight];
 					start = ptr1[0];
 
 					ptr1++;
@@ -1190,13 +1193,13 @@ void FillVertic_A(int ecx, int edi) {
 						out2 = start + out;
 
 						for (j = start; j < hsize + start; j++) {
-							assert(out + j < frontVideoBuffer + 640*480);
-							if (j >= 0 && j < 640)
+							assert(out + j < frontVideoBuffer + videoWidth * videoHeight);
+							if (j >= 0 && j < videoWidth)
 								out[j] = color;
 						}
 					}
 				}
-				out += 640;
+				out += videoWidth;
 				currentLine++;
 			} while (--vsize);
 			break;
@@ -1205,9 +1208,9 @@ void FillVertic_A(int ecx, int edi) {
 	case 1: {   // copper
 			currentLine = vtop;
 			do {
-				if (currentLine >= 0 && currentLine < 480) {
+				if (currentLine >= 0 && currentLine < videoHeight) {
 					start = ptr1[0];
-					stop = ptr1[480];
+					stop = ptr1[videoHeight];
 
 					ptr1++;
 					hsize = stop - start;
@@ -1228,8 +1231,8 @@ void FillVertic_A(int ecx, int edi) {
 							start += mask;
 							start = (start & 0xFF00) | ((start & 0xFF) & (unsigned char)(dx >> 8)) ;
 							start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-							if (j >= 0 && j < 640) {
-								assert(out + j < frontVideoBuffer + 640*480);
+							if (j >= 0 && j < videoWidth) {
+								assert(out + j < frontVideoBuffer + videoWidth * videoHeight);
 								out[j] = start & 0xFF;
 							}
 							mask = (mask << 2) | (mask >> 14);
@@ -1238,7 +1241,7 @@ void FillVertic_A(int ecx, int edi) {
 					}
 
 				}
-				out += 640;
+				out += videoWidth;
 				currentLine++;
 			} while (--vsize);
 			break;
@@ -1246,9 +1249,9 @@ void FillVertic_A(int ecx, int edi) {
 	case 2: { // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine // BUGGYYYY !
 			currentLine = vtop;
 			do {
-				if (currentLine >= 0 && currentLine < 480) {
+				if (currentLine >= 0 && currentLine < videoHeight) {
 					start = ptr1[0];
-					stop = ptr1[480];
+					stop = ptr1[videoHeight];
 					ptr1++;
 					hsize = stop - start;
 
@@ -1257,8 +1260,8 @@ void FillVertic_A(int ecx, int edi) {
 						out2 = start + out;
 						for (j = start; j < hsize + start; j++) {
 							if ((start + (vtop % 1))&1) {
-								if (j >= 0 && j < 640) {
-									assert(out + j < frontVideoBuffer + 640*480);
+								if (j >= 0 && j < videoWidth) {
+									assert(out + j < frontVideoBuffer + videoWidth * videoHeight);
 									out[j] = color;
 								}
 							}
@@ -1267,7 +1270,7 @@ void FillVertic_A(int ecx, int edi) {
 					}
 
 				}
-				out += 640;
+				out += videoWidth;
 				currentLine++;
 			} while (--vsize);
 			break;
@@ -1278,9 +1281,9 @@ void FillVertic_A(int ecx, int edi) {
 
 			currentLine = vtop;
 			do {
-				if (currentLine >= 0 && currentLine < 480) {
+				if (currentLine >= 0 && currentLine < videoHeight) {
 					start = ptr1[0];
-					stop = ptr1[480];
+					stop = ptr1[videoHeight];
 					ptr1++;
 					hsize = stop - start;
 
@@ -1295,12 +1298,12 @@ void FillVertic_A(int ecx, int edi) {
 							ax = (unsigned short int)*(int*) out2;
 							ax &= 1;
 							if (ax ^ bh) {
-								assert(out2 < frontVideoBuffer + 640*480);
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
 								out2++;
 							}
 
 							for (j = 0; j < hsize; j++) {
-								assert(out2 < frontVideoBuffer + 640*480);
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
 								*(out2) = (unsigned char)color;
 								out2 += 2;
 							}
@@ -1308,7 +1311,7 @@ void FillVertic_A(int ecx, int edi) {
 					}
 
 				}
-				out += 640;
+				out += videoWidth;
 				currentLine++;
 			} while (--vsize);
 			break;
@@ -1317,20 +1320,20 @@ void FillVertic_A(int ecx, int edi) {
 			renderLoop = vsize;
 			currentLine = vtop;
 			do {
-				if (currentLine >= 0 && currentLine < 480) {
+				if (currentLine >= 0 && currentLine < videoHeight) {
 					unsigned short int startColor = ptr2[0];
-					unsigned short int stopColor = ptr2[480];
+					unsigned short int stopColor = ptr2[videoHeight];
 
 					short int colorSize = stopColor - startColor;
 
-					stop = ptr1[480];  // stop
+					stop = ptr1[videoHeight];  // stop
 					start = ptr1[0]; // start
 
 					ptr1++;
 					out2 = start + out;
 					hsize = stop - start;
 
-					varf2 = ptr2[480];
+					varf2 = ptr2[videoHeight];
 					varf3 = ptr2[0];
 
 					ptr2++;
@@ -1338,29 +1341,29 @@ void FillVertic_A(int ecx, int edi) {
 					varf4 = (float)((int)varf2 - (int)varf3);
 
 					if (hsize == 0) {
-						assert(out2 < frontVideoBuffer + 640*480);
-						if (start >= 0 && start < 640)
+						assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+						if (start >= 0 && start < videoWidth)
 							*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
 					} else if (hsize > 0) {
 						if (hsize == 1) {
-							assert(out2 + 1 < frontVideoBuffer + 640*480);
-							if (start >= -1 && start < 640 - 1)
+							assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+							if (start >= -1 && start < videoWidth - 1)
 								*(out2 + 1) = stopColor >> 8;
 
-							assert(out2 < frontVideoBuffer + 640*480);
-							if (start >= 0 && start < 640)
+							assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+							if (start >= 0 && start < videoWidth)
 								*(out2) = startColor >> 8;
 						} else if (hsize == 2) {
-							assert(out2 + 2 < frontVideoBuffer + 640*480);
-							if (start >= -2 && start < 640 - 2)
+							assert(out2 + 2 < frontVideoBuffer + videoWidth * videoHeight);
+							if (start >= -2 && start < videoWidth - 2)
 								*(out2 + 2) = stopColor >> 8;
 
-							assert(out2 + 1 < frontVideoBuffer + 640*480);
-							if (start >= -1 && start < 640 - 1)
+							assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+							if (start >= -1 && start < videoWidth - 1)
 								*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
 
-							assert(out2 < frontVideoBuffer + 640*480);
-							if (start >= 0 && start < 640)
+							assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+							if (start >= 0 && start < videoWidth)
 								*(out2) = startColor >> 8;
 						} else {
 							int currentXPos = start;
@@ -1369,8 +1372,8 @@ void FillVertic_A(int ecx, int edi) {
 
 							if (hsize % 2) {
 								hsize /= 2;
-								assert(out2 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = startColor >> 8;
 								out2++;
 								currentXPos++;
@@ -1380,15 +1383,15 @@ void FillVertic_A(int ecx, int edi) {
 							}
 
 							do {
-								assert(out2 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = startColor >> 8;
 
 								currentXPos++;
 								startColor += colorSize;
 
-								assert(out2 + 1 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2 + 1) = startColor >> 8;
 
 								currentXPos++;
@@ -1398,7 +1401,7 @@ void FillVertic_A(int ecx, int edi) {
 						}
 					}
 				}
-				out += 640;
+				out += videoWidth;
 				currentLine++;
 			} while (--renderLoop);
 
@@ -1409,23 +1412,23 @@ void FillVertic_A(int ecx, int edi) {
 
 			currentLine = vtop;
 			do {
-				if (currentLine >= 0 && currentLine < 480) {
-					stop = ptr1[480]; // stop
+				if (currentLine >= 0 && currentLine < videoHeight) {
+					stop = ptr1[videoHeight]; // stop
 					start = ptr1[0];  // start
 					ptr1++;
 					hsize = stop - start;
 
 					if (hsize >= 0) {
 						unsigned short int startColor = ptr2[0];
-						unsigned short int stopColor = ptr2[480];
+						unsigned short int stopColor = ptr2[videoHeight];
 						int currentXPos = start;
 
 						out2 = start + out;
 						ptr2++;
 
 						if (hsize == 0) {
-							assert(out2 < frontVideoBuffer + 640*480);
-							if (currentXPos >= 0 && currentXPos < 640)
+							assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+							if (currentXPos >= 0 && currentXPos < videoWidth)
 								*(out2) = (unsigned char)(((startColor + stopColor) / 2) >> 8);
 
 							assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1438,8 +1441,8 @@ void FillVertic_A(int ecx, int edi) {
 
 								currentColor &= 0xFF;
 								currentColor += startColor;
-								assert(out2 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = currentColor >> 8;
 
 								assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1448,8 +1451,8 @@ void FillVertic_A(int ecx, int edi) {
 								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 								currentColor += startColor;
 								currentXPos++;
-								assert(out2 + 1 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2 + 1) = currentColor >> 8;
 
 								assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1462,8 +1465,8 @@ void FillVertic_A(int ecx, int edi) {
 								colorSize /= 2;
 								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 								currentColor += startColor;
-								assert(out2 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = currentColor >> 8;
 
 								assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1475,8 +1478,8 @@ void FillVertic_A(int ecx, int edi) {
 								currentColor &= 0xFF;
 								currentColor += startColor;
 
-								assert(out2 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = currentColor >> 8;
 
 								assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1487,8 +1490,8 @@ void FillVertic_A(int ecx, int edi) {
 								currentColor += startColor;
 
 								currentXPos++;
-								assert(out2 + 1 < frontVideoBuffer + 640*480);
-								if (currentXPos >= 0 && currentXPos < 640)
+								assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2 + 1) = currentColor >> 8;
 
 								assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1503,8 +1506,8 @@ void FillVertic_A(int ecx, int edi) {
 									currentColor &= 0xFF;
 									currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 									currentColor += startColor;
-									assert(out2 < frontVideoBuffer + 640*480);
-									if (currentXPos >= 0 && currentXPos < 640)
+									assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+									if (currentXPos >= 0 && currentXPos < videoWidth)
 										*(out2) = currentColor >> 8;
 
 									assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1517,8 +1520,8 @@ void FillVertic_A(int ecx, int edi) {
 								do {
 									currentColor &= 0xFF;
 									currentColor += startColor;
-									assert(out2 < frontVideoBuffer + 640*480);
-									if (currentXPos >= 0 && currentXPos < 640)
+									assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+									if (currentXPos >= 0 && currentXPos < videoWidth)
 										*(out2) = currentColor >> 8;
 
 									assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1527,8 +1530,8 @@ void FillVertic_A(int ecx, int edi) {
 									startColor += colorSize;
 									currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 									currentColor += startColor;
-									assert(out2 + 1 < frontVideoBuffer + 640*480);
-									if (currentXPos >= 0 && currentXPos < 640)
+									assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+									if (currentXPos >= 0 && currentXPos < videoWidth)
 										*(out2 + 1) = currentColor >> 8;
 
 									assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1540,7 +1543,7 @@ void FillVertic_A(int ecx, int edi) {
 						}
 					}
 				}
-				out += 640;
+				out += videoWidth;
 				currentLine++;
 			} while (--renderLoop);
 			assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1605,11 +1608,11 @@ int ComputePoly_A(void) {
 	/*
 	  if(vleft<0)
 	    return 2;
-	  if(vright>=640)
+	  if(vright>=videoWidth)
 	    return 2;
 	  if(vtop<0)
 	    return 2;
-	  if(vbottom>=480)
+	  if(vbottom>=videoHeight)
 	    return 2;
 	*/
 	ptr1 = pRenderV1;   // on retourne au debut de la liste
@@ -1658,7 +1661,7 @@ int ComputePoly_A(void) {
 				oldVertexY = size;  // oldVertexY now become the number of pixel
 				size = temp2 * 2;
 
-				ptr3 = &polyTab[temp2 + 480]; // ptr3 is the output ptr in the renderTab
+				ptr3 = &polyTab[temp2 + videoHeight]; // ptr3 is the output ptr in the renderTab
 
 				temp4 = ((oldVertexX - currentVertexX) << 16);  // temp4 = size in X << 16
 
@@ -1689,7 +1692,7 @@ int ComputePoly_A(void) {
 				}
 
 				if (FillVertic_AType >= 7) { // we must compute the color progression
-					short int* ptr3 = &polyTab2[temp2 + 480];
+					short int* ptr3 = &polyTab2[temp2 + videoHeight];
 
 					temp4 = (vertexParam2 - oldVertexParam); // compute the color difference
 
@@ -1990,7 +1993,7 @@ void drawLine(int a, int b, int c, int d, int e) {
 
 // implementer la suite
 
-	flag2 = 640;    // esi
+	flag2 = videoWidth;    // esi
 	c -= a;
 	d -= b;
 	if (d < 0) {
