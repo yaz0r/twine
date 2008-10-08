@@ -16,8 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-short int extraDataTable1[]=
-{
+short int extraDataTable1[] = {
 	10,
 	0,
 	-20,
@@ -42,8 +41,7 @@ short int extraDataTable1[]=
 };
 
 
-short int extraDataTable2[]=
-{
+short int extraDataTable2[] = {
 	18,
 	0,
 	-20,

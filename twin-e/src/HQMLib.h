@@ -20,15 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include<assert.h>
 
 #ifdef GAME_DEBUG
-  #define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
+#define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
 #else // _DEBUG
-  #define todo(string)
+#define todo(string)
 #endif // _DEBUG
 
 #ifdef GAME_DEBUG
-  #define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
+#define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
 #else // _DEBUG
-  #define assert_ptr(ptr)
+#define assert_ptr(ptr)
 #endif // _DEBUG
 
 extern unsigned char* Ptr_HQM_Memory;

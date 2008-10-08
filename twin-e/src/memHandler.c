@@ -26,73 +26,63 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 int currentAllocatedMemory = 0;
 int staticMemoryUsage = 0;
 
-struct memoryBlockStruct
-{
-  void* ptr;
-  int size;
-  boolean used;
+struct memoryBlockStruct {
+	void* ptr;
+	int size;
+	boolean used;
 };
 
 memoryBlockStruct memoryBlockArray[NUNMEMORYBLOCKS];
 
-void initMemorySystem()
-{
-  int i;
+void initMemorySystem() {
+	int i;
 
-  for(i=0;i<NUNMEMORYBLOCKS;i++)
-  {
-    memoryBlockArray[i].used = false;
-  }
+	for (i = 0;i < NUNMEMORYBLOCKS;i++) {
+		memoryBlockArray[i].used = false;
+	}
 }
 
-void *Malloc(size_t size)
-{
-  int i;
-  void *ptr;
+void *Malloc(size_t size) {
+	int i;
+	void *ptr;
 
-  for(i=0;i<NUNMEMORYBLOCKS;i++)
-  {
-    if(memoryBlockArray[i].used == false)
-      break;
-  }
+	for (i = 0;i < NUNMEMORYBLOCKS;i++) {
+		if (memoryBlockArray[i].used == false)
+			break;
+	}
 
-  if(i==NUNMEMORYBLOCKS && memoryBlockArray[NUNMEMORYBLOCKS].used)
-  {
-    printf("All blocks are used !\n");
-    assert(true);
-  }
+	if (i == NUNMEMORYBLOCKS && memoryBlockArray[NUNMEMORYBLOCKS].used) {
+		printf("All blocks are used !\n");
+		assert(true);
+	}
 
-  ptr = malloc(size);
+	ptr = malloc(size);
 
-  if (!ptr)
-  {
-    printf("Can't alloc %d!\n", size);
-    exit(1);
-  }
+	if (!ptr) {
+		printf("Can't alloc %d!\n", size);
+		exit(1);
+	}
 
-  memoryBlockArray[i].ptr = ptr;
-  memoryBlockArray[i].size = size;
-  memoryBlockArray[i].used = true;
+	memoryBlockArray[i].ptr = ptr;
+	memoryBlockArray[i].size = size;
+	memoryBlockArray[i].used = true;
 
-  currentAllocatedMemory += size;
+	currentAllocatedMemory += size;
 
-  return (ptr);
+	return (ptr);
 }
 
-void MemFree(void* ptr)
-{
-  int i;
+void MemFree(void* ptr) {
+	int i;
 
-  for(i=0;i<NUNMEMORYBLOCKS;i++)
-  {
-    if(memoryBlockArray[i].used == true && memoryBlockArray[i].ptr == ptr)
-    {
-      free(memoryBlockArray[i].ptr);
-      currentAllocatedMemory -= memoryBlockArray[i].size;
-      memoryBlockArray[i].used = false;
-      break;
-    }
-  }
+	for (i = 0;i < NUNMEMORYBLOCKS;i++) {
+		if (memoryBlockArray[i].used == true && memoryBlockArray[i].ptr == ptr) {
+			free(memoryBlockArray[i].ptr);
+			currentAllocatedMemory -= memoryBlockArray[i].size;
+			memoryBlockArray[i].used = false;
+			break;
+		}
+	}
 }
 
 #endif

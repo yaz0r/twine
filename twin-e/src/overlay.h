@@ -1,15 +1,14 @@
 #ifndef _OVERLAY_H_
 #define _OVERLAY_H_
 
-struct overlayObjectListStruct
-{
-  short int field_0;
-  short int X;
-  short int Y;
-  short int type;
-  short int followedActor;
-  short int positionType;
-  int timeToDie;
+struct overlayObjectListStruct {
+	short int field_0;
+	short int X;
+	short int Y;
+	short int type;
+	short int followedActor;
+	short int positionType;
+	int timeToDie;
 };
 
 typedef struct overlayObjectListStruct overlayObjectListStruct;

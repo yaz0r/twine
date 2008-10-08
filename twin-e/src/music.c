@@ -23,88 +23,74 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "SDL/SDL.h"
 #endif //PCLIKE
 
-void PlayMusic(int musicNum)
-{
-  if (musicNum == -1)
-  {     /* stop music */
-    fullStopMusic();
-    currentlyPlayingCDTrack = -1;
-   // playMusic2();
-    playMusciVar1 = -1;
-    return;
-  }
+void PlayMusic(int musicNum) {
+	if (musicNum == -1) {    /* stop music */
+		fullStopMusic();
+		currentlyPlayingCDTrack = -1;
+		// playMusic2();
+		playMusciVar1 = -1;
+		return;
+	}
 
-  if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
-    playCDtrack(musicNum);
-  else
-    playMidi(musicNum);
+	if (playMusicFlag == 0 && musicNum >= 1 && musicNum <= 9)
+		playCDtrack(musicNum);
+	else
+		playMidi(musicNum);
 
-  return;
+	return;
 }
 
-void playCDtrack(int trackNumber)
-{
+void playCDtrack(int trackNumber) {
 #ifdef PCLIKE
-  freezeTime();
-  //Mix_FadeOutMusic(500);
-  currentlyPlayingMidi = -1;
+	freezeTime();
+	//Mix_FadeOutMusic(500);
+	currentlyPlayingMidi = -1;
 
-  if(cdrom!=NULL)
-  {
-    if(SDL_CDStatus(cdrom) == CD_PLAYING)
-    {
-      SDL_CDStop(cdrom);
-    }
-  }
-  currentlyPlayingCDTrack = -1;
+	if (cdrom != NULL) {
+		if (SDL_CDStatus(cdrom) == CD_PLAYING) {
+			SDL_CDStop(cdrom);
+		}
+	}
+	currentlyPlayingCDTrack = -1;
 
-  if(cdrom!=NULL)
-  {
-    if(CD_INDRIVE(SDL_CDStatus(cdrom)))
-      SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
-  }
-  else
-  {
-    playMidi(trackNumber);
-  }
+	if (cdrom != NULL) {
+		if (CD_INDRIVE(SDL_CDStatus(cdrom)))
+			SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
+	} else {
+		playMidi(trackNumber);
+	}
 
-  unfreezeTime();
-#endif //PCLIKE 
+	unfreezeTime();
+#endif //PCLIKE
 }
 
-void fullStopMusic(void)
-{
+void fullStopMusic(void) {
 #ifdef PCLIKE
-  if(cdrom!=NULL)
-  {
+	if (cdrom != NULL) {
 //    int status = SDL_CDStatus(cdrom);
 //    if(status == CD_PLAYING)
-    {
-      SDL_CDStop(cdrom);
-    }
-  }
+		{
+			SDL_CDStop(cdrom);
+		}
+	}
 #endif
 }
 
-void stopMusic(void)
-{
-  fullStopMusic();
-  currentlyPlayingCDTrack = -1;
+void stopMusic(void) {
+	fullStopMusic();
+	currentlyPlayingCDTrack = -1;
 }
 
-int IsMidiPlaying(void)
-{
-  return (0);
+int IsMidiPlaying(void) {
+	return (0);
 }
 
-void FadeMusicMidi(short int arg_0)
-{
+void FadeMusicMidi(short int arg_0) {
 }
 
-int getCurrentlyPlayingMusic(void)
-{
-  if (musicPosition > musicLength)
-    currentlyPlayingCDTrack = -1;
+int getCurrentlyPlayingMusic(void) {
+	if (musicPosition > musicLength)
+		currentlyPlayingCDTrack = -1;
 
-  return (currentlyPlayingCDTrack);
+	return (currentlyPlayingCDTrack);
 }

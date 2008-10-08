@@ -26,7 +26,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #ifndef PCLIKE
-#ifndef _EE 
+#ifndef _EE
 #include <shinobi.h>
 #endif
 #endif
@@ -34,23 +34,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define NUM_SECTOR_IN_BUFFER (3)
 #define BUFFER_SIZE (2048*NUM_SECTOR_IN_BUFFER)
 
-struct streamReader
-{
+struct streamReader {
 #ifdef PCLIKE
-  FILE* fileHandle;
+	FILE* fileHandle;
 #else
-#ifndef _EE 
-  // DC
-  GDFS fileHandle;
+#ifndef _EE
+	// DC
+	GDFS fileHandle;
 #endif
-#ifdef _EE 
-  FILE* fileHandle;
+#ifdef _EE
+	FILE* fileHandle;
 #endif
 #endif
 
-  unsigned char buffer[BUFFER_SIZE];
-  unsigned long int positionInBuffer;
-  unsigned long int currentSector;
+	unsigned char buffer[BUFFER_SIZE];
+	unsigned long int positionInBuffer;
+	unsigned long int currentSector;
 };
 
 typedef struct streamReader streamReader;

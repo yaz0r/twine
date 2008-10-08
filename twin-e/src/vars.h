@@ -53,46 +53,43 @@ void startThreadTimer(void);
 
 /*class LBA_renderer
 {*/
-struct pointTab
-{
+struct pointTab {
 #ifdef USE_FLOAT
-  float x;
-  float y;
-  float z;
+	float x;
+	float y;
+	float z;
 #else
-  short int x;
-  short int y;
-  short int z;
+	short int x;
+	short int y;
+	short int z;
 #endif
 };
 
 typedef struct pointTab pointTab;
 
-struct pointEntry
-{
-  short int data1;
-  short int data2;
-  short int data3;
-  short int param;
-  short int flag;
-  short int rotateZ;
-  short int rotateY;
-  short int rotateX;
-  int field_10;
-  int field_14;
-  int field_18;
-  int Y;
-  int field_20;
-  short int field_24;
+struct pointEntry {
+	short int data1;
+	short int data2;
+	short int data3;
+	short int param;
+	short int flag;
+	short int rotateZ;
+	short int rotateY;
+	short int rotateX;
+	int field_10;
+	int field_14;
+	int field_18;
+	int Y;
+	int field_20;
+	short int field_24;
 } PACKED;
 
 typedef struct pointEntry pointEntry;
 
-struct renderTabEntry
-{
-  short int depth;
-  short int renderType;
-  unsigned char *dataPtr;
+struct renderTabEntry {
+	short int depth;
+	short int renderType;
+	unsigned char *dataPtr;
 };
 
 typedef struct renderTabEntry renderTabEntry;
@@ -223,7 +220,7 @@ void configureOrthoProjection(int a, int b, int c);
 void setSomething3sub(int eax, int ebx, int ecx);
 void setCameraAngleSub(int eax, int ebx, int ecx);
 void setCameraAngle(int param0, int param1, int param2, int param3, int param4, int param5, int param6);
-void setCameraPosition( int X, int Y, int param2, int param3, int param4 );
+void setCameraPosition(int X, int Y, int param2, int param3, int param4);
 void setSomething2(int a, int b, int c);
 void setSomething3(int a, int b, int c);
 
@@ -247,23 +244,21 @@ extern int cameraVar3;
 
 //};
 
-struct zbufferDataStruct
-{
-  short int y;
-  short int z;
-  short int x;
-  short int drawX;
-  short int drawY;
-  short int spriteNum;
+struct zbufferDataStruct {
+	short int y;
+	short int z;
+	short int x;
+	short int drawX;
+	short int drawY;
+	short int spriteNum;
 };
 
 typedef struct zbufferDataStruct zbufferDataStruct;
 
-struct flagDataStruct
-{
-  short int x;
-  short int z;
-  short int y;
+struct flagDataStruct {
+	short int x;
+	short int z;
+	short int y;
 };
 
 typedef struct flagDataStruct flagDataStruct;
@@ -276,39 +271,35 @@ struct pointTab
   short int z;
     };*/
 
-struct point2dStruct
-{
-  short int x;
-  short int y;
+struct point2dStruct {
+	short int x;
+	short int y;
 };
 
 typedef struct point2dStruct point2dStruct;
 
-struct point3dStruct
-{
-  short int x;
-  short int y;
-  short int z;
+struct point3dStruct {
+	short int x;
+	short int y;
+	short int z;
 };
 
 typedef struct point3dStruct point3dStruct;
 
-struct lineCoordinates
-{
-  int data;
-  short int x1;
-  short int y1;
-  short int x2;
-  short int y2;
+struct lineCoordinates {
+	int data;
+	short int x1;
+	short int y1;
+	short int x2;
+	short int y2;
 };
 
 typedef struct lineCoordinates lineCoordinates;
 
-struct lineData
-{
-  int data;
-  short int p1;
-  short int p2;
+struct lineData {
+	int data;
+	short int p1;
+	short int p2;
 };
 
 typedef struct lineData lineData;
@@ -320,63 +311,59 @@ typedef struct lineData lineData;
   unsigned char *dataPtr;
     };*/
 
-struct sceneStruct
-{
-  short int field_0;
-  short int field_2;
-  short int field_4;
-  short int field_6;
+struct sceneStruct {
+	short int field_0;
+	short int field_2;
+	short int field_4;
+	short int field_6;
 };
 
 typedef struct sceneStruct sceneStruct;
 
-struct extraListStruct
-{
-  short int field_0;
-  short int X;
-  short int Y;
-  short int Z;
+struct extraListStruct {
+	short int field_0;
+	short int X;
+	short int Y;
+	short int Z;
 
-  short int field_8;
-  short int field_A;
-  short int field_C;
+	short int field_8;
+	short int field_A;
+	short int field_C;
 
-  timeStruct trackActorRotation;
+	timeStruct trackActorRotation;
 
-  short int field_E;
-  short int field_10;
-  short int field_12;
-  short int field_14;
-  short int field_16;
-  int time;
-  short int field_1C;
-  short int field_1E;
-  short int field_20;
+	short int field_E;
+	short int field_10;
+	short int field_12;
+	short int field_14;
+	short int field_16;
+	int time;
+	short int field_1C;
+	short int field_1E;
+	short int field_20;
 };
 
 typedef struct extraListStruct extraListStruct;
 
-struct currentDirtyBoxListStruct
-{
-  unsigned short int left;
-  unsigned short int top;
-  unsigned short int right;
-  unsigned short int bottom;
+struct currentDirtyBoxListStruct {
+	unsigned short int left;
+	unsigned short int top;
+	unsigned short int right;
+	unsigned short int bottom;
 };
 
 typedef struct currentDirtyBoxListStruct currentDirtyBoxListStruct;
 
-struct drawListStruct
-{
-  short int field_0;
-  unsigned short int field_2;
-  unsigned short int X;
-  unsigned short int Z;
-  unsigned short int Y;
-  unsigned short int field_A;
-  unsigned short int field_C;
-  unsigned short int field_E;
-  unsigned short int field_10;
+struct drawListStruct {
+	short int field_0;
+	unsigned short int field_2;
+	unsigned short int X;
+	unsigned short int Z;
+	unsigned short int Y;
+	unsigned short int field_A;
+	unsigned short int field_C;
+	unsigned short int field_E;
+	unsigned short int field_10;
 };
 
 typedef struct drawListStruct drawListStruct;
@@ -400,23 +387,21 @@ struct pointEntry
   short int field_24;
     };*/
 
-struct FLAheaderStruct
-{
-  char version[6];
-  int numOfFrames;
-  char speed;
-  char var1;
-  short int var2;
-  short int var3;
+struct FLAheaderStruct {
+	char version[6];
+	int numOfFrames;
+	char speed;
+	char var1;
+	short int var2;
+	short int var3;
 };
 
 typedef struct FLAheaderStruct FLAheaderStruct;
 
-struct frameDataStruct
-{
-  char videoSize;
-  char dummy;
-  int frameVar0;
+struct frameDataStruct {
+	char videoSize;
+	char dummy;
+	int frameVar0;
 };
 
 typedef struct frameDataStruct frameDataStruct;
@@ -701,7 +686,7 @@ extern short int talkingActor;
 * short int backInitVar3; short int backDialogueBoxRight; short int backDialogueBoxBottom;
 * short int back2InitVar3; short int back2DialogueBoxRight; short int back2DialogueBoxBottom;
 * short int backInitVar2;
-* 
+*
 * short int back3DialogueBoxRight;
 */
 
@@ -1214,10 +1199,10 @@ int AnimNuage(unsigned char *ptr);
 int RotateNuage(unsigned char *ptr);
 
 int AffObjetIso(int arg_0, int arg_4, int arg_8, int arg_C, int arg_10, int arg_14,
-    unsigned char *arg_18);
+				unsigned char *arg_18);
 
 void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_C,
-short int arg_10, short int arg_14, unsigned char *arg_18);
+			   short int arg_10, short int arg_14, unsigned char *arg_18);
 
 void CopyInterAnim(unsigned char *arg_0, unsigned char *arg_4);
 

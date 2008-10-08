@@ -18,448 +18,398 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-char magicLevelForceTable[]=
-{
-  2,
-  3,
-  4,
-  6,
-  8,
-  0,
+char magicLevelForceTable[] = {
+	2,
+	3,
+	4,
+	6,
+	8,
+	0,
 };
 
-void GereAnimAction(actor * lactor, int actorNum)
-{
-  char *ebx;
-  int var_4;
-  int var_18;
-  char al;
-  int var_54;
-  char *edi;
-  char *var_48;
-  char *var_50;
-  char *var_44;
-  char *var_40;
-  char *var_3C;
-  char *var_4C;
-  char *var_38;
-  char *var_34;
-  char *var_30;
-  char *edx;
-  char *eax;
-  short int temp;
+void GereAnimAction(actor * lactor, int actorNum) {
+	char *ebx;
+	int var_4;
+	int var_18;
+	char al;
+	int var_54;
+	char *edi;
+	char *var_48;
+	char *var_50;
+	char *var_44;
+	char *var_40;
+	char *var_3C;
+	char *var_4C;
+	char *var_38;
+	char *var_34;
+	char *var_30;
+	char *edx;
+	char *eax;
+	short int temp;
 
-  ebx = (char *) lactor->animExtraData;
+	ebx = (char *) lactor->animExtraData;
 
-  var_4 = 0;
-  var_18 = *(ebx++);
+	var_4 = 0;
+	var_18 = *(ebx++);
 
-  while (var_4 < var_18)
-  {
-    al = *(ebx++);
+	while (var_4 < var_18) {
+		al = *(ebx++);
 
-    al -= 5;
-    if (al > 16)
-      return;
+		al -= 5;
+		if (al > 16)
+			return;
 
-    var_54 = al;
+		var_54 = al;
 
-    edi = ebx + 1;
+		edi = ebx + 1;
 
-    var_48 = edi + 2;
-    var_50 = var_48 + 2;
-    var_44 = var_50 + 2;
-    var_40 = var_44 + 2;
-    var_3C = var_40 + 2;
-    var_4C = var_3C + 2;
-    var_38 = var_4C + 2;
+		var_48 = edi + 2;
+		var_50 = var_48 + 2;
+		var_44 = var_50 + 2;
+		var_40 = var_44 + 2;
+		var_3C = var_40 + 2;
+		var_4C = var_3C + 2;
+		var_38 = var_4C + 2;
 
-    var_34 = var_38 + 1;
-    var_30 = var_34 + 1;
+		var_34 = var_38 + 1;
+		var_30 = var_34 + 1;
 
-    edx = edi + 11;
-    eax = edi + 15;
+		edx = edi + 11;
+		eax = edi + 15;
 
 //        printf("Opcode: %d\n",var_54);
 
-    switch (var_54)
-    {
-      case 0: // attacking !
-        {
-          temp = *(ebx++);
-          temp--;
-          if (temp == lactor->animPosition)
-          {
-            lactor->field_66 = *(ebx++);
-            lactor->dynamicFlagsBF.bUnk0002 = 1;
-          }
-          else
-          {
-            ebx++;
-          }
-          break;
-        }
-      case 1:
-        {
-          temp = *(ebx++);
+		switch (var_54) {
+		case 0: { // attacking !
+				temp = *(ebx++);
+				temp--;
+				if (temp == lactor->animPosition) {
+					lactor->field_66 = *(ebx++);
+					lactor->dynamicFlagsBF.bUnk0002 = 1;
+				} else {
+					ebx++;
+				}
+				break;
+			}
+		case 1: {
+				temp = *(ebx++);
 
-          if (temp == lactor->animPosition)
-          {
-            HQ_3D_MixSample(READ_LE_S16(ebx), 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
-          }
+				if (temp == lactor->animPosition) {
+					HQ_3D_MixSample(READ_LE_S16(ebx), 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
+				}
 
-          ebx += 2;
-          break;
-        }
-      case 2:
-        {
-          temp = *(ebx++);
-          if (temp == lactor->animPosition)
-          {
-            int temp_28;
-            int temp_1C;
+				ebx += 2;
+				break;
+			}
+		case 2: {
+				temp = *(ebx++);
+				if (temp == lactor->animPosition) {
+					int temp_28;
+					int temp_1C;
 
-            temp_28 = READ_LE_S16(ebx);
-            ebx+=2;
+					temp_28 = READ_LE_S16(ebx);
+					ebx += 2;
 
-            temp_1C = READ_LE_S16(ebx);
-            ebx+=2;
-      
-            HQ_3D_MixSample(temp_28, (rand()%temp_1C) + 0x1000 - (abs(temp_1C)>>1), 1, lactor->X, lactor->Y, lactor->Z);
-          }
-          else
-          {
-            ebx += 4;
-          }
-          break;
-        }
-      case 3:
-        {
-          temp = *(ebx++);
-          if (temp == lactor->animPosition)
-          {
-            int temp_8;
-            int temp_C;
-            int temp_24;
-            int temp_14;
-            int cx;
-            int dx;
+					temp_1C = READ_LE_S16(ebx);
+					ebx += 2;
 
-            temp_8 = READ_LE_S16(ebx);
-            ebx+=2;
+					HQ_3D_MixSample(temp_28, (rand() % temp_1C) + 0x1000 - (abs(temp_1C) >> 1), 1, lactor->X, lactor->Y, lactor->Z);
+				} else {
+					ebx += 4;
+				}
+				break;
+			}
+		case 3: {
+				temp = *(ebx++);
+				if (temp == lactor->animPosition) {
+					int temp_8;
+					int temp_C;
+					int temp_24;
+					int temp_14;
+					int cx;
+					int dx;
 
-            temp_C = *(ebx++);
+					temp_8 = READ_LE_S16(ebx);
+					ebx += 2;
 
-            cx = READ_LE_S16(ebx);
-            ebx+=2;
+					temp_C = *(ebx++);
 
-            dx = lactor->angle + READ_LE_S16(ebx);
-            ebx+=2;
+					cx = READ_LE_S16(ebx);
+					ebx += 2;
 
-            temp_24 = READ_LE_S16(ebx);
-            ebx+=2;
+					dx = lactor->angle + READ_LE_S16(ebx);
+					ebx += 2;
 
-            temp_14 = *(ebx++);
+					temp_24 = READ_LE_S16(ebx);
+					ebx += 2;
 
-            ThrowExtra(actorNum, lactor->X, lactor->Y + temp_8, lactor->Z, temp_C, cx, dx, temp_24, temp_14, *(ebx++));
-          }
-          else
-          {
-            ebx += 11;
-          }
-          break;
-        }
-      case 4:
-        {
-          if(magicBallIdx==-1)
-          {
-            temp = *(ebx++);
-            if( temp == lactor->animPosition)
-            {
-              int var_8;
-              int dx;
-              int var_24;
-              int var_14;
+					temp_14 = *(ebx++);
 
-              var_8 = READ_LE_S16(ebx);
-              ebx +=2;
-              dx = READ_LE_S16(ebx);
-              ebx +=2;
-              var_24 = READ_LE_S16(ebx);
-              ebx +=2;
-              var_14 = *(ebx++);
+					ThrowExtra(actorNum, lactor->X, lactor->Y + temp_8, lactor->Z, temp_C, cx, dx, temp_24, temp_14, *(ebx++));
+				} else {
+					ebx += 11;
+				}
+				break;
+			}
+		case 4: {
+				if (magicBallIdx == -1) {
+					temp = *(ebx++);
+					if (temp == lactor->animPosition) {
+						int var_8;
+						int dx;
+						int var_24;
+						int var_14;
 
-              ThrowMagicBall(lactor->X, lactor->Y + var_8, lactor->Z, dx, lactor->angle, var_24, var_14);
-            }
-            else
-            {
-              ebx += 7;
-            }
-          }
-          else
-          {
-            ebx += 8;
-          }
-          break;
-        }
-      case 5:
-        {
-          temp = *(ebx++);
-          if (temp == lactor->animPosition)
-          {
-            int dx;
-            int cx;
+						var_8 = READ_LE_S16(ebx);
+						ebx += 2;
+						dx = READ_LE_S16(ebx);
+						ebx += 2;
+						var_24 = READ_LE_S16(ebx);
+						ebx += 2;
+						var_14 = *(ebx++);
 
-            dx = READ_LE_S16(ebx);
-            ebx += 2;
-            cx = READ_LE_S16(ebx);
-            ebx += 2;
+						ThrowMagicBall(lactor->X, lactor->Y + var_8, lactor->Z, dx, lactor->angle, var_24, var_14);
+					} else {
+						ebx += 7;
+					}
+				} else {
+					ebx += 8;
+				}
+				break;
+			}
+		case 5: {
+				temp = *(ebx++);
+				if (temp == lactor->animPosition) {
+					int dx;
+					int cx;
 
-            HQ_3D_MixSample(dx, 0x1000, cx, lactor->X, lactor->Y, lactor->Z);
-          }
-          else
-          {
-            ebx += 4;
-          }
-          break;
-        }
-      case 6: // shoot auto aiming missile
-        {
-          temp = *(ebx++);
-          if (temp == lactor->animPosition)
-          {
-            int var_8;
-            int var_C;
-            int dx;
-            int var_24;
-            int temp;
+					dx = READ_LE_S16(ebx);
+					ebx += 2;
+					cx = READ_LE_S16(ebx);
+					ebx += 2;
 
-            var_8 = READ_LE_S16(ebx);
-            ebx += 2;
-            var_C = *(ebx++);
-            dx = *(ebx++);
-            var_24 = READ_LE_S16(ebx);
-            ebx += 2;
-            temp = *(ebx++);
+					HQ_3D_MixSample(dx, 0x1000, cx, lactor->X, lactor->Y, lactor->Z);
+				} else {
+					ebx += 4;
+				}
+				break;
+			}
+		case 6: { // shoot auto aiming missile
+				temp = *(ebx++);
+				if (temp == lactor->animPosition) {
+					int var_8;
+					int var_C;
+					int dx;
+					int var_24;
+					int temp;
 
-            ExtraSearch(actorNum, lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, var_24, temp);
-          }
-          else
-          {
-            ebx += 6;
-          }
-          break;
-        }
-      case 7: // shoot with angle offset
-        {
-          temp = *(ebx);
-          ebx = edi;
-          if(temp == lactor->animPosition)
-          {
-            int distance;
-            int angle;
-            int var_8;
-            int var_C;
-            int dx;
-            int cx;
-            int var_24;
-            int var_14;
-            int temp;
+					var_8 = READ_LE_S16(ebx);
+					ebx += 2;
+					var_C = *(ebx++);
+					dx = *(ebx++);
+					var_24 = READ_LE_S16(ebx);
+					ebx += 2;
+					temp = *(ebx++);
 
-            distance = Distance2D(lactor->X,lactor->Z,twinsen->X,twinsen->Z);
-            angle = GetAngle(lactor->Y, 0, twinsen->Y, distance);
+					ExtraSearch(actorNum, lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, var_24, temp);
+				} else {
+					ebx += 6;
+				}
+				break;
+			}
+		case 7: { // shoot with angle offset
+				temp = *(ebx);
+				ebx = edi;
+				if (temp == lactor->animPosition) {
+					int distance;
+					int angle;
+					int var_8;
+					int var_C;
+					int dx;
+					int cx;
+					int var_24;
+					int var_14;
+					int temp;
 
-            var_8 = READ_LE_S16(edi);
-            ebx = edi+2;
-            var_C =*(ebx++);
-            dx = READ_LE_S16(ebx);
-            ebx += 2;
-            cx = lactor->angle + READ_LE_S16(ebx);
-            ebx += 2;
-            var_24 = READ_LE_S16(ebx);
-            ebx +=2;
-            var_14 = *(ebx++);
-            temp = *(ebx++);
+					distance = Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
+					angle = GetAngle(lactor->Y, 0, twinsen->Y, distance);
 
-            ThrowExtra(actorNum,lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, cx, var_24, var_14, temp);
-          }
-          ebx = edx;
-          break;
-        }
-      case 8:
-        {
-          temp = *(ebx);
-          if(temp == lactor->animPosition)
-          {
-            // TODO: implement
-            //playSound7(READ_LE_S16(edi));
-            ebx = var_48;
-          }
-          else
-          {
-            ebx = var_48;
-          }
-          break;
-        }
-      case 10:
-        {
-          temp = *(ebx++);
+					var_8 = READ_LE_S16(edi);
+					ebx = edi + 2;
+					var_C = *(ebx++);
+					dx = READ_LE_S16(ebx);
+					ebx += 2;
+					cx = lactor->angle + READ_LE_S16(ebx);
+					ebx += 2;
+					var_24 = READ_LE_S16(ebx);
+					ebx += 2;
+					var_14 = *(ebx++);
+					temp = *(ebx++);
 
-          ebx = edi;
-          break;
-        }
-      case 11:
-        {
-          temp = *(ebx++);
+					ThrowExtra(actorNum, lactor->X, lactor->Y + var_8, lactor->Z, var_C, dx, cx, var_24, var_14, temp);
+				}
+				ebx = edx;
+				break;
+			}
+		case 8: {
+				temp = *(ebx);
+				if (temp == lactor->animPosition) {
+					// TODO: implement
+					//playSound7(READ_LE_S16(edi));
+					ebx = var_48;
+				} else {
+					ebx = var_48;
+				}
+				break;
+			}
+		case 10: {
+				temp = *(ebx++);
 
-          ebx = edi;
-          break;
-        }
-       case 12: // twinsen attacking
-         {
-          temp = *(ebx++);
-          temp--;
-          ebx = edi;
-          if (temp == lactor->animPosition)
-          {
-            lactor->field_66 = magicLevelForceTable[magicLevel];
-            lactor->dynamicFlagsBF.bUnk0002 = 1;
-          }
-          break;
-        }
-      case 13:
-        {
-          if(*ebx == lactor->animPosition)
-          {
-            int throwX;
-            int throwY;
-            int throwZ;
+				ebx = edi;
+				break;
+			}
+		case 11: {
+				temp = *(ebx++);
 
-            int distanceX;
-            int distanceY;
-            int distanceZ;
+				ebx = edi;
+				break;
+			}
+		case 12: { // twinsen attacking
+				temp = *(ebx++);
+				temp--;
+				ebx = edi;
+				if (temp == lactor->animPosition) {
+					lactor->field_66 = magicLevelForceTable[magicLevel];
+					lactor->dynamicFlagsBF.bUnk0002 = 1;
+				}
+				break;
+			}
+		case 13: {
+				if (*ebx == lactor->animPosition) {
+					int throwX;
+					int throwY;
+					int throwZ;
 
-            int spriteIdx;
+					int distanceX;
+					int distanceY;
+					int distanceZ;
 
-            int param1;
-            int param2;
-            int param3;
-            int param4;
+					int spriteIdx;
 
-            int strength;
+					int param1;
+					int param2;
+					int param3;
+					int param4;
 
-            distanceX = READ_LE_S16(edi);
-            distanceY = READ_LE_S16(edi+2);
-            distanceZ = READ_LE_S16(edi+4);
+					int strength;
 
-            Rotate(distanceX, distanceZ, lactor->angle);
+					distanceX = READ_LE_S16(edi);
+					distanceY = READ_LE_S16(edi + 2);
+					distanceZ = READ_LE_S16(edi + 4);
 
-            throwX = destX + lactor->X;
-            throwY = distanceY + lactor->Y;
-            throwZ = destZ + lactor->Z;
+					Rotate(distanceX, distanceZ, lactor->angle);
 
-            spriteIdx = *(edi+6);
+					throwX = destX + lactor->X;
+					throwY = distanceY + lactor->Y;
+					throwZ = destZ + lactor->Z;
 
-            param1 = READ_LE_S16(edi+7);
-            param2 = READ_LE_S16(edi+9) + lactor->angle;
-            param3 = READ_LE_S16(edi+11);
-            param4 = *(edi+13);
+					spriteIdx = *(edi + 6);
 
-            strength = *(edi+14);
+					param1 = READ_LE_S16(edi + 7);
+					param2 = READ_LE_S16(edi + 9) + lactor->angle;
+					param3 = READ_LE_S16(edi + 11);
+					param4 = *(edi + 13);
 
-            ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
-          }
-          ebx = eax;
-          break;
-        }
-        case 14: 
-        {
-          if(*ebx == lactor->animPosition)
-          {
-            int newAngle;
+					strength = *(edi + 14);
 
-            int throwX;
-            int throwY;
-            int throwZ;
+					ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
+				}
+				ebx = eax;
+				break;
+			}
+		case 14: {
+				if (*ebx == lactor->animPosition) {
+					int newAngle;
 
-            int distanceX;
-            int distanceY;
-            int distanceZ;
+					int throwX;
+					int throwY;
+					int throwZ;
 
-            int spriteIdx;
+					int distanceX;
+					int distanceY;
+					int distanceZ;
 
-            int param1;
-            int param2;
-            int param3;
-            int param4;
+					int spriteIdx;
 
-            int strength;
+					int param1;
+					int param2;
+					int param3;
+					int param4;
 
-            newAngle = GetAngle(lactor->Y, 0, twinsen->Y, Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z));
+					int strength;
 
-            distanceX = READ_LE_S16(edi);
-            distanceY = READ_LE_S16(edi+2);
-            distanceZ = READ_LE_S16(edi+4);
+					newAngle = GetAngle(lactor->Y, 0, twinsen->Y, Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z));
 
-            Rotate( distanceX, distanceZ, lactor->angle);
+					distanceX = READ_LE_S16(edi);
+					distanceY = READ_LE_S16(edi + 2);
+					distanceZ = READ_LE_S16(edi + 4);
 
-            throwX = destX + lactor->X;
-            throwY = distanceY + lactor->Y;
-            throwZ = destZ + lactor->Z;
+					Rotate(distanceX, distanceZ, lactor->angle);
 
-            spriteIdx = *(edi+6);
+					throwX = destX + lactor->X;
+					throwY = distanceY + lactor->Y;
+					throwZ = destZ + lactor->Z;
 
-            param1 = READ_LE_S16(edi+7) + newAngle;
-            param2 = READ_LE_S16(edi+9) + lactor->angle;
-            param3 = READ_LE_S16(edi+11);
-            param4 = *(edi+13);
+					spriteIdx = *(edi + 6);
 
-            strength = *(edi+14);
+					param1 = READ_LE_S16(edi + 7) + newAngle;
+					param2 = READ_LE_S16(edi + 9) + lactor->angle;
+					param3 = READ_LE_S16(edi + 11);
+					param4 = *(edi + 13);
 
-            ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
-          }
-          ebx = eax;
-          break;
-        }
-      case 15: // shoot slightly aiming
-        {
-          if(*ebx == lactor->animPosition)
-          {
-            int distanceX;
-            int distanceY;
-            int distanceZ;
+					strength = *(edi + 14);
 
-            int spriteIdx;
+					ThrowExtra(actorNum, throwX, throwY, throwZ, spriteIdx, param1, param2, param3, param4, strength);
+				}
+				ebx = eax;
+				break;
+			}
+		case 15: { // shoot slightly aiming
+				if (*ebx == lactor->animPosition) {
+					int distanceX;
+					int distanceY;
+					int distanceZ;
 
-            int targetActor;
-            int param3;
-            int param4;
+					int spriteIdx;
 
-            distanceX = READ_LE_S16(edi);
-            distanceY = READ_LE_S16(edi+2);
-            distanceZ = READ_LE_S16(edi+4);
+					int targetActor;
+					int param3;
+					int param4;
 
-            Rotate( distanceX, distanceZ, lactor->angle);
+					distanceX = READ_LE_S16(edi);
+					distanceY = READ_LE_S16(edi + 2);
+					distanceZ = READ_LE_S16(edi + 4);
 
-            spriteIdx = *(edi+6);
-            targetActor = *(edi+7);
-            param3 = READ_LE_S16(edi+8);
-            param4 = *(edi+10);
+					Rotate(distanceX, distanceZ, lactor->angle);
 
-            ExtraSearch( actorNum, lactor->X + destX, lactor->Y + distanceY, lactor->Z + distanceZ, spriteIdx, targetActor, param3, param4);
-          }
-          ebx = edx;
-          break;
-        }
-      default:
-        {
+					spriteIdx = *(edi + 6);
+					targetActor = *(edi + 7);
+					param3 = READ_LE_S16(edi + 8);
+					param4 = *(edi + 10);
+
+					ExtraSearch(actorNum, lactor->X + destX, lactor->Y + distanceY, lactor->Z + distanceZ, spriteIdx, targetActor, param3, param4);
+				}
+				ebx = edx;
+				break;
+			}
+		default: {
 #ifdef GAME_DEBUG
-          printf("Unsupported opcode %d in GereAnimAction\n", var_54);
+				printf("Unsupported opcode %d in GereAnimAction\n", var_54);
 #endif
-          exit(1);
-        }
-      }
-      var_4++;
-  }
+				exit(1);
+			}
+		}
+		var_4++;
+	}
 
 }

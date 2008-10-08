@@ -88,15 +88,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 
 #ifdef GAME_DEBUG
-    #define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
+#define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
 #else // _DEBUG
-    #define todo(string)
+#define todo(string)
 #endif // _DEBUG
 
 #ifdef GAME_DEBUG
-    #define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
+#define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
 #else // _DEBUG
-    #define assert_ptr(ptr)
+#define assert_ptr(ptr)
 #endif // _DEBUG
 
 #ifndef PCLIKE
@@ -104,30 +104,28 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #ifdef MACOSX
-#define convertDWFromLE(x) ((x >> 24) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | (x << 24)) 
+#define convertDWFromLE(x) ((x >> 24) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | (x << 24))
 #define convertWFromLE(x) (((x>>8)&0xFF)|((x<<8)&0xFF00))
 #else
 #define convertDWFromLE(x) (x)
 #define convertWFromLE(x) (x)
 #endif
 
-struct mouseStatusStruct
-{
-  int left;
-  int right;
-  int X;
-  int Y;
+struct mouseStatusStruct {
+	int left;
+	int right;
+	int X;
+	int Y;
 };
 
 typedef struct mouseStatusStruct mouseStatusStruct;
 
-struct actorBoxStruct
-{
-  int actorNum;
-  int left;
-  int right;
-  int top;
-  int bottom;
+struct actorBoxStruct {
+	int actorNum;
+	int left;
+	int right;
+	int top;
+	int bottom;
 };
 
 typedef struct actorBoxStruct actorBoxStruct;
@@ -148,8 +146,8 @@ typedef struct actorBoxStruct actorBoxStruct;
 #define ANIM_walkBackward 2
 #define ANIM_turnLeft 3
 #define ANIM_turnRight 4
-#define ANIM_hit 5 
-#define ANIM_hitBig 6 
+#define ANIM_hit 5
+#define ANIM_hitBig 6
 #define ANIM_fall 7
 #define ANIM_land 8
 #define ANIM_landHit 9

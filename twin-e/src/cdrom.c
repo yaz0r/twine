@@ -22,72 +22,69 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "SDL/SDL.h"
 #endif
 
-int InitCDR(char *string)
-{
+int InitCDR(char *string) {
 #ifdef PCLIKE
-   // int cur_track;
-   // int min, sec, frame;
-  int numOfCDROM;
-  int cdNum;
+	// int cur_track;
+	// int min, sec, frame;
+	int numOfCDROM;
+	int cdNum;
 
-  numOfCDROM = SDL_CDNumDrives();
+	numOfCDROM = SDL_CDNumDrives();
 
-  printf("Found %d CDROM devices\n", numOfCDROM);
+	printf("Found %d CDROM devices\n", numOfCDROM);
 
-  if (!numOfCDROM)
-  {
-    /*
-    * None found 
-    */
-    fprintf(stderr, "No CDROM devices available\n");
-    exit(-1);
-  }
+	if (!numOfCDROM) {
+		/*
+		* None found
+		*/
+		fprintf(stderr, "No CDROM devices available\n");
+		exit(-1);
+	}
 
-  for (cdNum = 0; cdNum < numOfCDROM; cdNum++)
-  {
+	for (cdNum = 0; cdNum < numOfCDROM; cdNum++) {
 
-    printf("Testing drive %s\n", SDL_CDName(cdNum));
+		printf("Testing drive %s\n", SDL_CDName(cdNum));
 
-    /*
-    * Open the default drive 
-    */
-    cdrom=SDL_CDOpen(cdNum);
+		/*
+		* Open the default drive
+		*/
+		cdrom = SDL_CDOpen(cdNum);
 
-    /*
-    * Did if open? Check if cdrom is NULL 
-    */
+		/*
+		* Did if open? Check if cdrom is NULL
+		*/
 
-    if(!cdrom){ fprintf(stderr, "Couldn't open drive: %s\n", SDL_GetError()); } else 
-    
-    {
-      /*
-       * Print Volume info 
-       */
-       
-      SDL_CDStatus(cdrom);
-      if(cdrom->numtracks==10)
-      {
-        printf("Assuming that it is LBA cd...\n");
-        return(1);
-      } 
+		if (!cdrom) {
+			fprintf(stderr, "Couldn't open drive: %s\n", SDL_GetError());
+		} else
 
-    }
-    SDL_CDClose(cdrom);
-  }
+		{
+			/*
+			 * Print Volume info
+			 */
 
-  cdrom=NULL;
+			SDL_CDStatus(cdrom);
+			if (cdrom->numtracks == 10) {
+				printf("Assuming that it is LBA cd...\n");
+				return(1);
+			}
 
-  printf("Can't find LBA1 CD!\n");
+		}
+		SDL_CDClose(cdrom);
+	}
+
+	cdrom = NULL;
+
+	printf("Can't find LBA1 CD!\n");
 
 #endif
 
-  return (0);
+	return (0);
 }
 
-void stopCD(void)
-{
+void stopCD(void) {
 #ifdef PCLIKE
-  if(cdrom!=NULL)
-    SDL_CDStop(cdrom);
+	if (cdrom != NULL)
+		SDL_CDStop(cdrom);
 #endif
 }

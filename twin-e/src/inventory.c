@@ -18,262 +18,230 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-void Inventory(void)
-{
-  int di = 1;
-  int previouslySelectedObject;
+void Inventory(void) {
+	int di = 1;
+	int previouslySelectedObject;
 
-  int localReinitVar1 = reinitVar1;
-  int localReinitVar2 = reinitVar2;
-  
-  int oldLanguageCD1;
-  int bx;
-  
-  CopyScreen(frontVideoBuffer, workVideoBuffer);
+	int localReinitVar1 = reinitVar1;
+	int localReinitVar2 = reinitVar2;
 
-  SetLightVector(896, 950, 0);
+	int oldLanguageCD1;
+	int bx;
 
-  inventorySelectedColor = 68;
+	CopyScreen(frontVideoBuffer, workVideoBuffer);
 
-  if(numClover > 0)
-    vars[27] = 1; 
+	SetLightVector(896, 950, 0);
 
-  DrawListInventory();
+	inventorySelectedColor = 68;
 
-  oldLanguageCD1=languageCD1;
-  languageCD1 = 0;
+	if (numClover > 0)
+		vars[27] = 1;
 
-  InitDial(2);
+	DrawListInventory();
 
-  bx = 3;
-      
-  TestCoulDial(4);
-  InitDialWindow();
+	oldLanguageCD1 = languageCD1;
+	languageCD1 = 0;
 
-  while(skipIntro != 1)
-  {
-    readKeyboard();
+	InitDial(2);
 
-    previouslySelectedObject = currentSelectedObjectInInventory;
+	bx = 3;
 
-    if(!di)
-    {
-      key = printTextVar12;
-      mainLoopVar5 = key1;
-      mainLoopVar7 = skipIntro;
+	TestCoulDial(4);
+	InitDialWindow();
 
-      if(key != 0 || key1 != 0)
-      {
-        di = 1;
-      }
-    }
-    else
-    {
-      mainLoopVar7 = 0;
-      key = 0;
-      mainLoopVar5 = 0;
-      if(!printTextVar12 && !key1)
-      {
-        di = 0;
-      }
-    }
+	while (skipIntro != 1) {
+		readKeyboard();
 
-    if(mainLoopVar7 == 1 || mainLoopVar5 & 0x20)
-      break;
+		previouslySelectedObject = currentSelectedObjectInInventory;
 
-    if(key & 2)
-    {
-      currentSelectedObjectInInventory++;
+		if (!di) {
+			key = printTextVar12;
+			mainLoopVar5 = key1;
+			mainLoopVar7 = skipIntro;
 
-      if(currentSelectedObjectInInventory>= 28)
-        currentSelectedObjectInInventory = 0;
+			if (key != 0 || key1 != 0) {
+				di = 1;
+			}
+		} else {
+			mainLoopVar7 = 0;
+			key = 0;
+			mainLoopVar5 = 0;
+			if (!printTextVar12 && !key1) {
+				di = 0;
+			}
+		}
 
-      DrawOneInventory(previouslySelectedObject);
+		if (mainLoopVar7 == 1 || mainLoopVar5 & 0x20)
+			break;
 
-      bx = 3;
-    }
+		if (key & 2) {
+			currentSelectedObjectInInventory++;
 
-    if(key & 1)
-    {
-      currentSelectedObjectInInventory--;
+			if (currentSelectedObjectInInventory >= 28)
+				currentSelectedObjectInInventory = 0;
 
-      if(currentSelectedObjectInInventory < 0)
-          currentSelectedObjectInInventory = 27;
+			DrawOneInventory(previouslySelectedObject);
 
-      DrawOneInventory(previouslySelectedObject);
+			bx = 3;
+		}
 
-      bx = 3;
-    }
+		if (key & 1) {
+			currentSelectedObjectInInventory--;
 
-    if(key & 4)
-    {
-      currentSelectedObjectInInventory-=4;
+			if (currentSelectedObjectInInventory < 0)
+				currentSelectedObjectInInventory = 27;
 
-      if(currentSelectedObjectInInventory < 0)
-        currentSelectedObjectInInventory += 28;
+			DrawOneInventory(previouslySelectedObject);
 
-      DrawOneInventory(previouslySelectedObject);
+			bx = 3;
+		}
 
-      bx = 3;
-    }
+		if (key & 4) {
+			currentSelectedObjectInInventory -= 4;
 
-    if(key & 8)
-    {
-      currentSelectedObjectInInventory+=4;
+			if (currentSelectedObjectInInventory < 0)
+				currentSelectedObjectInInventory += 28;
 
-      if(currentSelectedObjectInInventory>= 28)
-        currentSelectedObjectInInventory -= 28;
+			DrawOneInventory(previouslySelectedObject);
 
-      DrawOneInventory(previouslySelectedObject);
+			bx = 3;
+		}
 
-      bx = 3;
-    }
+		if (key & 8) {
+			currentSelectedObjectInInventory += 4;
 
-    if(bx==3)
-    {
-      SecondInitDialWindow();
+			if (currentSelectedObjectInInventory >= 28)
+				currentSelectedObjectInInventory -= 28;
 
-      if(vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
-      {
-        OpenDialNoWindow(currentSelectedObjectInInventory + 100);
-      }
-      else
-      {
-        OpenDialNoWindow(128);
-      }
+			DrawOneInventory(previouslySelectedObject);
 
-      bx = 0;
-    }
+			bx = 3;
+		}
 
-    if(bx!=2)
-    {
-      bx = printText10();
-    }
+		if (bx == 3) {
+			SecondInitDialWindow();
 
-    if(mainLoopVar5&1)
-    {
-      if(bx == 2)
-      {
-        SecondInitDialWindow();
-        bx = 0;
-      }
-      else
-      {
-        if(vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
-        {
-          SecondInitDialWindow();
-          OpenDialNoWindow(currentSelectedObjectInInventory+100);
-        }
-      }
-    }
+			if (vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory <= 27) {
+				OpenDialNoWindow(currentSelectedObjectInInventory + 100);
+			} else {
+				OpenDialNoWindow(128);
+			}
 
-    waitRetrace();
+			bx = 0;
+		}
 
-    DrawOneInventory(currentSelectedObjectInInventory);
+		if (bx != 2) {
+			bx = printText10();
+		}
 
-    if((mainLoopVar5 & 2) && vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory<=27)
-    {
-      mainLoopVar9 = currentSelectedObjectInInventory;
-      inventorySelectedColor = 91;
-      DrawOneInventory(currentSelectedObjectInInventory);
-      break;
-    }
-  }
+		if (mainLoopVar5&1) {
+			if (bx == 2) {
+				SecondInitDialWindow();
+				bx = 0;
+			} else {
+				if (vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory <= 27) {
+					SecondInitDialWindow();
+					OpenDialNoWindow(currentSelectedObjectInInventory + 100);
+				}
+			}
+		}
 
-  CloseDial();
+		waitRetrace();
 
-  reinitVar1 = localReinitVar1;
-  reinitVar2 = localReinitVar2;
+		DrawOneInventory(currentSelectedObjectInInventory);
 
-  reinitAll1();
+		if ((mainLoopVar5 & 2) && vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory <= 27) {
+			mainLoopVar9 = currentSelectedObjectInInventory;
+			inventorySelectedColor = 91;
+			DrawOneInventory(currentSelectedObjectInInventory);
+			break;
+		}
+	}
 
-  languageCD1 = oldLanguageCD1;
+	CloseDial();
 
-  InitDial(currentTextBank + 3);
+	reinitVar1 = localReinitVar1;
+	reinitVar2 = localReinitVar2;
 
-  while(skipIntro != 0 && key1 != 0)
-  {
-    readKeyboard();
-  }
+	reinitAll1();
+
+	languageCD1 = oldLanguageCD1;
+
+	InitDial(currentTextBank + 3);
+
+	while (skipIntro != 0 && key1 != 0) {
+		readKeyboard();
+	}
 
 }
 
-void SecondInitDialWindow(void)
-{
-  blitRectangle(dialogueBoxLeft,dialogueBoxTop,dialogueBoxRight,dialogueBoxBottom,(char*)workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char*)frontVideoBuffer);
-  osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft,dialogueBoxTop,dialogueBoxRight,dialogueBoxBottom);
-  printText8Var3 = 0;
+void SecondInitDialWindow(void) {
+	blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char*)workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char*)frontVideoBuffer);
+	osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+	printText8Var3 = 0;
 }
 
-void CloseDial(void)
-{
-  printTextVar13 = 0;
+void CloseDial(void) {
+	printTextVar13 = 0;
 }
 
-void OpenDialNoWindow(int itemNumber)
-{
-  initText(itemNumber);
+void OpenDialNoWindow(int itemNumber) {
+	initText(itemNumber);
 }
 
-void DrawListInventory()
-{
-  int object;
+void DrawListInventory() {
+	int object;
 
-  drawBoxInsideTrans(17,10,622,320,4);
-  DrawCadre(17,10,622,320);
-  Rect(110,18,188,311,75);
-  osystem_CopyBlockPhys(frontVideoBuffer,17,10,622,320);
+	drawBoxInsideTrans(17, 10, 622, 320, 4);
+	DrawCadre(17, 10, 622, 320);
+	Rect(110, 18, 188, 311, 75);
+	osystem_CopyBlockPhys(frontVideoBuffer, 17, 10, 622, 320);
 
-  for(object=0;object<28;object++)
-  {
-    DrawOneInventory(object);
-  }
+	for (object = 0;object < 28;object++) {
+		DrawOneInventory(object);
+	}
 
 }
 
-void DrawOneInventory(int objectNumber)
-{
-  int objectX = (objectNumber/4) * 85 + 64;
-  int objectY = (objectNumber & 3) * 75 + 52;
+void DrawOneInventory(int objectNumber) {
+	int objectX = (objectNumber / 4) * 85 + 64;
+	int objectY = (objectNumber & 3) * 75 + 52;
 
-  int left = objectX - 37;
-  int right = objectX + 37;
-  int top = objectY - 32;
-  int bottom = objectY + 32;
+	int left = objectX - 37;
+	int right = objectX + 37;
+	int top = objectY - 32;
+	int bottom = objectY + 32;
 
-  if(currentSelectedObjectInInventory == objectNumber)
-    Box(left, top, right, bottom, inventorySelectedColor);
-  else
-    Box(left, top, right, bottom, 0);
+	if (currentSelectedObjectInInventory == objectNumber)
+		Box(left, top, right, bottom, inventorySelectedColor);
+	else
+		Box(left, top, right, bottom, 0);
 
-  if(vars[objectNumber] && !vars[70] && objectNumber <= 27)
-  {
-    char* objectPtr;
+	if (vars[objectNumber] && !vars[70] && objectNumber <= 27) {
+		char* objectPtr;
 
-    objectPtr = (char*)HQR_Get(HQR_Inventory,objectNumber);
+		objectPtr = (char*)HQR_Get(HQR_Inventory, objectNumber);
 
-    if(HQR_Flag)
-      loadGfxSub((unsigned char*)objectPtr);
+		if (HQR_Flag)
+			loadGfxSub((unsigned char*)objectPtr);
 
-    objectRotation[objectNumber]+=8;
+		objectRotation[objectNumber] += 8;
 
-    Draw3dObject(objectX, objectY, objectPtr, objectRotation[objectNumber], 15000);
+		Draw3dObject(objectX, objectY, objectPtr, objectRotation[objectNumber], 15000);
 
-    if(objectNumber == 15) // fuel object
-    {
-      CoulFont(15);
-      Font(left + 3, top + 32, Itoa(fuel));
-    }
-  }
+		if (objectNumber == 15) { // fuel object
+			CoulFont(15);
+			Font(left + 3, top + 32, Itoa(fuel));
+		}
+	}
 
-  DrawCadre(left, top, right, bottom);
-  osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+	DrawCadre(left, top, right, bottom);
+	osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
 }
 
-void Rect(int bottom, int right, int top, int left, int param)
-{
-  Line(bottom, right, top, right, param);
-  Line(bottom, left, top, left, param);
-  Line(bottom, right, bottom, left, param);
-  Line(top, right, top, left, param);
+void Rect(int bottom, int right, int top, int left, int param) {
+	Line(bottom, right, top, right, param);
+	Line(bottom, left, top, left, param);
+	Line(bottom, right, bottom, left, param);
+	Line(top, right, top, left, param);
 }

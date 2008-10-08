@@ -46,10 +46,9 @@ total:        9341k
 */
 
 
-void InitBufferCube(void)
-{
-   // todo: mettre les codes d'erreur
+void InitBufferCube(void) {
+	// todo: mettre les codes d'erreur
 
-  bufCube = Malloc(204800);  // 204800 = 64*64*25*2
-  bufferBrick = Malloc(361472);
+	bufCube = Malloc(204800);  // 204800 = 64*64*25*2
+	bufferBrick = Malloc(361472);
 }

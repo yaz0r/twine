@@ -38,7 +38,6 @@ int threadTimer(void *test) // LBA time is 50 frames per seconds ie,  a frame ev
     return (0);
 }*/
 
-void startThreadTimer()
-{
-   // SDL_CreateThread(threadTimer, NULL);
+void startThreadTimer() {
+	// SDL_CreateThread(threadTimer, NULL);
 }
