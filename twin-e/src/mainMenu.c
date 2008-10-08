@@ -81,10 +81,11 @@ void MainGameMenu(void) {
 					osystem_setPalette(menuPalRGBA);
 				}
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
-				do {
-					do {
-					} while (key1 != 0);
-				} while (skipIntro != 0);
+// 				do {
+// 					do {
+// 						readKeyboard();
+// 					} while (key1 != 0);
+// 				} while (skipIntro != 0);
 			}
 		} else if (temp == 21) { // Continue Game
 			if (chooseSave(21)) {
@@ -305,6 +306,8 @@ int processMenu(short int *menuData) {
 	currentButton = *(localData + 5 + currentButton * 2); // on recupere le point de sortie
 
 	readKeyboard();
+
+	SDL_Delay(100);
 
 	return (currentButton);
 }
