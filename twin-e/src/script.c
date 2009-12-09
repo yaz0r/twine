@@ -19,6 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 #include "actors.h"
 #include "images.h"
+#include "fla.h"
 
 int getCOL(actor* ptrActor) {
 	if (ptrActor->life <= 0)
@@ -610,7 +611,7 @@ void runActorScript(short int actorNumber)
 			}
 		case 64: { //LM_PLAY_FLA
 				int length = strlen((char*)actorScriptPtr);
-				PlayAnimFla((char*)actorScriptPtr);
+				playFla((char*)actorScriptPtr);
 				actorScriptPtr += length + 1;
 				break;
 			}
@@ -1189,24 +1190,22 @@ void manipActor(actor * lactor) {
 			}
 			break;
 		}
-	case 26: {
-			manipActorVar1 = 1;
-			manipActorResult = inGameMenuAnswer;
-			break;
-		}
-	case 27: {
-			manipActorResult = fuel;
-			break;
-		}
+	case 26:
+		manipActorVar1 = 1;
+		manipActorResult = inGameMenuAnswer;
+		break;
+
+	case 27:
+		manipActorResult = fuel;
+		break;
 
 	case 28:
 		manipActorResult = lactor->standOn;
 		break;
 
-	case 29: {
-			manipActorResult = 1;
-			break;
-		}
+	case 29:
+		manipActorResult = 1;
+		break;
 
 	default:
 		printf("Unhandled manipActor opcode %d\n", opcode);
@@ -1214,7 +1213,8 @@ void manipActor(actor * lactor) {
 	}
 }
 
-int doCalc(void) {
+int doCalc(void)
+{
 	unsigned char *localActorScript = actorScriptPtr;
 	unsigned char opcode;
 	int opcode2 = -1;
@@ -1223,22 +1223,22 @@ int doCalc(void) {
 
 	opcode = *(localActorScript++);
 
-	switch (manipActorVar1) {
-	case 0: {
-			opcode2 = *(localActorScript++);
-			break;
-		}
-	case 1: {
-			opcode2 = READ_LE_S16(localActorScript);
-			localActorScript += 2;
-			break;
-		}
-	default: {
-			printf("Unsupported manipActorVar1 in docalc!\n");
-			exit(1);
-		}
+	switch (manipActorVar1)
+	{
+	case 0:
+		opcode2 = *(localActorScript++);
+		break;
+	case 1:
+		opcode2 = READ_LE_S16(localActorScript);
+		localActorScript += 2;
+		break;
+	default:
+		printf("Unsupported manipActorVar1 in docalc!\n");
+		exit(1);
 	}
-	switch (opcode) {
+
+	switch (opcode)
+	{
 	case 0:
 		if (localManipActorResult == opcode2)
 			result = 1;
@@ -1271,7 +1271,6 @@ int doCalc(void) {
 	manipActorResult = localManipActorResult;
 	actorScriptPtr = localActorScript;
 
-	return (result);
-
+	return result;
 }
 

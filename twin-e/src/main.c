@@ -19,8 +19,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 #include "images.h"
+#include "fla.h"
 
-#define FASTDEBUG
+/*#define FASTDEBUG*/
 
 void initVideoStuff(void) {
 	int i, j, k;
@@ -45,27 +46,12 @@ static void init(void)
 {
 	soundInit();
 
-	printf("Initializing twin-e...\n");
-    printf("Compiled the %s at %s\n", __DATE__, __TIME__);
-
 	initVideoStuff();
 
-	useSound = 1;
-	useSB = 1;
-
-	if (useSound) {
-        printf("Sound activated\n");
-		if (useSB)
-			HQR_Midi = HQR_Init_Ressource("midi_sb.hqr",32000,2);
-		else
-			HQR_Midi = HQR_Init_Ressource("midi_mi.hqr",32000,2);
-
-		if (!HQR_Midi) {
-            printf("Error in sound");
-			useSound = 0;
-		}
-	}
-
+#ifdef USE_SDL_MIXER
+    printf("Sound activated\n");
+	HQR_Midi = HQR_Init_Ressource("midi_mi_win.hqr",32000,2);
+#endif
 
 	workVideoBuffer = malloc(307700 * sizeof(byte));
 
@@ -74,13 +60,9 @@ static void init(void)
 #endif
 
 	bufSpeak = malloc(BUF_SPEAK_SIZE);
-
 	bufMemoSeek = malloc(BUF_MEMOSEEK_SIZE);
-
 	bufText = malloc(BUF_TEXT_SIZE);
-
 	bufOrder = malloc(BUF_ORDER_SIZE);
-
 	bufAni1 = bufAni2 = malloc(BUF_ANIM_SIZE);
 
     bufCube = malloc(204800);  // 204800 = 64*64*25*2
@@ -120,7 +102,7 @@ static void init(void)
 
 	FadeToBlack((char *) paletteRGBA);
 
-	PlayAnimFla("DRAGON3");
+	playFla("DRAGON3");
 #endif
 
 	Load_HQR("ress.hqr", workVideoBuffer, 14);
@@ -138,7 +120,6 @@ static void init(void)
 int main(int argc, char *argv[])
 {
 	osystem_init(argc, argv);
-	printf("Success !\n");
 
 	initVars();
 	init();
@@ -192,7 +173,7 @@ void newGame(void)
 	osystem_flip(frontVideoBuffer);
 	playMidi(1);
 
-	PlayAnimFla("INTROD");
+	playFla("INTROD");
 #endif
 	SetBackPal();
 	Cls();

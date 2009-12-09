@@ -596,7 +596,7 @@ int loadBrk(int gridSize) {
 
 	for (i = firstBrick;i <= lastBrick;i++) {
 		if (brickUsageTable[i]) {
-			brickSizeTable[i] = Size_HQR("LBA_BRK.HQR", i);
+			brickSizeTable[i] = Size_HQR(DATADIR "LBA_BRK.HQR", i);
 			brickTable[i] = (unsigned char*)malloc(brickSizeTable[i]);
 			Load_HQR("LBA_BRK.HQR", brickTable[i], i);
 		}

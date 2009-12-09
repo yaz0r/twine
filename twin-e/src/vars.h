@@ -42,10 +42,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define NUM_MAX_FLAGS 200
 #define NUM_MAX_ZONES 100
 
-int threadTimer(void);
-void startThreadTimer(void);
-
-struct pointTab {
+typedef struct
+{
 #ifdef USE_FLOAT
 	float x;
 	float y;
@@ -55,11 +53,10 @@ struct pointTab {
 	short int y;
 	short int z;
 #endif
-};
+} pointTab;
 
-typedef struct pointTab pointTab;
-
-struct pointEntry {
+typedef struct
+{
 	short int data1;
 	short int data2;
 	short int data3;
@@ -74,17 +71,14 @@ struct pointEntry {
 	int Y;
 	int field_20;
 	short int field_24;
-} PACKED;
+} PACKED pointEntry;
 
-typedef struct pointEntry pointEntry;
-
-struct renderTabEntry {
+typedef struct
+{
 	short int depth;
 	short int renderType;
 	unsigned char *dataPtr;
-};
-
-typedef struct renderTabEntry renderTabEntry;
+} renderTabEntry;
 
 extern short int *tab1;
 extern short int *tab2;
@@ -212,16 +206,15 @@ extern int cameraVar1;
 extern int cameraVar2;
 extern int cameraVar3;
 
-struct zbufferDataStruct {
+typedef struct
+{
 	short int y;
 	short int z;
 	short int x;
 	short int drawX;
 	short int drawY;
 	short int spriteNum;
-};
-
-typedef struct zbufferDataStruct zbufferDataStruct;
+} zbufferDataStruct;
 
 struct flagDataStruct {
 	short int x;
@@ -321,48 +314,13 @@ struct drawListStruct {
 
 typedef struct drawListStruct drawListStruct;
 
-struct FLAheaderStruct {
-	char version[6];
-	int numOfFrames;
-	char speed;
-	char var1;
-	short int var2;
-	short int var3;
-};
-
-typedef struct FLAheaderStruct FLAheaderStruct;
-
-struct frameDataStruct {
-	char videoSize;
-	char dummy;
-	int frameVar0;
-};
-
-typedef struct frameDataStruct frameDataStruct;
-
-extern int numOfFrameInFLA;
-extern char flaPalette[256*3];
-extern char flaPaletteRGBA[256*4];
-extern FLAheaderStruct flaHeaderData;
 extern byte* workVideoBufferCopy;
-extern FILE* dataFileHandle;
-extern int flahVar2;
-extern int flahVar3;
-extern int flaSpeed;
-extern int samplesInFla;
-extern frameDataStruct frameData;
-extern int runFLAscriptVar0;
-extern int lastNumOfColor;
-extern int lastStartColor;
-extern char flaBuffer[320*200];
 
 #ifdef PCLIKE
 extern SDL_CD* cdrom;
 #endif
 
 extern short int key;
-extern uint16 useSound;
-extern byte useSB;
 extern hqr_entry* HQR_Midi;
 extern uint32 unkPtr;   // recheck
 extern uint32 cfg_file;
@@ -847,8 +805,6 @@ extern short int objectRotation[255];
 extern char inventorySelectedColor;
 extern char currentSelectedObjectInInventory;
 
-// order important !
-
 extern int reinitVar1;
 extern int reinitVar2;
 extern int reinitVar12;
@@ -895,11 +851,6 @@ void IncrustGrm(int gridNumber);
 int WorldColBrickFull(int var0, int var1, int var2, int var3);
 
 void processInGameMenu(int index);
-
-void DrawFrame(char* ptr, int width, int height);
-void UpdateFrame(char* ptr, int width);
-int InitFla(char* file);
-void DrawNextFrameFla();
 
 int BoundRegleTrois(int var0, int var1, int var2, int var3);
 void CheckZoneSce(actor * lactor, int actorNumber);
@@ -1209,8 +1160,6 @@ void AdelineLogo(void);
 void initVars(void);
 
 void MainGameMenu(void);
-
-void PlayAnimFla(char *flaName);
 
 void DrawCadre(int left, int top, int right, int bottom);
 

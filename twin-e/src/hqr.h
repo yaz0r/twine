@@ -24,7 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <string.h>
 
 typedef struct hqr_entry_s {
-	char fileName[12];
+	char fileName[20];
 	char preloadedResource;
 
 	/* non preloaded data */

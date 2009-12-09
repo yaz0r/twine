@@ -99,17 +99,14 @@ FILE * ifopen(const char * path, const char * mode) {
 
 boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal)
 {
-	char fullPath[MAX_PATH];
-	snprintf(fullPath, sizeof(fullPath) - 1, DATADIR "%s", fileName);
-	fullPath[sizeof(fullPath) - 1] = '\0';
 #ifndef DREAMCAST
 #ifdef USE_IFOPEN
-	pThis->fileHandle = ifopen(fullPath, "rb");
+	pThis->fileHandle = ifopen(fileName, "rb");
 #else
-	pThis->fileHandle = fopen(fullPath, "rb");
+	pThis->fileHandle = fopen(fileName, "rb");
 #endif
 #else
-	pThis->fileHandle = gdFsOpen(fullPath, NULL);
+	pThis->fileHandle = gdFsOpen(fileName, NULL);
 #endif
 
 	if (pThis->fileHandle)
@@ -121,7 +118,7 @@ boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal)
     else
     {
 		if (fatal) {
-			printf("FATAL: Can't find %s\n", fullPath);
+			printf("FATAL: Can't find %s\n", fileName);
 			exit(-1);
 		}
 		return false;
@@ -172,14 +169,6 @@ void streamReader_seek(streamReader* pThis, uint32 seekPosition) {
 	uint32 sectorToSeek;
 
 	sectorToSeek = seekPosition / 2048;
-
-	/*  if((sectorToSeek >= pThis->currentSector) && (sectorToSeek < pThis->currentSector + NUM_SECTOR_IN_BUFFER ))// already at the good sector
-	  {
-	    pThis->positionInBuffer = (seekPosition - (sectorToSeek*2048));
-	  }
-	  else
-	  {
-	  } */
 
 #ifndef DREAMCAST
 	fseek(pThis->fileHandle, sectorToSeek * 2048, SEEK_SET);

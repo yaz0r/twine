@@ -32,7 +32,7 @@ void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
 	char filename[MAX_PATH];
 	Mix_Chunk * sample;
 
-	sample = Mix_LoadWAV_RW(SDL_RWFromMem(HQR_Get(HQR_Samples,sampleNum), Size_HQR("SAMPLES.HQR", sampleNum)), 0);
+	sample = Mix_LoadWAV_RW(SDL_RWFromMem(HQR_Get(HQR_Samples,sampleNum), Size_HQR(DATADIR "SAMPLES.HQR", sampleNum)), 0);
 
 	if (sample == NULL)
 		printf("Mix_LoadWAV(\"%s\"): %s\n", filename, Mix_GetError());
@@ -66,8 +66,8 @@ void playMidi(int musicNum) {
 	char filename[MAX_PATH];
 	FILE* fhandle;
 
-	if (sample != NULL)
-		Mix_FreeMusic(sample);
+	/*if (sample != NULL)
+		Mix_FreeMusic(sample);*/
 
 	if (musicNum == 9)
 		return;

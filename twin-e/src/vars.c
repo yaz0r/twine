@@ -121,35 +121,18 @@ int textWindowBottomSave;
 
 unsigned char *_partsPtr2;
 
-int numOfFrameInFLA;
-char flaPalette[256*3];
-char flaPaletteRGBA[256*4];
-FLAheaderStruct flaHeaderData;
 byte* workVideoBufferCopy;
-FILE* dataFileHandle;
-int flahVar2;
-int flahVar3;
-int flaSpeed;
-int samplesInFla;
-frameDataStruct frameData;
-int runFLAscriptVar0;
-int lastNumOfColor;
-int lastStartColor;
-char flaBuffer[320*200];
 
 #ifdef PCLIKE
 SDL_CD* cdrom;
 #endif //PCLIKE
 
 short int key;
-uint16 useSound;
-byte useSB;
 hqr_entry* HQR_Midi;
 uint32 unkPtr;    // recheck
 uint32 cfg_file;
 
 byte *workVideoBuffer;
-//    byte *frontVideoBuffer;
 byte *frontVideoBufferbis;
 
 byte *videoPtr1;
@@ -706,8 +689,6 @@ byte fkeys;
 boolean breakmainLoop;
 
 void initVars(void) {
-	useSound = 0;
-	useSB = 1;
 	HQR_Midi = 0;
 	unkPtr = 0;     // recheck
 

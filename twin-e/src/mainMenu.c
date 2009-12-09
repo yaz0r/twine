@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "images.h"
+#include "fla.h"
 #include "lba.h"
 
 void rungame(void)
@@ -37,7 +38,7 @@ void rungame(void)
 
     Cls();
     osystem_flip(frontVideoBuffer);
-    PlayAnimFla("The_end");
+    playFla("The_end");
     Cls();
     osystem_flip(frontVideoBuffer);
     osystem_setPalette(menuPalRGBA);
