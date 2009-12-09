@@ -18,21 +18,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-int lastFireTime = 0;
-
 void makeFireEffect(int top, int param) {
 	unsigned char *temp;
 	unsigned char *out;
 	int i, j;
-	unsigned char temp3;
+	unsigned char temp3 = 0;
 	unsigned char bh, bl;
-
-	/*while(lastFireTime==time) // loop to wait next frame
-	{
-	      osystem_delay(5);
-	};*/
-
-	lastFireTime = lba_time;
 
 	makeFireEffectInit();
 

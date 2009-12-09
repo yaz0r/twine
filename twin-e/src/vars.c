@@ -39,27 +39,13 @@ short int *tab1;
 short int *tab2;
 short int *tab3;
 
-int _angleX;
-int _angleY;
-int _angleZ;
-
-int _cameraAngleX;
-int _cameraAngleY;
-int _cameraAngleZ;
-
 int renderLeft;
 int renderRight;
 int renderTop;
 int renderBottom;
 
-int _X;
-int _Y;
-int _Z;
-
 short int polyTab[960];
 short int polyTab2[960];
-
-int _numOfPrimitives;
 
 int isUsingOrhoProjection;
 
@@ -72,7 +58,6 @@ int setSomethingVar2;
 short int setSomethingVar3;
 
 unsigned char *frontVideoBuffer;
-//OSystem *osystem;
 
 int _baseMatrix[3 * 3];
 
@@ -99,11 +84,6 @@ renderTabEntry *renderTabSortedPtr;
 renderTabEntry renderTab[1000];
 renderTabEntry renderTabSorted[1000];
 unsigned char renderTab7[10000];
-
-/*int renderBottom;
-int renderLeft;
-int renderRight;
-int renderTop; */
 
 int renderLoop;
 
@@ -141,11 +121,6 @@ int textWindowBottomSave;
 
 unsigned char *_partsPtr2;
 
-//debugger _debugger;
-
-int useFlaPCX;
-int flaTime;
-short int flaVar2;
 int numOfFrameInFLA;
 char flaPalette[256*3];
 char flaPaletteRGBA[256*4];
@@ -262,15 +237,6 @@ char mainMenu3Var3[256];
 FILE *voxFileHandle;
 int printTextVar5;
 
-/*    int textWindowTop;
-int textWindowLeftSave;
-int textWindowLeft;
-int textWindowTopSave;
-int textWindowRight;
-int textWindowRightSave;
-int textWindowBottom;
-int textWindowBottomSave;*/
-
 int dialogueBoxLeft;
 int dialogueBoxTop;
 int dialogueBoxRight;
@@ -360,8 +326,7 @@ short int subMenuData[] = {
 	8,
 	33,
 };
-
-/////////////////////////////////////////////
+////////////////////////////////////////
 
 char needChangeRoom;
 short int chapter;
@@ -369,12 +334,10 @@ short int newGameVar4;
 
 int newGameVar5;
 
-int screenLockupTable[2000];  // valeur temporaire...
+int screenLockupTable[2000];  /* TODO: temporary ? */
 
 int initVideoVar1;
 
-// int reinitVar1;
-// int progressiveTextStartColor;
 short int newTwinsenX;
 short int newTwinsenZ;
 short int newTwinsenY;
@@ -408,17 +371,8 @@ int stringLenght;
 short int useAlternatePalette;
 short int drawInGameTransBox;
 
-// SDL_CD *cdrom;
-
-// short int isUsingOrhoProjection;
-
-// int setSomething2Var1;
-// int setSomething2Var2;
-// int setSomething2Var3;
-
 char buf1[256];
-
-char buf2[256];   // check size
+char buf2[256]; /* TODO: check size */
 
 char *printText8Ptr1;
 char *printText8Ptr2;
@@ -449,8 +403,6 @@ char enterPlayerNameVar1;
 
 char allowedCharIndex[71];
 
-short int currentKey;
-
 short int enterPlayerNameVar2;
 
 int addLineBreakX;
@@ -462,38 +414,6 @@ int wordSizePixel;
 char spaceChar;
 short int talkingActor;
 
-/*
-* short int backInitVar3; short int backDialogueBoxRight; short int backDialogueBoxBottom;
-* short int back2InitVar3; short int back2DialogueBoxRight; short int back2DialogueBoxBottom;
-* short int backInitVar2;
-*
-* short int back3DialogueBoxRight;
-*/
-
-
-
-//    short int FillVertic_AType;
-
-//    short int vertexCoordinates[193];
-
-//    short int pRenderV3[96];
-//    short int *pRenderV1;
-//    short int *pRenderV2;
-//    short int numOfVertexRemaining;
-//    short int polyCropped;
-
-/*    short int vleft;
-short int vtop;
-short int vright;
-short int vbottom;
-
-unsigned char oldVertexParam;
-unsigned char vertexParam1;
-unsigned char vertexParam2;*/
-
-//    short int numOfVertex;
-// short int back3DialogueBoxBottom;
-
 short int pt8s4var1[96];
 short int *pt8s4var2;
 short int *pt8s4var3;
@@ -503,11 +423,7 @@ short int *pt8s4var6;
 
 int printText8PrepareBufferVar3;
 
-/*    short int *tab1;
-short int *tab2;
-short int *tab3; */
-
-actor actors[100];    // yeah, can use up to 100 actor !
+actor actors[100];
 actor *twinsen;
 
 short int holomapTraj;
@@ -523,7 +439,7 @@ short int newTwinsenYByZone;
 
 short int twinsenZBeforeFall;
 
-timeStruct mainLoopVar1;
+time mainLoopVar1;
 short int mainLoopVar4;
 short int disableScreenRecenter;
 
@@ -553,17 +469,9 @@ int currentPositionInBodyPtrTab;
 short int numOfZones;
 short int numFlags;
 
-byte *file3D0;
-byte *file3D1;
-byte *file3D2;
-byte *file3D3;
-byte *file3D4;
+byte *file3D[5];
 
-short int TCos0Init;
-short int TCos1Init;
-short int TCos2Init;
-short int TCos3Init;
-short int TCos4Init;
+short int TCos[5];
 
 unsigned char *loadTwinsenCostumesVar1;
 
@@ -583,7 +491,6 @@ short int sceneVar15;
 short int newTwinsenXByScene;
 short int newTwinsenYByScene;
 short int newTwinsenZByScene;
-//flagDataStruct *flagData;
 flagDataStruct flagData[NUM_MAX_FLAGS];
 ZONE_Box zoneData[NUM_MAX_ZONES];
 
@@ -661,7 +568,7 @@ drawListStruct drawList[150];
 unsigned char *menuCostumeIndex;
 short int TCOS[4];
 
-timeStruct timeVar;
+time timeVar;
 
 short int winTab[4];
 
@@ -676,15 +583,7 @@ int renderV11;
 int renderV10;
 
 short int numOfPrimitives;
-//    renderTabEntry *renderTabEntryPtr;
-//    renderTabEntry *renderTabEntryPtr2;
-//  renderTabEntry *renderTabSortedPtr;
 unsigned short int costumeHeader;
-
-//    renderTabEntry renderTab[1000];
-//    renderTabEntry renderTabSorted[1000];
-//    short int polyTab[960];
-//    short int polyTab2[960];
 
 short int numOfPri1;
 unsigned char *pri1Ptr;
@@ -695,12 +594,8 @@ unsigned char *pri2Ptr;
 int renderTab2[271];
 int *renderTab3;
 
-//    unsigned char *renderV19;
-
 pointTab renderTab5[800];
 pointTab renderTab6[800];
-//    short int shadeTable[500];
-
 int *renderV21;
 
 int rs1v1;
@@ -709,17 +604,11 @@ int rs1v2;
 short int rs1s2v1;
 unsigned char *rs1s2v2;
 
-//    short int primitiveCounter;
-
-//    unsigned char renderTab7[10000];
-
 unsigned char *render23;
 
 short int render25;
 
 unsigned char *render24;
-
-//    int renderLoop;
 
 int action;
 
@@ -777,11 +666,6 @@ short int animVar4;
 
 int drawVar1;
 
-//    int renderLeft;
-//  int renderRight;
-//  int renderTop;
-//  int renderBottom;
-
 int currentActorInZoneProcess;
 
 short int twinsenKey;
@@ -814,9 +698,6 @@ int reinitVar12;
 int renderV22;
 int renderV23;
 int renderV24;
-/*    int destX;
-int destZ;
-int destY; */
 
 int bufRotate0[9];
 int bufRotate1[9];
@@ -898,7 +779,7 @@ void initVars(void) {
 
 	buttonDrawVar1 = 550;
 
-#ifdef LANG_FRENSH
+#ifdef LANG_FRENCH
 	language = 1;
 #elif defined LANG_GERMAN
 	language = 2;
@@ -924,11 +805,6 @@ void initVars(void) {
 	setSomethingVar2 = 200;
 	setSomethingVar3 = 500;
 	isUsingOrhoProjection = 0;
-	isUsingOrhoProjection = 0;
-
-	// setSomething2Var1=0;
-	// setSomething2Var2=0;
-	// setSomething2Var3=0;
 
 	dialogueBoxParam1 = 3;
 	dialogueBoxParam2 = 591;
@@ -1016,11 +892,6 @@ void initVars(void) {
 	spaceChar = ' ';
 
 	vertexCoordinates[0] = 0x1234;
-	/*
-	* backDialogueBoxRight=0; backDialogueBoxBottom=0; back2InitVar3=0; back2DialogueBoxRight=0;
-	* back2DialogueBoxBottom=0; backInitVar2=0; backUnk1=0; back3DialogueBoxRight=0; backUnk2=0;
-	* back3DialogueBoxBottom=0;
-	*/
 
 	pt8s4var2 = pt8s4var1 + 1;
 	pt8s4var3 = pt8s4var1 + 2;
@@ -1074,18 +945,17 @@ void initVars(void) {
 	numOfZones = 0;
 	numFlags = 0;
 
-	file3D0 = NULL;
-	file3D1 = NULL;
+	file3D[0] = NULL;
+	file3D[1] = NULL;
+	file3D[2] = NULL;
+	file3D[3] = NULL;
+	file3D[4] = NULL;
 
-	file3D2 = NULL;
-	file3D3 = NULL;
-	file3D4 = NULL;
-
-	TCos0Init = 0;
-	TCos1Init = 0;
-	TCos2Init = 0;
-	TCos3Init = 0;
-	TCos4Init = 0;
+	TCos[0] = 0;
+	TCos[1] = 0;
+	TCos[2] = 0;
+	TCos[3] = 0;
+	TCos[4] = 0;
 
 	fireEffectVar1 = NULL;
 	fireEffectVar2 = NULL;
@@ -1209,24 +1079,16 @@ void initVars(void) {
 
 	action = 0;
 
-	useFlaPCX = 1;
-	flaVar2 = 1;
-
 	showTalkVar = 1;
 
 	magicBallNumBounce = 1;
 	magicBallParam = 1;
 
-	// ADDED
 	fkeys = 0;
 	breakmainLoop = false;
 }
 
 void CoulFont(int i) {
-	setTextColorSub(i);
-}
-
-void setTextColorSub(int i) {
 	textColor = i;
 }
 

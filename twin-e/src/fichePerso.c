@@ -30,34 +30,33 @@ int getAnimIndexForBody(byte anim, short int actorNumber) {
 	act = &actors[actorNumber];
 	bodyPtr = act->entityDataPtr;
 
-	do {
+	for (;;)
+    {
 		type = *(bodyPtr++);
 
 		if (type == -1) {
 			loadTwinsenCostumesVar1 = NULL;
-			return (-1);
+			return -1;
 		}
 
 		ptr = (bodyPtr + 1);
 
-		if (type == 3) {
-			if (anim == *bodyPtr) {
-				ptr++;
-				var1 = READ_LE_S16(ptr);
-				ptr += 2;
-				ptr2 = ptr;
-				ptr++;
-				if (*ptr2 != 0) {
-					costumePtr = ptr - 1;
-				}
-				loadTwinsenCostumesVar1 = costumePtr;
-				return (var1);
-			}
+		if (type == 3 && anim == *bodyPtr)
+        {
+			ptr++;
+			var1 = READ_LE_S16(ptr);
+			ptr += 2;
+			ptr2 = ptr;
+			ptr++;
+			if (*ptr2 != 0)
+				costumePtr = ptr - 1;
+			loadTwinsenCostumesVar1 = costumePtr;
+			return var1;
 		}
 
 		bodyPtr = *ptr + ptr;
 
-	} while (1);
+	}
 
-	return (0);
+	return 0;
 }

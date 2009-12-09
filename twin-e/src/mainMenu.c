@@ -16,104 +16,73 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "images.h"
 #include "lba.h"
 
-short int var4 = 0;
+void rungame(void)
+{
+    int shadowtemp, langtemp;
+    shadowtemp = shadowMode;
+    langtemp = languageCD1;
+    languageCD1 = 0;
+    shadowMode = 0;
+    reinitAll(1);
+    currentRoom = 119;
+    needChangeRoom = 119;
+    mainLoop();
+    gameStaffIsDisplayed = 0;
+                   
+    languageCD1 = langtemp;
+    shadowMode = shadowtemp;
+
+    Cls();
+    osystem_flip(frontVideoBuffer);
+    PlayAnimFla("The_end");
+    Cls();
+    osystem_flip(frontVideoBuffer);
+    osystem_setPalette(menuPalRGBA);
+}
 
 void MainGameMenu(void) {
-//    short int var4; // disabled to be able to quit the game without problems
-	int temp;
-	int temp2;
-	int temp3;
-
-	// FILE* SaveGame;
+	int nmenu;
+    int cont = 1;
 
 	HQ_StopSample();
-//    var4 = 0; // disabled to be able to quit the game without problems
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
 
-	if (var4 != 0)
-		return;
-
-	do {
+	while (cont)
+    {
 		InitDial(0);
 		playCDtrack(9);
 		HQ_StopSample();
 		GetMultiText(49, mainMenuVar1);
-		temp = processMenu(mainMenuData);
+		nmenu = processMenu(mainMenuData);
+        SDL_Delay(100);
 
-		if (temp == 20) // New Game
-			//  if( 1)
-		{
-			if (enterPlayerName(42)) {
-				/*
-				 * do // Cette boucle essai des noms de fichiers jusqu'a trouver un nom de fichier
-				 * vide. Probleme si on a plus de 9999 sauvegarde dans le meme repertoire {
-				 * saveGameFileName[0]=mainMenuVar3; saveGameFileName[1]=0; // pas dans le code
-				 * original.. // random pour avoir un num entre 0000 et 9999
-				 * strcat(saveGameFileName,mainMenu7(10000*rand()));
-				 * strcat(saveGameFileName,".LBA"); SaveGame=checkIfFileExist(saveGameFileName);
-				 * }while(!SaveGame);
-				 */
+        switch(nmenu)
+        {
+        case 20: /* new game */
+			if (enterPlayerName(42))
+            {
 				reinitAll(1);
 				newGame();
-				if (mainLoop()) {
-					gameStaffIsDisplayed = 1;
 
-					temp2 = shadowMode;
-					temp3 = languageCD1;
-					languageCD1 = 0;
-					shadowMode = 0;
-					reinitAll(1);
-					currentRoom = 119;
-					needChangeRoom = 119;
-					mainLoop();
-					gameStaffIsDisplayed = 0;
+				if (mainLoop())
+                    rungame();
 
-					languageCD1 = temp3;
-					shadowMode = temp2;
-
-					Cls();
-					osystem_Flip(frontVideoBuffer);
-					PlayAnimFla("The_end");
-					Cls();
-					osystem_Flip(frontVideoBuffer);
-					osystem_setPalette(menuPalRGBA);
-				}
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
-// 				do {
-// 					do {
-// 						readKeyboard();
-// 					} while (key1 != 0);
-// 				} while (skipIntro != 0);
 			}
-		} else if (temp == 21) { // Continue Game
-			if (chooseSave(21)) {
+            break;
+
+        case 21: /* continue game */
+			if (chooseSave(21))
+            {
 				reinitAll(-1);
 				newGame();
-				if (mainLoop()) {
-					gameStaffIsDisplayed = 1;
 
-					temp2 = shadowMode;
-					temp3 = languageCD1;
-					languageCD1 = 0;
-					shadowMode = 0;
-					reinitAll(1);
-					currentRoom = 119;
-					needChangeRoom = 119;
-					mainLoop();
-					gameStaffIsDisplayed = 0;
+				if (mainLoop())
+                    rungame();
 
-					languageCD1 = temp3;
-					shadowMode = temp2;
-					Cls();
-					osystem_Flip(frontVideoBuffer);
-					PlayAnimFla("The_end");
-
-					Cls();
-					osystem_Flip(frontVideoBuffer);
-					osystem_setPalette(menuPalRGBA);
-				}
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
 				do {
 					do {
@@ -121,33 +90,38 @@ void MainGameMenu(void) {
 					} while (key1 != 0);
 				} while (skipIntro != 0);
 			}
-		} else if (temp == 22) { // Quit
+            break;
+
+        case 22: /* quit */
 			printf("\nLBA/Relentless TwinEngine < %s / %s >\n\nOK.\n", __DATE__, __TIME__);
-			var4 = 1;
-			//	breakmainLoop =  true;
-		} else if (temp == 23) { // Options
+            cont = 0;
+            break;
+
+        case 23: /* options */
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_Flip(frontVideoBuffer);
+			osystem_flip(frontVideoBuffer);
 			soundMenuData[5] = 26;
 			optionMenu();
-		} else if (temp == 9999) {
-			// playSubVideo();
+            break;
 
+        case 9999: /* ?? */
 			Load_HQR("ress.hqr", workVideoBuffer, 14);
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
 
 			SetBackPal();
-			osystem_Flip(frontVideoBuffer);
+			osystem_flip(frontVideoBuffer);
 			FadeToPal((char *) menuPalRGBA);
-		}
-	} while (!var4); // once var4 is set it will imediatly quit the game
+            break;
+        }
+    }
 }
 
 void HQ_StopSample(void) {
 	// todo: implement this
 }
 
-int chooseSave(int param) {
+int chooseSave(/*int param*/)
+{
 	FILE* fHandle;
 
 	fHandle = fopen("SAVE.LBA", "rb");
@@ -161,7 +135,7 @@ int chooseSave(int param) {
 	  var_0C = 50;
 
 	  CopyScreen(workVideoBuffer, frontVideoBuffer);
-	  osystem_Flip(frontVideoBuffer);
+	  osystem_flip(frontVideoBuffer);
 	  var_24 = alloc(1500);
 	  var_28 = alloc(200);
 
@@ -287,7 +261,6 @@ int processMenu(short int *menuData) {
 			do {
 				readKeyboard();
 				drawButton(localData, 1);
-				osystem_updateImage();
 			} while (printTextVar12 == 0 && key1 == 0 && skipIntro == 0);
 			buttonNeedRedraw = 0;
 		} else {
@@ -300,7 +273,6 @@ int processMenu(short int *menuData) {
 			readKeyboard();
 		}
 
-		osystem_updateImage();
 	} while (!(key1 & 2) && !(key1 & 1));
 
 	currentButton = *(localData + 5 + currentButton * 2); // on recupere le point de sortie
@@ -357,7 +329,7 @@ void drawSelectableLetter(int x, int y, int arg) {
 
 	Font(centerX - SizeFont(buffer) / 2, centerY - 18, buffer);
 
-	osystem_CopyBlockPhys(frontVideoBuffer, left, top, right2, bottom);
+	osystem_copyBlockPhys(left, top, right2, bottom);
 
 }
 
@@ -373,56 +345,45 @@ int enterPlayerName(short int param) {
 	c = 0;
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 	InitDial(0);
 	GetMultiText(param, buffer);
 	CoulFont(15);
 	Font(320 - (SizeFont(buffer) / 2), 20, buffer);
-	osystem_CopyBlockPhys(frontVideoBuffer, 0, 0, 639, 99);
+	osystem_copyBlockPhys(0, 0, 639, 99);
 	playerName[0] = enterPlayerNameVar1;
 	// drawSmallButton(320,100,playerName,1);
 	drawSelectableLetters();
 
-	/* do
-	{
-	   readKeyboard();
-	}
-	 while (skipIntro == 0 && key1 == 0);
-
-	 do
-	{
-	   key = (char) getKeyboardChar();
-	}
-	 while (!key);*/
-
-	// todo: implement this
+	// TODO: implement this
 
 	enterPlayerNameVar2 = 0;
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 
 	return (1);
 
 	return (c);
 }
 
-char *Itoa(int valeur) {
-	// toto: implement this
-	char *text;
+char* itoa(int nb) {
+    int i, j;
+    j = nb;
+    while (j >= 10) {
+        j /= 10;
+        i++;
+    }
 
-	text = Malloc(256);
-	sprintf(text, "%d", valeur);
-
-	return (text);
-	// return("test");
+	char* text = malloc(sizeof(char) * i);
+	sprintf(text, "%d", nb);
+	return text;
 }
 
 void drawButton(short int *data, int a) {
 	int buttonNumber;
 	int maxButton;
 
-	// int var4;
-	unsigned short int *localData = data;
+	unsigned short int *localData = (unsigned short int*)data;
 	int temp;
 	unsigned char temp2;
 	unsigned short temp3;
@@ -540,9 +501,9 @@ void drawButtonGFX(int largeur, int posY, int c, int d, int mode) {
 	stringLength = SizeFont(buttonText);
 	Font(largeur - (stringLength / 2), posY - 18, buttonText);
 
-	// todo: implementer les boutons de volume...
+	// TODO: implement volume buttons
 
-	osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+	osystem_copyBlockPhys(left, top, right, bottom);
 
 }
 
@@ -656,220 +617,25 @@ void LineLBA(int a, int b, int c, int d, int e) {
 	drawLine(a, b, c, d, e);
 }
 
-// a=x1
-// b=y1
-// c=x2
-// d=y2;
-/*void drawLine(int X1, int Y1, int X2, int Y2, int color)
-{
-    int temp;
-    short int flag;
-    int flag2;
-    unsigned char *out;
-    short int var2;
-    short int xchg;
-
-    osystem_drawLine(X1,Y1,X2,Y2,color,palette);
-    return;
-
-    currentLineColor = color;
-
-    if (X1 > X2)      // pour toujours dessiner de gauche à droite
-  {
-      temp = X2;
-      X2 = X1;
-      X1 = temp;
-
-      temp = Y2;
-      Y2 = Y1;
-      Y1 = temp;
-
-  }
-
-    do
-    {
-        flag = 0;
-
-        if (X1 < textWindowLeft)
-      {
-          flag |= 1;
-      }
-        else
-      {
-          if (X1 > textWindowRight)
-        return; // line completly out of screen
-      }
-        if (Y1 < textWindowTop)
-      {
-          flag |= 8;
-      }
-        else
-      {
-          if (Y1 > textWindowBottom)
-        flag |= 4;
-      }
-
-        flag <<= 8;
-
-        if (X2 < textWindowLeft)
-      return; // line out of screen
-
-        if (X2 > textWindowRight)
-      flag |= 2;
-
-        if (Y2 < textWindowTop)
-      {
-          flag |= 8;
-      }
-        else
-      {
-          if (Y2 > textWindowBottom)
-        flag |= 4;
-      }
-
-        flag2 = flag >> 8;
-
-        if (flag & flag2)
-      return;
-
-        flag2 |= flag;
-
-        if(flag2)
-        {
-            int step1=Y1-X1;
-            int step2=Y2-X2;
-
-            if(flag & 0x100) // crop left
-            {
-                return;
-                X1=-(X1-textWindowLeft);
-                X1*=step2;
-                X1/=step1;
-                X2+=X1;
-                X1=textWindowLeft;
-            }
-            else
-            if(flag & 0x800)
-            {
-                return;
-            }
-            else
-            if(flag & 0x400)
-            {
-                return;
-            }
-            else
-            if(flag & 0x2) // crop right
-            {
-                Y1=X1;
-                X1=textWindowRight;
-                X1-=Y1;
-                X1*=step2;
-                X1/=step1;
-                Y2=X1;
-                Y2+=X2;
-                X1=Y1;
-                Y1=textWindowRight;
-            }
-            else
-            if(flag & 0x8)
-            {
-                return;
-            }
-            else
-            if(flag & 0x4)
-            {
-                return;
-            }
-        }
-        else
-        {
-            break;
-        }
-    }
-    while(1);
-
-   // implementer la suite
-
-    flag2 = 640;    // esi
-    X2 -= X1;
-    Y2 -= Y1;
-    if (Y2 < 0)
-  {
-      flag2 = -flag2;
-      Y2 = -Y2;
-  }
-
-    out = frontVideoBuffer + screenLockupTable[Y1] + X1;
-
-    if (X2 < Y2)      // pente importante
-  {
-      xchg = X2;
-      X2 = Y2;
-      Y2 = xchg;
-      var2 = X2;
-      var2 <<= 1;
-      Y1 = X2;
-      Y2 <<= 1;
-      X1++;
-      do
-    {
-        *out = (unsigned char) color;
-        Y1 -= Y2;
-        if (Y1 > 0)
-      {
-          out += flag2;
-      }
-        else
-      {
-          Y1 += var2;
-          out += flag2 + 1;
-      }
-    }
-      while (--X2);
-  }
-    else      // pente reduite
-  {
-      var2 = X2;
-      var2 <<= 1;
-      Y1 = X2;
-      Y2 <<= 1;
-      X1++;
-      do
-    {
-        *out = (unsigned char) color;
-        out++;
-        Y1 -= Y2;
-        if (Y1 < 0)
-      {
-          Y1 += var2;
-          out += flag2;
-      }
-    }
-      while (--X2);
-  }
-}*/
-
 int SizeFont(char *string) {
 	unsigned char caractere;
 	stringLenght = 0;
 
-	do {
+	for (;;)
+    {
 		caractere = (unsigned char) * (string++);
 
 		if (caractere == 0)
 			break;
-		if (caractere == 0x20) {
+        else if (caractere == 0x20)
 			stringLenght += spaceLenght;
-		}
-
 		else {
-			stringLenght += interCharSpace; // espace inter lettre
+			stringLenght += interCharSpace; // space inter-letters
 			stringLenght += *(fntFont + convertWFromLE(*((short int *)(fntFont + caractere * 4))));
 		}
-	} while (1);
+	}
 
-	return (stringLenght);
+	return stringLenght;
 }
 
 void copyStringToString(char *a, char *b, int c) {
@@ -880,7 +646,7 @@ void copyStringToString(char *a, char *b, int c) {
 }
 
 int optionMenu(void) { // Options menu
-	byte temp;
+    byte temp;
 	byte temp2 = 0;
 
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
@@ -895,76 +661,82 @@ int optionMenu(void) { // Options menu
 			temp2 = 1;
 		} else if (temp == 30) { // Volume Settings
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_Flip(frontVideoBuffer);
+			osystem_flip(frontVideoBuffer);
 			// volumeMenu();
 		} else if (temp == 46) { // Saved Gamee Management
 
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_Flip(frontVideoBuffer);
+			osystem_flip(frontVideoBuffer);
 			// saveManipMenu();
 
 		} else if (temp == 47) { // Advenced Options
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_Flip(frontVideoBuffer);
+			osystem_flip(frontVideoBuffer);
 			optionMenu2();
 		}
 	} while (temp2 != 1);
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 
 	return (0);
 }
 
 void optionMenu2(void) { // Advanced Options
-	byte temp;
 	byte quit = 0;
 
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
+    
+    while (!quit)
+    {
+        switch (processMenu(subMenuData))
+        {
+            case 33: // No Scenery Zoom
+                subMenuData[13] = 233;
+                // zoomMode = 0;
+                break;
+            case 231:
+                subMenuData[9] = 31;
+                break;
+            case 232: // Shadows for all animated objects
+    			subMenuData[11] = 32;
+    			shadowMode = 2;
+                break;
+            case 233: // Scenery Zoom On
+    			subMenuData[13] = 33;
+    			// zoomMode = 1;
+                break;
+            case 131:
+    			subMenuData[9] = 231;
+                break;
+            case 132: // No Shadows
+    			subMenuData[11] = 232;
+    			shadowMode = 0;
+                break;
+            case 26: // Back to previous menu
+                quit = 1;
+                break;
+            case 31:
+    			subMenuData[9] = 131;
+                break;
+            case 32: // Character shadows
+    			subMenuData[11] = 132;
+    			shadowMode = 1;
+                break;
+            case 2: // Agressive Manual
+    			subMenuData[7] = 4;
+    			autoAgressivity = 0;
+                break;
+            case 4: // Agressize Auto
+    			subMenuData[7] = 2;
+    			autoAgressivity = 1;
+                break;
+    	}
+    }
 
-	do {
-		temp = processMenu(subMenuData);
-
-		if (temp == 33) { // No Scenery Zoom
-			subMenuData[13] = 233;
-			//  zoomMode=0;
-		} else if (temp == 231) {
-			subMenuData[9] = 31;
-		} else if (temp == 232) { // Shadows for all animated objects
-			subMenuData[11] = 32;
-			shadowMode = 2;
-		} else if (temp == 233) { // Scenery Zoom On
-			subMenuData[13] = 33;
-			//  zoomMode=1;
-		} else if (temp == 131) {
-			subMenuData[9] = 231;
-		} else if (temp == 132) { // No Shadows
-			subMenuData[11] = 232;
-			shadowMode = 0;
-		} else if (temp == 26) { // Back to previous menu
-			quit = 1;
-
-		} else if (temp == 31) {
-			subMenuData[9] = 131;
-		} else if (temp == 32) { // Character shadows
-			subMenuData[11] = 132;
-			shadowMode = 1;
-		} else if (temp == 2) { // Aggressive Manual
-			subMenuData[7] = 4;
-			autoAgressivity = 0;
-		} else if (temp == 4) { // Aggressive Auto
-			subMenuData[7] = 2;
-			autoAgressivity = 1;
-		}
-
-	} while (!quit);
-
-	// todo: implementer le process interne
+	// todo: implement internal process
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 }
 
-/*void abort(void)
-{
-}*/

@@ -16,35 +16,28 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-struct MDL_BoundingBoxPoint {
+#ifndef COSTUME_H
+#define COSTUME_H
+
+typedef struct {
 	short int bottomLeft;
 	short int topRight;
-};
+} MDL_BoundingBoxPoint;
 
-typedef struct MDL_BoundingBoxPoint MDL_BoundingBoxPoint;
-
-struct MDL_BoundingBox {
+typedef struct
+{
 	MDL_BoundingBoxPoint X;
 	MDL_BoundingBoxPoint Y;
 	MDL_BoundingBoxPoint Z;
-};
+} MDL_BoundingBox;
 
-typedef struct MDL_BoundingBox MDL_BoundingBox;
-
-struct animTimerDataStruct {
+typedef struct {
 	char* ptr;
 	int time;
-};
+} animTimerData;
 
-typedef struct animTimerDataStruct animTimerDataStruct;
-
-struct actor {
-#ifdef TXT_SCRIPTS
-	char name[256];
-	int modelNumber;
-	int timeDelay;
-	int faceTwinkenVar;
-#endif
+typedef struct
+{
 	int body;
 	int anim;
 	int field_2;
@@ -69,7 +62,7 @@ struct actor {
 
 	int angle;	// rotation ?
 	int speed;
-	timeStruct time;
+	time time;
 	int comportement;
 	int positionInMoveScript;
 	int positionInActorScript;
@@ -140,8 +133,8 @@ struct actor {
 	unsigned char *moveScript;
 	unsigned char *actorScript;
 
-	animTimerDataStruct animTimerData; // new
-};
+	animTimerData animTimerData; // new
+} actor;
 
-typedef struct actor actor;
+#endif
 

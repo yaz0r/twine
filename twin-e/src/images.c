@@ -16,11 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "images.h"
 #include "lba.h"
-/*
-#include <sn_fcntl.h>
-#include <usrsnasm.h>
-*/
+
 void AdelineLogo(void) {
 	playMidi(31);
 	Load_HQR("ress.hqr", workVideoBuffer, 27);
@@ -28,16 +26,11 @@ void AdelineLogo(void) {
 	Load_HQR("ress.hqr", palette, 28);
 	convertPalToRGBA(palette, paletteRGBA);
 	blackToWhite();
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 	fadeIn(paletteRGBA);
 #ifdef PCLIKE
 	SDL_Delay(6000);
 #endif
-}
-
-void CopyScreen(byte * source, byte * destination) {
-
-	memcpy(destination, source, 307200);
 }
 
 void fadeIn(byte * palette) {
@@ -95,7 +88,7 @@ void RessPict(int imageNumber) {
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
 	Load_HQR("ress.hqr", palette, imageNumber + 1);
 	convertPalToRGBA(palette, paletteRGBA);
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 	FadeToPal((char *) paletteRGBA);
 }
 
@@ -135,12 +128,12 @@ void FadeToPal(char *palette) {
 
 }
 
-void blackToWhite(void) {
+void blackToWhite(void)
+{
 	byte palette[1024];
 	int i;
 
-	i = 256;
-	for (i = 0; i < 256; i += 3) {
+	for (i = 255; i >= 0; i -= 3) {
 		memset(palette, i, 1024);
 
 		osystem_setPalette(palette);
@@ -148,29 +141,14 @@ void blackToWhite(void) {
 	}
 }
 
-void SetBackPal(void) {
-	// int i;
-
-	/*
-	 * for(i=0;i<768;i++) palette[i]=0;
-	 */
-
+void SetBackPal(void)
+{
 	memset(palette, 0, 768);
 	memset(paletteRGBA, 0, 1024);
 
 	osystem_setPalette(paletteRGBA);
 
 	palReseted = 1;
-}
-
-void Cls(void) {
-	/*
-	 * int i;
-	 *
-	 * for(i=0;i<307200;i++) { frontVideoBuffer[i]=0; }
-	 */
-
-	memset(frontVideoBuffer, 0, 307200);
 }
 
 void convertPalToRGBA(byte * palSource, byte * palDest) {

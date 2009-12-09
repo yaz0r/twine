@@ -18,9 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#ifdef WIN32
-#include "sdl.h"
-#endif
+#include "actors.h"
+#include "images.h"
 
 int cptime = 0;
 
@@ -41,10 +40,9 @@ int mainLoopInteration(void) {
 	int frameTime;
 	int textBank;
 
+	currentTime = lba_time;
+	for (;;)
 	{
-		currentTime = lba_time;
-mainLoopStart:
-
 		readKeyboard();
 		if (mainLoopVar4 > 500)
 			waitRetrace();
@@ -201,7 +199,7 @@ mainLoopStart:
 
 					if (cptime != 0) { // clear if have something already writed in the screen
 						blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-						osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 350, 479);
+						osystem_copyBlockPhys(5, 446, 350, 479);
 					}
 					// Added: Implemented with translations like LBA2 -----
 					CoulFont(15);
@@ -210,33 +208,26 @@ mainLoopStart:
 					InitDial(0);
 					GetMultiText(fkeys - 1, dataString);
 					Font(5, 446, dataString);
-					osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 350, 479);
+					osystem_copyBlockPhys(5, 446, 350, 479);
 					currentTextBank = textBank;
 					InitDial(currentTextBank + 3);
-					// ---------------------------------------------------
 					cptime = currentTime;
 					SetComportement(fkeys - 1);
-
-					// LBA1 type ----- Disabled
-					//
-					// processComportementMenu();
-					// unfreezeTime();
 
 					fkeys = 0;
 				}
 
 				// Using J to Enable Proto-Pack
-				if (mainLoopVar7 == 'j' && vars[12] == 1) { // only if its in the inventory
-					// Not implemented in the origianl version ---------------
-
+				if (mainLoopVar7 == 'j' && vars[12] == 1)
+				{
 					if (cptime != 0) { // clear if have something already writed in the screen
 						blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-						osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 350, 479);
+						osystem_copyBlockPhys(5, 446, 350, 479);
 					}
 
 					CoulFont(15);
 					Font(5, 446, "Proto-Pack");
-					osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 200, 479);
+					osystem_copyBlockPhys(5, 446, 200, 479);
 					// -------------------------------------------------------
 					cptime = currentTime;
 
@@ -247,14 +238,10 @@ mainLoopStart:
 					}
 
 					if (comportementHero == 4) {
-#ifdef GAME_DEBUG
 						printf("Stop using Proto-Pack!");
-#endif
 						SetComportement(0);
 					} else {
-#ifdef GAME_DEBUG
 						printf("Now using Proto-Pack!");
-#endif
 						SetComportement(4);
 					}
 				}
@@ -262,7 +249,7 @@ mainLoopStart:
 				// Time to display the behaviour text showed in the previous condition.
 				if ((lba_time - cptime) > 100 && cptime) {
 					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-					osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 350, 479);
+					osystem_copyBlockPhys(5, 446, 350, 479);
 					cptime = 0;
 				}
 
@@ -283,66 +270,6 @@ mainLoopStart:
 					//needChangeRoom=currentRoom+1;
 				}
 
-
-#ifdef GAME_DEBUG
-				if (mainLoopVar7 == 'r') { // changed because proto-pack key
-					needChangeRoom = currentRoom + 1;
-				}
-				if (mainLoopVar7 == 'f') { // changed because prto-pack key
-					needChangeRoom = currentRoom - 1;
-				}
-
-				if (mainLoopVar7 == 'h') {
-					InitAnim(ANIM_static, 0, 255, 0);
-				}
-
-				if (mainLoopVar7 == 't') {
-					printf("StoryState: %d\n", ++chapter);
-				}
-				if (mainLoopVar7 == 'g') {
-					printf("StoryState: %d\n", --chapter);
-				}
-#endif
-
-				/***********************************************/
-				/*
-				 * camera debugger
-				 */
-				/***********************************************/
-
-
-				/*      if (printTextVar12 & 2)      // x-- -> bas
-				      {
-				      newCameraY++;
-				      requestBackgroundRedraw = 1;
-				      }
-
-				      if (printTextVar12 & 1)      // x++ -> haut
-				      {
-				      newCameraY--;
-				      requestBackgroundRedraw = 1;
-				      }
-
-				      if (printTextVar12 & 4)      // y-- -> gauche
-				      {
-				      newCameraX--;
-				      requestBackgroundRedraw = 1;
-				      }
-
-				      if (printTextVar12 & 8)      // y++ -> droite
-				      {
-				      newCameraX++;
-				      requestBackgroundRedraw = 1;
-				      }
-				    */
-
-				/**********************************************/
-				// angle debug
-
-				// printf("from %d to %X\n",twinsen->time.from,twinsen->time.to);
-
-				/**********************************************/
-
 				if (mainLoopVar7 == 'h' && vars[0] == 1 && vars[70] == 0) { // draw holomap
 					freezeTime();
 					TestRestoreModeSVGA(1);
@@ -356,12 +283,10 @@ mainLoopStart:
 					// pauseSound();
 					freezeTime();
 					if (!drawInGameTransBox) {
-#ifdef GAME_DEBUG
 						printf("Game in Pause...");
-#endif
 						CoulFont(15);
 						Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
-						osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
+						osystem_copyBlockPhys(5, 446, 100, 479);
 					}
 					readKeyboard();
 					while (skipIntro) {
@@ -378,11 +303,9 @@ mainLoopStart:
 					};
 					if (!drawInGameTransBox) {
 						blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
-						osystem_CopyBlockPhys(frontVideoBuffer, 5, 446, 100, 479);
+						osystem_copyBlockPhys(5, 446, 100, 479);
 					}
-#ifdef GAME_DEBUG
 					printf("Game Resumed!");
-#endif
 					unfreezeTime();
 					// resumeSound();
 				}
@@ -391,7 +314,7 @@ mainLoopStart:
 				// fin des inputs
 			}
 		}
-		mainLoopVar17 = GetRealValue(&mainLoopVar1);
+		mainLoopVar17 = getRealValue(&mainLoopVar1);
 		if (!mainLoopVar17)
 			mainLoopVar17 = 1;
 
@@ -487,7 +410,7 @@ mainLoopStart:
 							}
 						}
 					} else {
-						CheckCarrier(i);
+						checkCarrier(i);
 						actors[i].dynamicFlagsBF.bUnk0020 = 1;
 						actors[i].costumeIndex = -1;
 						actors[i].zone = -1;
@@ -495,16 +418,10 @@ mainLoopStart:
 				}
 
 				if (needChangeRoom != -1)
-					goto mainLoopStart;
+					continue;
 
 			}
 		}
-#ifdef GAME_DEBUG
-#ifdef PCLIKE
-		if (debugger_processDebug())
-			requestBackgroundRedraw = 1;
-#endif
-#endif
 
 		assert(frontVideoBufferbis == frontVideoBuffer);
 
@@ -579,57 +496,8 @@ void reinitAll(int save) {
 	}
 
 	/*
-	 * FadeToBlack((char*)menuPalRGBA); Cls(); osystem_Flip(frontVideoBuffer);
+	 * FadeToBlack((char*)menuPalRGBA); Cls(); osystem_flip(frontVideoBuffer);
 	 */
-}
-
-//S2336.LBA
-
-void LoadGame(void) {
-	FILE* fileHandle;
-	unsigned char data;
-	char* namePtr;
-
-	fileHandle = OpenRead("SAVE.LBA");
-
-	namePtr = playerName;
-
-	Read(fileHandle, (char*)&data, 1);
-
-	do {
-		Read(fileHandle, (char*)&data, 1);
-		*(namePtr++) = data;
-	} while (data);
-
-	Read(fileHandle, (char*)&data, 1);
-	Read(fileHandle, (char*)vars, data);
-	Read(fileHandle, (char*)&needChangeRoom, 1);
-	Read(fileHandle, (char*)&chapter, 1);
-	Read(fileHandle, (char*)&comportementHero, 1);
-	startupComportementHeroInCube = comportementHero;
-	Read(fileHandle, (char*)&(twinsen->life), 1);
-	Read(fileHandle, (char*)&numCoin, 2);
-	Read(fileHandle, (char*)&magicLevel, 1);
-	Read(fileHandle, (char*)&magicPoint, 1);
-	Read(fileHandle, (char*)&numCloverBox, 1);
-	Read(fileHandle, (char*)&newTwinsenX, 2);
-	Read(fileHandle, (char*)&newTwinsenZ, 2);
-	Read(fileHandle, (char*)&newTwinsenY, 2);
-	Read(fileHandle, (char*)&(twinsen->angle), 2);
-	startupAngleInCube = twinsen->angle;
-	Read(fileHandle, (char*)&(twinsen->body), 1);
-	Read(fileHandle, (char*)&data, 1);
-	Read(fileHandle, (char*)GV14, data);
-	Read(fileHandle, (char*)&fuel, 1);
-	Read(fileHandle, (char*)&data, 1);
-	Read(fileHandle, (char*)itemUsed, data);
-	Read(fileHandle, (char*)&numClover, 1);
-	Read(fileHandle, (char*)&usingSword, 1);
-
-	Close(fileHandle);
-
-	currentRoom = -1;
-	twinsenPositionModeInNewCube = 3;
 }
 
 void reinitAll1(void) {
@@ -643,10 +511,6 @@ void TestRestoreModeSVGA(int arg_0) {
 	if (!drawInGameTransBox)
 		return;
 
-	if (useSamples) {
-		// code de son non géré...
-	}
-
 	mainLoop2sub1();
 
 	if (useAlternatePalette)
@@ -655,8 +519,6 @@ void TestRestoreModeSVGA(int arg_0) {
 		osystem_setPalette(paletteRGBA);
 
 	drawInGameTransBox = 0;
-
-	// code son non gégé...
 
 	if (!arg_0)
 		fullRedraw(1);
@@ -791,11 +653,11 @@ void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_
 	configureOrthoProjection(temp2, temp1, 0);
 	SetClip(arg_0, arg_4, var_4, arg_C);
 
-	if (arg_14 == -1) {
-		temp = GetRealAngle(&timeVar);
-		if (timeVar.numOfStep == 0) {
+	if (arg_14 == -1)
+	{
+		temp = getRealAngle(&timeVar);
+		if (timeVar.numOfStep == 0)
 			setActorAngleSafe(temp, temp - 256, 50, &timeVar);
-		}
 		AffObjetIso(0, arg_10, 0, 0, temp, 0, costumePtr);
 	} else
 		AffObjetIso(0, arg_10, 0, 0, arg_14, 0, costumePtr);
@@ -882,7 +744,7 @@ void DoDir(int actorNum) {
 	} else {
 		if (!(lactor->staticFlagsBF.bIsSpriteActor)) {
 			if (lactor->comportement != 1) {
-				lactor->angle = GetRealAngle(&lactor->time);
+				lactor->angle = getRealAngle(&lactor->time);
 			}
 		}
 
@@ -921,7 +783,7 @@ void DoDir(int actorNum) {
 							if (autoAgressivity) {
 								twinsenMoved = 1;
 
-								lactor->angle = GetRealAngle(&lactor->time);
+								lactor->angle = getRealAngle(&lactor->time);
 
 								//   if(mainLoopVar6 == 1 || lactor->anim == 0) // TODO: figure it out. mainLoopVar6 may be related to the fact that the action key was released
 								if (lactor->anim == 0) {
@@ -979,7 +841,7 @@ void DoDir(int actorNum) {
 							}
 
 							twinsenMoved = 1;
-							lactor->angle = GetRealAngle(&lactor->time);
+							lactor->angle = getRealAngle(&lactor->time);
 						}
 					} else {
 						if (vars[2] == 1) { // have sword
@@ -990,7 +852,7 @@ void DoDir(int actorNum) {
 							InitAnim(ANIM_swordAttack, 1, 0, actorNum);
 
 							twinsenMoved = 1;
-							lactor->angle = GetRealAngle(&lactor->time);
+							lactor->angle = getRealAngle(&lactor->time);
 						}
 					}
 				}
@@ -1029,7 +891,7 @@ void DoDir(int actorNum) {
 					} else {
 						if (!(lactor->dynamicFlagsBF.bUnk0080)) {
 							lactor->angle =
-								GetRealAngle(&lactor->time);
+								getRealAngle(&lactor->time);
 						}
 					}
 				}
@@ -1040,7 +902,7 @@ void DoDir(int actorNum) {
 						InitAnim(ANIM_turnRight, 0, 255, actorNum);
 					} else {
 						if (!(lactor->dynamicFlagsBF.bUnk0080)) {
-							lactor->angle = GetRealAngle(&lactor->time);
+							lactor->angle = getRealAngle(&lactor->time);
 						}
 					}
 				}
@@ -1158,7 +1020,7 @@ void DoAnim(int actorNum) {
 			if (lactor->speed) {
 				int dx;
 
-				dx = GetRealValue(&lactor->time);
+				dx = getRealValue(&lactor->time);
 
 				if (!dx) {
 					if (lactor->time.to > 0) {
@@ -1182,7 +1044,7 @@ void DoAnim(int actorNum) {
 				if (lactor->dynamicFlagsBF.bIsMoving) {
 					if (lactor->doorStatus) { // is oppening
 						var_10 = lactor->doorStatus;
-						if (Distance2D(processActorX, processActorY, lactor->lastX, lactor->lastY) >= var_10) {
+						if (distance2d(processActorX, processActorY, lactor->lastX, lactor->lastY) >= var_10) {
 							if (lactor->angle == 0) {
 								processActorY = lactor->lastY + lactor->doorStatus;
 							} else if (lactor->angle == 0x100) {

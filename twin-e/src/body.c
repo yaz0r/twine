@@ -33,37 +33,32 @@ int SearchBody(int bodyNum, int actorNum) {	// should be something like initBody
 	lactor = &actors[actorNum];
 	bodyPtr = lactor->entityDataPtr;
 
-	do {
-
+	for (;;)
+    {
 		var1 = *(bodyPtr++);
 
 		if (var1 == 0xFF)
-			return (-1);
+			return -1;
 
 		bodyPtr2 = bodyPtr + 1;
 
-		if (var1 == 1) {
+		if (var1 == 1)
+        {
 			var2 = *(bodyPtr);
 
 			if (var2 == bodyNum) {
 				bodyPtr3 = bodyPtr2 + 1;
 				flag = READ_LE_U16(bodyPtr3);
 
-				if (!(flag & 0x8000)) {
-#ifdef PRELOAD_ALL
-					bodyPtrTab[currentPositionInBodyPtrTab] = HQR_GetCopy(HQR_Bodies, flag & 0xFFFF);
-#else
+				if (!(flag & 0x8000))
+                {
 					HQRM_Load("body.hqr", flag & 0xFFFF, &bodyPtrTab[currentPositionInBodyPtrTab]);
-#endif
-					if (!bodyPtrTab[currentPositionInBodyPtrTab]) {
-						printf("Body.HQR in HQ_Mem\n");
-						exit(1);
-					}
 					loadGfxSub(bodyPtrTab[currentPositionInBodyPtrTab]);
-					WRITE_LE_U16(bodyPtr3, currentPositionInBodyPtrTab + 0x8000);  // maintenant, on dit que c'est en memoire HQR
+					WRITE_LE_U16(bodyPtr3, currentPositionInBodyPtrTab + 0x8000);
 					index = currentPositionInBodyPtrTab;
 					currentPositionInBodyPtrTab++;
-				} else {
+				}
+                else {
 					flag &= 0x7FFF;
 					index = flag;
 				}
@@ -75,13 +70,13 @@ int SearchBody(int bodyNum, int actorNum) {	// should be something like initBody
 				bodyPtr3++;
 
 				if (!*bodyPtr4)
-					return (index);
+					return index;
 
 				bodyPtr4 = bodyPtr3;
 				bodyPtr3++;
 
 				if (*bodyPtr4 != 14)
-					return (index);
+					return index;
 
 				bodyPtr5 = (short int *) bodyPtr3;
 
@@ -99,11 +94,12 @@ int SearchBody(int bodyNum, int actorNum) {	// should be something like initBody
 				loadCostumeVar6 = READ_LE_U16(bodyPtr3);
 				bodyPtr3 += 2;	//Y2
 
-				return (index);
+				return index;
 
 			}
 		}
 
 		bodyPtr = *bodyPtr2 + bodyPtr2;
-	} while (1);
+    }
 }
+

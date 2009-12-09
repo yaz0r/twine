@@ -77,6 +77,6 @@ ex:
 	return (1);
 }
 
-int loadVox(int index) {
-	return (0);
+int loadVox() {
+	return 0;
 }

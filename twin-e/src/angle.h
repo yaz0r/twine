@@ -16,11 +16,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-struct timeStruct {
+typedef struct
+{
 	short int from;
 	short int to;
 	short int numOfStep;
 	int timeOfChange;
-};
+} time;
 
-typedef struct timeStruct timeStruct;
+#include "costume.h" /* TODO: UGLY: hack to do not enable recursive include... */
+
+void clearRealAngle(actor *ptr);
+void setActorAngle(short int arg0, short int arg4, short int arg8, time *ptr);
+void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8, time *timePtr);
+int getRealAngle(time *angleData);
+int getRealValue(time *angleData);
+

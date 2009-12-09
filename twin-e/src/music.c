@@ -19,17 +19,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #ifdef PCLIKE
-# ifdef USE_FMOPL_MIDI
-#  include <SDL_mixer.h>
-# endif
+# include <SDL_mixer.h>
 # include "SDL/SDL.h"
 #endif
 
 void PlayMusic(int musicNum) {
 	if (musicNum == -1) {    /* stop music */
-		fullStopMusic();
 		currentlyPlayingCDTrack = -1;
-		// playMusic2();
 		playMusciVar1 = -1;
 		return;
 	}
@@ -45,9 +41,7 @@ void PlayMusic(int musicNum) {
 void playCDtrack(int trackNumber) {
 #ifdef PCLIKE
 	freezeTime();
-#ifdef USE_FMOPL_MIDI
 	Mix_FadeOutMusic(500);
-#endif
 	currentlyPlayingMidi = -1;
 
 	if (cdrom != NULL) {
@@ -68,20 +62,7 @@ void playCDtrack(int trackNumber) {
 #endif
 }
 
-void fullStopMusic(void) {
-#ifdef PCLIKE
-	if (cdrom != NULL) {
-//    int status = SDL_CDStatus(cdrom);
-//    if(status == CD_PLAYING)
-		{
-			SDL_CDStop(cdrom);
-		}
-	}
-#endif
-}
-
 void stopMusic(void) {
-	fullStopMusic();
 	currentlyPlayingCDTrack = -1;
 }
 
@@ -89,7 +70,8 @@ int IsMidiPlaying(void) {
 	return (0);
 }
 
-void FadeMusicMidi(short int arg_0) {
+void FadeMusicMidi(/*short int arg_0*/)
+{
 }
 
 int getCurrentlyPlayingMusic(void) {

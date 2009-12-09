@@ -18,54 +18,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-int InitGrille(short int roomNumber) {
+void initGrid(short int roomNumber)
+{
 	int gridSize;
 	int bllSize;
 	int brickDataSize;
-	int size;
 
-#ifdef _PRELOAD_ALL
-	gridSize = HQR_Grids->sizeArray[roomNumber];
-	currentGrid = HQR_Get(HQR_Grids, roomNumber);
-#else
 	gridSize = Size_HQR("lba_gri.hqr", roomNumber);
-	HQM_Alloc(gridSize + 1000, &currentGrid);
-	if (currentGrid == NULL)
-		return (0);
+	currentGrid = malloc(gridSize + 1000);
 	Load_HQR("lba_gri.hqr", currentGrid, roomNumber);
-#endif
 
-#ifdef _PRELOAD_ALL
-	if (currentBll)
-		MemFree(currentBll);
-	bllSize = HQR_Bll->sizeArray[roomNumber];
-	currentBll = HQR_GetCopy(HQR_Bll, roomNumber);
-#else
 	bllSize = Size_HQR("lba_bll.hqr", roomNumber);
-	HQM_Alloc(bllSize + 1000, &currentBll);
-	if (currentBll == NULL)
-		return (0);
+    currentBll = malloc(bllSize + 1000);
 	Load_HQR("lba_bll.hqr", currentBll, roomNumber);
-#endif
 
 	brickDataSize = loadBrk(gridSize);
-	/*
-	  if (!brickDataSize)
-	    return (0);*/
-
-	//HQM_Alloc(brickDataSize, &bufferBrick2);
-
-	//size = CreateMaskGph((unsigned int *) bufferBrick, (unsigned int *) bufferBrick2);
-
 	CreateMaskGph();
-
-	//HQM_Shrink_Last(bufferBrick2, size);
-
 	numberOfBll = (READ_LE_U32(currentBll)) >> 2;
 
 	createCube();
-
-	return (1);
 }
 
 void MixteMapToCube(byte* gridPtr) {
@@ -136,7 +107,7 @@ void MixteColonne(unsigned char *gridEntry, unsigned char *dest) {
 void IncrustGrm(int gridNumber) {
 	byte* gridPtr;
 
-	gridPtr = LoadMalloc_HQR("lba_gri.hqr", gridNumber + 120);
+	HQRM_Load("lba_gri.hqr", gridNumber + 120, (unsigned char**)&gridPtr);
 
 	if (!gridPtr) {
 		printf("arg grm not found in lba_gri\n");
@@ -145,7 +116,7 @@ void IncrustGrm(int gridNumber) {
 
 	MixteMapToCube(gridPtr);
 
-	MemFree(gridPtr);
+	free(gridPtr);
 	requestBackgroundRedraw = 1;
 }
 
@@ -210,41 +181,9 @@ void addCubeEntry(unsigned char *gridEntry, unsigned char *dest) {
 
 	} while (--temp1);
 }
-/*
-int CreateMaskGph(unsigned int *buffer1, unsigned int *destBuffer)
-{
-  unsigned char *destPtr;
-  int numOfBricks;
-  int i;
-  int sizeOfCurrentBrick;
-  int startOffset;
-  unsigned int firstBrickOffset;
-
-  firstBrickOffset = READ_LE_U32(buffer1);
-  destPtr = (unsigned char *) ((unsigned char*)destBuffer + firstBrickOffset);
-  numOfBricks = READ_LE_U32(buffer1) >> 2;
-
-  *(destBuffer++) = startOffset = *buffer1;
-
-  for (i = 0; i < numOfBricks-1; i++)
-  {
-    sizeOfCurrentBrick = CalcGraphMsk(i, buffer1, (unsigned int *) destPtr);
-
-    destPtr += sizeOfCurrentBrick;
-    counter += sizeOfCurrentBrick;
-
-    startOffset += sizeOfCurrentBrick;
-
-    *(destBuffer++) = startOffset;
-  }
-
-  return (startOffset);
-}
-*/
-
 
 // build the masks for the bricks
-int CalcGraphMsk(int var, unsigned char *buffer, unsigned char *ptr) {
+int CalcGraphMsk(unsigned char *buffer, unsigned char *ptr) {
 	unsigned int *ptrSave = (unsigned int *)ptr;
 	unsigned char *ptr2;
 	unsigned char *esi;

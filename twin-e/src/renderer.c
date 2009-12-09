@@ -19,16 +19,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 #include "math.h"
 
-#ifdef GAME_DEBUG
-extern actor* pCurrentActorRender;
-#endif
-
 static const int videoWidth = 640;
 static const int videoHeight = 480;
 
 static int baseMatrixRotationX;
 static int baseMatrixRotationY;
 static int baseMatrixRotationZ;
+
+int _angleX, _angleY, _angleZ, _X, _Y, _Z, _numOfPrimitives;
 
 int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr) {
 	unsigned char *ptr;
@@ -99,10 +97,6 @@ void SetLightVector(int angleX, int angleY, int angleZ) {
 	tab1 = &angleTable[0];
 	tab2 = &angleTable[256];
 	tab3 = &angleTable[384];
-
-	_cameraAngleX = angleX;
-	_cameraAngleY = angleY;
-	_cameraAngleZ = angleZ;
 
 	_angleX = angleX;
 	_angleY = angleY;
@@ -742,7 +736,6 @@ int finishRender(unsigned char *esi) {
 
 				bestDepth = -32000;
 				renderV19 = edi;
-				osystem_startPoly();
 
 				do {
 					currentPolyVertex = (polyVertexHeader *) esi;
@@ -764,13 +757,10 @@ int finishRender(unsigned char *esi) {
 
 					currentDepth = currentVertex->z;
 
-					osystem_addPointColor(destinationVertex->x, destinationVertex->y, currentDepth, (unsigned char)shadeValue);
-
 					if (currentDepth > bestDepth)
 						bestDepth = currentDepth;
 				} while (--counter);
 
-				osystem_stopPoly();
 			} else if (FillVertic_AType >= 7) { // only 1 shade value is used
 				destinationHeader = (polyHeader *) edi;
 
@@ -790,7 +780,6 @@ int finishRender(unsigned char *esi) {
 				bestDepth = -32000;
 				counter = destinationHeader->numOfVertex;
 
-				osystem_startPoly();
 
 				do {
 					eax = READ_LE_S16(esi);
@@ -807,13 +796,10 @@ int finishRender(unsigned char *esi) {
 
 					currentDepth = currentVertex->z;
 
-					osystem_addPointColor(destinationVertex->x, destinationVertex->y, currentDepth, color + shadeTable[shadeEntry]);
-
 					if (currentDepth > bestDepth)
 						bestDepth = currentDepth;
 				} while (--counter);
 
-				osystem_stopPoly();
 			} else { // no shade is used
 				destinationHeader = (polyHeader *) edi;
 
@@ -829,7 +815,6 @@ int finishRender(unsigned char *esi) {
 				eax = 0;
 				counter = currentPolyHeader->numOfVertex;
 
-				osystem_startPoly();
 				do {
 					eax = READ_LE_S16(esi);
 					esi += 2;
@@ -845,12 +830,9 @@ int finishRender(unsigned char *esi) {
 
 					currentDepth = currentVertex->z;
 
-					osystem_addPointColor(destinationVertex->x, destinationVertex->y, currentDepth, (unsigned char)destinationHeader->colorIndex);
-
 					if (currentDepth > bestDepth)
 						bestDepth = currentDepth;
 				} while (--(counter));
-				osystem_stopPoly();
 			}
 
 			render24 = edi;
@@ -920,8 +902,6 @@ int finishRender(unsigned char *esi) {
 			bestDepth = _flattenPointTable[point1].z;
 			depth = _flattenPointTable[point2].z;
 
-			osystem_addLine(_flattenPointTable[point1].x, _flattenPointTable[point1].y, _flattenPointTable[point1].z, _flattenPointTable[point2].x, _flattenPointTable[point2].y, _flattenPointTable[point2].z, (param & 0xFF00) >> 8);
-
 			if (depth >= bestDepth)
 				bestDepth = depth;
 
@@ -944,8 +924,6 @@ int finishRender(unsigned char *esi) {
 			short int center = READ_LE_U16(esi + 6);
 			short int size = READ_LE_U16(esi + 4);
 
-			osystem_addSphere(_flattenPointTable[center/6].x, _flattenPointTable[center/6].y, _flattenPointTable[center/6].z, size, color);
-
 			*(unsigned char*)edi = color;
 			WRITE_LE_S16(edi + 1, _flattenPointTable[center/6].x);
 			WRITE_LE_S16(edi + 3, _flattenPointTable[center/6].y);
@@ -961,9 +939,6 @@ int finishRender(unsigned char *esi) {
 		} while (--temp);
 	}
 
-#ifdef USE_GL
-	return(0);
-#endif
 
 	renderTabEntryPtr2 = renderTab;
 
@@ -988,8 +963,6 @@ int finishRender(unsigned char *esi) {
 	}
 	renderTabEntryPtr2 = renderTabSorted;
 
-	/*    _numOfPrimitives = 1;
-	    renderTabEntryPtr2++;*/
 
 	assert(frontVideoBufferbis == frontVideoBuffer);
 
@@ -1063,7 +1036,6 @@ int finishRender(unsigned char *esi) {
 					//  char circleColor;
 
 					int circleParam1;
-					int circleParam2;
 					int circleParam3;
 					int circleParam4;
 					int circleParam5;
@@ -1074,16 +1046,6 @@ int finishRender(unsigned char *esi) {
 					circleParam4 = READ_LE_S16(esi + 1);
 					circleParam5 = READ_LE_S16(esi + 3);
 					circleParam3 = READ_LE_S16(esi + 5);
-
-					/* circleParam1 = eax & 0xFF;
-					 circleParam2 = (eax & 0xFFFF00) >> 8;
-					 esi += 4;
-					 eax = *(int*) esi;
-					 circleParam3 = eax & 0xFFFF;
-					 circleParam4 = (eax & 0xFFFF0000) >> 16;
-					 esi += 4;
-					 circleParam5 = *(short int*)esi;
-					 esi += 2; */
 
 					if (!isUsingOrhoProjection) {
 						circleParam3 = (circleParam3 * cameraVar2) / (cameraVar1 + *(short int*)esi);
@@ -1110,7 +1072,6 @@ int finishRender(unsigned char *esi) {
 					assert(frontVideoBufferbis == frontVideoBuffer);
 					circle_fill(circleParam4, circleParam5, circleParam3, circleParam1);
 					assert(frontVideoBufferbis == frontVideoBuffer);
-					/*prepareCircle(circleParam3*/
 
 				}
 			default: {
@@ -1141,23 +1102,11 @@ void FillVertic_A(int ecx, int edi) {
 	int j;
 	int currentLine;
 
-// char borrow;
 	short int start, stop;
 
 	float varf2;
 	float varf3;
 	float varf4;
-
-	/* if (vtop <= 0 || vbottom <= 0)
-	   return;
-	 if (vleft <= 0 || vright <= 0)
-	   return;
-	 if (vleft >= videoWidth)
-	   return;
-	 // if(vright>=videoWidth)
-	   // return;
-	 if (vtop >= videoHeight || vbottom >= videoHeight)
-	   return;*/
 
 	if (vtop < 0) {
 		return;
@@ -1178,8 +1127,6 @@ void FillVertic_A(int ecx, int edi) {
 	vsize++;
 
 	color = edi;
-
-	// osystem_Flip(frontVideoBuffer);
 
 	switch (ecx) {
 	case 0: { // flat polygon
@@ -1554,9 +1501,7 @@ void FillVertic_A(int ecx, int edi) {
 			break;
 		}
 	default: {
-#ifdef GAME_DEBUG
 			printf("Unsuported render type %d\n", FillVertic_AType);
-#endif
 			break;
 		}
 	};
@@ -1609,16 +1554,6 @@ int ComputePoly_A(void) {
 	ptr1[0] = pRenderV1[0];
 	ptr1[1] = pRenderV1[1];
 	ptr1[2] = pRenderV1[2];
-	/*
-	  if(vleft<0)
-	    return 2;
-	  if(vright>=videoWidth)
-	    return 2;
-	  if(vtop<0)
-	    return 2;
-	  if(vbottom>=videoHeight)
-	    return 2;
-	*/
 	ptr1 = pRenderV1;   // on retourne au debut de la liste
 
 	vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;

@@ -16,9 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "images.h"
 #include "lba.h"
 
-void Inventory(void) {
+void Inventory(void)
+{
 	int di = 1;
 	int previouslySelectedObject;
 
@@ -177,7 +179,7 @@ void Inventory(void) {
 
 void SecondInitDialWindow(void) {
 	blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char*)workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char*)frontVideoBuffer);
-	osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+	osystem_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 	printText8Var3 = 0;
 }
 
@@ -195,7 +197,7 @@ void DrawListInventory() {
 	drawBoxInsideTrans(17, 10, 622, 320, 4);
 	DrawCadre(17, 10, 622, 320);
 	Rect(110, 18, 188, 311, 75);
-	osystem_CopyBlockPhys(frontVideoBuffer, 17, 10, 622, 320);
+	osystem_copyBlockPhys(17, 10, 622, 320);
 
 	for (object = 0;object < 28;object++) {
 		DrawOneInventory(object);
@@ -231,12 +233,12 @@ void DrawOneInventory(int objectNumber) {
 
 		if (objectNumber == 15) { // fuel object
 			CoulFont(15);
-			Font(left + 3, top + 32, Itoa(fuel));
+			Font(left + 3, top + 32, itoa(fuel));
 		}
 	}
 
 	DrawCadre(left, top, right, bottom);
-	osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+	osystem_copyBlockPhys(left, top, right, bottom);
 }
 
 void Rect(int bottom, int right, int top, int left, int param) {

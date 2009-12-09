@@ -17,7 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
-#include "extraData.h"
+#include "extra.h"
 
 void makeMagicBallBounce(extraListStruct* pExtra, int X, int Y, int Z) {
 	if (WorldColBrick(X, pExtra->Z, Z)) {
@@ -395,7 +395,7 @@ void GereExtras(void) {
 
 					verticalAngle = GetAngle(extraList[i].Z, 0, currentExtraZ, DoTrackVar1);
 
-					dx = GetRealAngle(&extraList[i].trackActorRotation);
+					dx = getRealAngle(&extraList[i].trackActorRotation);
 
 					if (!dx) {
 						dx = 1;

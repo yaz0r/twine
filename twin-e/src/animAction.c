@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+#include "actors.h"
 
 char magicLevelForceTable[] = {
 	2,
@@ -231,7 +232,7 @@ void GereAnimAction(actor * lactor, int actorNum) {
 					int var_14;
 					int temp;
 
-					distance = Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
+					distance = distance2d(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
 					angle = GetAngle(lactor->Y, 0, twinsen->Y, distance);
 
 					var_8 = READ_LE_S16(edi);
@@ -348,7 +349,7 @@ void GereAnimAction(actor * lactor, int actorNum) {
 
 					int strength;
 
-					newAngle = GetAngle(lactor->Y, 0, twinsen->Y, Distance2D(lactor->X, lactor->Z, twinsen->X, twinsen->Z));
+					newAngle = GetAngle(lactor->Y, 0, twinsen->Y, distance2d(lactor->X, lactor->Z, twinsen->X, twinsen->Z));
 
 					distanceX = READ_LE_S16(edi);
 					distanceY = READ_LE_S16(edi + 2);
@@ -403,9 +404,7 @@ void GereAnimAction(actor * lactor, int actorNum) {
 				break;
 			}
 		default: {
-#ifdef GAME_DEBUG
 				printf("Unsupported opcode %d in GereAnimAction\n", var_54);
-#endif
 				exit(1);
 			}
 		}

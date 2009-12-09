@@ -48,9 +48,6 @@ typedef unsigned char boolean;
 
 #if defined(_MSC_VER)
 
-//#pragma warning (disable: 4244)
-//#pragma warning (disable: 4101)
-
 #define scumm_stricmp stricmp
 #define snprintf _snprintf
 
@@ -171,8 +168,6 @@ FORCEINLINE void WRITE_LE_S32(void *ptr, int32 value) {
 	((byte*)ptr)[2] = val2;
 	((byte*)ptr)[3] = val3;
 }
-
-//#define WRITE_LE_SHORT(ptr,value) (*(ptr) = value&0xFF); (*((ptr)+1) = (value>>8)&0xFF)
 
 #endif
 

@@ -18,39 +18,43 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-void StartInitObj(short int arg_0) {
+#include "actors.h"
+
+void initActor(short int id)
+{
 	actor *lactor;
 
-	lactor = &actors[arg_0];
+	lactor = &actors[id];
 
-	if (lactor->staticFlagsBF.bIsSpriteActor) { // if sprite actor
-		if (lactor->field_66 != 0) {
+	if (lactor->staticFlagsBF.bIsSpriteActor) // if sprite actor
+	{
+		if (lactor->field_66 != 0)
 			lactor->dynamicFlagsBF.bUnk0002 = 1;
-		}
 
 		lactor->costumeIndex = -1;
 
-		InitSprite(lactor->field_8, arg_0);
+		initSprite(lactor->field_8, id);
 
 		setActorAngleSafe(0, 0, 0, &lactor->time);
 
-		if (lactor->staticFlagsBF.bIsUsingClipping) {
+		if (lactor->staticFlagsBF.bIsUsingClipping)
+		{
 			lactor->lastX = lactor->X;
 			lactor->lastZ = lactor->Y;
 			lactor->lastY = lactor->Z;
 		}
-
-	} else {
+	}
+	else
+	{
 		lactor->costumeIndex = -1;
 
-		InitBody(lactor->body, arg_0);
+		InitBody(lactor->body, id);
 
 		lactor->previousAnimIndex = -1;
 		lactor->field_78 = 0;
 
-		if (lactor->costumeIndex != -1) {
-			InitAnim(lactor->anim, 0, 255, arg_0);
-		}
+		if (lactor->costumeIndex != -1)
+			InitAnim(lactor->anim, 0, 255, id);
 
 		setActorAngleSafe(lactor->angle, lactor->angle, 0, &lactor->time);
 	}
@@ -60,10 +64,11 @@ void StartInitObj(short int arg_0) {
 	lactor->positionInActorScript = 0;
 }
 
-void resetActor(int actorNumber) {
+void resetActor(short int id)
+{
 	actor *localActor;
 
-	localActor = &actors[actorNumber];
+	localActor = &actors[id];
 
 	localActor->body = 0;
 	localActor->anim = 0;
@@ -111,16 +116,17 @@ void resetActor(int actorNumber) {
 	localActor->positionInActorScript = 0;
 }
 
-//load spriteActorBoundingBox
-void InitSprite(int imageNumber, int actorNumber) {
-	actor *lactor = &actors[actorNumber];
+void initSprite(int imageId, short int actorId)
+{
+	actor *lactor = &actors[actorId];
 
-	if (lactor->staticFlagsBF.bIsSpriteActor && imageNumber != -1 && lactor->costumeIndex != imageNumber) {
+	if (lactor->staticFlagsBF.bIsSpriteActor && imageId != -1 && lactor->costumeIndex != imageId)
+	{
 		short int *ptr;
 
-		lactor->costumeIndex = imageNumber;
+		lactor->costumeIndex = imageId;
 
-		ptr = (short int *)(spriteActorData + imageNumber * 16 + 4);
+		ptr = (short int *)(spriteActorData + imageId * 16 + 4);
 
 		lactor->boudingBox.X.bottomLeft = READ_LE_S16(ptr++);
 		lactor->boudingBox.X.topRight = READ_LE_S16(ptr++);
@@ -131,13 +137,13 @@ void InitSprite(int imageNumber, int actorNumber) {
 	}
 }
 
-void CheckCarrier(int actorNumber) {
-	S32 i;
+void checkCarrier(short int id)
+{
+	short int i;
 
-	if (actors[actorNumber].staticFlagsBF.bIsCarrier) {
-		for (i = 0;i < numActorInRoom;i++) {
-			if (actors[i].standOn == actorNumber)
+	if (actors[id].staticFlagsBF.bIsCarrier)
+		for (i = 0; i < numActorInRoom; i++)
+			if (actors[i].standOn == id)
 				actors[i].standOn = -1;
-		}
-	}
 }
+

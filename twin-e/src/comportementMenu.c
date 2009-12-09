@@ -16,9 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "images.h"
 #include "lba.h"
 
-animTimerDataStruct animDataTab[4];
+animTimerData animDataTab[4];
 
 void DrawComportement(int lcomportement, int arg, int arg2) {
 	unsigned char *currentAnim;
@@ -35,7 +36,7 @@ void DrawComportement(int lcomportement, int arg, int arg2) {
 	box_top = 110;
 	box_bottom = 229;
 
-	currentAnim = HQR_Get(HQR_Anims, TCOS[lcomportement]);
+	currentAnim = HQR_Get(HQR_Anims, TCos[lcomportement]);
 
 	currentAnimSate = winTab[lcomportement];
 
@@ -77,8 +78,8 @@ void DrawComportement(int lcomportement, int arg, int arg2) {
 
 	DrawObj3D(box_left, box_top, box_right, box_bottom, -600, arg, menuCostumeIndex); // dessine le model
 
-	osystem_CopyBlockPhys(frontVideoBuffer, box_left, var_10, box_right, box_bottom);
-	osystem_CopyBlockPhys(frontVideoBuffer, 110, 239, 540, 279);
+	osystem_copyBlockPhys(box_left, var_10, box_right, box_bottom);
+	osystem_copyBlockPhys(110, 239, 540, 279);
 
 	loadSavedTextWindow();
 }
@@ -123,11 +124,11 @@ void DrawInfoMenu(short int arg_0, short int arg_4) {
 
 	AffGraph(0, var_4, arg_4 + 15, HQR_Get(HQR_Sprites, 3));  // draw coins
 	CoulFont(155);
-	Font(arg_0 + 370, arg_4 + 5, Itoa(numCoin));  // amount of coins
+	Font(arg_0 + 370, arg_4 + 5, itoa(numCoin));  // amount of coins
 
 	AffGraph(0, var_4, arg_4 + 55, HQR_Get(HQR_Sprites, 6));  // draw key
 	CoulFont(155);
-	Font(arg_0 + 370, arg_4 + 40, Itoa(numKey));
+	Font(arg_0 + 370, arg_4 + 40, itoa(numKey));
 
 	for (i = 0; i < numCloverBox; i++) { // boites à trefles
 		AffGraph(0, RegleTrois32(arg_0 + 25, arg_0 + 325, 10, i), arg_4 + 58, HQR_Get(HQR_Sprites, 41));
@@ -137,28 +138,23 @@ void DrawInfoMenu(short int arg_0, short int arg_4) {
 		AffGraph(0, RegleTrois32(arg_0 + 25, arg_0 + 325, 10, i) + 2, arg_4 + 60, HQR_Get(HQR_Sprites, 7));
 	}
 
-	osystem_CopyBlockPhys(frontVideoBuffer, arg_0, arg_4, arg_0 + 450, arg_4 + 80);
+	osystem_copyBlockPhys(arg_0, arg_4, arg_0 + 450, arg_4 + 80);
 }
 
 void drawMenuWin(short int var) {
 	DrawCadre(100, 100, 550, 290);
 	drawBoxInsideTrans(101, 101, 549, 289, 2);
 
-	setAnimAtKeyFrame(winTab[0], HQR_Get(HQR_Anims, TCOS[0]), menuCostumeIndex, &animDataTab[0]);
-	DrawComportement(0, var, 0);
-
-	setAnimAtKeyFrame(winTab[1], HQR_Get(HQR_Anims, TCOS[1]), menuCostumeIndex, &animDataTab[1]);
-	DrawComportement(1, var, 0);
-
-	setAnimAtKeyFrame(winTab[2], HQR_Get(HQR_Anims, TCOS[2]), menuCostumeIndex, &animDataTab[2]);
-	DrawComportement(2, var, 0);
-
-	setAnimAtKeyFrame(winTab[3], HQR_Get(HQR_Anims, TCOS[3]), menuCostumeIndex, &animDataTab[3]);
-	DrawComportement(3, var, 0);
+	unsigned short int i;
+	for (i = 0; i < 4; i++)
+	{
+		setAnimAtKeyFrame(winTab[i], HQR_Get(HQR_Anims, TCos[i]), menuCostumeIndex, &animDataTab[i]);
+		DrawComportement(i, var, 0);
+	}
 
 	DrawInfoMenu(100, 300);
 
-	osystem_CopyBlockPhys(frontVideoBuffer, 100, 100, 550, 290);
+	osystem_copyBlockPhys(100, 100, 550, 290);
 }
 
 void processComportementMenu(void) {
@@ -176,11 +172,6 @@ void processComportementMenu(void) {
 
 	menuCostumeIndex = bodyPtrTab[twinsen->costumeIndex];
 
-	TCOS[0] = TCos0Init;
-	TCOS[1] = TCos1Init;
-	TCOS[2] = TCos2Init;
-	TCOS[3] = TCos3Init;
-
 	setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);
 
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
@@ -196,11 +187,12 @@ void processComportementMenu(void) {
 
 	savedComportement = comportementHero;
 
-	setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCOS[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
+	setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCos[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
 
 	readKeyboard();
 
-	while (key1 & 4 || (skipIntro > 59 && skipIntro < 62)) {
+	while (key1 & 4 || (skipIntro > 59 && skipIntro < 62))
+    {
 		readKeyboard();
 
 		key = printTextVar12;
@@ -211,7 +203,7 @@ void processComportementMenu(void) {
 		if (key & 4)
 			comportementHero--;
 
-		if (comportementHero < 0) // J'ai reecrit ca à ma sauce
+		if (comportementHero < 0)
 			comportementHero = 3;
 
 		if (comportementHero >= 4)
@@ -221,7 +213,7 @@ void processComportementMenu(void) {
 			DrawComportement(savedComportement, twinsen->angle, 1);
 			savedComportement = comportementHero;
 			setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);  // rotate twinsen
-			setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCOS[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
+			setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCos[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
 
 			while (printTextVar12) {
 				readKeyboard();
@@ -232,7 +224,6 @@ void processComportementMenu(void) {
 #ifndef PCLIKE
 		lba_time += 3;
 #endif
-		osystem_updateImage();
 	}
 
 	SetComportement(comportementHero);

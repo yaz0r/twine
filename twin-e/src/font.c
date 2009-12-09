@@ -32,11 +32,9 @@ void drawCharacter(int X, int Y, unsigned char caractere) {
 	byte *data;
 	byte *screen;
 
-// int temp=0;
 	int toNextLine;
 	char index;
 
-// char color;
 	char usedColor;
 	char number;
 	char jump;

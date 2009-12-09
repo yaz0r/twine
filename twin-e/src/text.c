@@ -16,6 +16,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "images.h"
 #include "lba.h"
 
 void InitDial(int index) {
@@ -41,7 +42,7 @@ void InitDial(int index) {
 	textSize = Load_HQR("text.hqr", (byte *) bufText, bundleEntryPoint);
 
 	if (languageCD1 != 0)
-		loadVox(index);
+		loadVox();
 
 	return;
 }
@@ -118,7 +119,6 @@ void printTextFullScreen(int textIndex) {
 				break;
 			}
 		}
-		osystem_updateImage();
 	} while (!temp3);
 
 	printTextVar5 = 0;
@@ -198,13 +198,11 @@ int printText4(FILE * fileHandle) {
 }
 
 void readBufferSpeak(FILE * fileHandle) {
-	int a;
-	int b;
-	int c;
+	int a, b, c;
 
-	Read(fileHandle, (char *) &b, 4);
-	Read(fileHandle, (char *) &c, 4);
-	Read(fileHandle, (char *) &a, 2);
+	fread(&b, sizeof(int), 1, fileHandle);
+	fread(&c, sizeof(int), 1, fileHandle);
+	fread(&a, sizeof(short int), 1, fileHandle);
 
 	// todo: implementer la suite
 }
@@ -216,13 +214,13 @@ void loadSavedTextWindow(void) {
 	textWindowBottom = textWindowBottomSave;
 }
 
-int printText6(int var) {
+int printText6(/* int var */) {
 	// todo: implement this
 	// sound function
 	return (0);
 }
 
-int printText7(int var) {
+int printText7(/*int var*/) {
 	// todo: implement this
 	// sound function
 	return (0);
@@ -262,13 +260,11 @@ void InitDialWindow(void) {
 		drawBoxInsideTrans(dialogueBoxLeft + 1, dialogueBoxTop + 1, dialogueBoxRight - 1, dialogueBoxBottom - 1, 3);
 	}
 
-	osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+	osystem_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 
 	printText8Var3 = 0;
 
 	blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) workVideoBuffer);
-
-	osystem_updateImage();
 }
 
 int printText10(void) {
@@ -288,7 +284,7 @@ int printText10(void) {
 		}
 		if (printText8Var6 != 0) {
 			blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
-			osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+			osystem_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 			printText8Var3 = 0;
 			printText8Var6 = 0;
 			TEXT_CurrentLetterX = dialogueBoxLeft + 8;
@@ -414,7 +410,7 @@ void drawDoubleLetter(int a, int b, int c, int d) {
 
 	// manque les check pour la taille de la boite de dialogue...
 
-	osystem_CopyBlockPhys(frontVideoBuffer, left, top, right, bottom);
+	osystem_copyBlockPhys(left, top, right, bottom);
 }
 
 void drawLetter2(int x, int y, int c) {
@@ -485,7 +481,7 @@ void printText10Sub(void) {
 		FillVertic(FillVertic_AType, progressiveTextStopColor);
 	}
 
-	osystem_CopyBlockPhys(frontVideoBuffer, dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
+	osystem_copyBlockPhys(dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
 }
 
@@ -497,407 +493,6 @@ int ComputePoly(void) {
 	pRenderV1 = vertexCoordinates;
 	return (ComputePoly_A());
 }
-
-/*int ComputePoly_A(void)
-{
-    short int vertexX, vertexY;
-    short int *ptr1, *ptr3;
-    int i;
-    short int psh1, psh2;
-    char direction = 1;
-    int echange;
-    short int oldVertexX, oldVertexY;
-    short int currentVertexX, currentVertexY;
-    short int size;
-    int temp2, temp4, temp5, temp6;
-    int step;
-    float vfloat, vfloat2;
-    float vcfloat, vcfloat2;
-
-    pRenderV1 = vertexCoordinates;
-    pRenderV2 = pRenderV3;
-    numOfVertexRemaining = numOfVertex;
-    polyCropped = 0;
-
-    vleft = vtop = 32767;
-    vright = vbottom = -32768;
-
-    ptr1 = vertexCoordinates;
-
-    for (i = 0; i < numOfVertex; i++)
-  {
-      ptr1++;   // discarding the 1st parameter
-
-      vertexX = *(ptr1++);
-
-      if (vertexX < vleft)
-    vleft = vertexX;
-      if (vertexX > vright)
-    vright = vertexX;
-
-      vertexY = *(ptr1++);
-
-      if (vertexY < vtop)
-    vtop = vertexY;
-      if (vertexY > vbottom)
-    vbottom = vertexY;
-  }
-
-    ptr1[0] = pRenderV1[0];
-    ptr1[1] = pRenderV1[1];
-    ptr1[2] = pRenderV1[2];
-
-    if (vbottom < vtop)
-  return (0);
-
-    if (vleft < textWindowLeft)
-  {
-      if (vright < textWindowLeft)
-    return (0);
-     // pRenderSub();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vright==textWindowLeft)
-      return (2);
-  }
-
-    if (vright > textWindowRight)
-  {
-      if (vleft > textWindowRight)
-    return (0);
-     // pRenderSub2();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vleft==textWindowRight)
-      return (2);
-  }
-
-    if (vtop < textWindowTop)
-  {
-      if (vbottom < textWindowTop)
-    return (0);
-     // pRenderSub3();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vbottom==textWindowBottom)
-      return (2);
-  }
-
-    if (vbottom > textWindowBottom)
-  {
-      if (vtop > textWindowBottom)
-    return (0);
-     // pRenderSub4();
-     // printf("3Dcropping...\n");
-     // exit(1);
-     // if(vtop==textWindowBottom)
-      return (2);
-  }
-
-    if (polyCropped)
-  {
-      printf("ComputePoly_A-> cropped poly !\n");
-      exit(1);
-  }
-
-    ptr1 = pRenderV1;   // on retourne au debut de la liste
-
-    vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
-    oldVertexX = *(ptr1++);
-    oldVertexY = *(ptr1++);
-
-    do
-  {
-      oldVertexParam = vertexParam1;
-
-      vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
-      currentVertexX = *(ptr1++);
-      currentVertexY = *(ptr1++);
-
-     // drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
-
-      if (currentVertexY == oldVertexY) // since it's scanline based, we don't care when we
-         //
-         //
-         //
-         //
-         //
-         //
-         //
-         //
-         //
-         //
-         // are only moving along X
-    {
-        oldVertexX = size = currentVertexX;
-    }
-      else
-    {
-        psh1 = currentVertexX;  // let's save the current coordinates since we are going to
-       //
-       //
-       //
-       //
-       //
-       //
-       //
-       //
-       //
-       //
-       // modify the values
-        psh2 = currentVertexY;
-
-        if (currentVertexY < oldVertexY)  // if we are going up
-      {
-          size = oldVertexY - currentVertexY;
-          direction = -1;
-
-          if (oldVertexX < currentVertexX)  // if we are going up right
-        {
-            echange = oldVertexX; // we invert the vertex to draw from new to old
-            oldVertexX = currentVertexX;
-            currentVertexX = echange;
-
-            echange = currentVertexY;
-            currentVertexY = oldVertexY;
-
-            oldVertexY = echange;
-
-            echange = oldVertexParam;
-            oldVertexParam = vertexParam2;
-            vertexParam2 = echange;
-
-            direction = 1;  // we will draw by going down the tab
-        }
-
-          temp2 = oldVertexY; // temp2 is the starting Y position
-          oldVertexY = size;  // oldVertexY now become the number of pixel
-          size = temp2 * 2;
-
-          ptr3 = &polyTab[temp2 + 480]; // ptr3 is the output ptr in the renderTab
-
-          temp4 = ((oldVertexX - currentVertexX) << 16);  // temp4 = size in X << 16
-
-          temp5 = temp4 / oldVertexY; // temp5 is the size of a step << 16
-          temp6 = temp4 % oldVertexY; // temp6 is the remaining << 16
-
-          vfloat = ((float) (oldVertexX - currentVertexX)) / ((float) oldVertexY);
-
-          temp6 >>= 1;
-          temp6 += 0x7FFF;
-
-          step = (unsigned short) temp5;  // retrieve the size of a step
-
-         // temp7 = (((unsigned short)temp6) | ((oldVertexX & 0xFFFF)<<16));
-          vfloat2 = oldVertexX;
-
-          oldVertexX = oldVertexY;  // oldVertexX is now the number of vertical pixels
-
-          oldVertexY += 2;
-
-          for (i = 0; i < oldVertexY; i++)
-        {
-           // *(ptr3)=((temp7&0xFFFF0000)>>16);
-            *(ptr3) = (short int) vfloat2;
-            ptr3 += direction;
-           // temp7+=step;
-            vfloat2 -= vfloat;
-        }
-
-          if (FillVertic_AType >= 7)
-        {
-            ptr3 = &polyTab2[temp2 + 480];
-
-            temp4 = ((vertexParam2 - oldVertexParam));
-
-            if (temp4 >= 0)
-          {
-            //  *
-           //   * temp5=temp4/oldVertexX; temp6=temp4%oldVertexX;
-            //  */
-
-/*      vcfloat = ((float) (temp4)) / ((float) oldVertexX);
-
-    //  *
-    //  * (*(unsigned char*)&temp6)>>=1; (*(unsigned char*)&temp6)+=0x7F;
-    //  */
-
-// temp6=(temp6&0xFF) | (oldVertexParam)<<8;
-
-/*    vcfloat2 = oldVertexParam;
-
-   // temp6=oldVertexParam;
-
-    oldVertexX += 2;
-
-    for (i = 0; i <= oldVertexX; i++)
-  {
-      *(ptr3) = (short int) vcfloat2;
-      ptr3 += direction;
-      vcfloat2 += vcfloat;
-  }
-}
-  else
-{
-    temp5 = temp4 / oldVertexX;
-    temp6 = temp4 % oldVertexX;
-
-    vcfloat = -((float) (temp4)) / ((float) oldVertexX);
-
-    (*(unsigned char *) &temp6) >>= 1;
-    (*(unsigned char *) &temp6) += 0x7F;
-
-    temp6 = (temp6 & 0xFF) | (oldVertexParam & 0xFF) << 8;
-
-    vcfloat2 = oldVertexParam;
-
-    temp6 = oldVertexParam;
-
-    oldVertexX += 2;
-
-    for (i = 0; i <= oldVertexX; i++)
-  {
-      *(ptr3) = (short int) vcfloat2;
-      ptr3 += direction;
-      vcfloat2 -= vcfloat;
-  }
-}
-}
-direction = 1;
-oldVertexY = psh2;
-oldVertexX = psh1;
-}
-
-else  // if we are going down
-{
-
-size = currentVertexY - oldVertexY; // size is the number of pixel we must go
-// verticaly
-
-if (oldVertexX > currentVertexX)  // if we are going down and to the left
-{
-  echange = oldVertexX; // in that case, we will draw the line the other
- // side (from new point to old point)
-  oldVertexX = currentVertexX;
-  currentVertexX = echange;
-
-  echange = currentVertexY;
-  currentVertexY = oldVertexY;
-  oldVertexY = echange;
-
-  echange = oldVertexParam;
-  oldVertexParam = vertexParam2;
-  vertexParam2 = echange;
-
-  direction = -1; // since we are going backward in the screen
-}
-
-temp2 = oldVertexY; // temp2 is the starting Y position
-oldVertexY = size;  // oldVertexY now become the number of pixel
-size = temp2 * 2;
-
-ptr3 = &polyTab[temp2]; // ptr3 is the output ptr in the renderTab
-
-temp4 = ((currentVertexX - oldVertexX) << 16);  // temp4 = size in X << 16
-
-temp5 = temp4 / oldVertexY; // temp5 is the size of a step << 16
-temp6 = temp4 % oldVertexY; // temp6 is the remaining << 16
-
-vfloat = ((float) (currentVertexX - oldVertexX)) / ((float) oldVertexY);
-
-temp6 >>= 1;
-temp6 += 0x7FFF;
-
-step = (unsigned short) temp5;  // retrieve the size of a step
-
-// temp7 = (((unsigned short)temp6) | ((oldVertexX & 0xFFFF)<<16));
-vfloat2 = oldVertexX;
-
-oldVertexX = oldVertexY;  // oldVertexX is now the number of vertical pixels
-
-oldVertexY += 2;
-
-for (i = 0; i < oldVertexY; i++)
-{
- // *(ptr3)=((temp7&0xFFFF0000)>>16);
-  *(ptr3) = (short int) vfloat2;
-  ptr3 += direction;
- // temp7+=step;
-  vfloat2 += vfloat;
-}
-
-if (FillVertic_AType >= 7)
-{
-  ptr3 = &polyTab2[temp2];
-
-  temp4 = ((vertexParam2 - oldVertexParam));
-
-  if (temp4 >= 0)
-{
-    temp5 = temp4 / oldVertexX;
-    temp6 = temp4 % oldVertexX;
-
-    vcfloat =
-  ((float) (vertexParam2 - oldVertexParam)) /
-  ((float) oldVertexX);
-
-    (*(unsigned char *) &temp6) >>= 1;
-    (*(unsigned char *) &temp6) += 0x7F;
-
-    temp6 = (temp6 & 0xFF) | (oldVertexParam) << 8;
-
-    vcfloat2 = oldVertexParam;
-
-    temp6 = oldVertexParam;
-
-    oldVertexX += 2;
-
-    for (i = 0; i <= oldVertexX; i++)
-  {
-      *(ptr3) = (short int) vcfloat2;
-      ptr3 += direction;
-      vcfloat2 += vcfloat;
-  }
-}
-  else
-{
-    temp5 = temp4 / oldVertexX;
-    temp6 = temp4 % oldVertexX;
-
-    vcfloat =
-  -((float) (vertexParam2 - oldVertexParam)) /
-  ((float) oldVertexX);
-
-    (*(unsigned char *) &temp6) >>= 1;
-    (*(unsigned char *) &temp6) += 0x7F;
-
-    temp6 = (temp6 & 0xFF) | (oldVertexParam & 0xFF) << 8;
-
-    vcfloat2 = oldVertexParam;
-
-    temp6 = oldVertexParam;
-
-   // oldVertexX+=2;
-
-    for (i = 0; i <= oldVertexX; i++)
-  {
-      *(ptr3) = (short int) vcfloat2;
-      ptr3 += direction;
-      vcfloat2 -= vcfloat;
-  }
-}
-}
-
-direction = 1;
-oldVertexY = psh2;
-oldVertexX = psh1;
-}
-}
-}
-while (--numOfVertexRemaining);
-
-return (1);
-}*/
 
 int findString(int index) {
 	int temp = 0;
@@ -1035,7 +630,7 @@ void getWordSize(char *arg1, char *arg2) {
 	while (*arg1 != 0 && *arg1 != 1 && *arg1 != 0x20) {
 		temp++;
 		*arg2++ = *arg1++;
-	};
+	}
 
 	wordSizeChar = temp;
 	*arg2 = 0;

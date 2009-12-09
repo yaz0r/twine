@@ -1,13 +1,22 @@
-debian/ubuntu build-deps (from Ubuntu Edgy):
-autoconf
-automake1.7
-libsdl1.2-dev
-libsdl-mixer1.2-dev
-- libaal-dev
-- libx11-dev
-- libxau-dev
-- libxdmcp-dev
-- libxext-dev
-- libxt-dev
-- mesa-common-dev
-- x-dev
+== Install dependencies ==
+- libSDL 1.2
+- SDL_mixer 1.2
+On gentoo:
+$ emerge -av libsdl sdl-mixer
+On debian/ubuntu:
+$ aptitude install libsdl1.2-dev libsdl-mixer1.2-dev
+
+== Compile twin-e ==
+% cd src
+% make
+$ make install
+
+== Copy datas from LBA ==
+% cd ../bin
+% mkdir -p data
+% cp -R <PLACE WHERE THE GAME IS>/* data
+
+== Run twin-e ==
+% ./twin-e
+
+

@@ -19,11 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _LBA_
 #define _LBA_
 
-#ifndef _EE
-# ifndef WIN32
-#  include "config.h"
-# endif
-#endif
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,12 +41,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # else
 #  include <malloc.h>
 # endif
-# ifdef USE_GL
-#  include <windows.h>    // Header File For Windows
-#  include <gl/gl.h>      // Header File For The OpenGL32 Library
-#  include <gl/glu.h>     // Header File For The GLu32 Library
-#  include <gl/glaux.h>   // Header File For The Glaux Library
-# endif
 #endif
 
 #ifndef PCLIKE
@@ -61,47 +51,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #  include <usrsnasm.h>   /* LibCross I/O routines. */
 #  include <sg_syCbl.h>   /* NTSC/RGB/VGA Cable check interface. */
 #  define PRELOAD_ALL
-#  define USE_GL
 # endif
 #endif
 
 #include <assert.h>
 
-#ifdef NDEBUG
-# define verify(exp)     (exp)
-#else
-# define verify(exp)     (assert(exp))
-#endif
+#define verify(exp)     (assert(exp))
 
-#include "HQRlib.h"
-#include "HQMLib.h"
+#include "hqr.h"
 
 #include "streamReader.h"
 
 #include "samples.h"
 #include "music.h"
 
-#ifndef MEM_DEBUG
-# define Malloc(size) malloc(size)
-# define MemFree(ptr) free(ptr)
-#endif
-
-
-#ifdef GAME_DEBUG
-# define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
-#else // _DEBUG
-# define todo(string)
-#endif // _DEBUG
-
-#ifdef GAME_DEBUG
-# define assert_ptr(ptr) assert(((int)ptr!=0xCDCDCDCD) && (ptr!=NULL))
-#else // _DEBUG
-# define assert_ptr(ptr)
-#endif // _DEBUG
-
-#ifndef PCLIKE
-# define exit(string) printf("Exit required\n")
-#endif
+#define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
+#define assert_ptr(ptr) /*assert((int)ptr != 0xCDCDCDCD && ptr != NULL)*/
 
 #ifdef MACOSX
 # define convertDWFromLE(x) ((x >> 24) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | (x << 24))
@@ -111,24 +76,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # define convertWFromLE(x) (x)
 #endif
 
-struct mouseStatusStruct {
+typedef struct
+{
 	int left;
 	int right;
 	int X;
 	int Y;
-};
+} mouseStatus;
 
-typedef struct mouseStatusStruct mouseStatusStruct;
-
-struct actorBoxStruct {
+typedef struct
+{
 	int actorNum;
 	int left;
 	int right;
 	int top;
 	int bottom;
-};
+} actorBox;
 
-typedef struct actorBoxStruct actorBoxStruct;
 
 // memory sizes
 #define BUF_SPEAK_SIZE 262176
@@ -189,18 +153,15 @@ typedef struct actorBoxStruct actorBoxStruct;
 // lba2 48 = use switch
 // lba2 49 = crawl
 
-//#include "opcodes.h"
 #include "osystem.h"
 #include "angle.h"
 #include "costume.h"
-#include "debug.h"
 #include "zones.h"
 #include "vars.h"
 #include "angleTable.h"
 #include "overlay.h"
-#include "file.h"
 
 #define MAX_PATH 256
-#define DATA_DIR "data/"
+#define DATADIR "data/"
 
 #endif

@@ -16,141 +16,74 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "images.h"
 #include "lba.h"
 
 streamReader fla_streamReader;
 
 int flaSampleTable[100];
 
-void PlayAnimFla(char *flaName) {
-
-	int var66 = 0; //quitFla
+void PlayAnimFla(char *flaName)
+{
 	int currentFrame;
-	int synchTime;
-	int esi;
+	int syncTime;
+    int oldSyncTime;
 	char buffer[256];
 
 #ifndef PCLIKE
 	return;
 #endif
 
-#ifdef FASTDEBUG
-	return;
-#endif
-
-	printf("PlayAnimFla: %s\n", flaName);
-
 	todo("remove");
 
 	Cls();
 
-	if (useFlaPCX == 0) {
-		printf("Unimplemented useFlaPCX!\n");
-		exit(1);
-	} else {
-		unsigned int i;
-		for (i = 0;i < strlen(flaName);i++) {
-			if (flaName[i] == '.')
-				flaName[i] = 0;
-		}
+	unsigned int i;
+	for (i = 0; i < strlen(flaName); i++)
+		if (flaName[i] == '.')
+			flaName[i] = 0;
 
-
-		stopMusic();
+	stopMusic();
 #ifdef PCLIKE
-		strcpy(buffer, "fla/");
-		strcat(buffer, flaName);
+	strcpy(buffer, "fla/");
+	strcat(buffer, flaName);
 #else
-		strcpy(buffer, flaName);
+	strcpy(buffer, flaName);
 #endif
-		AddExt(buffer, ".fla");
-		if (InitFla(buffer)) {
-			if (!strcmp(flaHeaderData.version, "V1.3")) {
-				ExtInitMcga();
-				SetBackPal();
-				Mcga_Cls();
-				Mcga_Flip();
-				Mcga_Cls();
-				flaVar2 = 1;
-				currentFrame = 0;
+    strcat(buffer, ".fla");
 
-				if (!var66) {
-					do {
-						if (skipIntro == 1)
-							var66 = 1;
+	if (InitFla(buffer) && strcmp(flaHeaderData.version, "V1.3") == 0)
+    {
+		SetBackPal();
+        currentFrame = 0;
+        syncTime = oldSyncTime = SDL_GetTicks();
 
-						esi = lba_time;
-						DrawNextFrameFla();
-						Mcga_Flip();
-						GestionPalette();
+        for (;;)
+        {
+			if (skipIntro)
+				break;
 
-						{
-							/*char* source=(char*)flaBuffer;
-							char* source2;
-							char* dest=(char*)frontVideoBuffer;
+            syncTime = SDL_GetTicks();
+            if (syncTime - oldSyncTime < 30) /* TODO: good value ? */
+                continue;
 
-							for(i=0;i<200;i++)
-							{
-							  for(j=0;j<320;j++)
-							  {
-							    *(dest++)=*(source);
-							    *(dest++)=*(source++);
-							  }
+			DrawNextFrameFla();
 
-							  source2=dest-640;
+		    osystem_draw320x200BufferToScreen((unsigned char*)flaBuffer);
 
-							  for(j=0;j<640;j++)
-							  {
-							    *(dest++)=*(source2++);
-							  }
+			readKeyboard();
 
-							}*/
-
-							osystem_draw320x200BufferToScreen((unsigned char*)flaBuffer);
-
-							/*do
-							{
-							  osystem_delay(5);
-							}while(time<esi+2);
-
-
-							*/
-#ifndef USE_GL
-							osystem_updateImage();
-#endif
-							readKeyboard();
-						}
-
-						//TODO: time sync code
-						synchTime = lba_time;
-
-						currentFrame++;
-
-						if (currentFrame == numOfFrameInFLA)
-							var66 = 1;
-
-						flaTime = synchTime;
-					} while (!var66);
-				}
-
-				FadeToBlack(flaPalette);
-				Mcga_Cls();
-				Mcga_Flip();
-				HQ_StopSample();
-				ClearFla();
-				ExtInitSvga();
-				SetBackPal();
-				Cls();
-			}
+            oldSyncTime = syncTime + (syncTime - oldSyncTime - 30);
+    	    currentFrame++;
+    		if (currentFrame == numOfFrameInFLA)
+	    		break;
 		}
 
+		FadeToBlack(flaPalette);
+		HQ_StopSample();
+		SetBackPal();
+		Cls();
 	}
-
-//    Close(dataFileHandle);
-}
-
-void AddExt(char* file, char* extention) {
-	// TODO: make real implementation
-	strcat(file, extention);
 }
 
 int InitFla(char* file) {
@@ -196,17 +129,7 @@ int InitFla(char* file) {
 		flaSampleTable[i] = var0;
 	}
 
-	return(1);
-}
-
-void ExtInitMcga() {
-	osystem_set320x200Mode(true);
-}
-
-void Mcga_Cls() {
-}
-
-void Mcga_Flip() {
+	return 1;
 }
 
 struct flaSampleStruct {
@@ -273,7 +196,7 @@ void DrawNextFrameFla() {
 		case 2: { // play sample
 				flaSampleStruct header;
 				memcpy(&header, ptr, sizeof(flaSampleStruct));
-				playSampleFla(header.sampleNum, header.freq, header.repeat, header.x, header.y);
+				playSampleFla(header.sampleNum, /* header.freq, */header.repeat/*, header.x, header.y*/);
 				break;
 			}
 		case 4: { // stop sample
@@ -304,36 +227,33 @@ void DrawNextFrameFla() {
 void DrawFrame(char* ptr, int width, int height) {
 	char* destPtr = (char*)flaBuffer;
 	char* startOfLine = destPtr;
-	char flag1;
-	char flag2;
+
+	char fill;
+    char loop;
 
 	int i;
 	int j;
 
-	do {
-		flag1 = *(ptr++);
+	while (height-- > 0)
+    {
+        loop = *(ptr++);
+		for (i = 0; i < loop; i++)
+        {
+			fill = *(ptr++);
 
-		for (i = 0;i < flag1;i++) {
-			flag2 = *(ptr++);
-
-			if (flag2 < 0) {
-				flag2 = -flag2;
-				for (j = 0;j < flag2;j++) {
+			if (fill < 0) /* copy all pixels */
+				for (j = 0; j < -fill; j++)
 					*(destPtr++) = *(ptr++);
-				}
-			} else {
-				char colorFill;
-
-				colorFill = *(ptr++);
-
-				for (j = 0;j < flag2;j++) {
-					*(destPtr++) = colorFill;
-				}
+			else
+            {
+				for (j = 0; j < fill; j++)
+					*(destPtr++) = *ptr;
+				ptr++;
 			}
 		}
 
 		startOfLine = destPtr = startOfLine + width;
-	} while (--height);
+	}
 }
 
 void UpdateFrame(char* ptr, int width) {
@@ -342,54 +262,38 @@ void UpdateFrame(char* ptr, int width) {
 	char* startOfLine;
 	int height;
 
-	char flag1;
-	char flag2;
+	char fill;
+    char loop;
 
-	int i;
-	int j;
+	int i, j;
 
-	skip = READ_LE_U16(ptr);
+    skip = READ_LE_U16(ptr);
 	ptr += 2;
 	skip *= width;
 	startOfLine = destPtr = (char*)flaBuffer + skip;
-	height = READ_LE_S16(ptr);
+    height = READ_LE_S16(ptr);;
 	ptr += 2;
 
+	while (height-- > 0)
+    {
+        loop = *(ptr++);
+		for (i = 0; i < loop; i++)
+        {
+			destPtr += (unsigned char) *(ptr++);
+			fill = *(ptr++);
 
-	do {
-		flag1 = *(ptr++);
-
-		for (i = 0;i < flag1;i++) {
-			destPtr += (unsigned char) * (ptr++);
-			flag2 = *(ptr++);
-
-			if (flag2 > 0) {
-
-				for (j = 0;j < flag2;j++) {
+			if (fill > 0) /* copy all pixels */
+				for (j = 0; j < fill; j++)
 					*(destPtr++) = *(ptr++);
-				}
-			} else {
-				char colorFill;
-				flag2 = -flag2;
-
-				colorFill = *(ptr++);
-
-				for (j = 0;j < flag2;j++) {
-					*(destPtr++) = colorFill;
-				}
+			else /* same color for all the line */
+			{
+				for (j = 0; j < -fill; j++)
+					*(destPtr++) = *ptr;
+                ptr++;
 			}
 		}
 
 		startOfLine = destPtr = startOfLine + width;
-	} while (--height);
+	}
 }
 
-void GestionPalette() {
-}
-
-void ClearFla() {
-}
-
-void ExtInitSvga() {
-	osystem_set320x200Mode(false);
-}

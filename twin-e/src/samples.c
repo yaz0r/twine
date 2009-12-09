@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#ifdef USE_FMOPL_MIDI
 #include <SDL_mixer.h>
+#include <sys/stat.h>
 
 struct sampleStructData {
 	int sampleIdx;
@@ -27,10 +27,10 @@ struct sampleStructData {
 
 struct sampleStructData sampleTable[16];
 
-void playSample(int sampleNum, int freq, int repeat, int x, int y) {
+void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
+{
 	char filename[MAX_PATH];
 	Mix_Chunk * sample;
-	FILE* fhandle;
 
 	sample = Mix_LoadWAV_RW(SDL_RWFromMem(HQR_Get(HQR_Samples,sampleNum), Size_HQR("SAMPLES.HQR", sampleNum)), 0);
 
@@ -40,7 +40,8 @@ void playSample(int sampleNum, int freq, int repeat, int x, int y) {
 	Mix_PlayChannel(0, sample, repeat - 1);
 }
 
-void playSampleFla(int sampleNum, int freq, int repeat, int x, int y) {
+void playSampleFla(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
+{
 	char filename[MAX_PATH];
 	Mix_Chunk * sample;
 
@@ -50,7 +51,8 @@ void playSampleFla(int sampleNum, int freq, int repeat, int x, int y) {
 	Mix_PlayChannel(0, sample, repeat - 1);
 }
 
-void soundInit() {
+void soundInit()
+{
 	const int audio_buffers = 512;
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, audio_buffers);
@@ -70,22 +72,20 @@ void playMidi(int musicNum) {
 	if (musicNum == 9)
 		return;
 
-	sprintf(filename, DATA_DIR"midi/%02d.midi", musicNum);
+	sprintf(filename, DATADIR "midi/%02d.midi", musicNum);
 
-	fhandle = OpenRead(filename);
+	/*fhandle = fopen(filename, "r");
 
 	if (!fhandle) {
-		hqr_entry* temp;
+		mkdir(DATADIR "midi", 0777);*/
+		fhandle = fopen(filename, "w");
 
-		Mkdir(DATA_DIR"midi");
-		fhandle = OpenWrite(filename);
+		char* temp = (char*)HQR_Get(HQR_Midi, musicNum);
+		fwrite(temp, Size_HQR(HQR_Midi->fileName, musicNum), 1, fhandle);
+	/*}*/
 
-		temp = HQR_Get(HQR_Inventory, musicNum);
-		fwrite(temp->ptr, temp->size1, 1, fhandle);
-		free(temp);
-	}
-
-	Close(fhandle);
+    /*else*/
+    	fclose(fhandle);
 
 	sample = Mix_LoadMUS(filename);
 
@@ -94,4 +94,3 @@ void playMidi(int musicNum) {
 	Mix_PlayMusic(sample, 0);
 }
 
-#endif

@@ -16,38 +16,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <math.h>
+
+#include "images.h"
 #include "lba.h"
-#include "math.h"
-
-int Distance2D(int X1, int Y1, int X2, int Y2) {
-	int Xdata;
-	int Ydata;
-
-	Xdata = X2 - X1;
-	Xdata *= Xdata;
-
-	Ydata = Y2 - Y1;
-	Ydata *= Ydata;
-
-	return ((int) sqrt(Xdata + Ydata));
-}
-
-int Distance3D(int X1, int Z1, int Y1, int X2, int Z2, int Y2) {
-	int newX;
-	int newZ;
-	int newY;
-
-	newX = X2 - X1;
-	newX *= newX;
-
-	newZ = Z2 - Z1;
-	newZ *= newZ;
-
-	newY = Y2 - Y1;
-	newY *= newY;
-
-	return ((int) sqrt(newX + newZ + newY));
-}
 
 int GetAngle(int X1, int Y1, int X2, int Y2) {
 	int newX;
@@ -237,7 +209,7 @@ void foundObject(int objectNumber) {
 
 	DrawOverBrick(object2X, object2Z, object2Y);
 
-	osystem_Flip(frontVideoBuffer);
+	osystem_flip(frontVideoBuffer);
 
 	projectPositionOnScreen(twinsen->X - objectX, twinsen->Y - objectZ, twinsen->Z - objectY);
 
@@ -249,7 +221,7 @@ void foundObject(int objectNumber) {
 	boxBottomRightX = projectedPositionX + 65;
 	boxBottomRightY = projectedPositionY + 65;
 
-	playSample(41, 0x1000, 1, 0x80, 0x80);
+	playSample(41, /*0x1000, */1/*, 0x80, 0x80*/);
 
 	/*    if(getFoundVox(2))
 	{
@@ -308,7 +280,7 @@ void foundObject(int objectNumber) {
 
 		objectRotation[objectNumber] += 8;
 
-		Draw3dObject(projectedPositionX, projectedPositionY, objectPtr, objectRotation[objectNumber], 10000);
+		Draw3dObject(projectedPositionX, projectedPositionY, (char*)objectPtr, objectRotation[objectNumber], 10000);
 
 		DrawCadre(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
 		AddPhysBox(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);

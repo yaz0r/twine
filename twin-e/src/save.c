@@ -18,6 +18,54 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+void LoadGame(void) {
+	FILE* fileHandle;
+	unsigned char data;
+	char* namePtr;
+
+	fileHandle = fopen("SAVE.LBA", "r");
+
+	namePtr = playerName;
+
+	fread(&data, sizeof(unsigned char), 1, fileHandle);
+
+	do {
+	    fread(&data, sizeof(unsigned char), 1, fileHandle);
+		*(namePtr++) = data;
+	} while (data);
+
+	fread(&data,             sizeof(unsigned char), 1,    fileHandle);
+	fread(&vars,             sizeof(char),          1,    fileHandle);
+	fread(&needChangeRoom,   sizeof(char),          1,    fileHandle);
+	fread(&chapter,          sizeof(char),          1,    fileHandle);
+	fread(&comportementHero, sizeof(char),          1,    fileHandle);
+
+	fread(&(twinsen->life),  sizeof(char),          1,    fileHandle);
+	fread(&numCoin,          sizeof(short int),     1,    fileHandle);
+	fread(&magicLevel,       sizeof(char),          1,    fileHandle);
+	fread(&magicPoint,       sizeof(char),          1,    fileHandle);
+	fread(&numCloverBox,     sizeof(char),          1,    fileHandle);
+	fread(&newTwinsenX,      sizeof(short int),     1,    fileHandle);
+	fread(&newTwinsenZ,      sizeof(short int),     1,    fileHandle);
+	fread(&newTwinsenY,      sizeof(short int),     1,    fileHandle);
+	fread(&(twinsen->angle), sizeof(short int),     1,    fileHandle);
+	fread(&(twinsen->body),  sizeof(char),          1,    fileHandle);
+	fread(&data,             sizeof(char),          1,    fileHandle);
+	fread(GV14,              sizeof(char),          data, fileHandle);
+	fread(&fuel,             sizeof(char),          1,    fileHandle);
+	fread(&data,             sizeof(char),          1,    fileHandle);
+	fread(itemUsed,          sizeof(char),          data, fileHandle);
+	fread(&numClover,        sizeof(char),          1,    fileHandle);
+
+	fclose(fileHandle);
+
+	startupComportementHeroInCube = comportementHero;
+	startupAngleInCube = twinsen->angle;
+
+	currentRoom = -1;
+	twinsenPositionModeInNewCube = 3;
+}
+
 void SaveGame(void) {
 	FILE* fHandle;
 	char temp;

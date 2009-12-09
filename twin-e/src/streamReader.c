@@ -22,10 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define USE_IFOPEN
 #endif
 
-#ifdef _EE
-#undef USE_IFOPEN
-#endif
-
 #ifdef USE_IFOPEN
 #include <sys/types.h>
 #include <dirent.h>
@@ -101,9 +97,10 @@ FILE * ifopen(const char * path, const char * mode) {
 }
 #endif
 
-boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal) {
+boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal)
+{
 	char fullPath[MAX_PATH];
-	snprintf(fullPath, sizeof(fullPath) - 1, DATA_DIR"%s", fileName);
+	snprintf(fullPath, sizeof(fullPath) - 1, DATADIR "%s", fileName);
 	fullPath[sizeof(fullPath) - 1] = '\0';
 #ifndef DREAMCAST
 #ifdef USE_IFOPEN
@@ -115,11 +112,14 @@ boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal) 
 	pThis->fileHandle = gdFsOpen(fullPath, NULL);
 #endif
 
-	if (pThis->fileHandle) {
+	if (pThis->fileHandle)
+    {
 		pThis->currentSector = 0;
 		streamReader_feedBuffer(pThis);
 		return true;
-	} else {
+	}
+    else
+    {
 		if (fatal) {
 			printf("FATAL: Can't find %s\n", fullPath);
 			exit(-1);
@@ -136,21 +136,6 @@ void streamReader_feedBuffer(streamReader* pThis) {
 #endif
 	pThis->positionInBuffer = 0;
 }
-
-/*u8 streamReader_getU8(streamReader* pThis)
-{
-  assert( pThis->fileHandle );
-}
-
-uint16 streamReader_getU16(streamReader* pThis)
-{
-  assert( pThis->fileHandle );
-}
-
-uint32 streamReader_getU32(streamReader* pThis)
-{
-  assert( pThis->fileHandle );
-}*/
 
 void streamReader_get(streamReader* pThis, void* destPtr, uint32 size) {
 	if (BUFFER_SIZE - pThis->positionInBuffer >= size) {

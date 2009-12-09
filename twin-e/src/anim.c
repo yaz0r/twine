@@ -33,7 +33,7 @@ struct bodyHeaderStruct {
 
 typedef struct bodyHeaderStruct bodyHeaderStruct;
 
-int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr) {
+int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerData *animTimerDataPtr) {
 	short int numOfKeyframeInAnim;
 	short int numOfBonesInAnim;
 	char *ptrToData;
@@ -110,7 +110,7 @@ int GetBouclageAnim(char *ptr) {
 	return (READ_LE_S16(ptr + 4));
 }
 
-int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr) {
+int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerData *animTimerDataPtr) {
 	short int animOpcode;
 
 	short int var0;
@@ -146,9 +146,10 @@ int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerDataS
 	if (!ebx) {
 		ebx = keyFramePtr;
 		ebp = keyFrameLength;
-	} else {
-		assert_ptr(ebx);
 	}
+    else {
+		assert_ptr(ebx);
+    }
 
 	lastKeyFramePtr = ebx;
 
@@ -288,7 +289,7 @@ void loadGfxSub(unsigned char *bodyPtr) {
 	}
 }
 
-int SetInterAnimObjet(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr) {
+int SetInterAnimObjet(int animState, char *animData, char *body, animTimerData *animTimerDataPtr) {
 	short int animOpcode;
 
 	short int var0;
@@ -497,7 +498,7 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
 	return (1);
 }
 
-int StockInterAnim(char *lBufAnim, char *lBody, animTimerDataStruct* animTimerDataPtr) {	// copy the next keyFrame from a different buffer
+int StockInterAnim(char *lBufAnim, char *lBody, animTimerData *animTimerDataPtr) {	// copy the next keyFrame from a different buffer
 	int temp;
 	char *ptr;
 	int *edi;
@@ -626,7 +627,7 @@ void PatchInterStep(char **ptr, int bp, int bx) {
 	*(ptr) = *(ptr) + 2;
 }
 
-int SetInterDepObjet(int position, char *anim, char *body, animTimerDataStruct* animTimerDataPtr) {
+int SetInterDepObjet(int position, char *anim, char *body, animTimerData *animTimerDataPtr) {
 	short int bodyFlags;
 	char *edi;
 	char *ebx;

@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _VARS_
 #define _VARS_
 
-#include "decomp.h"
 #include <stdlib.h>
 
 #ifdef PCLIKE
@@ -31,17 +30,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif //PCLIKE
 
 #ifdef PCLIKE
-#ifdef WIN32
-#define PACKED
+# ifdef WIN32
+#  define PACKED
+# else
+#  define PACKED __attribute__((packed))
+# endif
 #else
-#define PACKED __attribute__((packed))
+# define PACKED
 #endif
-#else
-//#define PACKED __attribute__((packed))
-#define PACKED
-#endif
-
-#include "global.h"
 
 #define NUM_MAX_FLAGS 200
 #define NUM_MAX_ZONES 100
@@ -90,27 +86,14 @@ struct renderTabEntry {
 
 typedef struct renderTabEntry renderTabEntry;
 
-//  public:
 extern short int *tab1;
 extern short int *tab2;
 extern short int *tab3;
-
-extern int _angleX;
-extern int _angleY;
-extern int _angleZ;
-
-extern int _cameraAngleX;
-extern int _cameraAngleY;
-extern int _cameraAngleZ;
 
 extern int renderLeft;
 extern int renderRight;
 extern int renderTop;
 extern int renderBottom;
-
-extern int _X;
-extern int _Y;
-extern int _Z;
 
 extern int destX;
 extern int destY;
@@ -118,8 +101,6 @@ extern int destZ;
 
 extern short int polyTab[960];
 extern short int polyTab2[960];
-
-extern int _numOfPrimitives;
 
 extern int isUsingOrhoProjection;
 
@@ -140,7 +121,7 @@ extern int _numOfParts;
 extern unsigned char *_pointsPtr;
 extern unsigned char *_partsPtr;
 
-extern int _matrixTable[271]; // should be matrixes
+extern int _matrixTable[271];
 extern unsigned char *_currentMatrixTableEntry;
 
 extern int *_shadePtr;
@@ -250,14 +231,6 @@ struct flagDataStruct {
 
 typedef struct flagDataStruct flagDataStruct;
 
-/*
-struct pointTab
-    {
-  short int x;
-  short int y;
-  short int z;
-    };*/
-
 struct point2dStruct {
 	short int x;
 	short int y;
@@ -310,7 +283,7 @@ struct extraListStruct {
 	short int field_A;
 	short int field_C;
 
-	timeStruct trackActorRotation;
+	time trackActorRotation;
 
 	short int field_E;
 	short int field_10;
@@ -367,16 +340,6 @@ struct frameDataStruct {
 
 typedef struct frameDataStruct frameDataStruct;
 
-#ifdef MEM_DEBUG
-
-extern int currentAllocatedMemory;
-extern int staticMemoryUsage;
-
-#endif
-
-extern int useFlaPCX;
-extern int flaTime;
-extern short int flaVar2;
 extern int numOfFrameInFLA;
 extern char flaPalette[256*3];
 extern char flaPaletteRGBA[256*4];
@@ -601,8 +564,6 @@ extern char enterPlayerNameVar1;
 
 extern char allowedCharIndex[71];
 
-extern short int currentKey;
-
 extern short int enterPlayerNameVar2;
 
 extern int addLineBreakX;
@@ -639,7 +600,7 @@ extern short int newTwinsenYByZone;
 
 extern short int twinsenZBeforeFall;
 
-extern timeStruct mainLoopVar1;
+extern time mainLoopVar1;
 extern short int mainLoopVar4;
 extern short int disableScreenRecenter;
 
@@ -669,17 +630,9 @@ extern int currentPositionInBodyPtrTab;
 extern short int numOfZones;
 extern short int numFlags;
 
-extern byte *file3D0;
-extern byte *file3D1;
-extern byte *file3D2;
-extern byte *file3D3;
-extern byte *file3D4;
+extern byte *file3D[];
 
-extern short int TCos0Init;
-extern short int TCos1Init;
-extern short int TCos2Init;
-extern short int TCos3Init;
-extern short int TCos4Init;
+extern short int TCos[];
 
 extern unsigned char *loadTwinsenCostumesVar1;
 
@@ -774,9 +727,8 @@ extern short int loadCostumeVar6;
 extern drawListStruct drawList[150];
 
 extern unsigned char *menuCostumeIndex;
-extern short int TCOS[4];
 
-extern timeStruct timeVar;
+extern time timeVar;
 
 extern short int winTab[4];
 
@@ -790,7 +742,6 @@ extern int renderV9;
 extern int renderV11;
 extern int renderV10;
 
-extern short int numOfPrimitives;
 extern unsigned short int costumeHeader;
 extern short int numOfPri1;
 extern unsigned char *pri1Ptr;
@@ -924,7 +875,6 @@ void DrawOneInventory(int objectNumber);
 void Inventory(void);
 void Draw3dObject(int X, int Y, char* objectPtr, int rotation, int param);
 void OpenDial(int textNumber);
-void CheckCarrier(int actorNumber);
 void ZONE_DrawZones(void);
 void GetShadow(int X, int Z, int Y);
 
@@ -941,7 +891,6 @@ void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int pa
 void AffSpecial(int extraNum, int X, int Y);
 void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4);
 void MixteColonne(unsigned char *gridEntry, unsigned char *dest);
-void MixteMapToCube(byte* gridPtr);
 void IncrustGrm(int gridNumber);
 int WorldColBrickFull(int var0, int var1, int var2, int var3);
 
@@ -949,20 +898,11 @@ void processInGameMenu(int index);
 
 void DrawFrame(char* ptr, int width, int height);
 void UpdateFrame(char* ptr, int width);
-void AddExt(char* file, char* extention);
 int InitFla(char* file);
-void ExtInitMcga();
-void Mcga_Cls();
-void Mcga_Flip();
 void DrawNextFrameFla();
-void GestionPalette();
-void ClearFla();
-void ExtInitSvga();
 
 int BoundRegleTrois(int var0, int var1, int var2, int var3);
 void CheckZoneSce(actor * lactor, int actorNumber);
-
-void ClearRealAngle(actor * ptr);
 
 void PatchInterAngle(char **ptr, int bp, int bx);
 void PatchInterStep(char **ptr, int bp, int bx);
@@ -979,7 +919,7 @@ int CheckObjCol(int param);
 void ReceptionObj(void);
 int WorldColBrick(int var0, int var1, int var2);
 void Rotate(int initialX, int initialY, int angle);
-int SetInterDepObjet(int position, char *anim, char *body, animTimerDataStruct* animTimerDataPtr);
+int SetInterDepObjet(int position, char *anim, char *body, animTimerData *animTimerDataPtr);
 int CheckZvOnZv(int var0, int var1);
 int ThrowExtra(int actorNum, int X, int Y, int Z, int sprite, int var2, int var3, int var4, int var5, int strength);
 void HitObj(int actorAttacking, int actorAttacked, int param, int angle);
@@ -988,29 +928,26 @@ int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int ol
 void ZoneGiveExtraBonus(ZONE_Box* pZone);
 
 void GiveExtraBonus(actor * lactor);
-int Distance3D(int X1, int Z1, int Y1, int X2, int Z2, int Y2);
-int StockInterAnim(char *lBufAnim, char *lBody, animTimerDataStruct* animTimerDataPtr);
+int StockInterAnim(char *lBufAnim, char *lBody, animTimerData *animTimerDataPtr);
 void GereAnimAction(actor * lactor, int actorNum);
 
 int GetNbFramesAnim(char *ptr);
 int GetBouclageAnim(char *ptr);
 
-int GetRealValue(timeStruct * angleData);
-
 void DoAnim(int actorNum);
 
-void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed, timeStruct * angleStruct);
+void ManualRealAngle(int angleFrom, int angleTo, int angleSpeed, time *angleStruct);
 
 int GetAngle(int X1, int Y1, int X2, int Y2);
 
 void DoDir(int actorNum);
 
-int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr);
-int SetInterAnimObjet(int animState, char *animData, char *body, animTimerDataStruct* animTimerDataPtr);
+int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerData *animTimerDataPtr);
+int SetInterAnimObjet(int animState, char *animData, char *body, animTimerData *animTimerDataPtr);
 
 void FlipBoxes(void);
 
-void SmallSort(drawListStruct *list, int listSize, int param);
+void SmallSort(drawListStruct *list, int listSize/*, int param*/);
 
 void CopyMask(int spriteNum, int x, int y, byte * bufferBrick, byte * buffer);
 
@@ -1018,13 +955,9 @@ void AddPhysBox(int left, int top, int right, int bottom);
 
 void DrawOverBrick(int X, int Z, int Y);
 
-void InitSprite(int imageNumber, int actorNumber);
-
 void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, unsigned char *ptr);
 
 int getAnimIndexForBody(byte anim, short int actorNumber);
-
-int Distance2D(int X1, int Y1, int X2, int Y2);
 
 void DoTrack(int actorNumber);
 
@@ -1032,9 +965,7 @@ void loadImageCrossFade(int imageNumber);
 
 void convertPalToRGBA(byte * palSource, byte * palDest);
 
-int HQ_3D_MixSample(int param0, int param1, int param2, int param3, int param4, int param5);
-
-int GetRealAngle(timeStruct * arg_0);
+int HQ_3D_MixSample(/* int param0, int param1, int param2, int param3, int param4, int param5 */);
 
 void SetClipLBA(int left, int top, int right, int bottom);
 #define SetClip SetClipLBA
@@ -1073,7 +1004,7 @@ void Box(int a, int b, int c, int d, unsigned char e);
 
 void DrawInfoMenu(short int arg_0, short int arg_4);
 
-int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerDataStruct* animTimerDataPtr);
+int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerData *animTimerDataPtr);
 
 void drawMenuWin(short int var);
 
@@ -1117,10 +1048,6 @@ void fullRedrawSub5(void);
 
 void blitBackgroundOnDirtyBoxes(void);
 
-void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8, timeStruct * timePtr);
-
-void resetActor(int actorNumber);
-
 void reinitAll3(void);
 
 void reinitVars(void);
@@ -1134,16 +1061,12 @@ void mainLoop2sub1(void);
 
 void fullRedraw(int param);
 void waitRetrace(void);
-void setActorAngle(short int arg0, short int arg4, short int arg8, timeStruct * ptr);
-
 void createCube(void);
 void addCubeEntry(unsigned char *gridEntry, unsigned char *dest);
 
-int CalcGraphMsk(int var, unsigned char *ptr1, unsigned char *ptr2);
+int CalcGraphMsk(unsigned char *ptr1, unsigned char *ptr2);
 
 int CreateMaskGph(void);
-
-void RazMem(unsigned char *ptr, int size);
 
 int loadBrk(int gridSize);
 
@@ -1154,11 +1077,7 @@ int getAnimIndexForBody(byte arg_0, short int actorNumber);
 
 void reinitExtraObjectList(void);
 
-void StartInitObj(short int arg_0);
-
 void SaveGame(void);
-
-int InitGrille(short int roomNumber);
 
 void HoloTraj(int arg_0);
 
@@ -1200,9 +1119,7 @@ void readBufferSpeak(FILE * fileHandle);
 
 void stopCD(void);
 
-int loadVox(int index);
-
-int InitCDR(char *string);
+int loadVox(void);
 
 void ChangeCube(void);
 
@@ -1225,15 +1142,13 @@ void CoulFont(int i);
 void setTextColorSub(int i);
 void drawButton(short int *data, int a);
 
-char *Itoa(int valeur);
+char *itoa(int valeur);
 void reinitAll(int save);
 int mainLoop(void);
 
 void checkHeap();
 
 void SetFont(byte * font, int param1, int param2);
-
-// byte *LoadMalloc_HQR(char *fileName, short int imageNumber);
 
 int processMenu(short int *menuData);
 int enterPlayerName(short int param);
@@ -1245,9 +1160,9 @@ void UnSetClip(void);
 int setVoxFileAtDigit(int index);
 int printText4(FILE * var1);
 void loadSavedTextWindow(void);
-int printText6(int var);
+int printText6(/*int var*/);
 
-int printText7(int var);
+int printText7(/*int var*/);
 int initText(int var);
 void InitDialWindow(void);
 int printText10(void);
@@ -1256,7 +1171,6 @@ int printText11(void);
 void drawButtonGFX(int largeur, int posY, int c, int d, int mode);
 
 void SetBackPal(void);
-void Cls(void);
 
 void printTextFullScreen(int textIndex);
 
@@ -1282,29 +1196,15 @@ void newGame(void);
 
 void InitBufferCube(void);
 
-// memory management functions
-#ifdef MEM_DEBUG
-void initMemorySystem();
-void* Malloc(size_t size);
-void MemFree(void* ptr);
-#endif
-
 void fadeIn(byte * palette);
 void adjustPalette(byte R, byte G, byte B, byte * palette, int a);
 
 int RegleTrois32(int modifier, int color, int param, int intensity);
 void setPalette(byte * palette);
 
-void dumpFile(char *name, char *ptr, int size); //!
-
 void initVideoStuff(void);
 
-void CopyScreen(byte * source, byte * destination);
-
 void AdelineLogo(void);
-
-void InitProgram(void);
-void initAll(char *fileName, int a);
 
 void initVars(void);
 
@@ -1320,10 +1220,10 @@ void drawSelectableLetters(void);
 
 void drawSelectableLetter(int y, int x, int arg);
 
-int chooseSave(int param);
+int chooseSave(/* int param */);
 
 void processTextLine(void);
 
-void CopyMaskLBA(int spriteNum, int x, int y, byte * localBufferBrick, byte * buffer);
+void CopyMaskLBA(int spriteNum, int x, int y, /*byte * localBufferBrick, */byte * buffer);
 
 #endif
