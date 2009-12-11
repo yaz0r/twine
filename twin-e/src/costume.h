@@ -20,15 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define COSTUME_H
 
 typedef struct {
-	short int bottomLeft;
-	short int topRight;
+       short int bottomLeft;
+       short int topRight;
 } MDL_BoundingBoxPoint;
 
 typedef struct
 {
-	MDL_BoundingBoxPoint X;
-	MDL_BoundingBoxPoint Y;
-	MDL_BoundingBoxPoint Z;
+       MDL_BoundingBoxPoint X;
+       MDL_BoundingBoxPoint Y;
+       MDL_BoundingBoxPoint Z;
 } MDL_BoundingBox;
 
 typedef struct {
@@ -135,6 +135,10 @@ typedef struct
 
 	animTimerData animTimerData; // new
 } actor;
+
+void LoadFicPerso(void);
+void InitBody(char arg_0, short int arg_4);
+void CopyInterAnim(unsigned char *arg_0, unsigned char *arg_4);
 
 #endif
 

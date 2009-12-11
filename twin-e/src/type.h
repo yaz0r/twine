@@ -51,13 +51,6 @@ typedef unsigned char boolean;
 #define scumm_stricmp stricmp
 #define snprintf _snprintf
 
-#if defined(CHECK_HEAP)
-#undef CHECK_HEAP
-#define CHECK_HEAP checkHeap();
-#else
-#define CHECK_HEAP
-#endif
-
 #define SCUMM_LITTLE_ENDIAN
 
 #define FORCEINLINE __forceinline
@@ -66,7 +59,6 @@ typedef unsigned char boolean;
 #else
 
 #define scumm_stricmp strcasecmp
-#define CHECK_HEAP
 #define SCUMM_LITTLE_ENDIAN
 #define SCUMM_NEED_ALIGNMENT
 

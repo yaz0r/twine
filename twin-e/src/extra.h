@@ -16,67 +16,19 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-short int extraDataTable1[] = {
-	10,
-	0,
-	-20,
-	4,
-	-6,
-	19,
-	-6,
-	7,
-	2,
-	12,
-	16,
-	0,
-	7,
-	-12,
-	16,
-	-7,
-	2,
-	-19,
-	-6,
-	-4,
-	-6
-};
+void reinitExtraObjectList(void);
+int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int oldZ, int oldY);
+void GereExtras(void);
+int ThrowExtra(int actorNum, int X, int Y, int Z, int sprite, int var2, int var3, int var4, int var5, int strength);
+void InitSpecial(int var0, int var1, int var2, int var3);
+void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4);
+void AffSpecial(int extraNum, int X, int Y);
+void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int param1);
+int ExtraBonus(int X, int Y, int Z, int param, int angle, int type, int param2);
+int ExtraCheckObjCol(extraListStruct* extra, int param);
+void ThrowMagicBall(int X, int Z, int Y, int param1, int angle, int param2, int param4);
+int ExtraSearch(int actorNum, int X, int Z, int Y, int spriteIdx, int targetActor, int maxSpeed, int param4);
 
+extern short int extraDataTable1[21];
+extern short int extraDataTable2[37];
 
-short int extraDataTable2[] = {
-	18,
-	0,
-	-20,
-	6,
-	-16,
-	8,
-	-10,
-	14,
-	-12,
-	20,
-	-4,
-	18,
-	4,
-	12,
-	4,
-	16,
-	8,
-	8,
-	16,
-	2,
-	12,
-	-4,
-	18,
-	-10,
-	16,
-	-12,
-	8,
-	-16,
-	10,
-	-20,
-	4,
-	-12,
-	-8,
-	-6,
-	-6,
-	-10,
-	-12
-};

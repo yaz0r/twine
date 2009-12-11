@@ -16,6 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#ifndef ANGLE_H
+#define ANGLE_H
+
 typedef struct
 {
 	short int from;
@@ -31,4 +34,6 @@ void setActorAngle(short int arg0, short int arg4, short int arg8, time *ptr);
 void setActorAngleSafe(short int arg_0, short int arg_4, short int arg_8, time *timePtr);
 int getRealAngle(time *angleData);
 int getRealValue(time *angleData);
+
+#endif
 

@@ -18,10 +18,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "mainLoop.h"
+
 #ifdef PCLIKE
-# include <SDL_mixer.h>
-# include "SDL/SDL.h"
+# include <SDL/SDL_mixer.h>
+# include <SDL/SDL.h>
 #endif
+
+SDL_CD *cdrom;
 
 void PlayMusic(int musicNum) {
 	if (musicNum == -1) {    /* stop music */

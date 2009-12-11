@@ -17,9 +17,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+
 #include "images.h"
 #include "cube.h"
 #include "actors.h"
+#include "renderer.h"
+#include "text.h"
+#include "mainLoop.h"
+#include "save.h"
+#include "mainMenu.h"
+#include "extra.h"
+#include "anim.h"
+
+#include "room.h"
 
 #define NUM_MAX_BRICKS 9000
 
@@ -28,6 +38,19 @@ unsigned char* brickMaskTable[NUM_MAX_BRICKS];
 unsigned int brickSizeTable[NUM_MAX_BRICKS];
 unsigned char brickUsageTable[NUM_MAX_BRICKS];
 
+byte *videoPtr1;
+byte *videoPtr2;
+byte *videoPtr3;
+byte *videoPtr4;
+byte *videoPtr5;
+byte *videoPtr6;
+byte *videoPtr7;
+byte *videoPtr8;
+byte *videoPtr9;
+byte *videoPtr10;
+byte *videoPtr11;
+byte *videoPtr12;
+byte *videoPtr13;
 
 static void RestartPerso(void) {
 	twinsen->comportement = 1;

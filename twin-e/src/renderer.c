@@ -17,14 +17,41 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
-#include "math.h"
+#include <math.h>
+#include "renderer.h"
+
+pointTab _projectedPointTable[800];
+pointTab _flattenPointTable[800];
+
+renderTabEntry *renderTabEntryPtr;
+renderTabEntry *renderTabEntryPtr2;
+renderTabEntry *renderTabSortedPtr;
+
+renderTabEntry renderTab[1000];
+renderTabEntry renderTabSorted[1000];
+unsigned char renderTab7[10000];
+
+int rs1v1;
+int rs1v2;
+
+short int rs1s2v1;
+unsigned char *rs1s2v2;
 
 static const int videoWidth = 640;
 static const int videoHeight = 480;
 
+unsigned char *pri2Ptr;
+unsigned char *pri2Ptr2;
+
+short int numOfPrimitives;
+short int numOfPri1;
+short int numOfPri2;
+
 static int baseMatrixRotationX;
 static int baseMatrixRotationY;
 static int baseMatrixRotationZ;
+
+unsigned char *renderV19;
 
 int _angleX, _angleY, _angleZ, _X, _Y, _Z, _numOfPrimitives;
 
@@ -405,7 +432,7 @@ void loadPart(int edx, int ecx, int ebx, unsigned char * ptr) {
 		destZ = _projectedPointTable[pointIdx].z;
 	}
 
-	RotMatIndex2((int *) _currentMatrixTableEntry, ebp);  // copie dans renderTab2 + application de la rotation
+	RotMatIndex2((int *) _currentMatrixTableEntry, ebp);
 
 	if (!rs1v2) {
 		printf("No points !\n");

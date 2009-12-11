@@ -20,8 +20,34 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "actors.h"
 #include "images.h"
+#include "renderer.h"
+#include "mainMenu.h"
+#include "input.h"
+#include "room.h"
+#include "fullRedraw.h"
+#include "save.h"
+#include "text.h"
+#include "inventory.h"
+#include "anim.h"
+#include "comportementMenu.h"
+#include "font.h"
+#include "extra.h"
+#include "moveActor.h"
+#include "script.h"
+#include "animAction.h"
+#include "angle.h"
+#include "actorScript.h"
+#include "fichePerso.h"
+#include "main.h"
+
+#include "mainLoop.h"
 
 int cptime = 0;
+
+short int twinsenKey;
+short int twinsenKey2;
+
+short int mainLoopVar9;
 
 int mainLoop(void) {
 	requestBackgroundRedraw = 1;
@@ -37,7 +63,6 @@ int mainLoopInteration(void) {
 	int temp;
 	int i;
 	int currentTime;
-	int frameTime;
 	int textBank;
 
 	currentTime = lba_time;
@@ -334,12 +359,14 @@ int mainLoopInteration(void) {
 
 		for (i = 0; i < numActorInRoom; i++) {
 			if (!(actors[i].dynamicFlagsBF.bUnk0020)) {
-				// printf("Processing actor %d...\n",i);
-				if (actors[i].life == 0) {
+				if (actors[i].life == 0)
+				{
 					if (i == 0) {
 						InitAnim(ANIM_landDeath, 4, 0, 0);  // play twinsen death anim
 						actors[i].comportement = 0;
-					} else {
+					}
+					else
+					{
 						HQ_3D_MixSample(37, rand() % 2000 + 3096, 1, actors[i].X, actors[i].Y, actors[i].Z);
 
 						if (i == currentPingouin) {
@@ -348,9 +375,8 @@ int mainLoopInteration(void) {
 						}
 					}
 
-					if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1)) {
+					if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1))
 						GiveExtraBonus(&actors[i]);
-					}
 				}
 				DoDir(i);
 
@@ -358,31 +384,25 @@ int mainLoopInteration(void) {
 				actors[i].field_22 = actors[i].Y;
 				actors[i].field_24 = actors[i].Z;
 
-				if (actors[i].positionInMoveScript != -1) {
+				if (actors[i].positionInMoveScript != -1)
 					DoTrack(i);
-				}
 
 				DoAnim(i);
 
-				if (actors[i].staticFlagsBF.bIsZonable) {
+				if (actors[i].staticFlagsBF.bIsZonable)
 					CheckZoneSce(&actors[i], i);
-				}
 
-				if (actors[i].positionInActorScript != -1) {
+				if (actors[i].positionInActorScript != -1)
 					runActorScript(i);
-				}
 
-				//if(brutalExit==-1)
-				//      return(-1);
-
-				if (actors[i].staticFlagsBF.bCanDrown) { // drown
-
-				}
-
-				if (actors[i].life <= 0) { // if actor dead...
-					if (!i) {
-						if (actors[i].dynamicFlagsBF.bUnk0004) {
-							if (numClover > 0) { // auto use clover
+				if (actors[i].life <= 0)
+				{ // if actor dead...
+					if (!i)
+					{
+						if (actors[i].dynamicFlagsBF.bUnk0004)
+						{
+							if (numClover > 0)
+							{ // auto use clover
 								twinsen->X = newTwinsenX;
 								twinsen->Y = newTwinsenZ;
 								twinsen->Z = newTwinsenY;
@@ -403,13 +423,17 @@ int mainLoopInteration(void) {
 								numClover--;
 
 								cropBottomScreen = i; // !!!???
-							} else { // game over ...
+							}
+							else
+							{ // game over ...
 								// TODO: play Game Over anim. Model 20 in Ress file
 								breakmainLoop = true;
 								printf("Game over...\n");
 							}
 						}
-					} else {
+					}
+					else
+					{
 						checkCarrier(i);
 						actors[i].dynamicFlagsBF.bUnk0020 = 1;
 						actors[i].costumeIndex = -1;
@@ -447,12 +471,9 @@ int mainLoopInteration(void) {
 		requestBackgroundRedraw = 0;
 		counter++;
 
-		frameTime = lba_time - currentTime;
-
 #ifndef PCLIKE
 		lba_time += 2;
 #endif
-
 	}
 
 	return 0;
@@ -664,7 +685,7 @@ void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_
 
 }
 
-void SetClipLBA(int left, int top, int right, int bottom) {
+void SetClip(int left, int top, int right, int bottom) {
 	if (left < 0)
 		left = 0;
 

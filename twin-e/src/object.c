@@ -18,6 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "fullRedraw.h"
+#include "actorScript.h"
+#include "extra.h"
+
+
 void GiveExtraBonus(actor * lactor) {
 	int i;
 	char extraTable[8];

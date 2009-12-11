@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "text.h"
+
 int setVoxFileAtDigit(int index) {
 	int temp = 0;
 	int temp2 = 0;

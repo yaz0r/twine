@@ -49,8 +49,6 @@ short int polyTab2[960];
 
 int isUsingOrhoProjection;
 
-pointTab _projectedPointTable[800];
-pointTab _flattenPointTable[800];
 short int shadeTable[500];
 
 int setSomethingVar1;
@@ -77,21 +75,11 @@ int _lightY;
 int _lightZ;
 
 short int primitiveCounter;
-renderTabEntry *renderTabEntryPtr;
-renderTabEntry *renderTabEntryPtr2;
-renderTabEntry *renderTabSortedPtr;
-
-renderTabEntry renderTab[1000];
-renderTabEntry renderTabSorted[1000];
-unsigned char renderTab7[10000];
-
 int renderLoop;
 
 short int vertexCoordinates[193];
 
 int numOfVertex;
-
-unsigned char *renderV19;
 
 short int FillVertic_AType;
 
@@ -121,12 +109,6 @@ int textWindowBottomSave;
 
 unsigned char *_partsPtr2;
 
-byte* workVideoBufferCopy;
-
-#ifdef PCLIKE
-SDL_CD* cdrom;
-#endif //PCLIKE
-
 short int key;
 hqr_entry* HQR_Midi;
 uint32 unkPtr;    // recheck
@@ -135,27 +117,9 @@ uint32 cfg_file;
 byte *workVideoBuffer;
 byte *frontVideoBufferbis;
 
-byte *videoPtr1;
-byte *videoPtr2;
-byte *videoPtr3;
-byte *videoPtr4;
-byte *videoPtr5;
-byte *videoPtr6;
-byte *videoPtr7;
-byte *videoPtr8;
-byte *videoPtr9;
-byte *videoPtr10;
-byte *videoPtr11;
-byte *videoPtr12;
-byte *videoPtr13;
-
 byte palette[256 * 3];  // tempvalue
 byte palette2[256 * 3]; // tempvalue
 byte paletteRGBA[256 * 4];
-
-unsigned char outBuffer[512000];
-
-int cropLeft;
 
 byte *bufSpeak;
 byte *bufMemoSeek;
@@ -212,11 +176,6 @@ int language;
 
 int languageCD1;
 
-int mainMenu3Var1;
-int mainMenu3Var2;
-
-char mainMenu3Var3[256];
-
 FILE *voxFileHandle;
 int printTextVar5;
 
@@ -242,74 +201,8 @@ short int buttonDrawVar1;
 char saveGameFileName[143];
 
 char currentRoom;
-char mainMenuVar3;
 int gameStaffIsDisplayed;
 short int shadowMode;
-
-char mainMenuVar1[60];
-
-///////////////////////////////////////////////////////////
-// MENU DATA
-
-short int mainMenuData[] = {
-	0,          // unk
-	4,          // num of buttons
-	200,        // unk
-	0,          // unk
-	0,          // unk
-//---------------------------- exit points
-	20,         // new game
-	0,
-	21,         // continue game
-	0,
-	23,         // options
-	0,
-	22,         // quit
-};
-
-short int subMenu2Data[] = {
-	0,
-	2,
-	240,
-	0,
-	0,
-	28,
-	0,
-	27,
-};
-
-short int soundMenuData[] = {
-	0,
-	4,
-	0,
-	0,
-	0,
-	24,
-	0,
-	30,
-	0,
-	46,
-	0,
-	47,
-};
-
-short int subMenuData[] = {
-	0,
-	5,
-	0,
-	0,
-	0,
-	26,
-	0,
-	4,
-	6,
-	31,
-	7,
-	32,
-	8,
-	33,
-};
-////////////////////////////////////////
 
 char needChangeRoom;
 short int chapter;
@@ -396,15 +289,6 @@ int wordSizePixel;
 
 char spaceChar;
 short int talkingActor;
-
-short int pt8s4var1[96];
-short int *pt8s4var2;
-short int *pt8s4var3;
-short int *pt8s4var4;
-short int *pt8s4var5;
-short int *pt8s4var6;
-
-int printText8PrepareBufferVar3;
 
 actor actors[100];
 actor *twinsen;
@@ -504,13 +388,7 @@ short int fullRedrawVar2;
 
 int numOfRedrawBox;
 
-currentDirtyBoxListStruct currentDirtyBoxList[300];
-currentDirtyBoxListStruct nextDirtyBoxList[300];
-
 short int fullRedrawVar8;
-
-unsigned char scanCodeTab1[29];
-unsigned short int scanCodeTab2[31];
 
 unsigned char *actorScriptPtr;
 
@@ -528,9 +406,6 @@ short int projectedPositionY;
 short int projectedPositionZ;
 #endif
 
-int zbufferVar1;
-int zbufferVar2;
-
 short int manipActorVar1;
 
 short int manipActorResult;
@@ -546,8 +421,6 @@ short int loadCostumeVar4;
 short int loadCostumeVar5;
 short int loadCostumeVar6;
 
-drawListStruct drawList[150];
-
 unsigned char *menuCostumeIndex;
 short int TCOS[4];
 
@@ -559,39 +432,7 @@ char dataString[256];
 
 short int currentLineColor;
 
-unsigned char *pri2Ptr2;
-
-int renderV9;
-int renderV11;
-int renderV10;
-
-short int numOfPrimitives;
 unsigned short int costumeHeader;
-
-short int numOfPri1;
-unsigned char *pri1Ptr;
-
-short int numOfPri2;
-unsigned char *pri2Ptr;
-
-int renderTab2[271];
-int *renderTab3;
-
-pointTab renderTab5[800];
-pointTab renderTab6[800];
-int *renderV21;
-
-int rs1v1;
-int rs1v2;
-
-short int rs1s2v1;
-unsigned char *rs1s2v2;
-
-unsigned char *render23;
-
-short int render25;
-
-unsigned char *render24;
 
 int action;
 
@@ -599,14 +440,7 @@ int shadowX;
 int shadowZ;
 int shadowY;
 
-int renderV1;
-int renderV2;
-int renderV3;
-
 unsigned char *flagModelPtr;
-
-zbufferDataStruct zbufferData[28][150];
-short int zbufferTab[28];
 
 char *keyFramePtr;
 char *animVar1;
@@ -651,9 +485,6 @@ int drawVar1;
 
 int currentActorInZoneProcess;
 
-short int twinsenKey;
-short int twinsenKey2;
-
 short int moveVar1;
 
 int showTalkVar;
@@ -678,9 +509,6 @@ char currentSelectedObjectInInventory;
 int reinitVar1;
 int reinitVar2;
 int reinitVar12;
-int renderV22;
-int renderV23;
-int renderV24;
 
 int bufRotate0[9];
 int bufRotate1[9];
@@ -688,40 +516,9 @@ int bufRotate1[9];
 byte fkeys;
 boolean breakmainLoop;
 
-void initVars(void) {
-	HQR_Midi = 0;
-	unkPtr = 0;     // recheck
-
-	workVideoBuffer = 0;
-	frontVideoBuffer = NULL;
-	frontVideoBufferbis = 0;
-
-	bufMemoSeek = 0;
-	bufText = 0;
-	bufOrder = 0;
-	bufAni1 = 0;
-	bufAni2 = 0;
-	menuPal = 0;
-	shadowSprite = 0;
-	spriteActorData = 0;
-	lbaFont = 0;
-
-	bufCube = NULL;
-
-	fntFont = 0;
-	interCharSpace = 1;
-	spaceLenght = 10;
-
-	setup_lst = 0;
-
+void initVars(void)
+{
 	textVar1 = -1;
-	textVar3 = 0;
-
-	voxFileHandle = 0;
-	printTextVar5 = 0;
-	key1 = 0;
-	printTextVar12 = 0;
-	printTextVar13 = 0;
 
 	textWindowTop = 0;
 	textWindowLeftSave = 0;
@@ -743,16 +540,12 @@ void initVars(void) {
 	languageCD1 = 0;
 	flagDisplayText = 1;
 
-	skipIntro = 0;
-	palReseted = 0;
-
 	needChangeRoom = -1;
 	chapter = 0;
 	newGameVar4 = 1;
 	newGameVar5 = 0;
 
 	currentRoom = 0;
-	mainMenuVar3 = 'S';
 	gameStaffIsDisplayed = 0;
 	shadowMode = 2;
 	lba_time = 0;
@@ -775,9 +568,6 @@ void initVars(void) {
 #endif
 
 	languageCD1 = 0;
-
-	mainMenu3Var1 = -1;
-	mainMenu3Var2 = -1;
 
 	useAlternatePalette = 0;
 	drawInGameTransBox = 0;
@@ -868,18 +658,9 @@ void initVars(void) {
 	allowedCharIndex[69] = 0x0D;
 	allowedCharIndex[70] = 0x00;
 
-	enterPlayerNameVar2 = 0;
-
 	spaceChar = ' ';
 
 	vertexCoordinates[0] = 0x1234;
-
-	pt8s4var2 = pt8s4var1 + 1;
-	pt8s4var3 = pt8s4var1 + 2;
-
-	pt8s4var4 = pt8s4var1 + 93;
-	pt8s4var5 = pt8s4var1 + 94;
-	pt8s4var6 = pt8s4var1 + 95;
 
 	tab1 = &angleTable[0];
 	tab2 = &angleTable[256];
@@ -891,27 +672,6 @@ void initVars(void) {
 	roomMusic = -1;
 	currentlyPlayingMidi = -2;
 
-	twinsenPositionModeInNewCube = 0;
-
-	newTwinsenXByZone = 0;
-	newTwinsenZByZone = 0;
-	newTwinsenYByZone = 0;
-
-	newTwinsenXByScene = 0;
-	newTwinsenYByScene = 0;
-	newTwinsenZByScene = 0;
-
-	twinsenZBeforeFall = 0;
-
-	numActorInRoom = 0;
-
-	disableScreenRecenter = 0;
-
-	timeToNextRoomSample = 0;
-	newCameraX = 0;
-	newCameraZ = 0;
-	newCameraY = 0;
-
 	magicBallIdx = -1;
 	twinsenMoved = 0;
 	useAnotherGrm = -1;
@@ -922,143 +682,7 @@ void initVars(void) {
 	changeRoomVar10 = 1;
 	changeRoomVar11 = 0;
 
-	currentPositionInBodyPtrTab = 0;
-	numOfZones = 0;
-	numFlags = 0;
-
-	file3D[0] = NULL;
-	file3D[1] = NULL;
-	file3D[2] = NULL;
-	file3D[3] = NULL;
-	file3D[4] = NULL;
-
-	TCos[0] = 0;
-	TCos[1] = 0;
-	TCos[2] = 0;
-	TCos[3] = 0;
-	TCos[4] = 0;
-
-	fireEffectVar1 = NULL;
-	fireEffectVar2 = NULL;
-
-	sceneRoomNumber = 0;
-
-	sceneVar2.field_0 = 0;
-	sceneVar2.field_2 = 0;
-	sceneVar2.field_4 = 0;
-	sceneVar2.field_6 = 0;
-
-	sceneVar3.field_0 = 0;
-	sceneVar3.field_2 = 0;
-	sceneVar3.field_4 = 0;
-	sceneVar3.field_6 = 0;
-
-	sceneVar4.field_0 = 0;
-	sceneVar4.field_2 = 0;
-	sceneVar4.field_4 = 0;
-	sceneVar4.field_6 = 0;
-
-	sceneVar14 = 0;
-	sceneVar15 = 0;
-	newTwinsenXByScene = 0;
-	newTwinsenYByScene = 0;
-	newTwinsenZByScene = 0;
-
-	mainLoopVar4 = 0;
-	autoAgressivity = 1;
-
-	mainLoopVar5 = 0;
-	mainLoopVar6 = 0;
-	mainLoopVar7 = 0;
-
-	musicPosition = 0;
-	musicLength = 0;
-
-	useSamples = 0;
-
-	time1 = 0;
-	time3 = 0;
-
-	counter = 0;
-
-	numOfRedrawBox = 0;
-
-	fullRedrawVar8 = 0;
-
-	scanCodeTab1[0] = 0x48;
-	scanCodeTab1[1] = 0x50;
-	scanCodeTab1[2] = 0x4B;
-	scanCodeTab1[3] = 0x4D;
-	scanCodeTab1[4] = 0x47;
-	scanCodeTab1[5] = 0x49;
-	scanCodeTab1[6] = 0x51;
-	scanCodeTab1[7] = 0x4F;
-
-	scanCodeTab1[8] = 0x39;
-	scanCodeTab1[9] = 0x1C;
-	scanCodeTab1[10] = 0x1D;
-	scanCodeTab1[11] = 0x38;
-	scanCodeTab1[12] = 0x53;
-	scanCodeTab1[13] = 0x2A;
-	scanCodeTab1[14] = 0x36;
-
-	scanCodeTab1[15] = 0x3B;
-	scanCodeTab1[16] = 0x3C;
-	scanCodeTab1[17] = 0x3D;
-	scanCodeTab1[18] = 0x3E;
-	scanCodeTab1[19] = 0x3F;
-	scanCodeTab1[20] = 0x40;
-	scanCodeTab1[21] = 0x41;
-	scanCodeTab1[22] = 0x42;
-	scanCodeTab1[23] = 0x43;
-	scanCodeTab1[24] = 0x44;
-	scanCodeTab1[25] = 0x57;
-	scanCodeTab1[26] = 0x58;
-	scanCodeTab1[27] = 0x2A;
-	scanCodeTab1[28] = 0x0;
-
-	scanCodeTab2[0] = 0x0100; // up
-	scanCodeTab2[1] = 0x0200; // down
-	scanCodeTab2[2] = 0x0400; // left
-	scanCodeTab2[3] = 0x0800; // right
-	scanCodeTab2[4] = 0x0500; // home
-	scanCodeTab2[5] = 0x0900; // pageup
-	scanCodeTab2[6] = 0x0A00; // pagedown
-	scanCodeTab2[7] = 0x0600; // end
-
-	scanCodeTab2[8] = 0x0101; // space bar
-	scanCodeTab2[9] = 0x0201; // enter
-	scanCodeTab2[10] = 0x0401;  // ctrl
-	scanCodeTab2[11] = 0x0801;  // alt
-	scanCodeTab2[12] = 0x1001;  // del
-	scanCodeTab2[13] = 0x2001;  // left shift
-	scanCodeTab2[14] = 0x2001;  // right shift
-
-	scanCodeTab2[15] = 0x0102;  // F1
-	scanCodeTab2[16] = 0x0202;  // F2
-	scanCodeTab2[17] = 0x0402;  // F3
-	scanCodeTab2[18] = 0x0802;  // F4
-	scanCodeTab2[19] = 0x1002;  // F5
-	scanCodeTab2[20] = 0x2002;  // F6
-	scanCodeTab2[21] = 0x4002;  // F7
-	scanCodeTab2[22] = 0x8002;  // F8
-
-	scanCodeTab2[23] = 0x0103;  // F9
-	scanCodeTab2[24] = 0x0203;  // F10
-	scanCodeTab2[25] = 0x0403;  // ?
-	scanCodeTab2[26] = 0x0803;  // ?
-	scanCodeTab2[27] = 0x00FF;  // left shift
-	scanCodeTab2[28] = 0x00FF;
-	scanCodeTab2[29] = 0x0;
-	scanCodeTab2[30] = 0x0;
-
 	loadCostumeVar = -32000;
-
-	HQR_Flag = 0;
-
-	renderTab3 = &renderTab2[9];
-
-	action = 0;
 
 	showTalkVar = 1;
 
@@ -1069,15 +693,3 @@ void initVars(void) {
 	breakmainLoop = false;
 }
 
-void CoulFont(int i) {
-	textColor = i;
-}
-
-void CoulDial(int a, int b, int c) {
-	progressiveTextStartColor = b;
-	progressiveTextStopColor = a;
-	progressiveTextStepSize = c;
-
-	progressiveTextBufferSize = ((b - a) + 1) / c;
-
-}

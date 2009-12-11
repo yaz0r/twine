@@ -18,6 +18,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "images.h"
 #include "lba.h"
+#include "mainMenu.h"
+#include "anim.h"
+#include "text.h"
+#include "mainLoop.h"
+#include "font.h"
+#include "input.h"
+#include "fullRedraw.h"
+#include "room.h"
 
 animTimerData animDataTab[4];
 

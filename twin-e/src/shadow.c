@@ -18,6 +18,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "fullRedraw.h"
+#include "mainLoop.h"
+
 void GetShadow(int X, int Z, int Y) {
 	int tempX;
 	int tempZ;

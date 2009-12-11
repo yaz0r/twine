@@ -17,7 +17,78 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+
+#include "mainLoop.h"
+#include "renderer.h"
+#include "actorScript.h"
+#include "fullRedraw.h"
+
 #include "extra.h"
+
+short int extraDataTable1[] = {
+	10,
+	0,
+	-20,
+	4,
+	-6,
+	19,
+	-6,
+	7,
+	2,
+	12,
+	16,
+	0,
+	7,
+	-12,
+	16,
+	-7,
+	2,
+	-19,
+	-6,
+	-4,
+	-6
+};
+
+
+short int extraDataTable2[] = {
+	18,
+	0,
+	-20,
+	6,
+	-16,
+	8,
+	-10,
+	14,
+	-12,
+	20,
+	-4,
+	18,
+	4,
+	12,
+	4,
+	16,
+	8,
+	8,
+	16,
+	2,
+	12,
+	-4,
+	18,
+	-10,
+	16,
+	-12,
+	8,
+	-16,
+	10,
+	-20,
+	4,
+	-12,
+	-8,
+	-6,
+	-6,
+	-10,
+	-12
+};
 
 void makeMagicBallBounce(extraListStruct* pExtra, int X, int Y, int Z) {
 	if (WorldColBrick(X, pExtra->Z, Z)) {
@@ -271,7 +342,7 @@ void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int pa
 		projectedPositionX = currentX;
 		projectedPositionY = currentY;
 
-		Line(oldComputedX, oldComputedY, currentX, currentY, param0);
+		drawLine(oldComputedX, oldComputedY, currentX, currentY, param0);
 
 		var_18++;
 
@@ -282,7 +353,7 @@ void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int pa
 
 	projectedPositionX = currentX;
 	projectedPositionY = currentY;
-	Line(currentX, currentY, computedX, computedY, param0);
+	drawLine(currentX, currentY, computedX, computedY, param0);
 }
 
 void GereExtras(void) {

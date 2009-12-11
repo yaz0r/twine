@@ -17,9 +17,26 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+
 #include "actors.h"
 #include "images.h"
 #include "fla.h"
+#include "renderer.h"
+#include "anim.h"
+#include "mainLoop.h"
+#include "main.h"
+#include "fullRedraw.h"
+#include "text.h"
+#include "room.h"
+#include "actorScript.h"
+#include "cube.h"
+#include "vox.h"
+#include "save.h"
+#include "input.h"
+#include "font.h"
+#include "mainMenu.h"
+
+#include "script.h"
 
 int getCOL(actor* ptrActor) {
 	if (ptrActor->life <= 0)

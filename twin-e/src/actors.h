@@ -11,4 +11,3 @@ void resetActor(short int id);
 void initSprite(int imageId, short int actorId);
 void checkCarrier(short int id);
 
-

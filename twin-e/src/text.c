@@ -16,8 +16,21 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "images.h"
 #include "lba.h"
+
+#include "images.h"
+#include "renderer.h"
+#include "mainMenu.h"
+#include "vox.h"
+#include "input.h"
+#include "font.h"
+#include "mainLoop.h"
+
+#include "text.h"
+
+short int pt8s4[96];
+
+int printText8PrepareBufferVar3;
 
 void InitDial(int index) {
 
@@ -371,7 +384,7 @@ void printText10Sub2(void) {
 
 	currentIndex = currentLetter * 3;
 
-	ptr = pt8s4var1 + currentIndex;
+	ptr = pt8s4 + currentIndex;
 
 	// todo: gerer le delay ici...
 
@@ -441,23 +454,23 @@ void printText8Sub4(short int a, short int b, short int c) {
 
 	if (counter < 32) {
 		temp = counter * 3;
-		pt8s4var1[temp] = c;
-		pt8s4var2[temp] = a;
-		pt8s4var3[temp] = b;
+		pt8s4[temp] = c;
+		pt8s4[temp+1] = a;
+		pt8s4[temp+2] = b;
 
 		counter++;
 	} else {
 		while (counter2 < 31) {
 			var1 = (counter2 + 1) * 3;
 			var2 = counter2 * 3;
-			pt8s4var1[var2] = pt8s4var1[var1];
-			pt8s4var2[var2] = pt8s4var2[var1];
-			pt8s4var3[var2] = pt8s4var3[var1];
+			pt8s4[var2] = pt8s4[var1];
+			pt8s4[var2+1] = pt8s4[var1+1];
+			pt8s4[var2+2] = pt8s4[var1+2];
 			counter2++;
 		};
-		pt8s4var4[0] = c;
-		pt8s4var5[0] = a;
-		pt8s4var6[0] = b;
+		pt8s4[93] = c;
+		pt8s4[94] = a;
+		pt8s4[95] = b;
 	}
 
 	printText8Var3 = counter;

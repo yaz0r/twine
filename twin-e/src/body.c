@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "anim.h"
+
 int SearchBody(int bodyNum, int actorNum) {	// should be something like initBody
 	actor *lactor;
 	unsigned char *bodyPtr;

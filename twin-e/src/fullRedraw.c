@@ -16,13 +16,38 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "images.h"
 #include "lba.h"
+
+#include "images.h"
+#include "renderer.h"
+#include "mainMenu.h"
+#include "text.h"
+#include "mainLoop.h"
+#include "shadow.h"
+#include "anim.h"
+#include "input.h"
+#include "extra.h"
+#include "font.h"
+#include "main.h"
+
+#include "fullRedraw.h"
 
 extern unsigned char* brickTable[];
 extern unsigned char* brickMaskTable[];
 
-static void DrawOverBrick3(int X, int Z, int Y);
+int zbufferVar1;
+int zbufferVar2;
+
+zbufferDataStruct zbufferData[28][150];
+short int zbufferTab[28];
+
+currentDirtyBoxListStruct currentDirtyBoxList[300];
+currentDirtyBoxListStruct nextDirtyBoxList[300];
+drawListStruct drawList[150];
+
+unsigned char outBuffer[512000];
+
+int cropLeft;
 
 short int overlay3dObect = 0;
 
@@ -827,139 +852,6 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick) {
 	}
 }
 
-
-void drawSprite2(int num, int var1, int var2, unsigned char *localBufferBrick) {
-	unsigned char *ptr;
-	int top;
-	int bottom;
-	int left;
-	int right;
-	unsigned char *outPtr;
-	unsigned char *outPtr2;
-	int offset;
-	int c1;
-	int c2;
-	int vc3;
-
-	int temp;
-	int iteration;
-	int i;
-
-	ptr = localBufferBrick + *(unsigned int *)(localBufferBrick + num * 4);
-
-	left = var1 + *(ptr + 2);
-	top = var2 + *(ptr + 3);
-	right = *ptr + left - 1;
-	bottom = *(ptr + 1) + top - 1;
-
-	ptr += 4;
-
-	// check des bords
-
-	if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight && bottom <= textWindowBottom) {
-		right++;
-		bottom++;
-
-		outPtr = workVideoBuffer + screenLockupTable[top] + left;
-
-		offset = -((right - left) - largeurEcran);
-
-		for (c1 = 0; c1 < bottom - top; c1++) {
-			vc3 = *(ptr++);
-			for (c2 = 0; c2 < vc3; c2++) {
-				temp = *(ptr++);
-				iteration = temp & 0x3F;
-				if (temp & 0xC0) {
-					iteration++;
-					if (!(temp & 0x40)) {
-						temp = *(ptr++);
-						for (i = 0; i < iteration; i++)
-							*(outPtr++) = temp;
-					} else {
-						for (i = 0; i < iteration; i++)
-							*(outPtr++) = *(ptr++);
-					}
-				} else {
-					outPtr += iteration + 1;
-				}
-			}
-			outPtr += offset;
-		}
-	} else {
-		if (left <= textWindowRight && top <= textWindowBottom && right >= textWindowLeft && bottom >= textWindowTop) {
-			if (top < textWindowTop) { // si il manque un bout du haut de la brique
-
-				for (c1 = 0; c1 < (textWindowTop - top); c1++) {
-					vc3 = *(ptr++);
-					for (c2 = 0; c2 < vc3; c2++) {
-						temp = *(ptr++);
-						if (temp & 0xC0) {
-							iteration = 0;
-							if (temp & 0x40) {
-								iteration = temp & 0x3F;
-							}
-							ptr += iteration + 1;
-						}
-					}
-				}
-				top = textWindowTop;
-			}
-
-			if (bottom > textWindowBottom)
-				bottom = textWindowBottom;
-
-			if (left < textWindowLeft)
-				cropLeft = textWindowLeft - left;
-			else
-				cropLeft = 0;
-
-			offset = -(left + cropLeft - 1 - right);
-
-			right -= textWindowRight;
-			if (right > 0)
-				offset -= right;
-
-			outPtr2 = screenLockupTable[top] + workVideoBuffer;
-			if (left >= 0)
-				outPtr2 += left;
-			outPtr = outBuffer;
-
-			for (c1 = 0; c1 <= bottom - top; c1++) {
-				outPtr = outBuffer;
-
-				for (i = 0; i < 512; i++)
-					outBuffer[i] = 0;
-
-				vc3 = *(ptr++);
-				for (c2 = 0; c2 < vc3; c2++) {
-					temp = *(ptr++);
-					iteration = temp & 0x3F;
-					if (temp & 0xC0) {
-						iteration++;
-						if (!(temp & 0x40)) {
-							temp = *(ptr++);
-							for (i = 0; i < iteration; i++)
-								*(outPtr++) = temp;
-						} else {
-							for (i = 0; i < iteration; i++)
-								*(outPtr++) = *(ptr++);
-						}
-					} else {
-						outPtr += iteration + 1;
-					}
-				}
-
-				for (i = 0; i < offset; i++) {
-					if (outBuffer[cropLeft + i] != 0)
-						*(outPtr2) = outBuffer[cropLeft + i];
-					outPtr2++;
-				}
-				outPtr2 += 640 - offset;
-			}
-		}
-	}
-}
-
 int projectPositionOnScreen(int coX, int coZ, int coY) {
 	if (!isUsingOrhoProjection) {
 		coX -= setSomething3Var12;
@@ -1027,14 +919,15 @@ void DrawOverBrick(int X, int Z, int Y) {
 
 			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z) {
 				if (currentZbufferData->x + currentZbufferData->y > Y + X) {
-					CopyMaskLBA(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, /* bufferBrick2, */workVideoBuffer);
+					printf("workVideoBuffer: %p\n", workVideoBuffer);
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, /* bufferBrick2, */workVideoBuffer);
 				}
 			}
 		}
 	}
 }
 
-static void DrawOverBrick3(int X, int Z, int Y) {
+/*static */void DrawOverBrick3(int X, int Z, int Y) {
 	int CopyBlockPhysLeft;
 	int CopyBlockPhysRight;
 	int i;
@@ -1050,18 +943,18 @@ static void DrawOverBrick3(int X, int Z, int Y) {
 
 			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z) {
 				if ((currentZbufferData->x == X) && (currentZbufferData->y == Y)) {
-					CopyMaskLBA(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, /* bufferBrick2, */workVideoBuffer);
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, /* bufferBrick2, */workVideoBuffer);
 				}
 
 				if ((currentZbufferData->x > X) || (currentZbufferData->y > Y)) {
-					CopyMaskLBA(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, /*bufferBrick2, */workVideoBuffer);
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, /*bufferBrick2, */workVideoBuffer);
 				}
 			}
 		}
 	}
 }
 
-void CopyMaskLBA(int spriteNum, int x, int y, /*byte * localBufferBrick, */byte * buffer)
+void CopyMask(int spriteNum, int x, int y, /*byte * localBufferBrick, */byte * buffer)
 {
 	unsigned char *ptr;
 	int top;

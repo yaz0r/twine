@@ -16,9 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "fla.h"
-#include "images.h"
 #include "lba.h"
+
+#include "images.h"
+#include "input.h"
+#include "mainMenu.h"
+
+#include "fla.h"
 
 streamReader fla_streamReader;
 frameData fla_frameData;
@@ -28,6 +32,7 @@ char flaPalette[256*3];
 char flaPaletteRGBA[256*4];
 
 int flaSampleTable[100];
+byte* workVideoBufferCopy;
 
 void playFla(char *flaName)
 {

@@ -16,9 +16,88 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include "lba.h"
+
 #include "images.h"
 #include "fla.h"
-#include "lba.h"
+#include "main.h"
+#include "input.h"
+#include "mainLoop.h"
+#include "text.h"
+#include "font.h"
+#include "fireEffect.h"
+#include "renderer.h"
+
+#include "mainMenu.h"
+
+char mainMenuVar1[60];
+int mainMenu3Var1;
+int mainMenu3Var2;
+char mainMenu3Var3[256];
+
+///////////////////////////////////////////////////////////
+// MENU DATA
+
+short int mainMenuData[] = {
+	0,          // unk
+	4,          // num of buttons
+	200,        // unk
+	0,          // unk
+	0,          // unk
+//---------------------------- exit points
+	20,         // new game
+	0,
+	21,         // continue game
+	0,
+	23,         // options
+	0,
+	22,         // quit
+};
+
+short int subMenu2Data[] = {
+	0,
+	2,
+	240,
+	0,
+	0,
+	28,
+	0,
+	27,
+};
+
+short int soundMenuData[] = {
+	0,
+	4,
+	0,
+	0,
+	0,
+	24,
+	0,
+	30,
+	0,
+	46,
+	0,
+	47,
+};
+
+short int subMenuData[] = {
+	0,
+	5,
+	0,
+	0,
+	0,
+	26,
+	0,
+	4,
+	6,
+	31,
+	7,
+	32,
+	8,
+	33,
+};
+////////////////////////////////////////
+
 
 void rungame(void)
 {
@@ -608,14 +687,10 @@ void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode) {
 }
 
 void DrawCadre(int left, int top, int right, int bottom) {
-	Line(left, top, right, top, 79);  // ligne du haut
-	Line(left, top, left, bottom, 79);  // ligne de gauche
-	Line(right, ++top, right, bottom, 73);  // ligne de droite
-	Line(++left, bottom, right, bottom, 73);  // ligne du bas
-}
-
-void LineLBA(int a, int b, int c, int d, int e) {
-	drawLine(a, b, c, d, e);
+	drawLine(left, top, right, top, 79);  // ligne du haut
+	drawLine(left, top, left, bottom, 79);  // ligne de gauche
+	drawLine(right, ++top, right, bottom, 73);  // ligne de droite
+	drawLine(++left, bottom, right, bottom, 73);  // ligne du bas
 }
 
 int SizeFont(char *string) {

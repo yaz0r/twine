@@ -18,6 +18,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "cube.h"
+#include "mainLoop.h"
+#include "anim.h"
+#include "text.h"
+#include "fullRedraw.h"
+#include "main.h"
+#include "actorScript.h"
+#include "extra.h"
+
 void CheckZoneSce(actor * lactor, int actorNumber) {
 	int currentX = lactor->X;
 	int currentY = lactor->Z;

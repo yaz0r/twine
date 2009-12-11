@@ -20,8 +20,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 #include "images.h"
 #include "fla.h"
+#include "mainMenu.h"
+#include "font.h"
+#include "text.h"
+#include "time.h"
+#include "input.h"
 
-/*#define FASTDEBUG*/
+#include "main.h"
+
+#define FASTDEBUG
 
 void initVideoStuff(void) {
 	int i, j, k;
@@ -206,4 +213,17 @@ void TestCoulDial(short int param) {
 	progressiveTextBufferSize = 14;
 	progressiveTextStartColor = param << 4;
 	progressiveTextStopColor = (param << 4) + 12;
+}
+
+void CoulFont(int i) {
+	textColor = i;
+}
+
+void CoulDial(int a, int b, int c) {
+	progressiveTextStartColor = b;
+	progressiveTextStopColor = a;
+	progressiveTextStepSize = c;
+
+	progressiveTextBufferSize = ((b - a) + 1) / c;
+
 }

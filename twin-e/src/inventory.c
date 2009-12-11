@@ -16,8 +16,20 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "images.h"
 #include "lba.h"
+
+#include "renderer.h"
+#include "mainMenu.h"
+#include "input.h"
+#include "images.h"
+#include "text.h"
+#include "main.h"
+#include "mainLoop.h"
+#include "anim.h"
+#include "actorScript.h"
+#include "font.h"
+
+#include "inventory.h"
 
 void Inventory(void)
 {
@@ -242,8 +254,8 @@ void DrawOneInventory(int objectNumber) {
 }
 
 void Rect(int bottom, int right, int top, int left, int param) {
-	Line(bottom, right, top, right, param);
-	Line(bottom, left, top, left, param);
-	Line(bottom, right, bottom, left, param);
-	Line(top, right, top, left, param);
+	drawLine(bottom, right, top, right, param);
+	drawLine(bottom, left, top, left, param);
+	drawLine(bottom, right, bottom, left, param);
+	drawLine(top, right, top, left, param);
 }

@@ -61,3 +61,6 @@ typedef struct {
 	short int dummy;
 } ZONE_Box;
 
+void GiveExtraBonus(actor * lactor);
+void ZoneGiveExtraBonus(ZONE_Box* pZone);
+void CheckZoneSce(actor * lactor, int actorNumber);

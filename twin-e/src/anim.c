@@ -18,6 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "fichePerso.h"
+#include "animAction.h"
+
+#include "anim.h"
+
 struct bodyHeaderStruct {
 	short int bodyFlag;     // 2
 	short int unk0;         // 2

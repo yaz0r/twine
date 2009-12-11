@@ -20,6 +20,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "images.h"
 #include "lba.h"
+#include "renderer.h"
+#include "mainMenu.h"
+#include "vox.h"
+#include "text.h"
+#include "input.h"
+#include "mainLoop.h"
+#include "fullRedraw.h"
+#include "main.h"
+#include "fichePerso.h"
+#include "anim.h"
+
+#include "actorScript.h"
 
 int GetAngle(int X1, int Y1, int X2, int Y2) {
 	int newX;
