@@ -27,6 +27,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "font.h"
 #include "fireEffect.h"
 #include "renderer.h"
+#include "hqr.h"
+#include "music.h"
+#include "room.h"
 
 #include "mainMenu.h"
 
@@ -98,6 +101,12 @@ short int subMenuData[] = {
 };
 ////////////////////////////////////////
 
+char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijklm?nopqrstuvwxyz!0123456789\040\b\r\0";
+
+short int buttonDrawVar1 = 550;
+
+short int shadowMode = 2;
+short int autoAgressivity = 1;
 
 void rungame(void)
 {
@@ -110,7 +119,6 @@ void rungame(void)
     currentRoom = 119;
     needChangeRoom = 119;
     mainLoop();
-    gameStaffIsDisplayed = 0;
                    
     languageCD1 = langtemp;
     shadowMode = shadowtemp;
@@ -133,7 +141,7 @@ void MainGameMenu(void) {
 	while (cont)
     {
 		InitDial(0);
-		playCDtrack(9);
+		playMusic(9);
 		HQ_StopSample();
 		GetMultiText(49, mainMenuVar1);
 		nmenu = processMenu(mainMenuData);
@@ -413,11 +421,11 @@ void drawSelectableLetter(int x, int y, int arg) {
 
 }
 
-int enterPlayerName(short int param) {
+int enterPlayerName(short int param)
+{
 	char buffer[256];
 
 	short int a, b, c, e;
-//    char key;
 
 	e = 1;
 	a = -1;
@@ -431,19 +439,14 @@ int enterPlayerName(short int param) {
 	CoulFont(15);
 	Font(320 - (SizeFont(buffer) / 2), 20, buffer);
 	osystem_copyBlockPhys(0, 0, 639, 99);
-	playerName[0] = enterPlayerNameVar1;
-	// drawSmallButton(320,100,playerName,1);
 	drawSelectableLetters();
 
 	// TODO: implement this
 
-	enterPlayerNameVar2 = 0;
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
 	osystem_flip(frontVideoBuffer);
 
-	return (1);
-
-	return (c);
+	return 1;
 }
 
 char* itoa(int nb) {
@@ -611,7 +614,7 @@ void blitRectangle(int left, int top, int right, int bottom, char *source, int l
 
 	hauteur = bottom - top + 1;
 
-	interligne = largeurEcran - largeur;
+	interligne = WINDOW_X - largeur;
 	temp3 = left;
 
 	left >>= 2;
@@ -664,7 +667,7 @@ void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode) {
 
 	largeur = right - left + 1;
 
-	temp = largeurEcran - largeur;
+	temp = WINDOW_X - largeur;
 	localMode = mode;
 
 	do {
@@ -728,7 +731,7 @@ int optionMenu(void) { // Options menu
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
 	HQ_StopSample();
 
-	playCDtrack(9);   // warning... Truc pas trop gere avec BX là...
+	playMusic(9);
 
 	do {
 		temp = processMenu(soundMenuData);

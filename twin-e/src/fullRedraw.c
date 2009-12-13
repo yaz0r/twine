@@ -29,6 +29,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "extra.h"
 #include "font.h"
 #include "main.h"
+#include "room.h"
+#include "hqr.h"
+#include "samples.h"
+#include "actors.h"
+#include "cube.h"
+#include "body.h"
+#include "script.h"
 
 #include "fullRedraw.h"
 
@@ -50,6 +57,26 @@ unsigned char outBuffer[512000];
 int cropLeft;
 
 short int overlay3dObect = 0;
+
+short int fullRedrawVar1;
+short int fullRedrawVar2;
+short int fullRedrawVar8;
+
+#ifdef USE_FLOAT
+float projectedPositionX;
+float projectedPositionY;
+float projectedPositionZ;
+#else
+short int projectedPositionX;
+short int projectedPositionY;
+short int projectedPositionZ;
+#endif
+
+int numOfRedrawBox;
+
+int cameraX;
+int cameraZ;
+int cameraY;
 
 void fullRedraw(int param) {
 	short int temp1;
@@ -570,15 +597,10 @@ void fullRedraw(int param) {
 	Load_HQR("ress.hqr", (byte *) & palette, 0);
 	convertPalToRGBA(palette, paletteRGBA);
 
-	/*
-	 * if(useAlternatePalette) FadeToPal((char*)menuPalRGBA); else FadeToPal((char*)paletteRGBA);
-	 */
-
-	if (useAlternatePalette) {
+	if (useAlternatePalette)
 		osystem_crossFade((char *) frontVideoBuffer, (char *) menuPalRGBA);
-	} else {
+	else
 		osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
-	}
 
 	osystem_setPalette((byte *) & paletteRGBA);
 
@@ -812,7 +834,7 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick) {
 
 		outPtr = frontVideoBuffer + screenLockupTable[top] + left;
 
-		offset = -((right - left) - largeurEcran);
+		offset = -((right - left) - WINDOW_X);
 
 		for (c1 = 0; c1 < bottom - top; c1++) {
 			vc3 = *(ptr++);
@@ -891,8 +913,7 @@ int projectPositionOnScreen(int coX, int coZ, int coY) {
 }
 
 int HQ_3D_MixSample(int param0/*, int param1, int param2, int param3, int param4, int param5 */) {
-	if (samplesLoaded != 0)
-		playSample(param0, /*1, */1/*, 10, 10*/);
+	playSample(param0, /*1, */1/*, 10, 10*/);
 	return (0);
 }
 
@@ -913,16 +934,15 @@ void DrawOverBrick(int X, int Z, int Y) {
 	CopyBlockPhysLeft = ((textWindowLeft + 24) / 24) - 1;
 	CopyBlockPhysRight = ((textWindowRight + 24) / 24);
 
-	for (j = CopyBlockPhysLeft; j <= CopyBlockPhysRight; j++) {
-		for (i = 0; i < zbufferTab[j]; i++) {
+	for (j = CopyBlockPhysLeft; j <= CopyBlockPhysRight; j++)
+	{
+		for (i = 0; i < zbufferTab[j]; i++)
+		{
 			currentZbufferData = &zbufferData[j][i];
 
-			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z) {
-				if (currentZbufferData->x + currentZbufferData->y > Y + X) {
-					printf("workVideoBuffer: %p\n", workVideoBuffer);
-					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, /* bufferBrick2, */workVideoBuffer);
-				}
-			}
+			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z)
+				if (currentZbufferData->x + currentZbufferData->y > Y + X)
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, workVideoBuffer);
 		}
 	}
 }
@@ -943,11 +963,11 @@ void DrawOverBrick(int X, int Z, int Y) {
 
 			if (currentZbufferData->drawY + 38 > textWindowTop && currentZbufferData->drawY <= textWindowBottom && currentZbufferData->z >= Z) {
 				if ((currentZbufferData->x == X) && (currentZbufferData->y == Y)) {
-					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, /* bufferBrick2, */workVideoBuffer);
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24, currentZbufferData->drawY, workVideoBuffer);
 				}
 
 				if ((currentZbufferData->x > X) || (currentZbufferData->y > Y)) {
-					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, /*bufferBrick2, */workVideoBuffer);
+					CopyMask(currentZbufferData->spriteNum, (j * 24) - 24,  currentZbufferData->drawY, workVideoBuffer);
 				}
 			}
 		}
@@ -1003,7 +1023,7 @@ void CopyMask(int spriteNum, int x, int y, /*byte * localBufferBrick, */byte * b
 	if (vSize <= 0)
 		return;
 
-	offset = -((right - left) - largeurEcran) - 1;
+	offset = -((right - left) - WINDOW_X) - 1;
 
 	right++;
 	bottom++;

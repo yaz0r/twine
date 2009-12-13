@@ -18,7 +18,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "main.h"
+
 #include "fireEffect.h"
+
+unsigned char *fireEffectVar1;
+unsigned char *fireEffectVar2;
 
 void makeFireEffect(int top, int param) {
 	unsigned char *temp;

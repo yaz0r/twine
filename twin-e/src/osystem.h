@@ -23,6 +23,7 @@ int osystem_init();
 extern int osystem_mouseRight;
 extern int osystem_mouseLeft;
 extern char fullscreen;
+extern char breakMainLoop;
 
 void osystem_mainLoop(void);
 void osystem_delay();

@@ -16,8 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#include <SDL/SDL.h>
+
 #include "lba.h"
-#include "SDL/SDL.h"
+
+#include "text.h"
 
 unsigned char scanCodeTab1[] = {
 	0x48,
@@ -89,6 +92,13 @@ unsigned short int scanCodeTab2[] = {
 	0x0,
 	0x0
 };
+
+short int key;
+short int key1;
+
+byte fkeys = 0;
+
+short int skipIntro;
 
 void readKeyboard(void) {
 	SDL_Event event;

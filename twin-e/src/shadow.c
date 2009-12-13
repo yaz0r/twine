@@ -20,12 +20,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "fullRedraw.h"
 #include "mainLoop.h"
+#include "main.h"
+
+int shadowX;
+int shadowZ;
+int shadowY;
 
 void GetShadow(int X, int Z, int Y) {
 	int tempX;
 	int tempZ;
 	int tempY;
 	unsigned char* ptr;
+	char shadowVar;
 
 	tempX = (X + 0x100) >> 9;
 	tempZ = Z >> 8;

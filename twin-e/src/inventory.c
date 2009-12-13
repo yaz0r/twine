@@ -28,8 +28,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "anim.h"
 #include "actorScript.h"
 #include "font.h"
+#include "hqr.h"
+#include "room.h"
+#include "extra.h"
+#include "script.h"
 
 #include "inventory.h"
+
+char inventorySelectedColor;
+char currentSelectedObjectInInventory;
+
+short int fuel;
 
 void Inventory(void)
 {

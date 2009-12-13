@@ -25,12 +25,79 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "input.h"
 #include "font.h"
 #include "mainLoop.h"
+#include "main.h"
+#include "hqr.h"
 
 #include "text.h"
 
 short int pt8s4[96];
 
 int printText8PrepareBufferVar3;
+
+int progressiveTextStartColor;
+int progressiveTextStopColor;
+int progressiveTextStepSize;
+int progressiveTextBufferSize;
+
+int textVar1 = -1;
+int languageCD1 = 0;
+
+int printTextVar5;
+short int printTextVar12;
+int printTextVar13;
+
+int dialogueBoxLeft = 16;
+int dialogueBoxTop = 334;
+int dialogueBoxRight = 623;
+int dialogueBoxBottom = 463;
+int dialogueBoxParam1 = 3;
+int dialogueBoxParam2 = 591;
+
+int flagDisplayText = 1;
+
+char *printText8Ptr1;
+char *printText8Ptr2;
+
+int printText8Var1;
+int printText8Var2;
+int printText8Var3;
+
+int TEXT_CurrentLetterX;
+int printText8Var5;
+int printText8Var6;
+int TEXT_CurrentLetterY;
+char *printText8Var8;
+
+int printText10Var1;
+
+int spaceLength;
+
+char buf1[256];
+char buf2[256]; /* TODO: check size */
+
+int addLineBreakX;
+
+int printText8PrepareBufferVar2;
+int printText8PrepareBufferVar3;
+
+int wordSizeChar;
+int wordSizePixel;
+
+char spaceChar = ' ';
+
+int textWindowTop = 0;
+int textWindowTopSave = 0;
+int textWindowLeftSave = 0;
+int textWindowLeft = 0;
+int textWindowRight = 639;
+int textWindowRightSave = 639;
+int textWindowBottom = 479;
+int textWindowBottomSave = 479;
+
+int currentTextLength;
+char *currentTextPtr;
+
+short int numTextEntry;
 
 void InitDial(int index) {
 
@@ -42,9 +109,8 @@ void InitDial(int index) {
 		return;
 
 	textVar1 = index;
-	textVar2[0] = textVar3;
 
-	bundleEntryPoint = (language * 14) * 2  + index * 2;
+	bundleEntryPoint = (LANGUAGE * 14) * 2  + index * 2;
 
 	size = Load_HQR("text.hqr", (byte *) bufOrder, bundleEntryPoint);
 
@@ -185,8 +251,8 @@ void saveTextWindow(void) {
 
 void UnSetClip(void) {
 	textWindowTop = textWindowLeft = 0;
-	textWindowRight = largeurEcran - 1;
-	textWindowBottom = hauteurEcran - 1;
+	textWindowRight = WINDOW_X - 1;
+	textWindowBottom = WINDOW_Y - 1;
 }
 
 int printText4(FILE * fileHandle) {

@@ -21,6 +21,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "images.h"
 #include "input.h"
 #include "mainMenu.h"
+#include "streamReader.h"
+#include "music.h"
+#include "samples.h"
+#include "main.h"
 
 #include "fla.h"
 
@@ -107,9 +111,6 @@ int initFla(char* file)
 	streamReader_open(&fla_streamReader, file, 0);
 
 	workVideoBufferCopy = workVideoBuffer;
-
-	if (samplesLoaded)
-		printf("Sample loaded in initFla\n");
 
 	streamReader_get(&fla_streamReader, &flaHeaderData.version, 6);
 	streamReader_get(&fla_streamReader, &flaHeaderData.numOfFrames, 4);

@@ -56,15 +56,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <assert.h>
 
-#define verify(exp)     (assert(exp))
-
-#include "hqr.h"
-
-#include "streamReader.h"
-
-#include "samples.h"
-#include "music.h"
-
 #define todo(string) printf("TODO %s:%d %s\n", __FILE__, __LINE__, string)
 #define assert_ptr(ptr) /*assert((int)ptr != 0xCDCDCDCD && ptr != NULL)*/
 
@@ -157,7 +148,6 @@ typedef struct
 #include "angle.h"
 #include "costume.h"
 #include "zones.h"
-#include "vars.h"
 #include "angleTable.h"
 #include "overlay.h"
 

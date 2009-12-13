@@ -16,6 +16,30 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+typedef struct
+{
+	short int field_0;
+	short int X;
+	short int Y;
+	short int Z;
+
+	short int field_8;
+	short int field_A;
+	short int field_C;
+
+	time trackActorRotation;
+
+	short int field_E;
+	short int field_10;
+	short int field_12;
+	short int field_14;
+	short int field_16;
+	int time;
+	short int field_1C;
+	short int field_1E;
+	short int field_20;
+} extraListStruct;
+
 void reinitExtraObjectList(void);
 int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int oldZ, int oldY);
 void GereExtras(void);
@@ -31,4 +55,15 @@ int ExtraSearch(int actorNum, int X, int Z, int Y, int spriteIdx, int targetActo
 
 extern short int extraDataTable1[21];
 extern short int extraDataTable2[37];
+extern extraListStruct extraList[50];
+extern short int magicBallIdx;
+
+extern short int numClover;
+extern short int numCloverBox;
+extern short int currentPingouin;
+extern short int magicLevel;
+extern short int magicPoint;
+extern short int numCoin;
+extern short int numKey;
+
 

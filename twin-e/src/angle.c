@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "hqr.h"
+
 void clearRealAngle(actor * ptr) {
 	setActorAngleSafe(ptr->angle, ptr->angle, 0, &ptr->time);
 }

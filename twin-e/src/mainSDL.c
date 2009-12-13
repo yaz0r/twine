@@ -26,6 +26,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <SDL_ttf.h>
 
 #include "mainLoop.h"
+#include "hqr.h"
+#include "images.h"
 
 #include "osystem.h"
 
@@ -44,6 +46,8 @@ SDL_Surface *surfaceTable[16];
 
 TTF_Font *font;
 
+char breakMainLoop = 0;
+
 void osystem_mainLoop(void) {
 #define SPEED 15              /* Ticks per Frame */
 #define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
@@ -53,7 +57,7 @@ long int t_start, t_left;
 long unsigned int t_end;
 long int q = 0;                   /* Dummy */
 
-	while (!breakmainLoop) { // To be able to quit the game ;)
+	while (!breakMainLoop) { // To be able to quit the game ;)
 		t_start = SDL_GetTicks();
 
 		mainLoopInteration();
@@ -107,7 +111,7 @@ int osystem_init()
 
 	fullscreen = 0;
 
-	if (SDL_Init(SDL_INIT_VIDEO | (USE_SDL_MIXER ? SDL_INIT_AUDIO:0)) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_CDROM | (USE_SDL_MIXER ? SDL_INIT_AUDIO:0)) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
 	}

@@ -20,10 +20,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "fichePerso.h"
 #include "animAction.h"
+#include "hqr.h"
+#include "actors.h"
+#include "mainLoop.h"
+#include "body.h"
+#include "main.h"
 
 #include "anim.h"
 
-struct bodyHeaderStruct {
+typedef struct
+{
 	short int bodyFlag;     // 2
 	short int unk0;         // 2
 	short int unk1;         // 2
@@ -34,9 +40,15 @@ struct bodyHeaderStruct {
 	short int offsetToData; // 2
 	char *ptrToKeyFrame;
 	int keyFrameTime;
-};
+} bodyHeaderStruct;
 
-typedef struct bodyHeaderStruct bodyHeaderStruct;
+short int animVar4;
+
+short int processActorSub2Var0;
+short int processActorSub2Var1;
+
+char *keyFramePtr;
+char *lastKeyFramePtr;
 
 int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerData *animTimerDataPtr) {
 	short int numOfKeyframeInAnim;
@@ -142,8 +154,6 @@ int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerData 
 	}
 
 	edi = body + 16;
-
-	animVar1 = edi;
 
 	ebx = animTimerDataPtr->ptr;
 	ebp = animTimerDataPtr->time;
@@ -321,8 +331,6 @@ int SetInterAnimObjet(int animState, char *animData, char *body, animTimerData *
 	}
 
 	edi = body + 16;
-
-	animVar1 = edi;
 
 	ebx = animTimerDataPtr->ptr;
 	ebp = animTimerDataPtr->time;
@@ -654,8 +662,6 @@ int SetInterDepObjet(int position, char *anim, char *body, animTimerData *animTi
 
 	if (bodyFlags & 2) {
 		edi = body + 16;
-
-		animVar1 = edi;
 
 		ebx = animTimerDataPtr->ptr;
 		ebp = animTimerDataPtr->time;

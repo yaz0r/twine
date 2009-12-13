@@ -19,8 +19,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #include "input.h"
+#include "samples.h"
+#include "hqr.h"
+#include "main.h"
 
 #include "images.h"
+
+byte palette[256 * 3];
+byte paletteRGBA[256 * 4];
+
+short int palReseted;
 
 void AdelineLogo(void) {
 	playMidi(31);

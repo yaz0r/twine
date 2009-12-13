@@ -30,8 +30,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "main.h"
 #include "fichePerso.h"
 #include "anim.h"
+#include "samples.h"
+#include "hqr.h"
+#include "music.h"
+#include "actors.h"
+#include "body.h"
 
 #include "actorScript.h"
+
+short int choiceTab[18];
+
+int numOfOptionsInChoice;
+short int inGameMenuData[10];
+
+int inGameMenuAnswer;
+
+short int objectRotation[255];
+
+int DoTrackVar1;
 
 int GetAngle(int X1, int Y1, int X2, int Y2) {
 	int newX;

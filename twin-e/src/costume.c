@@ -17,9 +17,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+
 #include "fichePerso.h"
 #include "room.h"
 #include "body.h"
+#include "hqr.h"
+#include "actors.h"
+#include "comportementMenu.h"
+
+byte *file3D[5];
+short int TCos[5];
+unsigned char *loadTwinsenCostumesVar1;
+
+short int loadCostumeVar = -32000;
+short int loadCostumeVar2;
+short int loadCostumeVar3;
+short int loadCostumeVar4;
+short int loadCostumeVar5;
+short int loadCostumeVar6;
 
 void LoadFicPerso(void) {
 	unsigned short int i;

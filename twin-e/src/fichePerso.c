@@ -18,6 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "actors.h"
+
 int getAnimIndexForBody(byte anim, short int actorNumber) {
 	actor *act;
 	char type;

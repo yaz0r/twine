@@ -16,8 +16,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "lba.h"
 #include <math.h>
+
+#include "lba.h"
+
+#include "text.h"
+#include "main.h"
+
 #include "renderer.h"
 
 pointTab _projectedPointTable[800];
@@ -53,15 +58,89 @@ static int baseMatrixRotationZ;
 
 unsigned char *renderV19;
 
+int _numOfPoints;
+int _numOfParts;
+unsigned char *_pointsPtr;
+unsigned char *_partsPtr;
+
+int _baseMatrix[3 * 3];
+
+int _matrixTable[271];  // should be matrixes
+unsigned char *_currentMatrixTableEntry;
+
+int *_shadePtr;
+
+int _shadeMatrix[9];
+int _lightX;
+int _lightY;
+int _lightZ;
+
+short int *tab1;
+short int *tab2;
+short int *tab3;
+
+short int polyTab[960];
+short int polyTab2[960];
+
+int isUsingOrhoProjection;
+
+short int shadeTable[500];
+
+short int primitiveCounter;
+
+int numOfVertex;
+short int numOfVertexRemaining;
+
+short int vleft;
+short int vtop;
+short int vright;
+short int vbottom;
+
+unsigned char oldVertexParam;
+unsigned char vertexParam1;
+unsigned char vertexParam2;
+
+short int *pRenderV1;
+short int *pRenderV2;
+short int pRenderV3[96];
+
+unsigned char *_partsPtr2;
+
+int setSomething3Var12;
+int setSomething3Var14;
+int setSomething3Var16;
+
+int setSomething2Var1;
+int setSomething2Var2;
+int setSomething2Var3;
+
+int cameraVar1;
+int cameraVar2;
+int cameraVar3;
+
+int destX;
+int destY;
+int destZ;
+
+int setSomethingVar1 = 320;
+int setSomethingVar2 = 200;
+
+int renderBottom;
+int renderLeft;
+int renderRight;
+int renderTop;
+
+int renderLoop;
+
+short int vertexCoordinates[193] = { 0x1234, 0 };
+
+short int FillVertic_AType;
+
 int _angleX, _angleY, _angleZ, _X, _Y, _Z, _numOfPrimitives;
 
 int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigned char *costumePtr) {
 	unsigned char *ptr;
 	short int costumeHeader;
-
-#ifdef MACOSX
-//  return 0;
-#endif
 
 	tab1 = &angleTable[0];
 	tab2 = &angleTable[256];
@@ -112,10 +191,9 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
 	return (0);
 }
 
-void configureOrthoProjection(int a, int b, int c) {
-	setSomethingVar1 = a;
-	setSomethingVar2 = b;
-	setSomethingVar3 = c;
+void configureOrthoProjection(int x, int y) {
+	setSomethingVar1 = x;
+	setSomethingVar2 = y;
 	isUsingOrhoProjection = 1;
 }
 
@@ -1553,7 +1631,6 @@ int ComputePoly_A(void) {
 	pRenderV1 = vertexCoordinates;
 	pRenderV2 = pRenderV3;
 	numOfVertexRemaining = numOfVertex;
-	polyCropped = 0;
 
 	vleft = vtop = 32767;
 	vright = vbottom = -32768;

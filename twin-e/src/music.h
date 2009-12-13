@@ -19,11 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _MUSIC_H_
 #define _MUSIC_H_
 
-void PlayMusic(int musicNum);
-void playCDtrack(int trackNumber);
-int getCurrentlyPlayingMusic(void);
-void FadeMusicMidi(/*short int arg_0*/);
-int IsMidiPlaying(void);
+void playMusic(int musicNum);
+char playCDtrack(int trackNumber);
 void stopMusic(void);
+void openCD(void);
+void closeCD(void);
 
 #endif

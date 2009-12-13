@@ -16,16 +16,12 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "lba.h"
-
 #include <SDL_mixer.h>
 #include <sys/stat.h>
 
-struct sampleStructData {
-	int sampleIdx;
-};
+#include "lba.h"
 
-struct sampleStructData sampleTable[16];
+#include "hqr.h"
 
 void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
 {
@@ -66,31 +62,25 @@ void playMidi(int musicNum) {
 	char filename[MAX_PATH];
 	FILE* fhandle;
 
-	/*if (sample != NULL)
-		Mix_FreeMusic(sample);*/
-
-	if (musicNum == 9)
-		return;
-
 	sprintf(filename, DATADIR "midi/%02d.midi", musicNum);
 
-	/*fhandle = fopen(filename, "r");
+	fhandle = fopen(filename, "r");
 
-	if (!fhandle) {
-		mkdir(DATADIR "midi", 0777);*/
+	if (!fhandle)
+	{
+		mkdir(DATADIR "midi", 0777);
 		fhandle = fopen(filename, "w");
 
 		char* temp = (char*)HQR_Get(HQR_Midi, musicNum);
 		fwrite(temp, Size_HQR(HQR_Midi->fileName, musicNum), 1, fhandle);
-	/*}*/
-
-    /*else*/
-    	fclose(fhandle);
+	}
+    fclose(fhandle);
 
 	sample = Mix_LoadMUS(filename);
 
 	if (sample == NULL)
 		printf("Mix_LoadMUS(\"%s\"): %s\n", filename, Mix_GetError());
+
 	Mix_PlayMusic(sample, 0);
 }
 

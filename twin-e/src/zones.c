@@ -26,6 +26,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "main.h"
 #include "actorScript.h"
 #include "extra.h"
+#include "room.h"
+#include "actors.h"
+#include "renderer.h"
+#include "script.h"
+#include "comportementMenu.h"
+
+int currentActorInZoneProcess;
+
+short int useAnotherGrm = -1;
 
 void CheckZoneSce(actor * lactor, int actorNumber) {
 	int currentX = lactor->X;
@@ -108,7 +117,6 @@ void CheckZoneSce(actor * lactor, int actorNumber) {
 						freezeTime();
 						TestRestoreModeSVGA(1);
 						TestCoulDial(pZone->data.ZONE_DisplayText.textColor);
-						talkingActor = actorNumber;
 						printTextFullScreen(pZone->data.ZONE_DisplayText.textIndex);
 						unfreezeTime();
 						fullRedraw(1);

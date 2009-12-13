@@ -24,3 +24,38 @@ void initProgressiveTextBuffer(void);
 void FillVertic(int arg0, int arg_4);
 int ComputePoly(void);
 
+extern int progressiveTextStartColor;
+extern int progressiveTextStopColor;
+extern int progressiveTextStepSize;
+extern int progressiveTextBufferSize;
+
+extern int languageCD1;
+
+extern int printText8Var3;
+extern int printTextVar5;
+extern short int printTextVar12;
+extern int printTextVar13;
+
+extern int dialogueBoxLeft;
+extern int dialogueBoxTop;
+extern int dialogueBoxRight;
+extern int dialogueBoxBottom;
+extern int dialogueBoxParam1;
+extern int dialogueBoxParam2;
+
+extern int flagDisplayText;
+
+extern int textWindowTop;
+extern int textWindowTopSave;
+extern int textWindowLeftSave;
+extern int textWindowLeft;
+extern int textWindowRight;
+extern int textWindowRightSave;
+extern int textWindowBottom;
+extern int textWindowBottomSave;
+
+extern int currentTextLength;
+extern char *currentTextPtr;
+
+extern short int numTextEntry;
+

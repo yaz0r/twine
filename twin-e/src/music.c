@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #include "mainLoop.h"
+#include "music.h"
+#include "samples.h"
 
 #ifdef PCLIKE
 # include <SDL/SDL_mixer.h>
@@ -27,60 +29,49 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 SDL_CD *cdrom;
 
-void PlayMusic(int musicNum) {
-	if (musicNum == -1) {    /* stop music */
-		currentlyPlayingCDTrack = -1;
-		playMusciVar1 = -1;
-		return;
-	}
+void openCD(void)
+{
+	cdrom = NULL;
+	if (SDL_CDNumDrives() > 0)
+		cdrom = SDL_CDOpen(0);
+}
 
-	if (musicNum >= 1 && musicNum <= 9)
-		playCDtrack(musicNum);
-	else
+void closeCD(void)
+{
+	SDL_CDClose(cdrom);
+}
+
+void playMusic(int musicNum) {
+	if (!playCDtrack(musicNum))
 		playMidi(musicNum);
 
 	return;
 }
 
-void playCDtrack(int trackNumber) {
+char playCDtrack(int trackNumber) {
 #ifdef PCLIKE
 	freezeTime();
+
 	Mix_FadeOutMusic(500);
-	currentlyPlayingMidi = -1;
 
-	if (cdrom != NULL) {
-		if (SDL_CDStatus(cdrom) == CD_PLAYING) {
+	if (cdrom != NULL)
+	{
+		if (SDL_CDStatus(cdrom) == CD_PLAYING)
 			SDL_CDStop(cdrom);
-		}
-	}
-	currentlyPlayingCDTrack = -1;
-
-	if (cdrom != NULL) {
 		if (CD_INDRIVE(SDL_CDStatus(cdrom)))
 			SDL_CDPlayTracks(cdrom, trackNumber, 0, 1, 0);
-	} else {
-		playMidi(trackNumber);
+		return 1;
 	}
+	else
+		return 0;
 
 	unfreezeTime();
+#else
+	return 0;
 #endif
 }
 
 void stopMusic(void) {
-	currentlyPlayingCDTrack = -1;
 }
 
-int IsMidiPlaying(void) {
-	return (0);
-}
 
-void FadeMusicMidi(/*short int arg_0*/)
-{
-}
-
-int getCurrentlyPlayingMusic(void) {
-	if (musicPosition > musicLength)
-		currentlyPlayingCDTrack = -1;
-
-	return (currentlyPlayingCDTrack);
-}

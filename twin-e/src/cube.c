@@ -17,8 +17,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "lba.h"
+
 #include "room.h"
+#include "hqr.h"
+#include "main.h"
+#include "mainLoop.h"
+
 #include "cube.h"
+
+unsigned char *currentGrid;
+unsigned char *currentBll;
 
 void initGrid(short int roomNumber)
 {
@@ -36,7 +44,6 @@ void initGrid(short int roomNumber)
 
 	brickDataSize = loadBrk(gridSize);
 	CreateMaskGph();
-	numberOfBll = (READ_LE_U32(currentBll)) >> 2;
 
 	createCube();
 }

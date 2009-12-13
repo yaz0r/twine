@@ -38,7 +38,6 @@ OBJ=actors.o \
 	streamReader.o \
 	text.o \
 	time.o \
-	vars.o \
 	vox.o \
 	zones.o
 

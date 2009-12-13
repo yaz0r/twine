@@ -18,6 +18,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "text.h"
+#include "main.h"
+
+byte *fntFont;
+int interCharSpace;
+int spaceLenght;
+int textColor;
+int stringLenght;
+
 void SetFont(byte * font, int param2, int param1) {
 	fntFont = font;
 	interCharSpace = param2;
@@ -61,7 +70,7 @@ void drawCharacter(int X, int Y, unsigned char caractere) {
 	tempX = X;
 	tempY = Y;
 
-	toNextLine = largeurEcran - sizeX;
+	toNextLine = WINDOW_X - sizeX;
 
 	do {
 		index = *(data++);

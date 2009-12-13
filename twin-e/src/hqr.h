@@ -63,5 +63,12 @@ int HQR_GetNumEntry(/*char* fileName*/);
 hqr_entry* HQR_Init_RessourcePreload(char *resourceName);
 unsigned char *HQR_GetCopy(hqr_entry * hqrPtr, short int arg_4);
 
+extern hqr_entry *HQR_Fic;
+extern hqr_entry *HQR_Inventory;
+extern hqr_entry *HQR_Sprites;
+extern hqr_entry *HQR_Anims;
+extern hqr_entry *HQR_Samples;
+extern hqr_entry *HQR_Midi;
+
 #endif
 

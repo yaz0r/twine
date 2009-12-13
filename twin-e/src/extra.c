@@ -22,6 +22,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "renderer.h"
 #include "actorScript.h"
 #include "fullRedraw.h"
+#include "hqr.h"
+#include "actors.h"
+#include "room.h"
+#include "main.h"
 
 #include "extra.h"
 
@@ -89,6 +93,20 @@ short int extraDataTable2[] = {
 	-10,
 	-12
 };
+
+extraListStruct extraList[50];
+
+int magicBallNumBounce = 1;
+int magicBallParam = 1;
+short int magicBallIdx = -1;
+
+short int numClover;
+short int numCloverBox;
+short int currentPingouin;
+short int magicLevel;
+short int magicPoint;
+short int numCoin;
+short int numKey;
 
 void makeMagicBallBounce(extraListStruct* pExtra, int X, int Y, int Z) {
 	if (WorldColBrick(X, pExtra->Z, Z)) {

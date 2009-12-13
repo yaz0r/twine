@@ -47,28 +47,9 @@ typedef unsigned char boolean;
 
 
 #if defined(_MSC_VER)
-
-#define scumm_stricmp stricmp
-#define snprintf _snprintf
-
-#define SCUMM_LITTLE_ENDIAN
-
-#define FORCEINLINE __forceinline
-#define NORETURN _declspec(noreturn)
-
+# define FORCEINLINE __forceinline
 #else
-
-#define scumm_stricmp strcasecmp
-#define SCUMM_LITTLE_ENDIAN
-#define SCUMM_NEED_ALIGNMENT
-
-#define FORCEINLINE static __inline__
-#define NORETURN __attribute__((__noreturn__))
-#define GCC_PACK __attribute__((packed))
-#define CDECL
-
-#define START_PACK_STRUCTS pack (push,1)
-#define END_PACK_STRUCTS   pack(pop)
+# define FORCEINLINE static __inline__
 #endif
 
 #define READ_LE_BYTE(ptr) (*(ptr))

@@ -29,6 +29,13 @@ volatile int lba_time;
 short int HQR_Flag;
 streamReader fileReader;
 
+hqr_entry *HQR_Fic;
+hqr_entry *HQR_Inventory;
+hqr_entry *HQR_Sprites;
+hqr_entry *HQR_Anims;
+hqr_entry *HQR_Samples;
+hqr_entry *HQR_Midi;
+
 hqr_entry* HQR_Init_Ressource(char* fileName, int sizeOfBuffer, int numOfEntriesInBuffer) {
 	hqr_entry *hqr_ptr;
 	unsigned char *dataPtr;

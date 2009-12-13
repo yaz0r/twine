@@ -64,7 +64,7 @@ void RotMatIndex2(int *eax, int *ebp);
 int finishRender(unsigned char *esi);
 void FillVertic_A(int ecx, int edi);
 int ComputePoly_A(void);
-void configureOrthoProjection(int a, int b, int c);
+void configureOrthoProjection(int x, int y);
 void setSomething3sub(int eax, int ebx, int ecx);
 void setCameraAngleSub(int eax, int ebx, int ecx);
 void setCameraAngle(int param0, int param1, int param2, int param3, int param4, int param5, int param6);
@@ -73,4 +73,37 @@ void setSomething2(int a, int b, int c);
 void setSomething3(int a, int b, int c);
 void drawLine(int a, int b, int c, int d, int e);
 
+extern short int *tab1;
+extern short int *tab2;
+extern short int *tab3;
+
+extern int isUsingOrhoProjection;
+
+extern short int *pRenderV1;
+
+extern int setSomething3Var12;
+extern int setSomething3Var14;
+extern int setSomething3Var16;
+
+extern int numOfVertex;
+
+extern int cameraVar1;
+extern int cameraVar2;
+extern int cameraVar3;
+
+extern int destX;
+extern int destY;
+extern int destZ;
+
+extern int setSomethingVar1;
+extern int setSomethingVar2;
+
+extern int renderBottom;
+extern int renderLeft;
+extern int renderRight;
+extern int renderTop;
+
+extern short int vertexCoordinates[193];
+
+extern short int FillVertic_AType;
 

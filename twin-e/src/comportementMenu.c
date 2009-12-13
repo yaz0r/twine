@@ -16,8 +16,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "images.h"
 #include "lba.h"
+
+#include "images.h"
 #include "mainMenu.h"
 #include "anim.h"
 #include "text.h"
@@ -26,8 +27,22 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "input.h"
 #include "fullRedraw.h"
 #include "room.h"
+#include "main.h"
+#include "hqr.h"
+#include "actors.h"
+#include "body.h"
+#include "extra.h"
+#include "script.h"
 
 animTimerData animDataTab[4];
+
+short int winTab[4];
+
+unsigned char *menuCostumeIndex;
+
+short int comportementHero;
+
+char dataString[256];
 
 void DrawComportement(int lcomportement, int arg, int arg2) {
 	unsigned char *currentAnim;

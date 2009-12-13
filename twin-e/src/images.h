@@ -15,5 +15,8 @@ void SetBackPal(void);
 void convertPalToRGBA(byte * palSource, byte * palDest);
 void loadImageCrossFade(int imageNumber);
 
+extern byte palette[256 * 3];
+extern byte paletteRGBA[256 * 4];
+
 
 

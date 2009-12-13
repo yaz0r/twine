@@ -16,8 +16,8 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-
 #include "lba.h"
+
 #include "images.h"
 #include "fla.h"
 #include "mainMenu.h"
@@ -25,10 +25,41 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "text.h"
 #include "time.h"
 #include "input.h"
+#include "hqr.h"
+#include "music.h"
+#include "samples.h"
+#include "room.h"
+#include "script.h"
 
 #include "main.h"
 
 #define FASTDEBUG
+
+short int newGameVar4 = 1;
+int newGameVar5 = 0;
+
+unsigned char *frontVideoBuffer;
+byte *workVideoBuffer;
+byte *frontVideoBufferbis;
+
+byte *bufSpeak;
+byte *bufMemoSeek;
+char *bufText;
+char *bufOrder;
+byte *bufAni1;
+byte *bufAni2;
+
+byte *menuPal;
+byte menuPalRGBA[1024];
+byte *shadowSprite;
+byte *spriteActorData;
+byte *lbaFont;
+
+byte *bufCube;
+
+int screenLockupTable[2000]; /* TODO: temporary ? */
+
+int setup_lst;
 
 void initVideoStuff(void) {
 	int i, j, k;
@@ -40,17 +71,16 @@ void initVideoStuff(void) {
 
 	j = 0;
 	k = 0;
-	for (i = hauteurEcran; i > 0; i--) {
+	for (i = WINDOW_Y; i > 0; i--) {
 		screenLockupTable[j] = k;
 		j++;
-		k += largeurEcran;
+		k += WINDOW_X;
 	}
-
-	initVideoVar1 = -1;
 }
 
 static void init(void)
 {
+	openCD();
 	soundInit();
 
 	initVideoStuff();
@@ -73,7 +103,6 @@ static void init(void)
 	bufAni1 = bufAni2 = malloc(BUF_ANIM_SIZE);
 
     bufCube = malloc(204800);  // 204800 = 64*64*25*2
-    bufferBrick = malloc(361472);
 
     HQRM_Load("ress.hqr", 0, (unsigned char**)&menuPal);
     HQRM_Load("ress.hqr", 1, (unsigned char**)&lbaFont);
@@ -90,8 +119,6 @@ static void init(void)
 	HQR_Sprites = HQR_Init_Ressource("sprites.hqr", 300000, 120); // enough to hold all the sprites in mem
 	HQR_Samples = HQR_Init_Ressource("samples.hqr", 4500000, 4500000 / 5000);
 	HQR_Anims = HQR_Init_Ressource("anim.hqr", 450000, 600); // should be able to hold all the anims of the game
-
-	samplesLoaded = 1;
 
 	FadeToBlack((char *) paletteRGBA);
 
@@ -128,8 +155,9 @@ int main(int argc, char *argv[])
 {
 	osystem_init(argc, argv);
 
-	initVars();
 	init();
+
+	closeCD();
 
 	return 0;
 }

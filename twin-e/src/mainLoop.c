@@ -39,6 +39,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "actorScript.h"
 #include "fichePerso.h"
 #include "main.h"
+#include "hqr.h"
+#include "music.h"
+#include "cube.h"
+#include "body.h"
 
 #include "mainLoop.h"
 
@@ -48,6 +52,68 @@ short int twinsenKey;
 short int twinsenKey2;
 
 short int mainLoopVar9;
+
+short int usingSword;
+
+short int twinsenZBeforeFall;
+
+time mainLoopVar1;
+short int disableScreenRecenter;
+
+short int mainLoopVar5;
+short int mainLoopVar6;
+short int mainLoopVar7;
+
+actor *processActorVar1;
+short int processActorVar2;
+short int processActorVar3;
+short int processActorVar4;
+
+short int processActorVar5;
+short int processActorVar6;
+
+short int processActorVar11;
+short int processActorVar12;
+short int processActorVar13;
+
+short int useAlternatePalette = 0;
+
+short int fieldCauseDamage;
+short int processActorX;
+short int processActorY;
+short int processActorZ;
+
+short int currentlyProcessedActorNum;
+
+int mainLoopVar17;
+
+int getPosVar1;
+int getPosVar2;
+int getPosVar3;
+
+short int drawInGameTransBox = 0;
+short int twinsenMoved = 0;
+
+short int requestBackgroundRedraw = 1;
+
+short int lockPalette = 0;
+
+short int currentTextBank;
+
+int newCameraX;
+int newCameraZ;
+int newCameraY;
+
+short int currentY;
+short int currentX;
+short int currentZ;
+
+time timeVar;
+
+int action;
+
+int time1;
+int time3;
 
 int mainLoop(void) {
 	requestBackgroundRedraw = 1;
@@ -69,8 +135,6 @@ int mainLoopInteration(void) {
 	for (;;)
 	{
 		readKeyboard();
-		if (mainLoopVar4 > 500)
-			waitRetrace();
 
 		if (needChangeRoom != -1)
 			ChangeCube();
@@ -80,264 +144,249 @@ int mainLoopInteration(void) {
 		mainLoopVar5 = key1;
 		mainLoopVar7 = skipIntro;
 
-		if (gameStaffIsDisplayed != 0) {
-			if (getCurrentlyPlayingMusic() != 8)
-				playCDtrack(8);
-			if (skipIntro != 0)
+		if (lockPalette == 0) {
+			// debut des inputs
 
-				return (0);
-			if (printTextVar12 != 0)
-				return (0);
-			if (key1 != 0)
-				return (0);
-		} else {
-			if (lockPalette == 0) {
-				// debut des inputs
-
-				if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) { // press ESC
-					TestRestoreModeSVGA(1);
-					freezeTime();
-					if (!makeGiveUpMenu()) {
-						unfreezeTime();
-						fullRedraw(1);
-					} else {
-						unfreezeTime();
-						fullRedraw(1);
-						freezeTime();
-						SaveGame();
-						breakmainLoop = true;
-						unfreezeTime();
-						return (0);
-					}
-				}
-				if (fkeys == 6) { // F6
-					temp = languageCD1;
-					freezeTime();
-					TestRestoreModeSVGA(1);
-					soundMenuData[5] = 15;
-					languageCD1 = 0;
-					InitDial(0);
-					optionMenu();
-					languageCD1 = temp;
-					InitDial(currentTextBank + 3);
-
-					if (currentRoom == 80) {
-						if (vars[90] == 1)
-							playCDtrack(8);
-						else
-							PlayMusic(roomMusic);
-					} else {
-						PlayMusic(roomMusic);
-					}
+			if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) { // press ESC
+				TestRestoreModeSVGA(1);
+				freezeTime();
+				if (!makeGiveUpMenu()) {
 					unfreezeTime();
 					fullRedraw(1);
-					fkeys = 0;
-				}
-				mainLoopVar9 = -1;
-				if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // inventory menu
+				} else {
+					unfreezeTime();
+					fullRedraw(1);
 					freezeTime();
-					TestRestoreModeSVGA(1);
-					Inventory();
+					SaveGame();
+					breakMainLoop = 1;
+					unfreezeTime();
+					return (0);
+				}
+			}
+			if (fkeys == 6) { // F6
+				temp = languageCD1;
+				freezeTime();
+				TestRestoreModeSVGA(1);
+				soundMenuData[5] = 15;
+				languageCD1 = 0;
+				InitDial(0);
+				optionMenu();
+				languageCD1 = temp;
+				InitDial(currentTextBank + 3);
 
-					// process object usage
-					switch (mainLoopVar9) {
-					case 0: { // use holomap
-							//processHolomap();
-							lockPalette = 1;
-							break;
+				if (currentRoom == 80 && vars[90])
+						playMusic(8);
+				else
+					playMusic(roomMusic);
+
+				unfreezeTime();
+				fullRedraw(1);
+				fkeys = 0;
+			}
+			mainLoopVar9 = -1;
+			if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // inventory menu
+				freezeTime();
+				TestRestoreModeSVGA(1);
+				Inventory();
+
+				// process object usage
+				switch (mainLoopVar9) {
+				case 0: { // use holomap
+						//processHolomap();
+						lockPalette = 1;
+						break;
+					}
+				case 1: { // use magical ball
+						if (usingSword == 1) {
+							InitBody(0, 0);
 						}
-					case 1: { // use magical ball
-							if (usingSword == 1) {
-								InitBody(0, 0);
-							}
 
-							usingSword = 0;
+						usingSword = 0;
 
-							break;
-						}
-					case 2: { // use sword
-							if (twinsen->body == 2) {
-								if (comportementHero == 4) {
-									SetComportement(0);
-								}
-
-								InitBody(2, 0);
-								InitAnim(24, 1, 0, 0);
-
-								usingSword = 1;
-							}
-							break;
-						}
-					case 5: { // Bù book
-							// todo: implement
-							break;
-						}
-					case 12: { // protopak
-							if (vars[6]) {
-								twinsen->body = 0;
-							} else {
-								twinsen->body = 1;
-							}
-
+						break;
+					}
+				case 2: { // use sword
+						if (twinsen->body == 2) {
 							if (comportementHero == 4) {
 								SetComportement(0);
-							} else {
-								SetComportement(4);
 							}
-							break;
-						}
-					case 14: { // pingoin
-							break;
-						}
-					case 26: { // text
-							break;
-						}
-					case 27: { // clover
-							if (twinsen->life < 50) {
-								if (numClover > 0) {
-									twinsen->life = 50;
-									magicPoint = magicLevel * 20;
 
-									numClover--;
+							InitBody(2, 0);
+							InitAnim(24, 1, 0, 0);
 
-									addOverlayObject(3, 27, 0, 0, 0, 0, 3);
-								}
-							}
-							break;
+							usingSword = 1;
 						}
+						break;
 					}
+				case 5: { // Bù book
+						// todo: implement
+						break;
+					}
+				case 12: { // protopak
+						if (vars[6]) {
+							twinsen->body = 0;
+						} else {
+							twinsen->body = 1;
+						}
 
-					unfreezeTime();
-					fullRedraw(1);
-				}
-				if ((byte) mainLoopVar5 & 4 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
-					freezeTime();
-					TestRestoreModeSVGA(1);
-					processComportementMenu();
-					unfreezeTime();
-					fullRedraw(1);
+						if (comportementHero == 4) {
+							SetComportement(0);
+						} else {
+							SetComportement(4);
+						}
+						break;
+					}
+				case 14: { // pingoin
+						break;
+					}
+				case 26: { // text
+						break;
+					}
+				case 27: { // clover
+						if (twinsen->life < 50) {
+							if (numClover > 0) {
+								twinsen->life = 50;
+								magicPoint = magicLevel * 20;
+
+								numClover--;
+
+								addOverlayObject(3, 27, 0, 0, 0, 0, 3);
+							}
+						}
+						break;
+					}
 				}
 
-				if (fkeys >= 1  && fkeys <= 4  && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys == comportementHero + 1)) { // F1-F4 - only if set a diferent behaviour than the current one
+				unfreezeTime();
+				fullRedraw(1);
+			}
+			if ((byte) mainLoopVar5 & 4 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
+				freezeTime();
+				TestRestoreModeSVGA(1);
+				processComportementMenu();
+				unfreezeTime();
+				fullRedraw(1);
+			}
+
+			if (fkeys >= 1  && fkeys <= 4  && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys == comportementHero + 1)) { // F1-F4 - only if set a diferent behaviour than the current one
 //           freezeTime(); // don-t need to freeze the time
-					TestRestoreModeSVGA(1);
+				TestRestoreModeSVGA(1);
 
-					if (cptime != 0) { // clear if have something already writed in the screen
-						blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-						osystem_copyBlockPhys(5, 446, 350, 479);
-					}
-					// Added: Implemented with translations like LBA2 -----
-					CoulFont(15);
-					textBank = currentTextBank;
-					currentTextBank = -1;
-					InitDial(0);
-					GetMultiText(fkeys - 1, dataString);
-					Font(5, 446, dataString);
-					osystem_copyBlockPhys(5, 446, 350, 479);
-					currentTextBank = textBank;
-					InitDial(currentTextBank + 3);
-					cptime = currentTime;
-					SetComportement(fkeys - 1);
-
-					fkeys = 0;
-				}
-
-				// Using J to Enable Proto-Pack
-				if (mainLoopVar7 == 'j' && vars[12] == 1)
-				{
-					if (cptime != 0) { // clear if have something already writed in the screen
-						blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-						osystem_copyBlockPhys(5, 446, 350, 479);
-					}
-
-					CoulFont(15);
-					Font(5, 446, "Proto-Pack");
-					osystem_copyBlockPhys(5, 446, 200, 479);
-					// -------------------------------------------------------
-					cptime = currentTime;
-
-					if (vars[6]) {
-						twinsen->body = 0;
-					} else {
-						twinsen->body = 1;
-					}
-
-					if (comportementHero == 4) {
-						printf("Stop using Proto-Pack!");
-						SetComportement(0);
-					} else {
-						printf("Now using Proto-Pack!");
-						SetComportement(4);
-					}
-				}
-
-				// Time to display the behaviour text showed in the previous condition.
-				if ((lba_time - cptime) > 100 && cptime) {
+				if (cptime != 0) { // clear if have something already writed in the screen
 					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
 					osystem_copyBlockPhys(5, 446, 350, 479);
-					cptime = 0;
 				}
+				// Added: Implemented with translations like LBA2 -----
+				CoulFont(15);
+				textBank = currentTextBank;
+				currentTextBank = -1;
+				InitDial(0);
+				GetMultiText(fkeys - 1, dataString);
+				Font(5, 446, dataString);
+				osystem_copyBlockPhys(5, 446, 350, 479);
+				currentTextBank = textBank;
+				InitDial(currentTextBank + 3);
+				cptime = currentTime;
+				SetComportement(fkeys - 1);
 
-
-				if (fkeys == 12) { // F12 for FullScreen
-					// TODO: Full Screen
-					//SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
-					fkeys = 0;
-				}
-
-
-				if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0) { // recenter screen
-					newCameraX = actors[currentlyFollowedActor].X >> 9;
-					newCameraZ = actors[currentlyFollowedActor].Y >> 8;
-					newCameraY = actors[currentlyFollowedActor].Z >> 9;
-					requestBackgroundRedraw = 1;
-					//needChangeRoom = 119;
-					//needChangeRoom=currentRoom+1;
-				}
-
-				if (mainLoopVar7 == 'h' && vars[0] == 1 && vars[70] == 0) { // draw holomap
-					freezeTime();
-					TestRestoreModeSVGA(1);
-					// processHolomap();
-					lockPalette = 1;
-					unfreezeTime();
-					fullRedraw(1);
-				}
-
-				if (mainLoopVar7 == 'p') {
-					// pauseSound();
-					freezeTime();
-					if (!drawInGameTransBox) {
-						printf("Game in Pause...");
-						CoulFont(15);
-						Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
-						osystem_copyBlockPhys(5, 446, 100, 479);
-					}
-					readKeyboard();
-					while (skipIntro) {
-						readKeyboard();
-					};
-					while (!skipIntro) {
-						readKeyboard();
-					};
-					do {
-						readKeyboard();
-					} while (!skipIntro && !printTextVar12 && key1);
-					while (skipIntro) {
-						readKeyboard();
-					};
-					if (!drawInGameTransBox) {
-						blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
-						osystem_copyBlockPhys(5, 446, 100, 479);
-					}
-					printf("Game Resumed!");
-					unfreezeTime();
-					// resumeSound();
-				}
-				// il manque un process des input là pour F5
-
-				// fin des inputs
+				fkeys = 0;
 			}
+
+			// Using J to Enable Proto-Pack
+			if (mainLoopVar7 == 'j' && vars[12] == 1)
+			{
+				if (cptime != 0) { // clear if have something already writed in the screen
+					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
+					osystem_copyBlockPhys(5, 446, 350, 479);
+				}
+
+				CoulFont(15);
+				Font(5, 446, "Proto-Pack");
+				osystem_copyBlockPhys(5, 446, 200, 479);
+				// -------------------------------------------------------
+				cptime = currentTime;
+
+				if (vars[6]) {
+					twinsen->body = 0;
+				} else {
+					twinsen->body = 1;
+				}
+
+				if (comportementHero == 4) {
+					printf("Stop using Proto-Pack!");
+					SetComportement(0);
+				} else {
+					printf("Now using Proto-Pack!");
+					SetComportement(4);
+				}
+			}
+
+			// Time to display the behaviour text showed in the previous condition.
+			if ((lba_time - cptime) > 100 && cptime) {
+				blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
+				osystem_copyBlockPhys(5, 446, 350, 479);
+				cptime = 0;
+			}
+
+
+			if (fkeys == 12) { // F12 for FullScreen
+				// TODO: Full Screen
+				//SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
+				fkeys = 0;
+			}
+
+
+			if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0) { // recenter screen
+				newCameraX = actors[currentlyFollowedActor].X >> 9;
+				newCameraZ = actors[currentlyFollowedActor].Y >> 8;
+				newCameraY = actors[currentlyFollowedActor].Z >> 9;
+				requestBackgroundRedraw = 1;
+				//needChangeRoom = 119;
+				//needChangeRoom=currentRoom+1;
+			}
+
+			if (mainLoopVar7 == 'h' && vars[0] == 1 && vars[70] == 0) { // draw holomap
+				freezeTime();
+				TestRestoreModeSVGA(1);
+				// processHolomap();
+				lockPalette = 1;
+				unfreezeTime();
+				fullRedraw(1);
+			}
+
+			if (mainLoopVar7 == 'p') {
+				// pauseSound();
+				freezeTime();
+				if (!drawInGameTransBox) {
+					printf("Game in Pause...");
+					CoulFont(15);
+					Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
+					osystem_copyBlockPhys(5, 446, 100, 479);
+				}
+				readKeyboard();
+				while (skipIntro) {
+					readKeyboard();
+				};
+				while (!skipIntro) {
+					readKeyboard();
+				};
+				do {
+					readKeyboard();
+				} while (!skipIntro && !printTextVar12 && key1);
+				while (skipIntro) {
+					readKeyboard();
+				};
+				if (!drawInGameTransBox) {
+					blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
+					osystem_copyBlockPhys(5, 446, 100, 479);
+				}
+				printf("Game Resumed!");
+				unfreezeTime();
+				// resumeSound();
+			}
+			// il manque un process des input là pour F5
+
+			// fin des inputs
 		}
 		mainLoopVar17 = getRealValue(&mainLoopVar1);
 		if (!mainLoopVar17)
@@ -421,13 +470,11 @@ int mainLoopInteration(void) {
 								lockPalette = 1;
 
 								numClover--;
-
-								cropBottomScreen = i; // !!!???
 							}
 							else
 							{ // game over ...
 								// TODO: play Game Over anim. Model 20 in Ress file
-								breakmainLoop = true;
+								breakMainLoop = 1;
 								printf("Game over...\n");
 							}
 						}
@@ -469,7 +516,6 @@ int mainLoopInteration(void) {
 
 		fullRedraw(requestBackgroundRedraw);
 		requestBackgroundRedraw = 0;
-		counter++;
 
 #ifndef PCLIKE
 		lba_time += 2;
@@ -490,7 +536,6 @@ void reinitAll(int save) {
 	newTwinsenZ = 0x1800;
 	newTwinsenY = 0x2000;
 	currentRoom = -1;
-	brutalExit = -1;
 	numClover = 0;
 	numCloverBox = 2;
 	currentPingouin = -1;
@@ -503,7 +548,6 @@ void reinitAll(int save) {
 	usingSword = 0;
 	currentTextBank = 0;
 	fuel = 0;
-	cropBottomScreen = 0;
 	currentlyFollowedActor = 0;
 	startupAngleInCube = 0;
 	comportementHero = 0;
@@ -522,7 +566,7 @@ void reinitAll(int save) {
 }
 
 void reinitAll1(void) {
-	configureOrthoProjection(311, 240, 512);
+	configureOrthoProjection(311, 240);
 	setSomething2(0, 0, 0);
 	setSomething3(0, 0, 0);
 	SetLightVector(reinitVar1, reinitVar2, 0);
@@ -531,8 +575,6 @@ void reinitAll1(void) {
 void TestRestoreModeSVGA(int arg_0) {
 	if (!drawInGameTransBox)
 		return;
-
-	mainLoop2sub1();
 
 	if (useAlternatePalette)
 		osystem_setPalette(menuPalRGBA);
@@ -545,18 +587,11 @@ void TestRestoreModeSVGA(int arg_0) {
 		fullRedraw(1);
 }
 
-void mainLoop2sub1(void) {
-	// code dpmi non géré.
-
-	initVideoVar1 = -1;
-}
-
 void waitRetrace(void) {
 #ifdef WIN32
 	int temp = SDL_GetTicks();
 
-	while (SDL_GetTicks() - temp < 15) {
-	}
+	while (SDL_GetTicks() - temp < 15) ;
 #endif
 }
 
@@ -631,9 +666,6 @@ void reinitVars(void) {
 	sceneVar4.field_4 = 1;
 	sceneVar4.field_6 = 1;
 
-	for (i = 0; i < 150; i++)
-		GV14[i] = 0;
-
 	numActorInRoom = 0;
 	currentPositionInBodyPtrTab = 0;
 	numOfZones = 0;
@@ -671,7 +703,7 @@ void DrawObj3D(short int arg_0, short int arg_4, short int arg_8, short int arg_
 	temp2 = arg_8 + arg_0;
 	temp2 >>= 1;
 
-	configureOrthoProjection(temp2, temp1, 0);
+	configureOrthoProjection(temp2, temp1);
 	SetClip(arg_0, arg_4, var_4, arg_C);
 
 	if (arg_14 == -1)
@@ -695,12 +727,12 @@ void SetClip(int left, int top, int right, int bottom) {
 		top = 0;
 	textWindowTop = top;
 
-	if (right >= largeurEcran)
-		right = largeurEcran - 1;
+	if (right >= WINDOW_X)
+		right = WINDOW_X - 1;
 	textWindowRight = right;
 
-	if (bottom >= hauteurEcran)
-		bottom = hauteurEcran - 1;
+	if (bottom >= WINDOW_Y)
+		bottom = WINDOW_Y - 1;
 	textWindowBottom = bottom;
 }
 
@@ -725,7 +757,7 @@ void Box(int left, int top, int right, int bottom, unsigned char e) {
 
 	// cropping
 
-	offset = -((right - left) - largeurEcran);
+	offset = -((right - left) - WINDOW_X);
 
 	ptr = frontVideoBuffer + screenLockupTable[top] + left;
 

@@ -140,5 +140,16 @@ void LoadFicPerso(void);
 void InitBody(char arg_0, short int arg_4);
 void CopyInterAnim(unsigned char *arg_0, unsigned char *arg_4);
 
+extern byte *file3D[];
+extern short int TCos[];
+extern unsigned char *loadTwinsenCostumesVar1;
+
+extern short int loadCostumeVar;
+extern short int loadCostumeVar2;
+extern short int loadCostumeVar3;
+extern short int loadCostumeVar4;
+extern short int loadCostumeVar5;
+extern short int loadCostumeVar6;
+
 #endif
 

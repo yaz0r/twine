@@ -35,8 +35,29 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "input.h"
 #include "font.h"
 #include "mainMenu.h"
+#include "music.h"
+#include "hqr.h"
+#include "extra.h"
+#include "moveActor.h"
+#include "comportementMenu.h"
+#include "inventory.h"
 
 #include "script.h"
+
+short int chapter = 0;
+int showTalkVar = 1;
+int drawVar1;
+short int manipActorVar1;
+short int currentGrid2 = -1;
+
+unsigned char vars[256];
+
+unsigned char *actorScriptPtr;
+
+short int currentlyFollowedActor;
+
+byte cubeFlags[80];
+byte itemUsed[28];
 
 int getCOL(actor* ptrActor) {
 	if (ptrActor->life <= 0)
@@ -208,7 +229,6 @@ void runActorScript(short int actorNumber)
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				TestCoulDial(lactor->talkColor);
-				talkingActor = actorNumber;
 				printTextFullScreen(READ_LE_S16(actorScriptPtr));
 				actorScriptPtr += 2;
 				unfreezeTime();
@@ -419,7 +439,6 @@ void runActorScript(short int actorNumber)
 				 */
 
 				TestCoulDial(actors[temp].talkColor);
-				talkingActor = temp;
 
 				textNum = READ_LE_S16(actorScriptPtr);
 
@@ -633,7 +652,7 @@ void runActorScript(short int actorNumber)
 				break;
 			}
 		case 65: { //LM_PLAY_MIDI
-				PlayMusic(*(actorScriptPtr++));
+				playMusic(*(actorScriptPtr++));
 				break;
 			}
 		case 66: { //LM_INC_CLOVER_BOX
@@ -695,8 +714,6 @@ void runActorScript(short int actorNumber)
 				 */
 
 				TestCoulDial(lactor->talkColor);
-
-				talkingActor = actorNumber;
 
 				textNumber = READ_LE_S16(actorScriptPtr);
 
@@ -958,7 +975,6 @@ void runActorScript(short int actorNumber)
 				newTwinsenX = -1;
 				twinsen->angle = startupAngleInCube;
 				SaveGame();
-				brutalExit = 1;
 				break;
 			}
 		case 99: { // LM_MIDI_OFF
@@ -969,11 +985,11 @@ void runActorScript(short int actorNumber)
 				int temp;
 
 				temp = *(actorScriptPtr++);
-				playCDtrack(temp);
+				playMusic(temp);
 				break;
 			}
 		case 101: { //LM_PROJ_ISO
-				configureOrthoProjection(311, 240, 512);
+				configureOrthoProjection(311, 240);
 				setSomething2(0, 0, 0);
 				setSomething3(0, 0, 0);
 				SetLightVector(reinitVar1, reinitVar2, 0);
@@ -1029,7 +1045,6 @@ void runActorScript(short int actorNumber)
 			osystem_copyBlockPhys(0, 0, 639, 240);
 			break;
 		case 105:
-			brutalExit = 0;
 			OPbreak = -1;
 			break;
 		default: {

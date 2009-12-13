@@ -1,5 +1,7 @@
 #include "lba.h"
 
+#include "hqr.h"
+
 overlayObjectListStruct overlayObjectList[10];
 
 void addOverlayObject(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int lifeTime) {

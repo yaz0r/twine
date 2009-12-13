@@ -28,6 +28,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mainMenu.h"
 #include "extra.h"
 #include "anim.h"
+#include "hqr.h"
+#include "music.h"
+#include "body.h"
+#include "main.h"
+#include "script.h"
+#include "comportementMenu.h"
 
 #include "room.h"
 
@@ -52,6 +58,52 @@ byte *videoPtr11;
 byte *videoPtr12;
 byte *videoPtr13;
 
+flagDataStruct flagData[NUM_MAX_FLAGS];
+
+sceneStruct sceneVar2;
+sceneStruct sceneVar3;
+sceneStruct sceneVar4;
+
+ZONE_Box zoneData[NUM_MAX_ZONES];
+
+byte palette2[256 * 3];
+
+char currentRoom;
+char needChangeRoom = -1;
+
+short int newTwinsenX;
+short int newTwinsenZ;
+short int newTwinsenY;
+
+short int newTwinsenXByZone;
+short int newTwinsenZByZone;
+short int newTwinsenYByZone;
+
+short int newTwinsenXByScene;
+short int newTwinsenYByScene;
+short int newTwinsenZByScene;
+
+short int numOfZones;
+short int numFlags;
+
+int numActorInRoom;
+
+short int changeRoomVar10 = 1;
+
+int reinitVar1;
+int reinitVar2;
+
+short int holomapTraj = -1;
+
+short int roomMusic = -1;
+
+short int twinsenPositionModeInNewCube;
+
+short int startupAngleInCube;
+short int startupComportementHeroInCube;
+
+unsigned char *scenePtr;
+
 static void RestartPerso(void) {
 	twinsen->comportement = 1;
 	memset(&twinsen->dynamicFlagsBF, 0, 2);
@@ -71,7 +123,6 @@ static void RestartPerso(void) {
 	twinsen->angle = startupAngleInCube;
 	setActorAngleSafe(twinsen->angle, twinsen->angle, 0, &twinsen->time);
 	SetComportement(startupComportementHeroInCube);
-	cropBottomScreen = 0;
 }
 
 void ChangeCube(void) {
@@ -109,13 +160,6 @@ void ChangeCube(void) {
 
 	InitDial(currentTextBank + 3);
 
-	if (roomMusic != -1) {
-		if (currentlyPlayingMidi != roomMusic) {
-			if (IsMidiPlaying())
-				FadeMusicMidi(1);
-		}
-	}
-
 	initGrid(needChangeRoom);
 
 	if (twinsenPositionModeInNewCube == 1) {
@@ -150,7 +194,6 @@ void ChangeCube(void) {
 	numKey = 0;
 	disableScreenRecenter = 0;
 	twinsenPositionModeInNewCube = 0;
-	timeToNextRoomSample = 0;
 
 	newCameraX = actors[currentlyFollowedActor].X >> 9;
 	newCameraZ = actors[currentlyFollowedActor].Y >> 8;
@@ -165,12 +208,11 @@ void ChangeCube(void) {
 
 	needChangeRoom = -1;
 	changeRoomVar10 = 1;
-	changeRoomVar11 = 14;
 
 	SetLightVector(reinitVar1, reinitVar2, 0);
 
 	if (roomMusic != -1)
-		PlayMusic(roomMusic);
+		playMusic(roomMusic);
 
 	printf("ChangeCube done\n");
 }
@@ -205,19 +247,16 @@ void LoadScene(int sceneNumber) {
 	int size;
 
 	size = HQRM_Load("scene.hqr", sceneNumber, &scenePtr);
-	localScenePtr = scenePtr;
 
-	// todo:faire la gestion d'erreur de chargement
+	/* TODO: make the loading error handling */
 
 	temp = (unsigned char*)scenePtr;
 
 	currentTextBank = READ_LE_BYTE(temp);
 	temp++;
 	needChangeRoom = sceneNumber;
-	sceneRoomNumber = READ_LE_BYTE(temp);
-	temp++;
-	temp += 2;
-	temp += 2;
+	/* skip sceneRoomNumber */
+	temp += 5;
 
 	reinitVar1 = READ_LE_U16(temp);
 	temp += 2;
@@ -247,12 +286,7 @@ void LoadScene(int sceneNumber) {
 	sceneVar3.field_6 = READ_LE_U16(temp);
 	temp += 2;
 	sceneVar4.field_6 = READ_LE_U16(temp);
-	temp += 2;
-
-	sceneVar14 = READ_LE_U16(temp);
-	temp += 2;
-	sceneVar15 = READ_LE_U16(temp);
-	temp += 2;
+	temp += 6; /* skip var14 and var15 */
 	roomMusic = READ_LE_BYTE(temp);
 	temp++;
 	newTwinsenXByScene = READ_LE_U16(temp);

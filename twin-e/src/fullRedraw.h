@@ -48,3 +48,21 @@ void GetDxDyGraph(int arg_0, int *arg_4, int *arg_8, unsigned char *ptr);
 void AddPhysBox(int left, int top, int right, int bottom);
 void FlipBoxes(void);
 
+extern short int fullRedrawVar8;
+
+#ifdef USE_FLOAT
+extern float projectedPositionX;
+extern float projectedPositionY;
+extern float projectedPositionZ;
+#else
+extern short int projectedPositionX;
+extern short int projectedPositionY;
+extern short int projectedPositionZ;
+#endif
+
+extern int numOfRedrawBox;
+
+extern int cameraX;
+extern int cameraZ;
+extern int cameraY;
+

@@ -21,8 +21,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "anim.h"
 #include "actorScript.h"
 #include "fullRedraw.h"
+#include "room.h"
+#include "hqr.h"
+#include "actors.h"
+#include "renderer.h"
+#include "mainLoop.h"
 
 #include "moveActor.h"
+
+short int moveVar1;
+short int manipActorResult;
 
 void DoTrack(int actorNumber) {
 	int continueMove;

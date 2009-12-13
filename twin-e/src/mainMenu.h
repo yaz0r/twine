@@ -19,4 +19,7 @@ int optionMenu(void);
 
 extern short int subMenu2Data[8];
 extern short int soundMenuData[12];
+extern short int shadowMode;
+extern short int autoAgressivity;
+
 

@@ -18,8 +18,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#include "actors.h"
 #include "anim.h"
+#include "room.h"
+#include "main.h"
+
+#include "actors.h"
+
+actor actors[100];
+actor *twinsen = &actors[0];
 
 void initActor(short int id)
 {

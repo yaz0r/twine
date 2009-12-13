@@ -18,6 +18,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
+#include "room.h"
+#include "script.h"
+#include "mainLoop.h"
+#include "actors.h"
+#include "comportementMenu.h"
+#include "extra.h"
+#include "inventory.h"
+
+char playerName[30];
+
 void LoadGame(void) {
 	FILE* fileHandle;
 	unsigned char data;
@@ -51,7 +61,6 @@ void LoadGame(void) {
 	fread(&(twinsen->angle), sizeof(short int),     1,    fileHandle);
 	fread(&(twinsen->body),  sizeof(char),          1,    fileHandle);
 	fread(&data,             sizeof(char),          1,    fileHandle);
-	fread(GV14,              sizeof(char),          data, fileHandle);
 	fread(&fuel,             sizeof(char),          1,    fileHandle);
 	fread(&data,             sizeof(char),          1,    fileHandle);
 	fread(itemUsed,          sizeof(char),          data, fileHandle);
@@ -101,7 +110,6 @@ void SaveGame(void) {
 	fwrite(&(twinsen->body), 1, 1, fHandle);
 	temp = 150; // size of holomapData
 	fwrite(&temp, 1, 1, fHandle);
-	fwrite(GV14, 150, 1, fHandle);
 	fwrite(&fuel, 1, 1, fHandle);
 	temp = 28;
 	fwrite(&temp, 1, 1, fHandle);
