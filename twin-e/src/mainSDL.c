@@ -284,7 +284,9 @@ void os_fullScreen()
 
 char os_isPressed(int key)
 {
+	Uint8 *keystates;
+
 	SDL_PumpEvents();
-	Uint8 *keystates = SDL_GetKeyState(NULL);
+	keystates = SDL_GetKeyState(NULL);
 	return keystates[key];
 }

@@ -441,13 +441,15 @@ int enterPlayerName(short int param)
 
 char* itoa(int nb) {
     int i, j;
+	char* text;
+
     j = nb;
     while (j >= 10) {
         j /= 10;
         i++;
     }
 
-	char* text = malloc(sizeof(char) * i);
+	text = malloc(sizeof(char) * i);
 	sprintf(text, "%d", nb);
 	return text;
 }

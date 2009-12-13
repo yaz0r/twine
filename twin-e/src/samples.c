@@ -61,6 +61,7 @@ static Mix_Music * sample = NULL;
 void playMidi(int musicNum) {
 	char filename[MAX_PATH];
 	FILE* fhandle;
+	char* temp;
 
 	sprintf(filename, "midi/%02d.midi", musicNum);
 
@@ -71,7 +72,7 @@ void playMidi(int musicNum) {
 		mkdir("midi", 0777);
 		fhandle = fopen(filename, "w");
 
-		char* temp = (char*)HQR_Get(HQR_Midi, musicNum);
+		temp = (char*)HQR_Get(HQR_Midi, musicNum);
 		fwrite(temp, Size_HQR(HQR_Midi->fileName, musicNum), 1, fhandle);
 	}
     fclose(fhandle);

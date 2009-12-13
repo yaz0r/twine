@@ -39,6 +39,7 @@ byte* workVideoBufferCopy;
 
 void playFla(char *flaName)
 {
+	unsigned int i;
 	int currentFrame;
 	int syncTime;
     int oldSyncTime;
@@ -52,7 +53,6 @@ void playFla(char *flaName)
 
 	Cls();
 
-	unsigned int i;
 	for (i = 0; i < strlen(flaName); i++)
 		if (flaName[i] == '.')
 			flaName[i] = 0;

@@ -164,10 +164,11 @@ void DrawInfoMenu(short int arg_0, short int arg_4) {
 }
 
 void drawMenuWin(short int var) {
+	unsigned short int i;
+
 	DrawCadre(100, 100, 550, 290);
 	drawBoxInsideTrans(101, 101, 549, 289, 2);
 
-	unsigned short int i;
 	for (i = 0; i < 4; i++)
 	{
 		setAnimAtKeyFrame(winTab[i], HQR_Get(HQR_Anims, TCos[i]), menuCostumeIndex, &animDataTab[i]);
