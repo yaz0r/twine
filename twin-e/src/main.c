@@ -33,8 +33,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "main.h"
 
-#define FASTDEBUG
-
 short int newGameVar4 = 1;
 int newGameVar5 = 0;
 

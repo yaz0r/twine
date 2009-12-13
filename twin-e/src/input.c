@@ -104,10 +104,9 @@ void readKeyboard(void) {
 	SDL_Event event;
 	int localKey;
 	int i;
-	int find = 0;
+	int find = -1;
 	short int temp;
 	unsigned char temp2;
-	char found = 0;
 	int size;
 	int j;
 	unsigned char *keyboard;
@@ -213,14 +212,12 @@ void readKeyboard(void) {
 				break;
 			}
 
-			for (i = 0; i < 28; i++) {
-				if (scanCodeTab1[i] == localKey) {
+			for (i = 0; i < 28; i++)
+				if (scanCodeTab1[i] == localKey)
 					find = i;
-					found = 1;
-				}
-			}
 
-			if (found != 0) {
+			if (find != -1)
+			{
 				temp = scanCodeTab2[find];
 				temp2 = temp & 0x00FF;
 

@@ -520,6 +520,7 @@ int mainLoopInteration(void) {
 #ifndef PCLIKE
 		lba_time += 2;
 #endif
+		break;
 	}
 
 	return 0;

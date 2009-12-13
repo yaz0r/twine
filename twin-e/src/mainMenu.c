@@ -132,6 +132,7 @@ void rungame(void)
 }
 
 void MainGameMenu(void) {
+#ifndef FASTDEBUG
 	int nmenu;
     int cont = 1;
 
@@ -152,11 +153,14 @@ void MainGameMenu(void) {
         case 20: /* new game */
 			if (enterPlayerName(42))
             {
+#endif
 				reinitAll(1);
 				newGame();
 
 				if (mainLoop())
                     rungame();
+
+#ifndef FASTDEBUG
 
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
 			}
@@ -202,6 +206,7 @@ void MainGameMenu(void) {
             break;
         }
     }
+#endif
 }
 
 void HQ_StopSample(void) {
