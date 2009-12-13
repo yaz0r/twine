@@ -32,7 +32,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "cube.h"
 #include "vox.h"
 #include "save.h"
-#include "input.h"
 #include "font.h"
 #include "mainMenu.h"
 #include "music.h"
@@ -901,7 +900,7 @@ void runActorScript(short int actorNumber)
 				Load_HQR("ress.hqr", (byte*)palette, 24);
 				convertPalToRGBA(palette, paletteRGBA);
 				if (!lockPalette) {
-					osystem_setPalette(paletteRGBA);
+					os_setPalette(paletteRGBA);
 				}
 				useAlternatePalette = 1;
 				unfreezeTime();
@@ -910,7 +909,7 @@ void runActorScript(short int actorNumber)
 		case 93: { //LM_SET_NORMAL_PAL
 				useAlternatePalette = 0;
 				if (!lockPalette) {
-					osystem_setPalette(menuPalRGBA);
+					os_setPalette(menuPalRGBA);
 				}
 				break;
 			}
@@ -924,7 +923,7 @@ void runActorScript(short int actorNumber)
 				CopyScreen(workVideoBuffer, frontVideoBuffer);
 				Load_HQR("ress.hqr", (byte *) & palette, 26);
 				convertPalToRGBA(palette, paletteRGBA);
-				osystem_flip(frontVideoBuffer);
+				os_flip(frontVideoBuffer);
 				FadeToPal((char*)paletteRGBA);
 				newGame2();
 				TestCoulDial(15);
@@ -936,12 +935,10 @@ void runActorScript(short int actorNumber)
 				newGame4();
 				FadeToBlack((char*)paletteRGBA);
 				Cls();
-				osystem_setPalette(menuPalRGBA);
+				os_setPalette(menuPalRGBA);
 				flagDisplayText = backupFlag;
 
-				do {
-					readKeyboard();
-				} while (skipIntro || key1);
+				while (!os_isPressed(KEY_CONTTEXT)) ;
 
 				unfreezeTime();
 				break;
@@ -999,7 +996,7 @@ void runActorScript(short int actorNumber)
 		case 102: //LM_PROJ_3D
 			Cls();
 			CopyScreen(frontVideoBuffer, workVideoBuffer);
-			osystem_flip(frontVideoBuffer);
+			os_flip(frontVideoBuffer);
 			changeRoomVar10 = 0;
 
 			setCameraPosition(320, 240, 128, 1024, 1024);
@@ -1033,7 +1030,7 @@ void runActorScript(short int actorNumber)
 					if (esi > 639)
 						edi = 639;
 
-					osystem_copyBlockPhys(0, drawVar1, edi, drawVar1 + 40);
+					os_copyBlockPhys(0, drawVar1, edi, drawVar1 + 40);
 					drawVar1 += 40;
 				}
 
@@ -1042,7 +1039,7 @@ void runActorScript(short int actorNumber)
 		case 104:
 			drawVar1 = 0;
 			Box(0, 0, 639, 240, 0);
-			osystem_copyBlockPhys(0, 0, 639, 240);
+			os_copyBlockPhys(0, 0, 639, 240);
 			break;
 		case 105:
 			OPbreak = -1;

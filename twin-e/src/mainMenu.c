@@ -21,7 +21,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "images.h"
 #include "fla.h"
 #include "main.h"
-#include "input.h"
 #include "mainLoop.h"
 #include "text.h"
 #include "font.h"
@@ -124,11 +123,11 @@ void rungame(void)
     shadowMode = shadowtemp;
 
     Cls();
-    osystem_flip(frontVideoBuffer);
+    os_flip(frontVideoBuffer);
     playFla("The_end");
     Cls();
-    osystem_flip(frontVideoBuffer);
-    osystem_setPalette(menuPalRGBA);
+    os_flip(frontVideoBuffer);
+    os_setPalette(menuPalRGBA);
 }
 
 void MainGameMenu(void) {
@@ -176,11 +175,6 @@ void MainGameMenu(void) {
                     rungame();
 
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
-				do {
-					do {
-						readKeyboard();
-					} while (key1 != 0);
-				} while (skipIntro != 0);
 			}
             break;
 
@@ -191,7 +185,7 @@ void MainGameMenu(void) {
 
         case 23: /* options */
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_flip(frontVideoBuffer);
+			os_flip(frontVideoBuffer);
 			soundMenuData[5] = 26;
 			optionMenu();
             break;
@@ -201,7 +195,7 @@ void MainGameMenu(void) {
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
 
 			SetBackPal();
-			osystem_flip(frontVideoBuffer);
+			os_flip(frontVideoBuffer);
 			FadeToPal((char *) menuPalRGBA);
             break;
         }
@@ -228,7 +222,7 @@ int chooseSave(/*int param*/)
 	  var_0C = 50;
 
 	  CopyScreen(workVideoBuffer, frontVideoBuffer);
-	  osystem_flip(frontVideoBuffer);
+	  os_flip(frontVideoBuffer);
 	  var_24 = alloc(1500);
 	  var_28 = alloc(200);
 
@@ -280,7 +274,7 @@ int processMenu(short int *menuData) {
 	short int currentButton;
 	short int temp3;
 	int musicChanged;
-	int buttonReleased = 1;
+	int buttonReleased = 0;
 
 	musicChanged = 0;
 
@@ -294,7 +288,7 @@ int processMenu(short int *menuData) {
 	maxButton = numEntry - 1;
 
 	do {
-		if (localData == mainMenuData) { // si on est dans le menu principal
+		/*if (localData == mainMenuData) { // si on est dans le menu principal
 			if (lba_time - localTime <= 11650) {
 				if (skipIntro == 46)
 					if (key1 != 32)
@@ -302,16 +296,14 @@ int processMenu(short int *menuData) {
 			} else {
 				return (9999);
 			}
-		}
+		} TODO: WTF is this ??? */
 
-		if (printTextVar12 == 0) {
+		if (!os_isPressed(KEY_MENU_UP) && !os_isPressed(KEY_MENU_DOWN))
 			buttonReleased = 1;
-		}
 
-		if (buttonReleased) {
-			key = printTextVar12;
-
-			if (((byte) key & 2)) { // on passe au bouton d'en dessous
+		if (buttonReleased)
+		{
+			if (os_isPressed(KEY_MENU_DOWN)) { // on passe au bouton d'en dessous
 				currentButton++;
 				if (currentButton == numEntry) {
 					currentButton = 0;  // on se retrouve au dessus
@@ -320,7 +312,7 @@ int processMenu(short int *menuData) {
 				buttonReleased = 0;
 			}
 
-			if (((byte) key & 1)) { // on passe au bouton d'au dessus
+			if (os_isPressed(KEY_MENU_UP)) { // on passe au bouton d'au dessus
 				currentButton--;
 				if (currentButton < 0) {
 					currentButton = maxButton;  // on se retrouve au dessous
@@ -351,26 +343,19 @@ int processMenu(short int *menuData) {
 			*localData = currentButton;
 
 			drawButton(localData, 0); // le bouton actuel
-			do {
-				readKeyboard();
-				drawButton(localData, 1);
-			} while (printTextVar12 == 0 && key1 == 0 && skipIntro == 0);
+			drawButton(localData, 1);
 			buttonNeedRedraw = 0;
 		} else {
 			if (musicChanged) {
-				// todo: update des volumes...
+				// TODO: update des volumes...
 			}
 
 			buttonNeedRedraw = 0;
 			drawButton(localData, 1);
-			readKeyboard();
 		}
-
-	} while (!(key1 & 2) && !(key1 & 1));
+	} while (!os_isPressed(KEY_MENU_ENTER));
 
 	currentButton = *(localData + 5 + currentButton * 2); // on recupere le point de sortie
-
-	readKeyboard();
 
 	SDL_Delay(100);
 
@@ -422,7 +407,7 @@ void drawSelectableLetter(int x, int y, int arg) {
 
 	Font(centerX - SizeFont(buffer) / 2, centerY - 18, buffer);
 
-	osystem_copyBlockPhys(left, top, right2, bottom);
+	os_copyBlockPhys(left, top, right2, bottom);
 
 }
 
@@ -438,18 +423,18 @@ int enterPlayerName(short int param)
 	c = 0;
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 	InitDial(0);
 	GetMultiText(param, buffer);
 	CoulFont(15);
 	Font(320 - (SizeFont(buffer) / 2), 20, buffer);
-	osystem_copyBlockPhys(0, 0, 639, 99);
+	os_copyBlockPhys(0, 0, 639, 99);
 	drawSelectableLetters();
 
 	// TODO: implement this
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 
 	return 1;
 }
@@ -591,7 +576,7 @@ void drawButtonGFX(int largeur, int posY, int c, int d, int mode) {
 
 	// TODO: implement volume buttons
 
-	osystem_copyBlockPhys(left, top, right, bottom);
+	os_copyBlockPhys(left, top, right, bottom);
 
 }
 
@@ -745,23 +730,23 @@ int optionMenu(void) { // Options menu
 			temp2 = 1;
 		} else if (temp == 30) { // Volume Settings
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_flip(frontVideoBuffer);
+			os_flip(frontVideoBuffer);
 			// volumeMenu();
 		} else if (temp == 46) { // Saved Gamee Management
 
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_flip(frontVideoBuffer);
+			os_flip(frontVideoBuffer);
 			// saveManipMenu();
 
 		} else if (temp == 47) { // Advenced Options
 			CopyScreen(workVideoBuffer, frontVideoBuffer);
-			osystem_flip(frontVideoBuffer);
+			os_flip(frontVideoBuffer);
 			optionMenu2();
 		}
 	} while (temp2 != 1);
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 
 	return (0);
 }
@@ -821,6 +806,6 @@ void optionMenu2(void) { // Advanced Options
 	// todo: implement internal process
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 }
 

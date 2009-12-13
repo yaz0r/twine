@@ -25,7 +25,7 @@ typedef unsigned short uint16;
 typedef unsigned long uint32;
 #ifndef __linux__
 #ifndef _TAMTYPES_H_
-typedef unsigned int uint;
+//typedef unsigned int uint;
 #endif
 #endif
 typedef signed char int8;

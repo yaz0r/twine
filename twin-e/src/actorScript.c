@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mainMenu.h"
 #include "vox.h"
 #include "text.h"
-#include "input.h"
 #include "mainLoop.h"
 #include "fullRedraw.h"
 #include "main.h"
@@ -155,24 +154,21 @@ void MyDial(int index) {
 		textStatus = printText10();
 		printText4(voxFileHandle);
 
-		if (textStatus == 2) {
-			while (skipIntro || key1 || printTextVar12) {
+		if (textStatus == 2)
+		{
+			printf("ahem\n");
+			while (os_isPressed(KEY_CONTTEXT))
 				printText4(voxFileHandle);
-				readKeyboard();
-			}
 
-			while (!(skipIntro || key1 || printTextVar12)) {
+			while (!os_isPressed(KEY_CONTTEXT))
 				printText4(voxFileHandle);
-				readKeyboard();
-			}
 		}
 
 		waitRetrace();
 	}
 
-	while (printText4(voxFileHandle)) {
-		readKeyboard();
-	}
+	while (printText4(voxFileHandle))
+		;
 
 	printTextVar5 = 0;
 
@@ -237,7 +233,7 @@ void foundObject(int objectNumber) {
 
 	DrawOverBrick(object2X, object2Z, object2Y);
 
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 
 	projectPositionOnScreen(twinsen->X - objectX, twinsen->Y - objectZ, twinsen->Z - objectY);
 
@@ -338,8 +334,7 @@ void foundObject(int objectNumber) {
 
 		FlipBoxes();
 
-		readKeyboard();
-		if (key1) {
+		if (os_isPressed(KEY_CONTTEXT)) {
 			if (!textDisplayState) {
 				closeWindow = true;
 			}
@@ -350,31 +345,23 @@ void foundObject(int objectNumber) {
 	}
 
 	/*
-	  if(!voxNotFound)
-	  {
-	    while(closeFoundVox())
-	    {
-	      readKeyboard();
-	      if(skipIntro==1)
-	        break;
-	    }
-	  }
-	  else*/
-	{
-		while (printText11()) {
-			readKeyboard();
-			if (skipIntro == 1)
+	if (!voxNotFound)
+		while (closeFoundVox())
+			if (os_isPressed(KEY_SKIP))
 				break;
-		}
+	else*/
+	{
+		while (printText11())
+			if (os_isPressed(KEY_SKIP))
+				break;
 	}
 
 	//stopVox();
 	reinitAll1();
 	InitDial(currentTextBank + 3);
 
-	while (skipIntro == 1) {
-		readKeyboard();
-	}
+	while (os_isPressed(KEY_SKIP))
+		;
 }
 
 void OpenDial(int textNumber) {

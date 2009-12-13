@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "lba.h"
 
-#include "input.h"
 #include "samples.h"
 #include "hqr.h"
 #include "main.h"
@@ -37,7 +36,7 @@ void AdelineLogo(void) {
 	Load_HQR("ress.hqr", palette, 28);
 	convertPalToRGBA(palette, paletteRGBA);
 	blackToWhite();
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 	fadeIn(paletteRGBA);
 #ifdef PCLIKE
 	SDL_Delay(6000);
@@ -47,10 +46,8 @@ void AdelineLogo(void) {
 void fadeIn(byte * palette) {
 	int i = 100;
 
-	for (i = 0; i < 100; i += 3) {
+	for (i = 0; i < 100; i += 3)
 		adjustPalette(255, 255, 255, palette, i);
-		readKeyboard();
-	}
 }
 
 void adjustPalette(byte R, byte G, byte B, byte * palette, int intensity) {
@@ -85,7 +82,7 @@ void adjustPalette(byte R, byte G, byte B, byte * palette, int intensity) {
 		counter += 4;
 	}
 
-	osystem_setPalette(localPalette);
+	os_setPalette(localPalette);
 }
 
 int RegleTrois32(int modifier, int color, int param, int intensity) {
@@ -99,7 +96,7 @@ void RessPict(int imageNumber) {
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
 	Load_HQR("ress.hqr", palette, imageNumber + 1);
 	convertPalToRGBA(palette, paletteRGBA);
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 	FadeToPal((char *) paletteRGBA);
 }
 
@@ -109,18 +106,15 @@ void loadImageCrossFade(int imageNumber) {
 	Load_HQR("ress.hqr", palette, imageNumber + 1);
 	convertPalToRGBA(palette, paletteRGBA);
 
-	osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+	os_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 }
 
 void FadeToBlack(char *palette) {
 	int i = 0;
 
-	if (palReseted == 0) {
-		for (i = 100; i >= 0; i -= 3) {
+	if (palReseted == 0)
+		for (i = 100; i >= 0; i -= 3)
 			adjustPalette(0, 0, 0, (byte *) palette, i);
-			readKeyboard();
-		}
-	}
 
 	palReseted = 1;
 }
@@ -128,12 +122,10 @@ void FadeToBlack(char *palette) {
 void FadeToPal(char *palette) {
 	int i = 100;
 
-	for (i = 0; i <= 100; i += 3) {
+	for (i = 0; i <= 100; i += 3)
 		adjustPalette(0, 0, 0, (byte *) palette, i);
-		readKeyboard();
-	}
 
-	osystem_setPalette((byte*)palette);
+	os_setPalette((byte*)palette);
 
 	palReseted = 0;
 
@@ -144,11 +136,10 @@ void blackToWhite(void)
 	byte palette[1024];
 	int i;
 
-	for (i = 255; i >= 0; i -= 3) {
+	for (i = 255; i >= 0; i -= 3)
+	{
 		memset(palette, i, 1024);
-
-		osystem_setPalette(palette);
-		readKeyboard();
+		os_setPalette(palette);
 	}
 }
 
@@ -157,7 +148,7 @@ void SetBackPal(void)
 	memset(palette, 0, 768);
 	memset(paletteRGBA, 0, 1024);
 
-	osystem_setPalette(paletteRGBA);
+	os_setPalette(paletteRGBA);
 
 	palReseted = 1;
 }

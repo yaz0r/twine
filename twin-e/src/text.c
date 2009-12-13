@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "renderer.h"
 #include "mainMenu.h"
 #include "vox.h"
-#include "input.h"
 #include "font.h"
 #include "mainLoop.h"
 #include "main.h"
@@ -140,9 +139,8 @@ void printTextFullScreen(int textIndex) {
 	}
 
 	if (!flagDisplayText && isVoxSet) { // si on doit player le Vox sans afficher le text
-		do {
+		while (temp2 && os_isPressed(KEY_SKIP))
 			temp2 = printText4(voxFileHandle);
-		} while (temp2 && skipIntro == 1);
 
 		printTextVar5 = 0;
 
@@ -168,27 +166,18 @@ void printTextFullScreen(int textIndex) {
 
 	do {      // debut de la boucle d'affichage du text+sons
 		waitRetrace();
-		readKeyboard();
 		isVoxSet = temp2 = printText10(); // on doit player le son ?
 		printText4(voxFileHandle);
 
 		if (isVoxSet == 2) {
-			do {
-				readKeyboard();
-				if (skipIntro == 0 && key1 == 0 && printTextVar12 == 0)
-					break;
+			printf("HMMMMMMMMMMMMMMMMMMMMMMM\n");
+			while (!os_isPressed(KEY_CONTTEXT))
 				printText4(voxFileHandle);
-			} while (1);
-
-			do {
-				readKeyboard();
-				if (skipIntro != 0 || key1 != 0 || printTextVar12 != 0)
-					break;
+			while (!os_isPressed(KEY_CONTTEXT))
 				printText4(voxFileHandle);
-			} while (1);
 		}
 
-		if (skipIntro == 1) {
+		if (os_isPressed(KEY_SKIP)) {
 			temp3 = 1;
 			break;
 		}
@@ -217,26 +206,11 @@ void printTextFullScreen(int textIndex) {
 		return;
 	}
 
-	do {      // ca doit etre la boucle d'attente de la fin de l'affichage du text
-		readKeyboard();
-	} while (skipIntro || key1 || printTextVar12);
+	while (!os_isPressed(KEY_CONTTEXT))
+		;
 
-
-	// now enabled ----------------------------------
-	// wait a key to continue the displaying the text
-	do {
-		readKeyboard();
-		if (skipIntro != 0) {
-			loadSavedTextWindow();
-			return;
-		}
-
-		if (key1 != 0) {
-			loadSavedTextWindow();
-			return;
-		}
-	} while (!printTextVar12);
-	//-------------------------------------------------
+	while (!os_isPressed(KEY_CONTTEXT))
+		loadSavedTextWindow();
 
 	loadSavedTextWindow();
 	return;
@@ -339,7 +313,7 @@ void InitDialWindow(void) {
 		drawBoxInsideTrans(dialogueBoxLeft + 1, dialogueBoxTop + 1, dialogueBoxRight - 1, dialogueBoxBottom - 1, 3);
 	}
 
-	osystem_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+	os_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 
 	printText8Var3 = 0;
 
@@ -363,7 +337,7 @@ int printText10(void) {
 		}
 		if (printText8Var6 != 0) {
 			blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char *) workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char *) frontVideoBuffer);
-			osystem_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+			os_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 			printText8Var3 = 0;
 			printText8Var6 = 0;
 			TEXT_CurrentLetterX = dialogueBoxLeft + 8;
@@ -489,7 +463,7 @@ void drawDoubleLetter(int a, int b, int c, int d) {
 
 	// manque les check pour la taille de la boite de dialogue...
 
-	osystem_copyBlockPhys(left, top, right, bottom);
+	os_copyBlockPhys(left, top, right, bottom);
 }
 
 void drawLetter2(int x, int y, int c) {
@@ -560,7 +534,7 @@ void printText10Sub(void) {
 		FillVertic(FillVertic_AType, progressiveTextStopColor);
 	}
 
-	osystem_copyBlockPhys(dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
+	os_copyBlockPhys(dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
 }
 

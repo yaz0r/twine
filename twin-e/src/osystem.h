@@ -16,26 +16,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include "SDL.h"
+#include "config.h"
 
-int osystem_init();
+#ifdef USE_SDL
+#include <SDL.h>
+#include "mainSDL.h"
+#endif
 
-extern int osystem_mouseRight;
-extern int osystem_mouseLeft;
+int os_init();
+
 extern char fullscreen;
 extern char breakMainLoop;
 
-void osystem_mainLoop(void);
-void osystem_delay();
-void osystem_crossFade(char *buffer, char *palette);
-void osystem_initBuffer(char *buffer, int width, int height);
-void osystem_initVideoBuffer(char *buffer, int width, int height);
-void osystem_setPalette(byte * palette);
-void osystem_setPalette320x200(byte * palette);
-void osystem_flip();
-void osystem_draw320x200BufferToScreen();
-void osystem_copyBlockPhys(int left, int top, int right, int bottom);
-void osystem_getMouseStatus(mouseStatus* mouseData);
+void os_mainLoop(void);
+void os_delay(int time);
+void os_crossFade(char *buffer, char *palette);
+void os_initBuffer(char *buffer, int width, int height);
+void os_initVideoBuffer(char *buffer, int width, int height);
+void os_setPalette(byte * palette);
+void os_setPalette320x200(byte * palette);
+void os_flip();
+void os_draw320x200BufferToScreen();
+void os_copyBlockPhys(int left, int top, int right, int bottom);
 
-void osystem_fullScreen();
+void os_fullScreen();
+char os_isPressed(int key);
 

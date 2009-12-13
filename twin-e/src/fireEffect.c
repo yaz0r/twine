@@ -24,6 +24,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 unsigned char *fireEffectVar1;
 unsigned char *fireEffectVar2;
+int mytime;
+int oldtime = 0;
 
 void makeFireEffect(int top, int param) {
 	unsigned char *temp;
@@ -31,6 +33,11 @@ void makeFireEffect(int top, int param) {
 	int i, j;
 	unsigned char temp3 = 0;
 	unsigned char bh, bl;
+
+	mytime = SDL_GetTicks(); /* TODO: buggy, and maybe too hacky */
+	if (mytime - oldtime < 20)
+		return;
+	oldtime = mytime;
 
 	makeFireEffectInit();
 
@@ -40,6 +47,7 @@ void makeFireEffect(int top, int param) {
 
 	bl = param;
 	bh = bl + 15;
+
 
 	for (i = 25; i >= 0; i--) {
 		for (j = 320; j >= 0; j--) {

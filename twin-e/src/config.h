@@ -1,12 +1,3 @@
-/* Mac OS X */
-/* #define MACOSX */
-
-/* Windows */
-/* #define WIN32 */
-
-/* UNIX(-like) */
-#define UNIX
-
 #define USE_SDL_MIXER 1
 
 #define LANG_ENGLISH 0
@@ -22,4 +13,6 @@
 #define WINDOW_Y 480
 
 #define FASTDEBUG
+
+#define USE_SDL
 

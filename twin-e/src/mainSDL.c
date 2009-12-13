@@ -16,11 +16,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "lba.h"
 
 #ifdef USE_SDL_MIXER
-#include <SDL/SDL_mixer.h>
+#include <SDL_mixer.h>
 #endif
 
 #include <SDL_ttf.h>
@@ -31,8 +31,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osystem.h"
 
-int osystem_mouseRight;
-int osystem_mouseLeft;
 char fullscreen;
 
 char *tempBuffer;
@@ -44,11 +42,13 @@ SDL_Surface *sdl_screen;  // that's the SDL global object for the screen
 SDL_Color sdl_colors[256];
 SDL_Surface *surfaceTable[16];
 
+SDL_Event event;
+
 TTF_Font *font;
 
 char breakMainLoop = 0;
 
-void osystem_mainLoop(void) {
+void os_mainLoop(void) {
 #define SPEED 15              /* Ticks per Frame */
 #define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
 #define SLEEP_GRAN 1         /* Granularity of sleep */
@@ -57,7 +57,16 @@ long int t_start, t_left;
 long unsigned int t_end;
 long int q = 0;                   /* Dummy */
 
-	while (!breakMainLoop) { // To be able to quit the game ;)
+	while (!breakMainLoop)
+	{
+		while (SDL_PollEvent(&event))
+		{
+			if (event.type == SDL_QUIT) {
+				breakMainLoop = 1;
+				break;
+			}
+		}
+
 		t_start = SDL_GetTicks();
 
 		mainLoopInteration();
@@ -74,22 +83,11 @@ long int q = 0;                   /* Dummy */
 	}
 }
 
-void osystem_delay(/* int time */) {
-//   SDL_Delay(time);
+void os_delay(int time) {
+   SDL_Delay(time);
 }
 
-void osystem_getMouseStatus(mouseStatus *mouseData) {
-
-	SDL_GetMouseState(&mouseData->X, &mouseData->Y);
-
-	mouseData->left = osystem_mouseLeft;
-	mouseData->right = osystem_mouseRight;
-
-	osystem_mouseLeft = 0;
-	osystem_mouseRight = 0;
-}
-
-int osystem_init()
+int os_init()
 {
 	unsigned char *keyboard;
 	int size;
@@ -149,13 +147,10 @@ int osystem_init()
 			SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
 	}
 
-	osystem_mouseLeft = 0;
-	osystem_mouseRight = 0;
-
 	return 0;
 }
 
-void osystem_setPalette(byte * palette)
+void os_setPalette(byte * palette)
 {
 	SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
 
@@ -166,20 +161,20 @@ void osystem_setPalette(byte * palette)
 	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
-void osystem_setPalette320x200(byte * palette)
+void os_setPalette320x200(byte * palette)
 {
 	SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
 
 	SDL_SetColors(sdl_buffer320x200, sdl_colorsTemp, 0, 256);
 }
 
-void osystem_flip()
+void os_flip()
 {
 	SDL_BlitSurface(sdl_buffer, NULL, sdl_screen, NULL);
 	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
-void osystem_draw320x200BufferToScreen()
+void os_draw320x200BufferToScreen()
 {
 	SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_bufferRGBA, NULL);
 
@@ -188,7 +183,7 @@ void osystem_draw320x200BufferToScreen()
 	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
-void osystem_copyBlockPhys(int left, int top, int right, int bottom) {
+void os_copyBlockPhys(int left, int top, int right, int bottom) {
 	SDL_Rect rectangle;
 
 	rectangle.x = left;
@@ -201,7 +196,7 @@ void osystem_copyBlockPhys(int left, int top, int right, int bottom) {
 	SDL_UpdateRect(sdl_screen, left, top, right - left + 1, bottom - top + 1);
 }
 
-void osystem_initVideoBuffer(char *buffer, int width, int height) {
+void os_initVideoBuffer(char *buffer, int width, int height) {
 	Uint32 rmask, gmask, bmask, amask;
 
 	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
@@ -222,11 +217,11 @@ void osystem_initVideoBuffer(char *buffer, int width, int height) {
 	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
 
-void osystem_initBuffer(char *buffer, int width, int height) {
+void os_initBuffer(char *buffer, int width, int height) {
 	sdl_buffer = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 640, 0, 0, 0, 0);
 }
 
-void osystem_crossFade(char *buffer, char *palette) {
+void os_crossFade(char *buffer, char *palette) {
 	int i;
 	SDL_Surface *backupSurface;
 	SDL_Surface *newSurface;
@@ -273,7 +268,7 @@ void osystem_crossFade(char *buffer, char *palette) {
 	SDL_FreeSurface(tempSurface);
 }
 
-void osystem_fullScreen()
+void os_fullScreen()
 {
 	SDL_FreeSurface(sdl_screen);
 	sdl_screen = NULL;
@@ -287,3 +282,9 @@ void osystem_fullScreen()
 	requestBackgroundRedraw = 1;
 }
 
+char os_isPressed(int key)
+{
+	SDL_PumpEvents();
+	Uint8 *keystates = SDL_GetKeyState(NULL);
+	return keystates[key];
+}

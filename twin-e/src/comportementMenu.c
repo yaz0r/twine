@@ -24,7 +24,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "text.h"
 #include "mainLoop.h"
 #include "font.h"
-#include "input.h"
 #include "fullRedraw.h"
 #include "room.h"
 #include "main.h"
@@ -101,8 +100,8 @@ void DrawComportement(int lcomportement, int arg, int arg2) {
 
 	DrawObj3D(box_left, box_top, box_right, box_bottom, -600, arg, menuCostumeIndex); // dessine le model
 
-	osystem_copyBlockPhys(box_left, var_10, box_right, box_bottom);
-	osystem_copyBlockPhys(110, 239, 540, 279);
+	os_copyBlockPhys(box_left, var_10, box_right, box_bottom);
+	os_copyBlockPhys(110, 239, 540, 279);
 
 	loadSavedTextWindow();
 }
@@ -161,7 +160,7 @@ void DrawInfoMenu(short int arg_0, short int arg_4) {
 		AffGraph(0, RegleTrois32(arg_0 + 25, arg_0 + 325, 10, i) + 2, arg_4 + 60, HQR_Get(HQR_Sprites, 7));
 	}
 
-	osystem_copyBlockPhys(arg_0, arg_4, arg_0 + 450, arg_4 + 80);
+	os_copyBlockPhys(arg_0, arg_4, arg_0 + 450, arg_4 + 80);
 }
 
 void drawMenuWin(short int var) {
@@ -177,7 +176,7 @@ void drawMenuWin(short int var) {
 
 	DrawInfoMenu(100, 300);
 
-	osystem_copyBlockPhys(100, 100, 550, 290);
+	os_copyBlockPhys(100, 100, 550, 290);
 }
 
 void processComportementMenu(void) {
@@ -185,6 +184,7 @@ void processComportementMenu(void) {
 	int languageCD1temp;
 	int var_4;
 	int savedComportement;
+	int canPress = 1;
 
 	freezeTime();
 
@@ -212,19 +212,19 @@ void processComportementMenu(void) {
 
 	setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCos[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
 
-	readKeyboard();
-
-	while (key1 & 4 || (skipIntro > 59 && skipIntro < 62))
+	while (os_isPressed(KEY_CHCONDUCT))
     {
-		readKeyboard();
-
-		key = printTextVar12;
-
-		if (key & 8)
+		if (os_isPressed(KEY_CHCONDUCT_RIGHT) && canPress) {
 			comportementHero++;
-
-		if (key & 4)
+			canPress = 0;
+		}
+		else if (os_isPressed(KEY_CHCONDUCT_LEFT) && canPress) {
 			comportementHero--;
+			canPress = 0;
+		}
+
+		if (!os_isPressed(KEY_CHCONDUCT_LEFT) && !os_isPressed(KEY_CHCONDUCT_RIGHT))
+			canPress = 1;
 
 		if (comportementHero < 0)
 			comportementHero = 3;
@@ -238,10 +238,8 @@ void processComportementMenu(void) {
 			setActorAngleSafe(twinsen->angle, twinsen->angle - 256, 50, &timeVar);  // rotate twinsen
 			setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCos[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
 
-			while (printTextVar12) {
-				readKeyboard();
+			while (printTextVar12)
 				DrawComportement(comportementHero, -1, 1);
-			}
 		}
 		DrawComportement(comportementHero, -1, 1);
 #ifndef PCLIKE

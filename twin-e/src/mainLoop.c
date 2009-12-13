@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "images.h"
 #include "renderer.h"
 #include "mainMenu.h"
-#include "input.h"
 #include "room.h"
 #include "fullRedraw.h"
 #include "save.h"
@@ -49,7 +48,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 int cptime = 0;
 
 short int twinsenKey;
-short int twinsenKey2;
 
 short int mainLoopVar9;
 
@@ -59,10 +57,6 @@ short int twinsenZBeforeFall;
 
 time mainLoopVar1;
 short int disableScreenRecenter;
-
-short int mainLoopVar5;
-short int mainLoopVar6;
-short int mainLoopVar7;
 
 actor *processActorVar1;
 short int processActorVar2;
@@ -120,34 +114,27 @@ int mainLoop(void) {
 	lockPalette = 1;
 	setActorAngle(0, -256, 5, &mainLoopVar1);
 
-	osystem_mainLoop();
+	os_mainLoop();
 
 	return 0;
 }
 
 int mainLoopInteration(void) {
-	int temp;
 	int i;
 	int currentTime;
-	int textBank;
+	/*int textBank;
+	int temp;*/
 
 	currentTime = lba_time;
 	for (;;)
 	{
-		readKeyboard();
-
 		if (needChangeRoom != -1)
 			ChangeCube();
-
-		mainLoopVar6 = mainLoopVar5;
-		key = printTextVar12;
-		mainLoopVar5 = key1;
-		mainLoopVar7 = skipIntro;
 
 		if (lockPalette == 0) {
 			// debut des inputs
 
-			if (skipIntro == 1 && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) { // press ESC
+			if (os_isPressed(KEY_MENU) && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) { // press ESC
 				TestRestoreModeSVGA(1);
 				freezeTime();
 				if (!makeGiveUpMenu()) {
@@ -163,7 +150,8 @@ int mainLoopInteration(void) {
 					return (0);
 				}
 			}
-			if (fkeys == 6) { // F6
+			/* TODO: fix
+			if (os_isPressed(KEY_F6)) { // F6
 				temp = languageCD1;
 				freezeTime();
 				TestRestoreModeSVGA(1);
@@ -175,16 +163,15 @@ int mainLoopInteration(void) {
 				InitDial(currentTextBank + 3);
 
 				if (currentRoom == 80 && vars[90])
-						playMusic(8);
+					playMusic(8);
 				else
 					playMusic(roomMusic);
 
 				unfreezeTime();
 				fullRedraw(1);
-				fkeys = 0;
-			}
+			}*/
 			mainLoopVar9 = -1;
-			if ((byte) mainLoopVar5 & 0x20 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // inventory menu
+			if (os_isPressed(KEY_INVENTORY) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // inventory menu
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				Inventory();
@@ -260,7 +247,7 @@ int mainLoopInteration(void) {
 				unfreezeTime();
 				fullRedraw(1);
 			}
-			if ((byte) mainLoopVar5 & 4 && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
+			if (os_isPressed(KEY_CHCONDUCT) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				processComportementMenu();
@@ -268,13 +255,16 @@ int mainLoopInteration(void) {
 				fullRedraw(1);
 			}
 
-			if (fkeys >= 1  && fkeys <= 4  && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys == comportementHero + 1)) { // F1-F4 - only if set a diferent behaviour than the current one
-//           freezeTime(); // don-t need to freeze the time
+			/* Change behavior */
+			/* TODO: fix */
+			/*
+			if (fkeys >= 1  && fkeys <= 4 && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys == comportementHero + 1))
+			{
 				TestRestoreModeSVGA(1);
 
 				if (cptime != 0) { // clear if have something already writed in the screen
 					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-					osystem_copyBlockPhys(5, 446, 350, 479);
+					os_copyBlockPhys(5, 446, 350, 479);
 				}
 				// Added: Implemented with translations like LBA2 -----
 				CoulFont(15);
@@ -283,26 +273,26 @@ int mainLoopInteration(void) {
 				InitDial(0);
 				GetMultiText(fkeys - 1, dataString);
 				Font(5, 446, dataString);
-				osystem_copyBlockPhys(5, 446, 350, 479);
+				os_copyBlockPhys(5, 446, 350, 479);
 				currentTextBank = textBank;
 				InitDial(currentTextBank + 3);
 				cptime = currentTime;
 				SetComportement(fkeys - 1);
 
 				fkeys = 0;
-			}
+			}*/
 
 			// Using J to Enable Proto-Pack
-			if (mainLoopVar7 == 'j' && vars[12] == 1)
+			if (os_isPressed(KEY_ACTION_PROTOPACK) && vars[12] == 1)
 			{
 				if (cptime != 0) { // clear if have something already writed in the screen
 					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-					osystem_copyBlockPhys(5, 446, 350, 479);
+					os_copyBlockPhys(5, 446, 350, 479);
 				}
 
 				CoulFont(15);
 				Font(5, 446, "Proto-Pack");
-				osystem_copyBlockPhys(5, 446, 200, 479);
+				os_copyBlockPhys(5, 446, 200, 479);
 				// -------------------------------------------------------
 				cptime = currentTime;
 
@@ -324,28 +314,24 @@ int mainLoopInteration(void) {
 			// Time to display the behaviour text showed in the previous condition.
 			if ((lba_time - cptime) > 100 && cptime) {
 				blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
-				osystem_copyBlockPhys(5, 446, 350, 479);
+				os_copyBlockPhys(5, 446, 350, 479);
 				cptime = 0;
 			}
 
-
+			/* TODO: fullscreen
 			if (fkeys == 12) { // F12 for FullScreen
-				// TODO: Full Screen
-				//SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
-				fkeys = 0;
-			}
+				SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
+			} */
 
 
-			if ((byte) mainLoopVar5 & 2 && disableScreenRecenter == 0) { // recenter screen
+			if (os_isPressed(KEY_RECENTER) && disableScreenRecenter == 0) { // recenter screen
 				newCameraX = actors[currentlyFollowedActor].X >> 9;
 				newCameraZ = actors[currentlyFollowedActor].Y >> 8;
 				newCameraY = actors[currentlyFollowedActor].Z >> 9;
 				requestBackgroundRedraw = 1;
-				//needChangeRoom = 119;
-				//needChangeRoom=currentRoom+1;
 			}
 
-			if (mainLoopVar7 == 'h' && vars[0] == 1 && vars[70] == 0) { // draw holomap
+			if (os_isPressed(KEY_ACTION_HOLOMAP) && vars[0] == 1 && vars[70] == 0) { // draw holomap
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				// processHolomap();
@@ -354,31 +340,21 @@ int mainLoopInteration(void) {
 				fullRedraw(1);
 			}
 
-			if (mainLoopVar7 == 'p') {
+			if (os_isPressed(KEY_PAUSE)) {
 				// pauseSound();
 				freezeTime();
 				if (!drawInGameTransBox) {
 					printf("Game in Pause...");
 					CoulFont(15);
 					Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
-					osystem_copyBlockPhys(5, 446, 100, 479);
+					os_copyBlockPhys(5, 446, 100, 479);
 				}
-				readKeyboard();
-				while (skipIntro) {
-					readKeyboard();
-				};
-				while (!skipIntro) {
-					readKeyboard();
-				};
-				do {
-					readKeyboard();
-				} while (!skipIntro && !printTextVar12 && key1);
-				while (skipIntro) {
-					readKeyboard();
-				};
+
+				while (!os_isPressed(KEY_PAUSE)) ;
+
 				if (!drawInGameTransBox) {
 					blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
-					osystem_copyBlockPhys(5, 446, 100, 479);
+					os_copyBlockPhys(5, 446, 100, 479);
 				}
 				printf("Game Resumed!");
 				unfreezeTime();
@@ -562,7 +538,7 @@ void reinitAll(int save) {
 	}
 
 	/*
-	 * FadeToBlack((char*)menuPalRGBA); Cls(); osystem_flip(frontVideoBuffer);
+	 * FadeToBlack((char*)menuPalRGBA); Cls(); os_flip(frontVideoBuffer);
 	 */
 }
 
@@ -578,9 +554,9 @@ void TestRestoreModeSVGA(int arg_0) {
 		return;
 
 	if (useAlternatePalette)
-		osystem_setPalette(menuPalRGBA);
+		os_setPalette(menuPalRGBA);
 	else
-		osystem_setPalette(paletteRGBA);
+		os_setPalette(paletteRGBA);
 
 	drawInGameTransBox = 0;
 
@@ -780,21 +756,20 @@ void DoDir(int actorNum) {
 	if (lactor->costumeIndex == -1)
 		return;
 
-	if (lactor->dynamicFlagsBF.bUnk0100) {
+	if (lactor->dynamicFlagsBF.isFalling)
+	{
 		short int tempAngle = 0;
 
 		if (lactor->comportement != 1)
 			return;
 
-		if (key & 4)
+		if (os_isPressed(KEY_CHAR_LEFT))
 			tempAngle = 0x100;
 
-		if (key & 8)
+		if (os_isPressed(KEY_CHAR_RIGHT))
 			tempAngle = -0x100;
 
 		ManualRealAngle(lactor->angle, lactor->angle + tempAngle, lactor->speed, &lactor->time);
-
-		twinsenKey = key;
 	} else {
 		if (!(lactor->staticFlagsBF.bIsSpriteActor)) {
 			if (lactor->comportement != 1) {
@@ -812,82 +787,67 @@ void DoDir(int actorNum) {
 			if (!actorNum) { // if it's twinsen
 				action = 0;
 
-				// ADDED: Like LBA2 ----
-				if (mainLoopVar7 == 'w') {
+				// ADDED: Like LBA2 ---- w
+				if (os_isPressed(KEY_CHAR_ACTION_2)) {
 					action = 1;
 					break;
 				}
 				//----------------------
 
-				switch (comportementHero) {
-				case 0: { // normal
-						if (mainLoopVar5 & 1) { // action button
-							action = 1;
-						}
+				if (os_isPressed(KEY_CHAR_ACTION))
+				{
+					switch (comportementHero)
+					{
+					case 0: // normal
+						action = 1;
 						break;
-					}
-				case 1: { // sportif
-						if (mainLoopVar5 & 1) { // jump
-							InitAnim(ANIM_jump, 1, 0, actorNum);
-						}
+					case 1: // sportif
+						InitAnim(ANIM_jump, 1, 0, actorNum);
 						break;
-					}
-				case 2: { // agressive
-						if (mainLoopVar5 & 1) {
-							if (autoAgressivity) {
-								twinsenMoved = 1;
+					case 2: // agressive
+						if (autoAgressivity) {
+							twinsenMoved = 1;
 
-								lactor->angle = getRealAngle(&lactor->time);
+							lactor->angle = getRealAngle(&lactor->time);
 
-								//   if(mainLoopVar6 == 1 || lactor->anim == 0) // TODO: figure it out. mainLoopVar6 may be related to the fact that the action key was released
-								if (lactor->anim == 0) {
-									char agressivityMove = (rand() % 3);
-
-									switch (agressivityMove) {
-									case 0: {
-											InitAnim(ANIM_kick, 1, 0, actorNum);
-											break;
-										}
-									case 1: {
-											InitAnim(ANIM_rightPunch, 1, 0, actorNum);
-											break;
-										}
-									case 2: {
-											InitAnim(ANIM_leftPunch, 1, 0, actorNum);
-											break;
-										}
-									default: {
-											printf("Bad random in agressivity !\n");
-											break;
-										}
-									}
+							if (lactor->anim == 0)
+							{
+								switch (rand() % 3)
+								{
+								case 0:
+										InitAnim(ANIM_kick, 1, 0, actorNum);
+										break;
+								case 1:
+										InitAnim(ANIM_rightPunch, 1, 0, actorNum);
+										break;
+								case 2:
+										InitAnim(ANIM_leftPunch, 1, 0, actorNum);
+										break;
+								default:
+										printf("Bad random in agressivity !\n");
+										break;
 								}
-
-							} else {
-								if (key & 8) {
+							}
+							else
+							{
+								if (os_isPressed(KEY_CHAR_ATTACK_RPUNCH))
 									InitAnim(ANIM_rightPunch, 1, 0, actorNum);
-								}
 
-								if (key & 4) {
+								if (os_isPressed(KEY_CHAR_ATTACK_LPUNCH))
 									InitAnim(ANIM_leftPunch, 1, 0, actorNum);
-								}
 
-								if (key & 1) {
+								if (os_isPressed(KEY_CHAR_ATTACK_KICK))
 									InitAnim(ANIM_kick, 1, 0, actorNum);
-								}
 							}
 						}
 						break;
-					}
-				case 3: { // discret
-						if (mainLoopVar5 & 1) {
-							InitAnim(ANIM_hide, 0, 255, 0);
-						}
+					case 3: // discret
+						InitAnim(ANIM_hide, 0, 255, 0);
 						break;
 					}
 				}
 
-				if (mainLoopVar5 & 8 && !vars[70]) {
+				if (os_isPressed(KEY_CHAR_USEWEAPON) && !vars[70]) {
 					if (usingSword == 0) {
 						if (vars[1] == 1) { // have magic ball
 							if (magicBallIdx == -1) {
@@ -913,32 +873,30 @@ void DoDir(int actorNum) {
 
 			}
 
-			if (mainLoopVar5 == 0 || action != 0) {
+			if ((!os_isPressed(KEY_CHAR_ACTION) && !os_isPressed(KEY_CHAR_ACTION_2)
+						&& !os_isPressed(KEY_CHAR_USEWEAPON)) || action != 0) {
 				short int tempAngle;
-				if (key & 3)  // if continue walking
-					twinsenMoved = 0; // don't break animation
 
-				if (key != twinsenKey || mainLoopVar5 != twinsenKey2) {
-					if (twinsenMoved != 0) {
-						InitAnim(ANIM_static, 0, 255, actorNum);
-					}
-				}
+				if (!os_isPressed(twinsenKey) && twinsenMoved && !os_isPressed(KEY_CHAR_FORWARD))
+					InitAnim(ANIM_static, 0, 255, actorNum);
 
 				twinsenMoved = 0;
 
-				if (key & 1) { // walk forward
+				if (os_isPressed(KEY_CHAR_FORWARD)) { // walk forward
 					if (currentActorInZoneProcess == 0) {
 						InitAnim(ANIM_walk, 0, 255, actorNum);
 					}
 					twinsenMoved = 1;
+					twinsenKey = KEY_CHAR_FORWARD;
 				}
 
-				if (key & 2) { // walk backward
+				if (os_isPressed(KEY_CHAR_BACKWARD)) { // walk backward
 					InitAnim(ANIM_walkBackward, 0, 255, actorNum);
 					twinsenMoved = 1;
+					twinsenKey = KEY_CHAR_BACKWARD;
 				}
 
-				if (key & 4) { // turn left
+				if (os_isPressed(KEY_CHAR_LEFT)) { // turn left
 					twinsenMoved = 1;
 					if (lactor->anim == 0) {
 						InitAnim(ANIM_turnLeft, 0, 255, actorNum);
@@ -948,35 +906,22 @@ void DoDir(int actorNum) {
 								getRealAngle(&lactor->time);
 						}
 					}
-				}
-
-				if (key & 8) { // turn right
-					twinsenMoved = 1;
-					if (lactor->anim == 0) {
-						InitAnim(ANIM_turnRight, 0, 255, actorNum);
-					} else {
-						if (!(lactor->dynamicFlagsBF.bUnk0080)) {
-							lactor->angle = getRealAngle(&lactor->time);
-						}
-					}
-				}
-
-				tempAngle = 0;
-
-				if (key & 4) {
 					tempAngle = 0x100;
+					twinsenKey = KEY_CHAR_LEFT;
 				}
 
-				if (key & 8) {
+				if (os_isPressed(KEY_CHAR_RIGHT)) { // turn right
+					twinsenMoved = 1;
+					if (lactor->anim == 0)
+						InitAnim(ANIM_turnRight, 0, 255, actorNum);
+					else if (!(lactor->dynamicFlagsBF.bUnk0080))
+							lactor->angle = getRealAngle(&lactor->time);
 					tempAngle = -0x100;
+					twinsenKey = KEY_CHAR_RIGHT;
 				}
 
 				ManualRealAngle(lactor->angle, lactor->angle + tempAngle,
 								lactor->speed, &lactor->time);
-
-				twinsenKey = key;
-				twinsenKey2 = mainLoopVar5;
-
 			}
 			break;
 		case 2: { //MOVE_FOLLOW
@@ -1070,7 +1015,7 @@ void DoAnim(int actorNum) {
 		processActorZ = lactor->Y;
 		processActorY = lactor->Z;
 
-		if (!(lactor->dynamicFlagsBF.bUnk0100)) { // actor freeze movement
+		if (!(lactor->dynamicFlagsBF.isFalling)) { // actor freeze movement
 			if (lactor->speed) {
 				int dx;
 
@@ -1248,7 +1193,7 @@ void DoAnim(int actorNum) {
 			lactor->standOn = -1; // actor fall from the object
 	}
 
-	if (lactor->dynamicFlagsBF.bUnk0100) { // if falling, then no modification...
+	if (lactor->dynamicFlagsBF.isFalling) { // if falling, then no modification...
 		processActorX = processActorVar2;
 		processActorZ = processActorVar3 + mainLoopVar17; // apply fall speed
 		processActorY = processActorVar4;
@@ -1272,7 +1217,7 @@ void DoAnim(int actorNum) {
 		if (lactor->staticFlagsBF.bComputeCollisionWithObj) // if we check collision with other objects
 			CheckObjCol(actorNum);  //check collision and see if actor fall on an object
 
-		if ((lactor->standOn != -1) && (lactor->dynamicFlagsBF.bUnk0100)) // if actor felt on another an object
+		if ((lactor->standOn != -1) && (lactor->dynamicFlagsBF.isFalling)) // if actor felt on another an object
 			ReceptionObj(); // stop falling
 
 		fieldCauseDamage = 0;
@@ -1293,7 +1238,7 @@ void DoAnim(int actorNum) {
 			DoCornerReajust(lactor->boudingBox.X.bottomLeft, lactor->boudingBox.Y.bottomLeft, lactor->boudingBox.Z.topRight, 8);
 		}
 
-		if (fieldCauseDamage && !(lactor->dynamicFlagsBF.bUnk0100) && !currentlyProcessedActorNum && (comportementHero == 1) && (lactor->anim == 1)) { // wall hit while running
+		if (fieldCauseDamage && !(lactor->dynamicFlagsBF.isFalling) && !currentlyProcessedActorNum && (comportementHero == 1) && (lactor->anim == 1)) { // wall hit while running
 			Rotate(lactor->boudingBox.X.bottomLeft, lactor->boudingBox.Z.bottomLeft, lactor->angle + 0x580);
 
 			destX += processActorX;
@@ -1321,7 +1266,7 @@ void DoAnim(int actorNum) {
 
 		if (position) { // if standing on floor
 			if (position == 1) { // if next step is in wall...
-				if (lactor->dynamicFlagsBF.bUnk0100) { // if was falling
+				if (lactor->dynamicFlagsBF.isFalling) { // if was falling
 					ReceptionObj();
 					processActorZ = (getPosVar2 << 8) + 0x100;
 				} else {
@@ -1351,26 +1296,26 @@ void DoAnim(int actorNum) {
 					}
 				}
 			} else { // not standing on flat floor
-				if (lactor->dynamicFlagsBF.bUnk0100)
+				if (lactor->dynamicFlagsBF.isFalling)
 					ReceptionObj();
 
 				ReajustPos(var_4);
 			}
 
-			lactor->dynamicFlagsBF.bUnk0100 = 0;
+			lactor->dynamicFlagsBF.isFalling = 0;
 		} else { // not standing on floor
 			if (lactor->staticFlagsBF.bIsFallable && lactor->standOn == -1) { // if fallable and actor not standing on another actor
 				var_8 = WorldColBrick(processActorX, processActorZ - 1, processActorY); // what is 1 step under ?
 
 				if (var_8) { // under is the floor
-					if (lactor->dynamicFlagsBF.bUnk0100) { // if was falling...
+					if (lactor->dynamicFlagsBF.isFalling) { // if was falling...
 						ReceptionObj();
 					}
 
 					ReajustPos(var_8);
 				} else { // start falling
 					if (!(lactor->dynamicFlagsBF.bUnk0080 == 1)) {
-						lactor->dynamicFlagsBF.bUnk0100 = 1;
+						lactor->dynamicFlagsBF.isFalling = 1;
 
 						if ((!actorNum) && twinsenZBeforeFall == 0) {
 							twinsenZBeforeFall = processActorZ;
@@ -1661,7 +1606,7 @@ int CheckObjCol(int actorNum) {
 				lactor->collision = currentlyTestedActor;
 
 				if (lactor2->staticFlagsBF.bIsCarrier) { // if carrier
-					if (lactor->dynamicFlagsBF.bUnk0100) { // if can stand on object
+					if (lactor->dynamicFlagsBF.isFalling) { // if can stand on object
 						processActorZ = Z2_2 - lactor->boudingBox.Y.bottomLeft + 1; // new Z
 
 						lactor->standOn = currentlyTestedActor;
@@ -1721,7 +1666,7 @@ lab12AC5:
 						if (newAngle >= 0x380 || (newAngle < 0x380 && newAngle < 0x80))
 							processActorY = Y1_2 - lactor->boudingBox.Z.topRight;
 					} else {
-						if (!(lactor->dynamicFlagsBF.bUnk0100)) {
+						if (!(lactor->dynamicFlagsBF.isFalling)) {
 							processActorX = processActorVar2;
 							processActorZ = processActorVar3;
 							processActorY = processActorVar4;
@@ -1807,7 +1752,7 @@ void ReceptionObj(void) { // stop falling
 		InitAnim(ANIM_land, 2, processActorVar1->field_2, currentlyProcessedActorNum);
 	}
 
-	processActorVar1->dynamicFlagsBF.bUnk0100 = 0;
+	processActorVar1->dynamicFlagsBF.isFalling = 0;
 }
 
 int WorldColBrickFull(int var0, int var1, int var2, int var3) {

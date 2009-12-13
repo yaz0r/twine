@@ -151,7 +151,8 @@ typedef struct
 #include "angleTable.h"
 #include "overlay.h"
 
+#ifndef MAX_PATH
 #define MAX_PATH 256
-#define DATADIR "data/"
+#endif
 
 #endif

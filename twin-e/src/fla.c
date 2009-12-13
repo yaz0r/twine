@@ -19,7 +19,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "lba.h"
 
 #include "images.h"
-#include "input.h"
 #include "mainMenu.h"
 #include "streamReader.h"
 #include "music.h"
@@ -60,8 +59,7 @@ void playFla(char *flaName)
 
 	stopMusic();
 #ifdef PCLIKE
-	strcpy(buffer, DATADIR);
-	strcat(buffer, "fla/");
+	strcpy(buffer, "fla/");
 	strcat(buffer, flaName);
 #else
 	strcpy(buffer, flaName);
@@ -77,7 +75,7 @@ void playFla(char *flaName)
 
         for (;;)
         {
-			if (skipIntro)
+			if (os_isPressed(KEY_SKIP))
 				break;
 
             syncTime = SDL_GetTicks();
@@ -86,9 +84,7 @@ void playFla(char *flaName)
 
 			drawNextFrameFla();
 
-		    osystem_draw320x200BufferToScreen((unsigned char*)flaBuffer);
-
-			readKeyboard();
+		    os_draw320x200BufferToScreen((unsigned char*)flaBuffer);
 
             oldSyncTime = syncTime + (syncTime - oldSyncTime - 1000.0f/(flaHeaderData.speed+1));
     	    currentFrame++;
@@ -168,7 +164,7 @@ void drawNextFrameFla()
 				copyStringToString(ptr + 4, flaPalette + startColor*3, numOfColor*3);
 
 				convertPalToRGBA((byte*)flaPalette, (byte*)flaPaletteRGBA);
-				osystem_setPalette320x200((byte*)flaPaletteRGBA);
+				os_setPalette320x200((byte*)flaPaletteRGBA);
 
 				break;
 			}

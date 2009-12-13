@@ -1,5 +1,5 @@
-CC ?= gcc
-CFLAGS=-I /usr/include/SDL/ -g -Wall -Wextra -Werror
+CC=gcc
+CFLAGS=-I /usr/include/SDL/ -g -Wall -Wextra -Werror -DUNIX
 LDFLAGS=-lSDL -lSDL_mixer -g
 OBJ=actors.o \
 	actorScript.o \
@@ -19,7 +19,6 @@ OBJ=actors.o \
 	fullRedraw.o \
 	hqr.o \
 	images.o \
-	input.o \
 	inventory.o \
 	script.o \
 	main.o \
@@ -37,11 +36,11 @@ OBJ=actors.o \
 	shadow.o \
 	streamReader.o \
 	text.o \
-	time.o \
 	vox.o \
 	zones.o
 
 TARGET=twin-e
+INSTALLDIR=../bin
 
 all: $(TARGET)
 
@@ -56,3 +55,6 @@ clean:
 
 mrproper: clean
 	rm $(TARGET)
+
+install: $(TARGET)
+	cp $(TARGET) $(INSTALLDIR)

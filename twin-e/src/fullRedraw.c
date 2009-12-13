@@ -25,7 +25,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mainLoop.h"
 #include "shadow.h"
 #include "anim.h"
-#include "input.h"
 #include "extra.h"
 #include "font.h"
 #include "main.h"
@@ -585,7 +584,7 @@ void fullRedraw(int param) {
 			FlipBoxes();  // update dirtyBox to screen and move all the nextDirtyBox to dirtyBox
 		} else {
 			if (!lockPalette)
-				osystem_flip(frontVideoBuffer);
+				os_flip(frontVideoBuffer);
 			fullRedrawSub5(); // move all the nextDirtyBox to dirtyBox
 			unfreezeTime();
 		}
@@ -598,13 +597,11 @@ void fullRedraw(int param) {
 	convertPalToRGBA(palette, paletteRGBA);
 
 	if (useAlternatePalette)
-		osystem_crossFade((char *) frontVideoBuffer, (char *) menuPalRGBA);
+		os_crossFade((char *) frontVideoBuffer, (char *) menuPalRGBA);
 	else
-		osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+		os_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
 
-	osystem_setPalette((byte *) & paletteRGBA);
-
-	readKeyboard();
+	os_setPalette((byte *) & paletteRGBA);
 
 	lockPalette = 0;
 
@@ -1140,7 +1137,7 @@ void FlipBoxes(void) {
 	int i;
 
 	for (i = 0; i < numOfRedrawBox; i++) { //draw the dirty box on screen
-		osystem_copyBlockPhys(currentDirtyBoxList[i].left, currentDirtyBoxList[i].top, currentDirtyBoxList[i].right, currentDirtyBoxList[i].bottom);
+		os_copyBlockPhys(currentDirtyBoxList[i].left, currentDirtyBoxList[i].top, currentDirtyBoxList[i].right, currentDirtyBoxList[i].bottom);
 	}
 
 	numOfRedrawBox = 0;

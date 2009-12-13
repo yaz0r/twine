@@ -23,8 +23,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "mainMenu.h"
 #include "font.h"
 #include "text.h"
-#include "time.h"
-#include "input.h"
 #include "hqr.h"
 #include "music.h"
 #include "samples.h"
@@ -64,8 +62,8 @@ void initVideoStuff(void) {
 
 	frontVideoBuffer = frontVideoBufferbis = malloc(sizeof(byte) * 307200);
 
-	osystem_initBuffer((char *) frontVideoBuffer, 640, 480);
-	osystem_initVideoBuffer(flaBuffer, 320, 200);
+	os_initBuffer((char *) frontVideoBuffer, 640, 480);
+	os_initVideoBuffer(flaBuffer, 320, 200);
 
 	j = 0;
 	k = 0;
@@ -126,11 +124,11 @@ static void init(void)
 	else
 		RessPict(12);
 
-	WaitTime(3000);
+	os_delay(3000);
 
 	loadImageCrossFade(52);
 
-	WaitTime(1000);
+	os_delay(1000);
 
 	FadeToBlack((char *) paletteRGBA);
 
@@ -141,7 +139,7 @@ static void init(void)
 
 	CopyScreen(workVideoBuffer, frontVideoBuffer);
 
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 
 	FadeToPal((char *) menuPalRGBA);
 
@@ -151,7 +149,7 @@ static void init(void)
 
 int main(int argc, char *argv[])
 {
-	osystem_init(argc, argv);
+	os_init(argc, argv);
 
 	init();
 
@@ -184,18 +182,17 @@ void newGame(void)
 	newGame2();
 	TestCoulDial(15);
 
-	for (screen = 0; screen < 3 && !skipIntro; screen++)
+	for (screen = 0; screen < 3 && !os_isPressed(KEY_SKIP); screen++)
 	{
 		Load_HQR("ress.hqr", workVideoBuffer, 15 + screen*2);
 		CopyScreen(workVideoBuffer, frontVideoBuffer);
 		Load_HQR("ress.hqr", palette, 16 + screen*2);
 		convertPalToRGBA(palette, paletteRGBA);
 
-		osystem_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
-		osystem_setPalette(paletteRGBA);
+		os_crossFade((char *) frontVideoBuffer, (char *) paletteRGBA);
+		os_setPalette(paletteRGBA);
 
 		printTextFullScreen(150 + screen);
-		readKeyboard();
 	}
 
 	newGameVar5 = 0;
@@ -203,14 +200,14 @@ void newGame(void)
 	newGameVar4 = 1;
 	FadeToBlack((char *) paletteRGBA);
 	Cls();
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 	playMidi(1);
 
 	playFla("INTROD");
 #endif
 	SetBackPal();
 	Cls();
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 
 	flagDisplayText = flagDisplayTextSave;  // on remet le flag comme il était au debut
 }

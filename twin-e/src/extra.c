@@ -623,7 +623,7 @@ void GereExtras(void) {
 				if (ExtraCheckObjCol(&extraList[i], -1) == 0) { // if twisen touch the extra
 					HQ_3D_MixSample(97, 0x1000, 1, extraList[i].X, extraList[i].Z, extraList[i].Y);
 
-					if (extraList[i].field_20 > 1 && !((byte) mainLoopVar5 & 2)) {
+					if (extraList[i].field_20 > 1 /*&& !((byte) mainLoopVar5 & 2) TODO: find what it is*/) {
 						projectPositionOnScreen(extraList[i].X - cameraX, extraList[i].Z - cameraZ, extraList[i].Y - cameraY);
 						addOverlayObject(1, extraList[i].field_20, projectedPositionX, projectedPositionY, 158, 0, 2);
 					}

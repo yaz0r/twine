@@ -502,7 +502,7 @@ void HoloTraj(int arg_0) {
 
 	UnSetClip();
 	Cls();
-	osystem_flip(frontVideoBuffer);
+	os_flip(frontVideoBuffer);
 	loadHolomapGFX();
 
 	localmakeHolomapTrajectoryVar = videoPtr12;
@@ -653,7 +653,7 @@ int loadBrk(int gridSize) {
 
 	for (i = firstBrick;i <= lastBrick;i++) {
 		if (brickUsageTable[i]) {
-			brickSizeTable[i] = Size_HQR(DATADIR "LBA_BRK.HQR", i);
+			brickSizeTable[i] = Size_HQR("LBA_BRK.HQR", i);
 			brickTable[i] = (unsigned char*)malloc(brickSizeTable[i]);
 			Load_HQR("LBA_BRK.HQR", brickTable[i], i);
 		}

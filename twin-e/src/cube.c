@@ -34,11 +34,11 @@ void initGrid(short int roomNumber)
 	int bllSize;
 	int brickDataSize;
 
-	gridSize = Size_HQR(DATADIR "lba_gri.hqr", roomNumber);
+	gridSize = Size_HQR("lba_gri.hqr", roomNumber);
 	currentGrid = malloc(gridSize + 1000);
 	Load_HQR("lba_gri.hqr", currentGrid, roomNumber);
 
-	bllSize = Size_HQR(DATADIR "lba_bll.hqr", roomNumber);
+	bllSize = Size_HQR("lba_bll.hqr", roomNumber);
     currentBll = malloc(bllSize + 1000);
 	Load_HQR("lba_bll.hqr", currentBll, roomNumber);
 

@@ -108,7 +108,7 @@ typedef struct
 		U16 bUnk0020 : 1; // 0x0020
 		U16 bIsMoving : 1; // 0x0040
 		U16 bUnk0080 : 1; // 0x0080
-		U16 bUnk0100 : 1; // 0x0100
+		U16 isFalling : 1; // 0x0100
 		U16 bUnk0200 : 1; // 0x0200
 		U16 bUnk0400 : 1; // 0x0400
 		U16 bUnk0800 : 1; // 0x0800

@@ -40,12 +40,8 @@ hqr_entry* HQR_Init_Ressource(char* fileName, int sizeOfBuffer, int numOfEntries
 	hqr_entry *hqr_ptr;
 	unsigned char *dataPtr;
 
-	char newFileName[255];
-	strcpy(newFileName, DATADIR);
-	strcat(newFileName, fileName);
-
     FILE* f = NULL;
-	if (!(f = fopen(newFileName, "rb"))) {
+	if (!(f = fopen(fileName, "rb"))) {
         printf("HQR: ERROR: file '%s' does not exist !\n", fileName);
 		return NULL;
     }
@@ -57,7 +53,7 @@ hqr_entry* HQR_Init_Ressource(char* fileName, int sizeOfBuffer, int numOfEntries
 	if (!hqr_ptr || !dataPtr)
 		return NULL;
 
-	strcpy(hqr_ptr->fileName, newFileName);
+	strcpy(hqr_ptr->fileName, fileName);
 	hqr_ptr->preloadedResource = false;
 
 	hqr_ptr->size1 = sizeOfBuffer;
@@ -77,11 +73,7 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber) {
 	unsigned int compressedSize;
 	unsigned short int mode;
 
-	char newFileName[255];
-	strcpy(newFileName, DATADIR);
-	strcat(newFileName, resourceName);
-
-	if (!streamReader_open(&fileReader, newFileName, 1))
+	if (!streamReader_open(&fileReader, resourceName, 1))
 		return 0;
 
 	streamReader_get(&fileReader, &headerSize, 4);
@@ -314,11 +306,7 @@ int HQRM_Load(char *fileName, short int arg_4, unsigned char ** ptr) { // rechec
 	unsigned short int mode;
 	unsigned char *temp;
 
-	char newFileName[255];
-	strcpy(newFileName, DATADIR);
-	strcat(newFileName, fileName);
-
-	if (!streamReader_open(&fileReader, newFileName, 1))
+	if (!streamReader_open(&fileReader, fileName, 1))
 		return(-1);
 
 	streamReader_get(&fileReader, &headerSize, 4);

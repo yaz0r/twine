@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "renderer.h"
 #include "mainMenu.h"
-#include "input.h"
 #include "images.h"
 #include "text.h"
 #include "main.h"
@@ -42,7 +41,6 @@ short int fuel;
 
 void Inventory(void)
 {
-	int di = 1;
 	int previouslySelectedObject;
 
 	int localReinitVar1 = reinitVar1;
@@ -72,32 +70,14 @@ void Inventory(void)
 	TestCoulDial(4);
 	InitDialWindow();
 
-	while (skipIntro != 1) {
-		readKeyboard();
-
+	while (!os_isPressed(KEY_SKIP))
+	{
 		previouslySelectedObject = currentSelectedObjectInInventory;
 
-		if (!di) {
-			key = printTextVar12;
-			mainLoopVar5 = key1;
-			mainLoopVar7 = skipIntro;
-
-			if (key != 0 || key1 != 0) {
-				di = 1;
-			}
-		} else {
-			mainLoopVar7 = 0;
-			key = 0;
-			mainLoopVar5 = 0;
-			if (!printTextVar12 && !key1) {
-				di = 0;
-			}
-		}
-
-		if (mainLoopVar7 == 1 || mainLoopVar5 & 0x20)
+		if (os_isPressed(KEY_INVENT_QUIT))
 			break;
 
-		if (key & 2) {
+		if (os_isPressed(KEY_INVENT_RIGHT)) {
 			currentSelectedObjectInInventory++;
 
 			if (currentSelectedObjectInInventory >= 28)
@@ -108,7 +88,7 @@ void Inventory(void)
 			bx = 3;
 		}
 
-		if (key & 1) {
+		if (os_isPressed(KEY_INVENT_LEFT)) {
 			currentSelectedObjectInInventory--;
 
 			if (currentSelectedObjectInInventory < 0)
@@ -119,7 +99,7 @@ void Inventory(void)
 			bx = 3;
 		}
 
-		if (key & 4) {
+		if (os_isPressed(KEY_INVENT_UP)) {
 			currentSelectedObjectInInventory -= 4;
 
 			if (currentSelectedObjectInInventory < 0)
@@ -130,7 +110,7 @@ void Inventory(void)
 			bx = 3;
 		}
 
-		if (key & 8) {
+		if (os_isPressed(KEY_INVENT_DOWN)) {
 			currentSelectedObjectInInventory += 4;
 
 			if (currentSelectedObjectInInventory >= 28)
@@ -157,7 +137,8 @@ void Inventory(void)
 			bx = printText10();
 		}
 
-		if (mainLoopVar5&1) {
+		if (os_isPressed(KEY_INVENT_SHOW))
+		{
 			if (bx == 2) {
 				SecondInitDialWindow();
 				bx = 0;
@@ -173,7 +154,7 @@ void Inventory(void)
 
 		DrawOneInventory(currentSelectedObjectInInventory);
 
-		if ((mainLoopVar5 & 2) && vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory <= 27) {
+		if (os_isPressed(KEY_INVENT_SELECT) && vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory <= 27) {
 			mainLoopVar9 = currentSelectedObjectInInventory;
 			inventorySelectedColor = 91;
 			DrawOneInventory(currentSelectedObjectInInventory);
@@ -191,16 +172,11 @@ void Inventory(void)
 	languageCD1 = oldLanguageCD1;
 
 	InitDial(currentTextBank + 3);
-
-	while (skipIntro != 0 && key1 != 0) {
-		readKeyboard();
-	}
-
 }
 
 void SecondInitDialWindow(void) {
 	blitRectangle(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom, (char*)workVideoBuffer, dialogueBoxLeft, dialogueBoxTop, (char*)frontVideoBuffer);
-	osystem_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
+	os_copyBlockPhys(dialogueBoxLeft, dialogueBoxTop, dialogueBoxRight, dialogueBoxBottom);
 	printText8Var3 = 0;
 }
 
@@ -218,7 +194,7 @@ void DrawListInventory() {
 	drawBoxInsideTrans(17, 10, 622, 320, 4);
 	DrawCadre(17, 10, 622, 320);
 	Rect(110, 18, 188, 311, 75);
-	osystem_copyBlockPhys(17, 10, 622, 320);
+	os_copyBlockPhys(17, 10, 622, 320);
 
 	for (object = 0;object < 28;object++) {
 		DrawOneInventory(object);
@@ -259,7 +235,7 @@ void DrawOneInventory(int objectNumber) {
 	}
 
 	DrawCadre(left, top, right, bottom);
-	osystem_copyBlockPhys(left, top, right, bottom);
+	os_copyBlockPhys(left, top, right, bottom);
 }
 
 void Rect(int bottom, int right, int top, int left, int param) {
