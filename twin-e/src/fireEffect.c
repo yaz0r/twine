@@ -34,7 +34,7 @@ void makeFireEffect(int top, int param) {
 	unsigned char temp3 = 0;
 	unsigned char bh, bl;
 
-	mytime = SDL_GetTicks(); /* TODO: buggy, and maybe too hacky */
+	mytime = os_getTicks();
 	if (mytime - oldtime < 20)
 		return;
 	oldtime = mytime;
@@ -77,6 +77,9 @@ void makeFireEffectInit(void) {
 	int i = 0;
 	unsigned int *copy1 = 0;
 	unsigned int *copy2 = 0;
+
+	if (!(rand() % 5))
+		bufSpeak[rand() % 320 * 10 + 6400] = 255;
 
 	fireEffectVar1 = bufSpeak;
 	fireEffectVar2 = bufSpeak + 16000;

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I /usr/include/SDL/ -g -Wall -Wextra -Werror -DUNIX
+CFLAGS=-I /usr/include/SDL/ -g -Wall -Wextra -Wdeclaration-after-statement -DUNIX
 LDFLAGS=-lSDL -lSDL_mixer -g
 OBJ=actors.o \
 	actorScript.o \

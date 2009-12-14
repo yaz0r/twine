@@ -41,4 +41,5 @@ void os_copyBlockPhys(int left, int top, int right, int bottom);
 
 void os_fullScreen();
 char os_isPressed(int key);
+unsigned int os_getTicks();
 

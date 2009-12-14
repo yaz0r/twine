@@ -39,7 +39,7 @@ void AdelineLogo(void) {
 	os_flip(frontVideoBuffer);
 	fadeIn(paletteRGBA);
 #ifdef PCLIKE
-	SDL_Delay(6000);
+	os_delay(6000);
 #endif
 }
 

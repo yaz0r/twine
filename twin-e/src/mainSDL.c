@@ -290,3 +290,9 @@ char os_isPressed(int key)
 	keystates = SDL_GetKeyState(NULL);
 	return keystates[key];
 }
+
+unsigned int os_getTicks()
+{
+	return SDL_GetTicks();
+}
+

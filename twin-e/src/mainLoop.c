@@ -87,6 +87,7 @@ int getPosVar3;
 
 short int drawInGameTransBox = 0;
 short int twinsenMoved = 0;
+short int twinsenWalked = 0;
 
 short int requestBackgroundRedraw = 1;
 
@@ -247,7 +248,7 @@ int mainLoopInteration(void) {
 				unfreezeTime();
 				fullRedraw(1);
 			}
-			if (os_isPressed(KEY_CHCONDUCT) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
+			if (os_isPressed(KEY_CHBEHIAVOR) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				processComportementMenu();
@@ -320,7 +321,7 @@ int mainLoopInteration(void) {
 
 			/* TODO: fullscreen
 			if (fkeys == 12) { // F12 for FullScreen
-				SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE|SDL_FULLSCREEN);
+				osystem_fullScreen();
 			} */
 
 
@@ -566,9 +567,9 @@ void TestRestoreModeSVGA(int arg_0) {
 
 void waitRetrace(void) {
 #ifdef WIN32
-	int temp = SDL_GetTicks();
+	int temp = os_getTicks();
 
-	while (SDL_GetTicks() - temp < 15) ;
+	while (os_getTicks() - temp < 15) ;
 #endif
 }
 
@@ -770,17 +771,18 @@ void DoDir(int actorNum) {
 			tempAngle = -0x100;
 
 		ManualRealAngle(lactor->angle, lactor->angle + tempAngle, lactor->speed, &lactor->time);
-	} else {
-		if (!(lactor->staticFlagsBF.bIsSpriteActor)) {
-			if (lactor->comportement != 1) {
+	}
+	else
+	{
+		if (!(lactor->staticFlagsBF.bIsSpriteActor))
+			if (lactor->comportement != 1)
 				lactor->angle = getRealAngle(&lactor->time);
-			}
-		}
 
 		if (lactor->comportement > 6)
 			return;
 
-		switch (lactor->comportement) {
+		switch (lactor->comportement)
+		{
 		case 0: // NO_MOVE
 			break;
 		case 1: // MOVE_MANUAL
@@ -881,38 +883,38 @@ void DoDir(int actorNum) {
 					InitAnim(ANIM_static, 0, 255, actorNum);
 
 				twinsenMoved = 0;
+				twinsenWalked = 0;
 
 				if (os_isPressed(KEY_CHAR_FORWARD)) { // walk forward
+					printf("walk\n");
 					if (currentActorInZoneProcess == 0) {
 						InitAnim(ANIM_walk, 0, 255, actorNum);
 					}
 					twinsenMoved = 1;
+					twinsenWalked = 1;
 					twinsenKey = KEY_CHAR_FORWARD;
 				}
 
 				if (os_isPressed(KEY_CHAR_BACKWARD)) { // walk backward
 					InitAnim(ANIM_walkBackward, 0, 255, actorNum);
 					twinsenMoved = 1;
+					twinsenWalked = 1;
 					twinsenKey = KEY_CHAR_BACKWARD;
 				}
 
 				if (os_isPressed(KEY_CHAR_LEFT)) { // turn left
 					twinsenMoved = 1;
-					if (lactor->anim == 0) {
+					if (!twinsenWalked)
 						InitAnim(ANIM_turnLeft, 0, 255, actorNum);
-					} else {
-						if (!(lactor->dynamicFlagsBF.bUnk0080)) {
-							lactor->angle =
-								getRealAngle(&lactor->time);
-						}
-					}
+					else if (!(lactor->dynamicFlagsBF.bUnk0080))
+						lactor->angle =	getRealAngle(&lactor->time);
 					tempAngle = 0x100;
 					twinsenKey = KEY_CHAR_LEFT;
 				}
 
 				if (os_isPressed(KEY_CHAR_RIGHT)) { // turn right
 					twinsenMoved = 1;
-					if (lactor->anim == 0)
+					if (!twinsenWalked)
 						InitAnim(ANIM_turnRight, 0, 255, actorNum);
 					else if (!(lactor->dynamicFlagsBF.bUnk0080))
 							lactor->angle = getRealAngle(&lactor->time);

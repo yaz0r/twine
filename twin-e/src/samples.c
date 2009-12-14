@@ -23,6 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "hqr.h"
 
+#ifdef USE_SDL_MIXER
 void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
 {
 	char filename[MAX_PATH];
@@ -84,4 +85,10 @@ void playMidi(int musicNum) {
 
 	Mix_PlayMusic(sample, 0);
 }
+#else
+void playSample(int sampleNum, int repeat) { }
+void playSampleFla(int sampleNum, int repeat) { }
+void soundInit(void) { }
+void playMidi() { }
+#endif
 

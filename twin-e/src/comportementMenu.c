@@ -213,18 +213,18 @@ void processComportementMenu(void) {
 
 	setAnimAtKeyFrame(winTab[comportementHero], HQR_Get(HQR_Anims, TCos[comportementHero]), menuCostumeIndex, &animDataTab[comportementHero]);
 
-	while (os_isPressed(KEY_CHCONDUCT))
+	while (os_isPressed(KEY_CHBEHAVIOR))
     {
-		if (os_isPressed(KEY_CHCONDUCT_RIGHT) && canPress) {
+		if (os_isPressed(KEY_CHBEHAVIOR_RIGHT) && canPress) {
 			comportementHero++;
 			canPress = 0;
 		}
-		else if (os_isPressed(KEY_CHCONDUCT_LEFT) && canPress) {
+		else if (os_isPressed(KEY_CHBEHAVIOR_LEFT) && canPress) {
 			comportementHero--;
 			canPress = 0;
 		}
 
-		if (!os_isPressed(KEY_CHCONDUCT_LEFT) && !os_isPressed(KEY_CHCONDUCT_RIGHT))
+		if (!os_isPressed(KEY_CHBEHAVIOR_LEFT) && !os_isPressed(KEY_CHBEHAVIOR_RIGHT))
 			canPress = 1;
 
 		if (comportementHero < 0)

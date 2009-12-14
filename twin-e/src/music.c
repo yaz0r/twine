@@ -27,6 +27,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # include <SDL/SDL.h>
 #endif
 
+#ifdef USE_SDL_MIXER
 SDL_CD *cdrom;
 
 void openCD(void)
@@ -74,4 +75,11 @@ char playCDtrack(int trackNumber) {
 void stopMusic(void) {
 }
 
+#else
+void openCD(void) { }
+void closeCD(void) { }
+void playMusic(int musicNum) { }
+char playCDtrack(int trackNumber) { }
+void stopMusic(void) { }
+#endif
 

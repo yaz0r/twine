@@ -145,7 +145,7 @@ void MainGameMenu(void) {
 		HQ_StopSample();
 		GetMultiText(49, mainMenuVar1);
 		nmenu = processMenu(mainMenuData);
-        SDL_Delay(100);
+        os_delay(100);
 
         switch(nmenu)
         {
@@ -357,7 +357,7 @@ int processMenu(short int *menuData) {
 
 	currentButton = *(localData + 5 + currentButton * 2); // on recupere le point de sortie
 
-	SDL_Delay(100);
+	os_delay(100);
 
 	return (currentButton);
 }
@@ -530,8 +530,10 @@ void drawButtonGFX(int largeur, int posY, int c, int d, int mode) {
 	top = posY - 25;
 	bottom = bottom2 = posY + 25;
 
-	if (mode != 0) {
-		if (c <= 5 && c >= 1) {
+	if (mode != 0)
+	{
+		if (c <= 5 && c >= 1)
+		{
 			switch (c) {
 			case 1: {
 					// musicVolumeRemaped=RegleTrois32(left,right,255,musicVolume);
@@ -552,18 +554,12 @@ void drawButtonGFX(int largeur, int posY, int c, int d, int mode) {
 					// masterVolume=RegleTrois32(left,right,255,masterVolume);
 				}
 			};
-		} else {
+		}
+		else
 			makeFireEffect(top, 64);
-			if (!(rand() % 5)) {
-				bufSpeak[rand() % 320 * 10 + 6400] = 255;
-			}
-		}
-
-		if (c <= 5 && c >= 1) {
-			// implement this
-		}
-
-	} else {
+	}
+	else
+	{
 		blitRectangle(left, top, right, bottom, (char *) workVideoBuffer, left, top,
 					  (char *) frontVideoBuffer);
 

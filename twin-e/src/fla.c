@@ -71,14 +71,14 @@ void playFla(char *flaName)
     {
 		SetBackPal();
         currentFrame = 0;
-        syncTime = oldSyncTime = SDL_GetTicks();
+        oldSyncTime = 0;
 
         for (;;)
         {
 			if (os_isPressed(KEY_SKIP))
 				break;
 
-            syncTime = SDL_GetTicks();
+            syncTime = os_getTicks();
             if (syncTime - oldSyncTime <= 1000.0f/(flaHeaderData.speed+1))
                 continue;
 
