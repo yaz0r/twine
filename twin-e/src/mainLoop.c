@@ -248,7 +248,7 @@ int mainLoopInteration(void) {
 				unfreezeTime();
 				fullRedraw(1);
 			}
-			if (os_isPressed(KEY_CHBEHIAVOR) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
+			if (os_isPressed(KEY_CHBEHAVIOR) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				processComportementMenu();
