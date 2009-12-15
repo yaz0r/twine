@@ -68,7 +68,7 @@ int getCOL(actor* ptrActor) {
 int getDISTANCE(actor* ptrActor1, actor* ptrActor2) {
 	int computedDistance;
 
-	if (!ptrActor2->dynamicFlagsBF.bUnk0020)
+	if (!ptrActor2->dynamicFlagsBF.isDead)
     {
 		// clamp for major height difference
 		if (abs(ptrActor2->Y - ptrActor1->Y) >= 1500)
@@ -237,7 +237,7 @@ void runActorScript(short int actorNumber)
 		case 26: { // LM_FALLABLE
 				int ltemp = *(actorScriptPtr++);
 
-				lactor->staticFlagsBF.bIsFallable = ltemp & 1;
+				lactor->staticFlagsBF.isFallable = ltemp & 1;
 				break;
 		}
 
@@ -340,7 +340,7 @@ void runActorScript(short int actorNumber)
 
 				checkCarrier(temp);
 
-				actors[temp].dynamicFlagsBF.bUnk0020 = 1;
+				actors[temp].dynamicFlagsBF.isDead = 1;
 				actors[temp].costumeIndex = -1;
 				actors[temp].zone = -1;
 				actors[temp].life = 0;
@@ -350,7 +350,7 @@ void runActorScript(short int actorNumber)
 
 		case 38: {
 				checkCarrier(actorNumber);
-				lactor->dynamicFlagsBF.bUnk0020 = 1;
+				lactor->dynamicFlagsBF.isDead = 1;
 				lactor->costumeIndex = -1;
 				lactor->zone = -1;
 				lactor->life = 0;
@@ -474,7 +474,7 @@ void runActorScript(short int actorNumber)
 		case 47: {
 				lactor->angle = 0x300;
 				lactor->X = lactor->lastX - READ_LE_S16(actorScriptPtr);
-				lactor->dynamicFlagsBF.bIsMoving = 0;
+				lactor->dynamicFlagsBF.isMoving = 0;
 				lactor->speed = 0;
 				actorScriptPtr += 2;
 				break;
@@ -482,7 +482,7 @@ void runActorScript(short int actorNumber)
 		case 48: {
 				lactor->angle = 0x100;
 				lactor->X = lactor->lastX + READ_LE_S16(actorScriptPtr);
-				lactor->dynamicFlagsBF.bIsMoving = 0;
+				lactor->dynamicFlagsBF.isMoving = 0;
 				lactor->speed = 0;
 				actorScriptPtr += 2;
 				break;
@@ -490,7 +490,7 @@ void runActorScript(short int actorNumber)
 		case 49: {
 				lactor->angle = 0x200;
 				lactor->Z = lactor->lastY - READ_LE_S16(actorScriptPtr);
-				lactor->dynamicFlagsBF.bIsMoving = 0;
+				lactor->dynamicFlagsBF.isMoving = 0;
 				lactor->speed = 0;
 				actorScriptPtr += 2;
 				break;
@@ -498,7 +498,7 @@ void runActorScript(short int actorNumber)
 		case 50: {
 				lactor->angle = 0;
 				lactor->Z = lactor->lastY + READ_LE_S16(actorScriptPtr);
-				lactor->dynamicFlagsBF.bIsMoving = 0;
+				lactor->dynamicFlagsBF.isMoving = 0;
 				lactor->speed = 0;
 				actorScriptPtr += 2;
 				break;
@@ -525,9 +525,9 @@ void runActorScript(short int actorNumber)
 			}
 		case 53: { // OBJ_COL
 				if (*(actorScriptPtr++) != 0) {
-					lactor->staticFlagsBF.bComputeCollisionWithObj = 1;
+					lactor->staticFlagsBF.computeCollisionWithObj = 1;
 				} else {
-					lactor->staticFlagsBF.bComputeCollisionWithObj = 0;
+					lactor->staticFlagsBF.computeCollisionWithObj = 0;
 				}
 				break;
 			}
@@ -536,14 +536,14 @@ void runActorScript(short int actorNumber)
 
 				temp = *(actorScriptPtr++);
 
-				lactor->staticFlagsBF.bComputeCollisionWithBricks = false;
-				lactor->staticFlagsBF.bIsDead = false;
+				lactor->staticFlagsBF.computeCollisionWithBricks = false;
+				lactor->staticFlagsBF.isDead = false;
 
 				if (temp == 1) {
-					lactor->staticFlagsBF.bComputeCollisionWithBricks = true;
+					lactor->staticFlagsBF.computeCollisionWithBricks = true;
 				} else if (temp == 2) {
-					lactor->staticFlagsBF.bComputeCollisionWithBricks = true;
-					lactor->staticFlagsBF.bIsDead = true;
+					lactor->staticFlagsBF.computeCollisionWithBricks = true;
+					lactor->staticFlagsBF.isDead = true;
 				}
 				break;
 			}
@@ -557,7 +557,7 @@ void runActorScript(short int actorNumber)
 				break;
 			}
 		case 56: { // INVISIBLE
-				lactor->staticFlagsBF.bNoDisplay = *(actorScriptPtr++);
+				lactor->staticFlagsBF.noDisplay = *(actorScriptPtr++);
 				break;
 			}
 		case 57: {
@@ -733,7 +733,7 @@ void runActorScript(short int actorNumber)
 		case 71: { //LM_INIT_PINGOUIN
 				byte newActor;
 				newActor = *(actorScriptPtr++);
-				actors[newActor].dynamicFlagsBF.bUnk0020 = 1;
+				actors[newActor].dynamicFlagsBF.isDead = 1;
 				currentPingouin = newActor;
 				actors[newActor].costumeIndex = -1;
 				actors[newActor].zone = -1;
@@ -1119,7 +1119,7 @@ void manipActor(actor * lactor) {
 			lactor2 = &actors[newActor];
 			manipActorVar1 = 1;
 			actorScriptPtr = localScriptPtr;
-			if (!(lactor2->dynamicFlagsBF.bUnk0020)) {
+			if (!(lactor2->dynamicFlagsBF.isDead)) {
 				if (lactor2->Z - lactor->Z < 1500) {
 					angle = GetAngle(lactor->X, lactor->Z, lactor2->X, lactor2->Z);
 					if (DoTrackVar1 > 32000)
@@ -1185,7 +1185,7 @@ void manipActor(actor * lactor) {
 		lactor2 = &actors[*actorScriptPtr];
 		manipActorVar1 = 1;
 		actorScriptPtr = localScriptPtr;
-		if (!(lactor2->dynamicFlagsBF.bUnk0020)) {
+		if (!(lactor2->dynamicFlagsBF.isDead)) {
 			manipActorResult =
 				distance3d(lactor->X, lactor->Z, lactor->Y, lactor2->X, lactor2->Z,
 						   lactor2->Y);
@@ -1202,7 +1202,7 @@ void manipActor(actor * lactor) {
 			temp = *actorScriptPtr;
 			actorScriptPtr = localScriptPtr;
 			if (vars[70] == 0) {
-				if (temp == mainLoopVar9) {
+				if (temp == selectedInventoryObj) {
 					manipActorResult = 1;
 				} else {
 					if (itemUsed[temp] == 1 && vars[temp] == 1) {

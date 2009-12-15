@@ -81,22 +81,22 @@ typedef struct
 	int pausedTrackPtr;
 
 	struct {
-		U16 bComputeCollisionWithObj : 1; // 0x0001
-		U16 bComputeCollisionWithBricks : 1; // 0x0002
-		U16 bIsZonable : 1; // 0x0004
-		U16 bIsUsingClipping : 1; // 0x0008
-		U16 bIsPushable : 1; // 0x0010
-		U16 bIsDead : 1; // 0x0020
-		U16 bCanDrown : 1; // 0x0040
+		U16 computeCollisionWithObj : 1; // 0x0001
+		U16 computeCollisionWithBricks : 1; // 0x0002
+		U16 isZonable : 1; // 0x0004
+		U16 isUsingClipping : 1; // 0x0008
+		U16 isPushable : 1; // 0x0010
+		U16 isDead : 1; // 0x0020
+		U16 canDrown : 1; // 0x0040
 		U16 bUnk80 : 1; // 0x0080
 		U16 bUnk0100 : 1; // 0x0100
-		U16 bNoDisplay : 1; // 0x0200
-		U16 bIsSpriteActor : 1; // 0x0400
-		U16 bIsFallable : 1; // 0x0800
-		U16 bDoesntCastShadow : 1; // 0x1000
-		U16 bIsBackgrounded : 1; // 0x2000
-		U16 bIsCarrier : 1; // 0x4000
-		U16 bIsUsingMiniZv : 1; // 0x8000
+		U16 noDisplay : 1; // 0x0200
+		U16 isSpriteActor : 1; // 0x0400
+		U16 isFallable : 1; // 0x0800
+		U16 doesntCastShadow : 1; // 0x1000
+		U16 isBackgrounded : 1; // 0x2000
+		U16 isCarrier : 1; // 0x4000
+		U16 isUsingMiniZv : 1; // 0x8000
 	} staticFlagsBF;
 
 	struct {
@@ -105,8 +105,8 @@ typedef struct
 		U16 bUnk0004 : 1; // 0x0004
 		U16 bUnk0008 : 1; // 0x0008
 		U16 wasDrawn : 1; // 0x0010
-		U16 bUnk0020 : 1; // 0x0020
-		U16 bIsMoving : 1; // 0x0040
+		U16 isDead : 1; // 0x0020
+		U16 isMoving : 1; // 0x0040
 		U16 bUnk0080 : 1; // 0x0080
 		U16 isFalling : 1; // 0x0100
 		U16 bUnk0200 : 1; // 0x0200

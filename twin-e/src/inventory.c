@@ -155,7 +155,7 @@ void Inventory(void)
 		DrawOneInventory(currentSelectedObjectInInventory);
 
 		if (os_isPressed(KEY_INVENT_SELECT) && vars[(unsigned char)currentSelectedObjectInInventory] == 1 && !vars[70] && currentSelectedObjectInInventory <= 27) {
-			mainLoopVar9 = currentSelectedObjectInInventory;
+			selectedInventoryObj = currentSelectedObjectInInventory;
 			inventorySelectedColor = 91;
 			DrawOneInventory(currentSelectedObjectInInventory);
 			break;

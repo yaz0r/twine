@@ -28,7 +28,7 @@ int BoundRegleTrois(int var0, int var1, int var2, int var3);
 int WorldColBrickFull(int var0, int var1, int var2, int var3);
 int mainLoopInteration(void);
 
-extern short int mainLoopVar9;
+extern short int selectedInventoryObj;
 extern short int usingSword;
 extern short int twinsenZBeforeFall;
 extern short int disableScreenRecenter;

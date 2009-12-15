@@ -49,7 +49,7 @@ int cptime = 0;
 
 short int twinsenKey;
 
-short int mainLoopVar9;
+short int selectedInventoryObj;
 
 short int usingSword;
 
@@ -133,22 +133,26 @@ int mainLoopInteration(void) {
 			ChangeCube();
 
 		if (lockPalette == 0) {
-			// debut des inputs
+			/* Starting inputs */
 
-			if (os_isPressed(KEY_MENU) && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.bNoDisplay) { // press ESC
+			/* Open the menu */
+			if (os_isPressed(KEY_MENU) && twinsen->life > 0 && twinsen->costumeIndex != -1 && !twinsen->staticFlagsBF.noDisplay)
+			{
 				TestRestoreModeSVGA(1);
 				freezeTime();
 				if (!makeGiveUpMenu()) {
 					unfreezeTime();
 					fullRedraw(1);
-				} else {
+				}
+				else
+				{
 					unfreezeTime();
 					fullRedraw(1);
 					freezeTime();
 					SaveGame();
 					breakMainLoop = 1;
 					unfreezeTime();
-					return (0);
+					return 0;
 				}
 			}
 			/* TODO: fix
@@ -171,84 +175,77 @@ int mainLoopInteration(void) {
 				unfreezeTime();
 				fullRedraw(1);
 			}*/
-			mainLoopVar9 = -1;
-			if (os_isPressed(KEY_INVENTORY) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // inventory menu
+			selectedInventoryObj = -1;
+			/* Open the inventory menu */
+			if (os_isPressed(KEY_INVENTORY) && twinsen->costumeIndex != -1 && twinsen->comportement == 1)
+			{
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				Inventory();
 
-				// process object usage
-				switch (mainLoopVar9) {
-				case 0: { // use holomap
-						//processHolomap();
-						lockPalette = 1;
-						break;
-					}
-				case 1: { // use magical ball
-						if (usingSword == 1) {
-							InitBody(0, 0);
-						}
+				/* TODO: fix missing objects */
+				/* Process selected objects */
+				switch (selectedInventoryObj)
+				{
+				/* holomap */
+				case holomap:
+					//processHolomap();
+					lockPalette = 1;
+					break;
+				/* magic ball */
+				case ball:
+					if (usingSword == 1)
+						InitBody(0, 0);
 
-						usingSword = 0;
+					usingSword = 0;
 
-						break;
-					}
-				case 2: { // use sword
-						if (twinsen->body == 2) {
-							if (comportementHero == 4) {
-								SetComportement(0);
-							}
-
-							InitBody(2, 0);
-							InitAnim(24, 1, 0, 0);
-
-							usingSword = 1;
-						}
-						break;
-					}
-				case 5: { // Bù book
-						// todo: implement
-						break;
-					}
-				case 12: { // protopak
-						if (vars[6]) {
-							twinsen->body = 0;
-						} else {
-							twinsen->body = 1;
-						}
-
-						if (comportementHero == 4) {
+					break;
+				/* funfrock's saber */
+				case saber:
+					if (twinsen->body == 2)
+					{
+						if (comportementHero == 4)
 							SetComportement(0);
-						} else {
-							SetComportement(4);
-						}
-						break;
-					}
-				case 14: { // pingoin
-						break;
-					}
-				case 26: { // text
-						break;
-					}
-				case 27: { // clover
-						if (twinsen->life < 50) {
-							if (numClover > 0) {
-								twinsen->life = 50;
-								magicPoint = magicLevel * 20;
 
-								numClover--;
+						InitBody(2, 0);
+						InitAnim(24, 1, 0, 0);
 
-								addOverlayObject(3, 27, 0, 0, 0, 0, 3);
-							}
-						}
-						break;
+						usingSword = 1;
 					}
+					break;
+				/* bù book */
+				case book:
+					break;
+				/* proto-pack */
+				case protopack:
+					break;
+				/* meca penguin */
+				case penguin:
+					break;
+				/* bonuses list */
+				case bonusesList:
+					break;
+				/* clover leaf */
+				case clover:
+					if (twinsen->life < 50 && numClover > 0)
+					{
+						twinsen->life = 50;
+						magicPoint = magicLevel * 20;
+
+						numClover--;
+
+						addOverlayObject(3, 27, 0, 0, 0, 0, 3);
+					}
+					break;
 				}
 
 				unfreezeTime();
 				fullRedraw(1);
 			}
-			if (os_isPressed(KEY_CHBEHAVIOR) && twinsen->costumeIndex != -1 && twinsen->comportement == 1) { // comportement menu
+
+			/* Open behavior menu */
+			if (os_isPressed(KEY_CHBEHAVIOR) && twinsen->costumeIndex != -1 && twinsen->comportement == 1)
+			{
 				freezeTime();
 				TestRestoreModeSVGA(1);
 				processComportementMenu();
@@ -283,8 +280,8 @@ int mainLoopInteration(void) {
 				fkeys = 0;
 			}*/
 
-			// Using J to Enable Proto-Pack
-			if (os_isPressed(KEY_ACTION_PROTOPACK) && vars[12] == 1)
+			/* Enable protopack */
+			if (os_isPressed(KEY_ACTION_PROTOPACK) && vars[protopack])
 			{
 				if (cptime != 0) { // clear if have something already writed in the screen
 					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
@@ -294,14 +291,12 @@ int mainLoopInteration(void) {
 				CoulFont(15);
 				Font(5, 446, "Proto-Pack");
 				os_copyBlockPhys(5, 446, 200, 479);
-				// -------------------------------------------------------
 				cptime = currentTime;
 
-				if (vars[6]) {
+				if (vars[medaillon])
 					twinsen->body = 0;
-				} else {
+				else
 					twinsen->body = 1;
-				}
 
 				if (comportementHero == 4) {
 					printf("Stop using Proto-Pack!");
@@ -313,7 +308,9 @@ int mainLoopInteration(void) {
 			}
 
 			// Time to display the behaviour text showed in the previous condition.
-			if ((lba_time - cptime) > 100 && cptime) {
+			if ((lba_time - cptime) > 100 && cptime)
+			{
+				printf("WTF ?? !!!\n");
 				blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
 				os_copyBlockPhys(5, 446, 350, 479);
 				cptime = 0;
@@ -325,26 +322,32 @@ int mainLoopInteration(void) {
 			} */
 
 
-			if (os_isPressed(KEY_RECENTER) && disableScreenRecenter == 0) { // recenter screen
+			/* Recenter the screen */
+			if (os_isPressed(KEY_RECENTER) && disableScreenRecenter == 0)
+			{
 				newCameraX = actors[currentlyFollowedActor].X >> 9;
 				newCameraZ = actors[currentlyFollowedActor].Y >> 8;
 				newCameraY = actors[currentlyFollowedActor].Z >> 9;
 				requestBackgroundRedraw = 1;
 			}
 
-			if (os_isPressed(KEY_ACTION_HOLOMAP) && vars[0] == 1 && vars[70] == 0) { // draw holomap
+			/* Draw the holomap */
+			if (os_isPressed(KEY_ACTION_HOLOMAP) && vars[holomap] == 1 && vars[70] == 0) // draw holomap
+			{
 				freezeTime();
 				TestRestoreModeSVGA(1);
-				// processHolomap();
+				//processHolomap();
 				lockPalette = 1;
 				unfreezeTime();
 				fullRedraw(1);
 			}
 
-			if (os_isPressed(KEY_PAUSE)) {
-				// pauseSound();
+			if (os_isPressed(KEY_PAUSE))
+			{
+				//pauseSound();
 				freezeTime();
-				if (!drawInGameTransBox) {
+				if (!drawInGameTransBox)
+				{
 					printf("Game in Pause...");
 					CoulFont(15);
 					Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
@@ -359,36 +362,41 @@ int mainLoopInteration(void) {
 				}
 				printf("Game Resumed!");
 				unfreezeTime();
-				// resumeSound();
+				//resumeSound();
 			}
-			// il manque un process des input là pour F5
 
-			// fin des inputs
+			/* TODO: F5 input process ? */
+
+			/* Finished input handling */
 		}
+
+		/* TODO: better name for this */
 		mainLoopVar17 = getRealValue(&mainLoopVar1);
 		if (!mainLoopVar17)
 			mainLoopVar17 = 1;
 
 		setActorAngle(0, -256, 5, &mainLoopVar1);
 		disableScreenRecenter = 0;
-		// playRoomSamples();
 
-		for (i = 0; i < numActorInRoom; i++) {
+		for (i = 0; i < numActorInRoom; i++)
 			actors[i].hitBy = -1;
-		}
 
 		GereExtras();
 
-		// 2nd boucle de process des acteurs
-
 		assert(frontVideoBufferbis == frontVideoBuffer);
 
-		for (i = 0; i < numActorInRoom; i++) {
-			if (!(actors[i].dynamicFlagsBF.bUnk0020)) {
+		/* Actors process wheel */
+
+		for (i = 0; i < numActorInRoom; i++)
+		{
+			if (!actors[i].dynamicFlagsBF.isDead)
+			{
+				/* Just killed */
 				if (actors[i].life == 0)
 				{
+					/* If it's twinsen */
 					if (i == 0) {
-						InitAnim(ANIM_landDeath, 4, 0, 0);  // play twinsen death anim
+						InitAnim(ANIM_landDeath, 4, 0, 0); /* Play twinsen death anim */
 						actors[i].comportement = 0;
 					}
 					else
@@ -401,9 +409,12 @@ int mainLoopInteration(void) {
 						}
 					}
 
+					/* TODO: find what exactly is field_10 */
 					if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1))
 						GiveExtraBonus(&actors[i]);
 				}
+
+				/* Manage actors' move */
 				DoDir(i);
 
 				actors[i].field_20 = actors[i].X;
@@ -415,20 +426,24 @@ int mainLoopInteration(void) {
 
 				DoAnim(i);
 
-				if (actors[i].staticFlagsBF.bIsZonable)
+				if (actors[i].staticFlagsBF.isZonable)
 					CheckZoneSce(&actors[i], i);
 
 				if (actors[i].positionInActorScript != -1)
 					runActorScript(i);
 
+				/* Already dead */
 				if (actors[i].life <= 0)
-				{ // if actor dead...
-					if (!i)
+				{
+					/* If it's twinsen */
+					if (i == 0)
 					{
+						/* TODO: find what it is */
 						if (actors[i].dynamicFlagsBF.bUnk0004)
 						{
+							/* If twinsen has clovers, use one of them */
 							if (numClover > 0)
-							{ // auto use clover
+							{
 								twinsen->X = newTwinsenX;
 								twinsen->Y = newTwinsenZ;
 								twinsen->Z = newTwinsenY;
@@ -448,9 +463,10 @@ int mainLoopInteration(void) {
 
 								numClover--;
 							}
+							/* Else, GAME OVER */
 							else
-							{ // game over ...
-								// TODO: play Game Over anim. Model 20 in Ress file
+							{
+								/* TODO: play Game Over anim. Model 20 in Ress file */
 								breakMainLoop = 1;
 								printf("Game over...\n");
 							}
@@ -459,22 +475,22 @@ int mainLoopInteration(void) {
 					else
 					{
 						checkCarrier(i);
-						actors[i].dynamicFlagsBF.bUnk0020 = 1;
+						actors[i].dynamicFlagsBF.isDead = 1;
 						actors[i].costumeIndex = -1;
 						actors[i].zone = -1;
 					}
 				}
-
-				if (needChangeRoom != -1)
-					continue;
-
 			}
 		}
 
 		assert(frontVideoBufferbis == frontVideoBuffer);
 
-		if (!disableScreenRecenter) {
-			projectPositionOnScreen(actors[currentlyFollowedActor].X - (newCameraX << 9), actors[currentlyFollowedActor].Y - (newCameraZ << 8), actors[currentlyFollowedActor].Z - (newCameraY << 9));
+		/* Recenter the screen */
+		if (!disableScreenRecenter)
+		{
+			projectPositionOnScreen(actors[currentlyFollowedActor].X - (newCameraX << 9), 
+									actors[currentlyFollowedActor].Y - (newCameraZ << 8),
+									actors[currentlyFollowedActor].Z - (newCameraY << 9));
 
 			if (projectedPositionX < 80 || projectedPositionX > 539 || projectedPositionY < 80 || projectedPositionY > 429) {
 				newCameraX = ((actors[currentlyFollowedActor].X + 0x100) >> 9) + (((actors[currentlyFollowedActor].X + 0x100) >> 9) - newCameraX) / 2;
@@ -491,6 +507,7 @@ int mainLoopInteration(void) {
 			}
 		}
 
+		/* Redraw the map */
 		fullRedraw(requestBackgroundRedraw);
 		requestBackgroundRedraw = 0;
 
@@ -503,7 +520,8 @@ int mainLoopInteration(void) {
 	return 0;
 }
 
-void reinitAll(int save) {
+void reinitAll(int save)
+{
 	UnSetClip();
 	reinitVar1 = 896;
 	reinitVar2 = 950;
@@ -531,11 +549,11 @@ void reinitAll(int save) {
 	comportementHero = 0;
 	startupComportementHeroInCube = 0;
 
-	if (save == -1) {
+	if (save == -1)
+	{
 		LoadGame();
-		if (newTwinsenX == -1) {
+		if (newTwinsenX == -1)
 			twinsenPositionModeInNewCube = 0;
-		}
 	}
 
 	/*
@@ -543,14 +561,16 @@ void reinitAll(int save) {
 	 */
 }
 
-void reinitAll1(void) {
+void reinitAll1(void)
+{
 	configureOrthoProjection(311, 240);
 	setSomething2(0, 0, 0);
 	setSomething3(0, 0, 0);
 	SetLightVector(reinitVar1, reinitVar2, 0);
 }
 
-void TestRestoreModeSVGA(int arg_0) {
+void TestRestoreModeSVGA(int arg_0)
+{
 	if (!drawInGameTransBox)
 		return;
 
@@ -565,7 +585,8 @@ void TestRestoreModeSVGA(int arg_0) {
 		fullRedraw(1);
 }
 
-void waitRetrace(void) {
+void waitRetrace(void)
+{
 #ifdef WIN32
 	int temp = os_getTicks();
 
@@ -573,22 +594,24 @@ void waitRetrace(void) {
 #endif
 }
 
-void freezeTime(void) {
+void freezeTime(void)
+{
 	if (!time1)
 		time3 = lba_time;
 
 	time1++;
-
 }
 
-void unfreezeTime(void) {
+void unfreezeTime(void)
+{
 	--time1;
 
 	if (time1 == 0)
 		lba_time = time3;
 }
 
-int makeGiveUpMenu(void) { // process le menu "continuer ou abandonner"
+int makeGiveUpMenu(void)
+{
 	int saveLangue;
 	int temp;
 
@@ -612,10 +635,9 @@ int makeGiveUpMenu(void) { // process le menu "continuer ou abandonner"
 	return (0);
 }
 
-void reinitVars(void) {
+void reinitVars(void)
+{
 	int i;
-
-	// reinitExtraObjectList();
 
 	for (i = 0; i < 10; i++)
 		overlayObjectList[i].field_0 = -1;
@@ -757,6 +779,7 @@ void DoDir(int actorNum) {
 	if (lactor->costumeIndex == -1)
 		return;
 
+	/* If actor is falling, it can just rotate */
 	if (lactor->dynamicFlagsBF.isFalling)
 	{
 		short int tempAngle = 0;
@@ -774,46 +797,58 @@ void DoDir(int actorNum) {
 	}
 	else
 	{
-		if (!(lactor->staticFlagsBF.bIsSpriteActor))
+		/* TODO: what is it ? */
+		if (!(lactor->staticFlagsBF.isSpriteActor))
 			if (lactor->comportement != 1)
 				lactor->angle = getRealAngle(&lactor->time);
 
-		if (lactor->comportement > 6)
+		/* TODO: ??? that's stupid, there's other behaviors !! */
+		if (lactor->comportement > 6) {
+			printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARGH\n");
 			return;
+		}
 
 		switch (lactor->comportement)
 		{
 		case 0: // NO_MOVE
 			break;
 		case 1: // MOVE_MANUAL
-			if (!actorNum) { // if it's twinsen
+			/* If it's twinsen */
+			if (actorNum == 0)
+			{
 				action = 0;
 
-				// ADDED: Like LBA2 ---- w
+				/* Use action (even if behavior is not normal) */
 				if (os_isPressed(KEY_CHAR_ACTION_2)) {
 					action = 1;
 					break;
 				}
-				//----------------------
 
+				/* If action key is pressed */
 				if (os_isPressed(KEY_CHAR_ACTION))
 				{
 					switch (comportementHero)
 					{
-					case 0: // normal
+					case normal:
+						/* Just do the action */
 						action = 1;
 						break;
-					case 1: // sportif
+					case athletic:
+						/* Change the animation to jump */
 						InitAnim(ANIM_jump, 1, 0, actorNum);
 						break;
-					case 2: // agressive
-						if (autoAgressivity) {
+					case agressive:
+						/* If agressivity is set automatical */
+						if (autoAgressivity)
+						{
 							twinsenMoved = 1;
 
 							lactor->angle = getRealAngle(&lactor->time);
 
+							/* TODO: figure what it is */
 							if (lactor->anim == 0)
 							{
+								/* Choose a random knock */
 								switch (rand() % 3)
 								{
 								case 0:
@@ -830,95 +865,110 @@ void DoDir(int actorNum) {
 										break;
 								}
 							}
-							else
-							{
-								if (os_isPressed(KEY_CHAR_ATTACK_RPUNCH))
-									InitAnim(ANIM_rightPunch, 1, 0, actorNum);
+						}
+						else
+						{
+							if (os_isPressed(KEY_CHAR_ATTACK_RPUNCH))
+								InitAnim(ANIM_rightPunch, 1, 0, actorNum);
 
-								if (os_isPressed(KEY_CHAR_ATTACK_LPUNCH))
-									InitAnim(ANIM_leftPunch, 1, 0, actorNum);
+							if (os_isPressed(KEY_CHAR_ATTACK_LPUNCH))
+								InitAnim(ANIM_leftPunch, 1, 0, actorNum);
 
-								if (os_isPressed(KEY_CHAR_ATTACK_KICK))
-									InitAnim(ANIM_kick, 1, 0, actorNum);
-							}
+							if (os_isPressed(KEY_CHAR_ATTACK_KICK))
+								InitAnim(ANIM_kick, 1, 0, actorNum);
 						}
 						break;
-					case 3: // discret
+					case discrete:
+						/* Change the animation to hide */
 						InitAnim(ANIM_hide, 0, 255, 0);
 						break;
 					}
 				}
 
-				if (os_isPressed(KEY_CHAR_USEWEAPON) && !vars[70]) {
-					if (usingSword == 0) {
-						if (vars[1] == 1) { // have magic ball
-							if (magicBallIdx == -1) {
-								InitAnim(ANIM_throwBall, 1, 0, actorNum);
-							}
+				/* TODO: understand ALL this paragraph */
+				/* If the weapon key is pressed and inventory is not open */
+				if (os_isPressed(KEY_CHAR_USEWEAPON) && !vars[70])
+				{
+					/* If twinsen is using the saber and he has it */
+					if (usingSword && vars[saber])
+					{
+						if (lactor->body != 2)
+							InitBody(2, 0);
 
-							twinsenMoved = 1;
-							lactor->angle = getRealAngle(&lactor->time);
-						}
-					} else {
-						if (vars[2] == 1) { // have sword
-							if (lactor->body != 2) {
-								InitBody(2, 0);
-							}
+						InitAnim(ANIM_swordAttack, 1, 0, actorNum);
 
-							InitAnim(ANIM_swordAttack, 1, 0, actorNum);
+						twinsenMoved = 1;
+						lactor->angle = getRealAngle(&lactor->time);
+					}
+					/* Else, if he has the magic ball */
+					else if (vars[ball])
+					{
+						if (magicBallIdx == -1)
+							InitAnim(ANIM_throwBall, 1, 0, actorNum);
 
-							twinsenMoved = 1;
-							lactor->angle = getRealAngle(&lactor->time);
-						}
+						twinsenMoved = 1;
+						lactor->angle = getRealAngle(&lactor->time);
 					}
 				}
 
 			}
 
+			/* If no action key is pressed, or no action is made */
 			if ((!os_isPressed(KEY_CHAR_ACTION) && !os_isPressed(KEY_CHAR_ACTION_2)
-						&& !os_isPressed(KEY_CHAR_USEWEAPON)) || action != 0) {
+						&& !os_isPressed(KEY_CHAR_USEWEAPON)) || action != 0)
+			{
 				short int tempAngle;
 
+				/* If previous key is not pressed, forward is not pressed and twinsen moved, then stay static */
 				if (!os_isPressed(twinsenKey) && twinsenMoved && !os_isPressed(KEY_CHAR_FORWARD))
 					InitAnim(ANIM_static, 0, 255, actorNum);
 
 				twinsenMoved = 0;
 				twinsenWalked = 0;
 
-				if (os_isPressed(KEY_CHAR_FORWARD)) { // walk forward
-					printf("walk\n");
-					if (currentActorInZoneProcess == 0) {
+				/* Walk forward */
+				if (os_isPressed(KEY_CHAR_FORWARD))
+				{
+					/* TODO: figure out what it is */
+					if (currentActorInZoneProcess == 0)
 						InitAnim(ANIM_walk, 0, 255, actorNum);
-					}
 					twinsenMoved = 1;
 					twinsenWalked = 1;
 					twinsenKey = KEY_CHAR_FORWARD;
 				}
 
-				if (os_isPressed(KEY_CHAR_BACKWARD)) { // walk backward
+				/* Walk backward */
+				if (os_isPressed(KEY_CHAR_BACKWARD))
+				{
 					InitAnim(ANIM_walkBackward, 0, 255, actorNum);
 					twinsenMoved = 1;
 					twinsenWalked = 1;
 					twinsenKey = KEY_CHAR_BACKWARD;
 				}
 
-				if (os_isPressed(KEY_CHAR_LEFT)) { // turn left
-					twinsenMoved = 1;
+				/* Turn left (counterclockwise) */
+				if (os_isPressed(KEY_CHAR_LEFT) && !os_isPressed(KEY_CHAR_RIGHT))
+				{
 					if (!twinsenWalked)
 						InitAnim(ANIM_turnLeft, 0, 255, actorNum);
+					/* TODO: what is it ?? */
 					else if (!(lactor->dynamicFlagsBF.bUnk0080))
 						lactor->angle =	getRealAngle(&lactor->time);
 					tempAngle = 0x100;
+					twinsenMoved = 1;
 					twinsenKey = KEY_CHAR_LEFT;
 				}
 
-				if (os_isPressed(KEY_CHAR_RIGHT)) { // turn right
-					twinsenMoved = 1;
+				/* Turn right (clockwise) */
+				if (os_isPressed(KEY_CHAR_RIGHT) && !os_isPressed(KEY_CHAR_LEFT))
+				{
 					if (!twinsenWalked)
 						InitAnim(ANIM_turnRight, 0, 255, actorNum);
+					/* TODO: what is it ?? */
 					else if (!(lactor->dynamicFlagsBF.bUnk0080))
 							lactor->angle = getRealAngle(&lactor->time);
 					tempAngle = -0x100;
+					twinsenMoved = 1;
 					twinsenKey = KEY_CHAR_RIGHT;
 				}
 
@@ -926,6 +976,7 @@ void DoDir(int actorNum) {
 								lactor->speed, &lactor->time);
 			}
 			break;
+		/* TODO: understand the other movements */
 		case 2: { //MOVE_FOLLOW
 				int tempAngle;
 
@@ -933,47 +984,44 @@ void DoDir(int actorNum) {
 
 				tempAngle = GetAngle(lactor->X, lactor->Z, actors[lactor->followedActor].X, actors[lactor->followedActor].Z);
 
-				if (lactor->staticFlagsBF.bIsSpriteActor) {
+				if (lactor->staticFlagsBF.isSpriteActor)
 					lactor->angle = tempAngle;
-				} else {
+				else
 					ManualRealAngle(lactor->angle, tempAngle, lactor->speed, &lactor->time);
-				}
 				break;
 			}
 
-		case 3: { //MOVE_TRACK
-				if (lactor->positionInMoveScript == -1) {
-					lactor->positionInMoveScript = 0;
-				}
-			}
+		case 3: //MOVE_TRACK
+			if (lactor->positionInMoveScript == -1)
+				lactor->positionInMoveScript = 0;
 			break;
 		case 4: // MOVE_FOLLOW_2
 			break;
 		case 5: // MOVE_TRACK_ATTACK
 			break;
-		case 6: { // MOVE_SAME_XZ
-				lactor->X = actors[lactor->followedActor].X;
-				lactor->Z = actors[lactor->followedActor].Z;
-			}
+		case 6: // MOVE_SAME_XZ
+			lactor->X = actors[lactor->followedActor].X;
+			lactor->Z = actors[lactor->followedActor].Z;
 			break;
-		case 7: { // MOVE_RANDOM
-				if (!(lactor->dynamicFlagsBF.bUnk0080)) {
-					if (lactor->field_3 & 0x80) {
-						ManualRealAngle(lactor->angle, (((rand() & 0x100) + (lactor->angle - 0x100)) & 0x3FF), lactor ->speed, &lactor->time);
+		case 7: // MOVE_RANDOM
+			if (!(lactor->dynamicFlagsBF.bUnk0080))
+			{
+				if (lactor->field_3 & 0x80)
+				{
+					ManualRealAngle(lactor->angle, (((rand() & 0x100) + (lactor->angle - 0x100)) & 0x3FF), lactor ->speed, &lactor->time);
+
+					lactor->cropLeft = rand() % 300 + lba_time + 300;
+
+					InitAnim(0, 0, 0xFF, actorNum);
+				}
+
+				if (lactor->time.numOfStep == 0) {
+					InitAnim(1, 0, 0xFF, actorNum);
+
+					if (lba_time > lactor->cropLeft) {
+						ManualRealAngle(lactor->angle, (((rand() & 0x100) + (lactor->angle - 0x100)) & 0x3FF) , lactor->speed, &lactor->time);
 
 						lactor->cropLeft = rand() % 300 + lba_time + 300;
-
-						InitAnim(0, 0, 0xFF, actorNum);
-					}
-
-					if (lactor->time.numOfStep == 0) {
-						InitAnim(1, 0, 0xFF, actorNum);
-
-						if (lba_time > lactor->cropLeft) {
-							ManualRealAngle(lactor->angle, (((rand() & 0x100) + (lactor->angle - 0x100)) & 0x3FF) , lactor->speed, &lactor->time);
-
-							lactor->cropLeft = rand() % 300 + lba_time + 300;
-						}
 					}
 				}
 			}
@@ -984,8 +1032,6 @@ void DoDir(int actorNum) {
 		}
 	}
 }
-
-boolean test = false;
 
 void DoAnim(int actorNum) {
 	actor *lactor;
@@ -1008,7 +1054,7 @@ void DoAnim(int actorNum) {
 	processActorVar3 = lactor->field_22;
 	processActorVar4 = lactor->field_24;
 
-	if (lactor->staticFlagsBF.bIsSpriteActor) { // is sprite actor
+	if (lactor->staticFlagsBF.isSpriteActor) { // is sprite actor
 		if (lactor->field_66) {
 			lactor->dynamicFlagsBF.bUnk0002 = 1;
 		}
@@ -1042,7 +1088,7 @@ void DoAnim(int actorNum) {
 
 				setActorAngle(0, lactor->speed, 50, &lactor->time);
 
-				if (lactor->dynamicFlagsBF.bIsMoving) {
+				if (lactor->dynamicFlagsBF.isMoving) {
 					if (lactor->doorStatus) { // is oppening
 						var_10 = lactor->doorStatus;
 						if (distance2d(processActorX, processActorY, lactor->lastX, lactor->lastY) >= var_10) {
@@ -1056,7 +1102,7 @@ void DoAnim(int actorNum) {
 								processActorX = lactor->lastX - lactor->doorStatus;
 							}
 
-							lactor->dynamicFlagsBF.bIsMoving = 0;
+							lactor->dynamicFlagsBF.isMoving = 0;
 							lactor->speed = 0;
 						}
 					} else { // is closing
@@ -1081,19 +1127,19 @@ void DoAnim(int actorNum) {
 							processActorZ = lactor->lastZ;
 							processActorY = lactor->lastY;
 
-							lactor->dynamicFlagsBF.bIsMoving = 0;
+							lactor->dynamicFlagsBF.isMoving = 0;
 							lactor->speed = 0;
 						}
 					}
 				}
 			}
 
-			if (lactor->staticFlagsBF.bIsPushable) {
+			if (lactor->staticFlagsBF.isPushable) {
 				processActorX += lactor->lastX;
 				processActorZ += lactor->lastZ;
 				processActorY += lactor->lastY;
 
-				if (lactor->staticFlagsBF.bIsUsingMiniZv) {
+				if (lactor->staticFlagsBF.isUsingMiniZv) {
 					processActorX = ((processActorX / 128) * 128);
 					processActorY = ((processActorY / 128) * 128);
 				}
@@ -1201,7 +1247,7 @@ void DoAnim(int actorNum) {
 		processActorY = processActorVar4;
 	}
 
-	if (lactor->staticFlagsBF.bComputeCollisionWithBricks) { // if wall collision is enabled
+	if (lactor->staticFlagsBF.computeCollisionWithBricks) { // if wall collision is enabled
 		int position;
 
 		getPosVar2 = 0;
@@ -1216,7 +1262,7 @@ void DoAnim(int actorNum) {
 			}
 		}
 
-		if (lactor->staticFlagsBF.bComputeCollisionWithObj) // if we check collision with other objects
+		if (lactor->staticFlagsBF.computeCollisionWithObj) // if we check collision with other objects
 			CheckObjCol(actorNum);  //check collision and see if actor fall on an object
 
 		if ((lactor->standOn != -1) && (lactor->dynamicFlagsBF.isFalling)) // if actor felt on another an object
@@ -1228,7 +1274,7 @@ void DoAnim(int actorNum) {
 		processActorVar12 = processActorZ;
 		processActorVar13 = processActorY;
 
-		if (!actorNum && !(lactor->staticFlagsBF.bIsDead)) { // check for wall collision
+		if (!actorNum && !(lactor->staticFlagsBF.isDead)) { // check for wall collision
 			DoCornerReadjustTwinkel(lactor->boudingBox.X.bottomLeft, lactor->boudingBox.Y.bottomLeft, lactor->boudingBox.Z.bottomLeft, 1);  // twinsen wall collision code
 			DoCornerReadjustTwinkel(lactor->boudingBox.X.topRight, lactor->boudingBox.Y.bottomLeft, lactor->boudingBox.Z.bottomLeft, 2);
 			DoCornerReadjustTwinkel(lactor->boudingBox.X.topRight, lactor->boudingBox.Y.bottomLeft, lactor->boudingBox.Z.topRight, 4);
@@ -1306,7 +1352,7 @@ void DoAnim(int actorNum) {
 
 			lactor->dynamicFlagsBF.isFalling = 0;
 		} else { // not standing on floor
-			if (lactor->staticFlagsBF.bIsFallable && lactor->standOn == -1) { // if fallable and actor not standing on another actor
+			if (lactor->staticFlagsBF.isFallable && lactor->standOn == -1) { // if fallable and actor not standing on another actor
 				var_8 = WorldColBrick(processActorX, processActorZ - 1, processActorY); // what is 1 step under ?
 
 				if (var_8) { // under is the floor
@@ -1334,7 +1380,7 @@ void DoAnim(int actorNum) {
 			lactor->life = 0; // die...
 		}
 	} else {   // no wall collision
-		if (lactor->staticFlagsBF.bComputeCollisionWithObj) //if actor collision
+		if (lactor->staticFlagsBF.computeCollisionWithObj) //if actor collision
 			CheckObjCol(actorNum);
 	}
 
@@ -1582,7 +1628,7 @@ int CheckObjCol(int actorNum) {
 	lactor->collision = -1;
 
 	while (currentlyTestedActor < numActorInRoom) {
-		if (currentlyTestedActor != actorNum && actors[currentlyTestedActor].costumeIndex != -1 && !(lactor->staticFlagsBF.bIsDead) && actors[currentlyTestedActor].standOn != actorNum) { // is actor valid (not self and defined)
+		if (currentlyTestedActor != actorNum && actors[currentlyTestedActor].costumeIndex != -1 && !(lactor->staticFlagsBF.isDead) && actors[currentlyTestedActor].standOn != actorNum) { // is actor valid (not self and defined)
 			actor* lactor2;
 
 			int X1_2;
@@ -1607,7 +1653,7 @@ int CheckObjCol(int actorNum) {
 
 				lactor->collision = currentlyTestedActor;
 
-				if (lactor2->staticFlagsBF.bIsCarrier) { // if carrier
+				if (lactor2->staticFlagsBF.isCarrier) { // if carrier
 					if (lactor->dynamicFlagsBF.isFalling) { // if can stand on object
 						processActorZ = Z2_2 - lactor->boudingBox.Y.bottomLeft + 1; // new Z
 
@@ -1633,10 +1679,10 @@ int CheckObjCol(int actorNum) {
 lab12AC5:
 					newAngle = GetAngle(processActorX, processActorY, lactor2->X, lactor2->Z);
 
-					if (lactor2->staticFlagsBF.bIsPushable && !(lactor->staticFlagsBF.bIsPushable)) { // should be pushed ?
+					if (lactor2->staticFlagsBF.isPushable && !(lactor->staticFlagsBF.isPushable)) { // should be pushed ?
 						lactor2->lastZ = 0;
 
-						if (lactor2->staticFlagsBF.bIsUsingMiniZv) {
+						if (lactor2->staticFlagsBF.isUsingMiniZv) {
 							if (newAngle >= 0x80 && newAngle < 0x180 && lactor->angle > 0x80 && lactor->angle < 0x180)
 								lactor2->lastX = 192;
 
@@ -1696,7 +1742,7 @@ lab12AC5:
 		Y2 = destZ + processActorY + lactor->boudingBox.Z.topRight;
 
 		for (i = 0;i < numActorInRoom;i++) {
-			if (i != actorNum && actors[i].costumeIndex != -1 && !(actors[i].staticFlagsBF.bNoDisplay) && actors[i].standOn != actorNum) { // is actor valid (not self and defined)
+			if (i != actorNum && actors[i].costumeIndex != -1 && !(actors[i].staticFlagsBF.noDisplay) && actors[i].standOn != actorNum) { // is actor valid (not self and defined)
 				actor* lactor2;
 
 				int X1_2;
