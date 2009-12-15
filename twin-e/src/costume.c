@@ -63,7 +63,7 @@ void InitBody(char bodyNum, short int actorNumber) {
 
 	lactor = &actors[actorNumber];
 
-	if (lactor->staticFlagsBF.bIsSpriteActor)
+	if (lactor->staticFlagsBF.isSpriteActor)
 		return;
 
 	if (actorNumber == 0 && comportementHero == 4 && lactor->field_14 != 0 && lactor->field_14 != 1) {	// Si c'est twinsen qu'on load
@@ -96,7 +96,7 @@ void InitBody(char bodyNum, short int actorNumber) {
 			var3 = READ_LE_S16(ptr++);
 			var4 = READ_LE_S16(ptr);
 
-			if (lactor->staticFlagsBF.bIsUsingMiniZv) {
+			if (lactor->staticFlagsBF.isUsingMiniZv) {
 				result1 = var2 - var1; // take smaller for bound
 				result2 = var4 - var3;
 

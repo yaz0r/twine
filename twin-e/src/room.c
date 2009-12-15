@@ -109,11 +109,11 @@ static void RestartPerso(void) {
 	memset(&twinsen->dynamicFlagsBF, 0, 2);
 	memset(&twinsen->staticFlagsBF, 0, 2);
 
-	twinsen->staticFlagsBF.bComputeCollisionWithObj = true;
-	twinsen->staticFlagsBF.bComputeCollisionWithBricks = true;
-	twinsen->staticFlagsBF.bIsZonable = true;
-	twinsen->staticFlagsBF.bCanDrown = true;
-	twinsen->staticFlagsBF.bIsFallable = true;
+	twinsen->staticFlagsBF.computeCollisionWithObj = true;
+	twinsen->staticFlagsBF.computeCollisionWithBricks = true;
+	twinsen->staticFlagsBF.isZonable = true;
+	twinsen->staticFlagsBF.canDrown = true;
+	twinsen->staticFlagsBF.isFallable = true;
 
 	twinsen->field_14 = 1;
 	twinsen->positionInMoveScript = -1;
@@ -318,25 +318,25 @@ void LoadScene(int sceneNumber) {
 		temp += 2;
 
 		if (staticFlags & 0x1) {
-			actors[currentActor].staticFlagsBF.bComputeCollisionWithObj = 1;
+			actors[currentActor].staticFlagsBF.computeCollisionWithObj = 1;
 		}
 		if (staticFlags & 0x2) {
-			actors[currentActor].staticFlagsBF.bComputeCollisionWithBricks = 1;
+			actors[currentActor].staticFlagsBF.computeCollisionWithBricks = 1;
 		}
 		if (staticFlags & 0x4) {
-			actors[currentActor].staticFlagsBF.bIsZonable = 1;
+			actors[currentActor].staticFlagsBF.isZonable = 1;
 		}
 		if (staticFlags & 0x8) {
-			actors[currentActor].staticFlagsBF.bIsUsingClipping = 1;
+			actors[currentActor].staticFlagsBF.isUsingClipping = 1;
 		}
 		if (staticFlags & 0x10) {
-			actors[currentActor].staticFlagsBF.bIsPushable = 1;
+			actors[currentActor].staticFlagsBF.isPushable = 1;
 		}
 		if (staticFlags & 0x20) {
-			actors[currentActor].staticFlagsBF.bIsDead = 1;
+			actors[currentActor].staticFlagsBF.isDead = 1;
 		}
 		if (staticFlags & 0x40) {
-			actors[currentActor].staticFlagsBF.bCanDrown = 1;
+			actors[currentActor].staticFlagsBF.canDrown = 1;
 		}
 		if (staticFlags & 0x80) {
 			actors[currentActor].staticFlagsBF.bUnk80 = 1;
@@ -346,31 +346,31 @@ void LoadScene(int sceneNumber) {
 			actors[currentActor].staticFlagsBF.bUnk0100 = 1;
 		}
 		if (staticFlags & 0x200) {
-			actors[currentActor].staticFlagsBF.bNoDisplay = 1;
+			actors[currentActor].staticFlagsBF.noDisplay = 1;
 		}
 		if (staticFlags & 0x400) {
-			actors[currentActor].staticFlagsBF.bIsSpriteActor = 1;
+			actors[currentActor].staticFlagsBF.isSpriteActor = 1;
 		}
 		if (staticFlags & 0x800) {
-			actors[currentActor].staticFlagsBF.bIsFallable = 1;
+			actors[currentActor].staticFlagsBF.isFallable = 1;
 		}
 		if (staticFlags & 0x1000) {
-			actors[currentActor].staticFlagsBF.bDoesntCastShadow = 1;
+			actors[currentActor].staticFlagsBF.doesntCastShadow = 1;
 		}
 		if (staticFlags & 0x2000) {
-			//actors[currentActor].staticFlagsBF.bIsBackgrounded = 1;
+			//actors[currentActor].staticFlagsBF.isBackgrounded = 1;
 		}
 		if (staticFlags & 0x4000) {
-			actors[currentActor].staticFlagsBF.bIsCarrier = 1;
+			actors[currentActor].staticFlagsBF.isCarrier = 1;
 		}
 		if (staticFlags & 0x8000) {
-			actors[currentActor].staticFlagsBF.bIsUsingMiniZv = 1;
+			actors[currentActor].staticFlagsBF.isUsingMiniZv = 1;
 		}
 
 		modelNumber = READ_LE_U16(temp);
 		temp += 2;
 
-		if (!(actors[currentActor].staticFlagsBF.bIsSpriteActor)) { // if not sprite actor
+		if (!(actors[currentActor].staticFlagsBF.isSpriteActor)) { // if not sprite actor
 #ifdef PRELOAD_ALL
 			actors[currentActor].entityDataPtr = HQR_GetCopy(HQR_Fic, modelNumber);
 #else

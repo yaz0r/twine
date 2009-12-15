@@ -209,9 +209,9 @@ void foundObject(int objectNumber) {
 	newCameraZ = (twinsen->Y + 0x100) >> 8;
 	newCameraY = (twinsen->Z + 0x100) >> 9;
 
-	twinsen->staticFlagsBF.bNoDisplay = true;
+	twinsen->staticFlagsBF.noDisplay = true;
 	fullRedraw(1);
-	twinsen->staticFlagsBF.bNoDisplay = false;
+	twinsen->staticFlagsBF.noDisplay = false;
 
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
 

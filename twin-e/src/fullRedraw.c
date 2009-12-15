@@ -127,7 +127,7 @@ void fullRedraw(int param) {
 
 		if ((useAnotherGrm == -1) || (lactor->Y <= READ_LE_S16((currentGrid2) * 24 + (char*)zoneData + 8))) { // eject characters hidden when using another GRM
 
-			if (lactor->staticFlagsBF.bIsBackgrounded && param == 0) {  // background actor, no redraw required
+			if (lactor->staticFlagsBF.isBackgrounded && param == 0) {  // background actor, no redraw required
 				// calculate the actor position on screen
 				projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
 
@@ -137,21 +137,21 @@ void fullRedraw(int param) {
 				}
 			} else
 			{
-				if (lactor->costumeIndex != -1  && !(lactor->staticFlagsBF.bNoDisplay)) { // 0x200 -> visible
+				if (lactor->costumeIndex != -1  && !(lactor->staticFlagsBF.noDisplay)) { // 0x200 -> visible
 					// calculate the actor position on screen
 					projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
 
-					if (((lactor->staticFlagsBF.bIsUsingClipping) && projectedPositionX > -112 && projectedPositionX < 752 && projectedPositionY > -50 && projectedPositionY < 651)
-							|| ((!(lactor->staticFlagsBF.bIsUsingClipping)) && projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)) {
+					if (((lactor->staticFlagsBF.isUsingClipping) && projectedPositionX > -112 && projectedPositionX < 752 && projectedPositionY > -50 && projectedPositionY < 651)
+							|| ((!(lactor->staticFlagsBF.isUsingClipping)) && projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)) {
 						temp3 = lactor->Z + lactor->X - cameraX - cameraY;
 
 						if (lactor->standOn != -1) { // if actor is on another actor
 							temp3 = actors[lactor->standOn].X - cameraX + actors[lactor->standOn].Z - cameraY + 2;
 						}
 
-						if (lactor->staticFlagsBF.bIsSpriteActor) {
+						if (lactor->staticFlagsBF.isSpriteActor) {
 							drawList[a12].field_2 = arg_46; // 0x1000
-							if (lactor->staticFlagsBF.bIsUsingClipping) {
+							if (lactor->staticFlagsBF.isUsingClipping) {
 								temp3 = lactor->lastX - cameraX + lactor->lastY - cameraY;
 							}
 						} else {
@@ -162,7 +162,7 @@ void fullRedraw(int param) {
 
 						a12++;
 
-						if (shadowMode != 0 && !(lactor->staticFlagsBF.bDoesntCastShadow)) { // 0x1000 -> no shadow cast
+						if (shadowMode != 0 && !(lactor->staticFlagsBF.doesntCastShadow)) { // 0x1000 -> no shadow cast
 							if (lactor->standOn != -1) { // quick shadow calc if on another actor
 								shadowX = lactor->X;
 								shadowZ = lactor->Y - 1;
@@ -333,7 +333,7 @@ void fullRedraw(int param) {
 				renderRight = renderLeft + spriteWidth;
 				renderBottom = renderTop + spriteHeight;
 
-				if (lactor->staticFlagsBF.bIsUsingClipping) {
+				if (lactor->staticFlagsBF.isUsingClipping) {
 					// if sprite actor use croping
 					SetClip(fullRedrawVar1 + lactor->cropLeft, fullRedrawVar2 + lactor->cropTop, fullRedrawVar1 + lactor->cropRight, fullRedrawVar2 + lactor->cropBottom);
 				} else {
@@ -344,7 +344,7 @@ void fullRedraw(int param) {
 					AffGraph(0, renderLeft, renderTop, HQR_Get(HQR_Sprites, lactor->costumeIndex));
 					lactor->dynamicFlagsBF.wasDrawn = 1;
 
-					if (lactor->staticFlagsBF.bIsUsingClipping) {
+					if (lactor->staticFlagsBF.isUsingClipping) {
 						DrawOverBrick3((lactor->lastX + 0x100) >> 9, lactor->lastZ >> 8, (lactor->lastY + 0x100) >> 9);
 					} else {
 						int tempX;

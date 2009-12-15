@@ -44,7 +44,7 @@ void GiveExtraBonus(actor * lactor) {
 		if (!magicLevel && currentBonus == 2) // if bonus is magic and magicLevel 1 not reached
 			currentBonus = 1; //bonus is life
 
-		if (lactor->dynamicFlagsBF.bUnk0020) {
+		if (lactor->dynamicFlagsBF.isDead) {
 			ExtraBonus(lactor->X, lactor->Y, lactor->Z, 0x100, 0, currentBonus, lactor->field_12);
 			HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
 		} else {

@@ -81,7 +81,7 @@ void DoTrack(int actorNumber) {
 
 				newAngle = GetAngle(lactor->X, lactor->Z, destX, destZ);
 
-				if (lactor->staticFlagsBF.bIsSpriteActor) {
+				if (lactor->staticFlagsBF.isSpriteActor) {
 					lactor->angle = newAngle;
 				} else {
 					ManualRealAngle(lactor->angle, newAngle, lactor->speed, &lactor->time);
@@ -105,7 +105,7 @@ void DoTrack(int actorNumber) {
 			break;
 		case 7: { // set angle
 				lactor->positionInMoveScript += 2;
-				if (!(lactor->staticFlagsBF.bIsSpriteActor)) {
+				if (!(lactor->staticFlagsBF.isSpriteActor)) {
 					manipActorResult = READ_LE_S16(scriptPtr);
 					if (lactor->time.numOfStep == 0) {
 						ManualRealAngle(lactor->angle, manipActorResult, lactor->speed, timePtr);
@@ -129,7 +129,7 @@ void DoTrack(int actorNumber) {
 			destY = flagData[manipActorResult].y;
 			destZ = flagData[manipActorResult].z;
 
-			if (lactor->staticFlagsBF.bIsSpriteActor) {
+			if (lactor->staticFlagsBF.isSpriteActor) {
 				lactor->speed = 0;
 			}
 
@@ -162,7 +162,7 @@ void DoTrack(int actorNumber) {
 
 			newAngle = 0x200 + GetAngle(lactor->X, lactor->Z, destX, destZ);
 
-			if (lactor->staticFlagsBF.bIsSpriteActor) {
+			if (lactor->staticFlagsBF.isSpriteActor) {
 				lactor->angle = newAngle;
 			} else {
 				ManualRealAngle(lactor->angle, newAngle, lactor->speed, &lactor->time);
@@ -198,7 +198,7 @@ void DoTrack(int actorNumber) {
 			break;
 		case 15:
 			lactor->positionInMoveScript++;
-			if (lactor->staticFlagsBF.bIsSpriteActor) { // if can move
+			if (lactor->staticFlagsBF.isSpriteActor) { // if can move
 				manipActorResult = *scriptPtr;
 
 				destX = flagData[manipActorResult].x;
@@ -221,22 +221,22 @@ void DoTrack(int actorNumber) {
 		case 16:
 			lactor->positionInMoveScript += 2;
 			lactor->speed = READ_LE_S16(scriptPtr);
-			if (lactor->staticFlagsBF.bIsSpriteActor) {
+			if (lactor->staticFlagsBF.isSpriteActor) {
 				setActorAngle(0, lactor->speed, 50, timePtr);
 			}
 			break;
 		case 17: // move actor to background
 			lactor->positionInMoveScript += 1;
 			if (*scriptPtr != 0) {
-				if (!(lactor->staticFlagsBF.bIsBackgrounded)) { //if actor wasn't already in background
-					//  lactor->staticFlagsBF.bIsBackgrounded = true; // set him to background
+				if (!(lactor->staticFlagsBF.isBackgrounded)) { //if actor wasn't already in background
+					//  lactor->staticFlagsBF.isBackgrounded = true; // set him to background
 					if (lactor->dynamicFlagsBF.wasDrawn) {
 						requestBackgroundRedraw = 1;
 					}
 				}
 			} else {
-				if (lactor->staticFlagsBF.bIsBackgrounded) {
-					lactor->staticFlagsBF.bIsBackgrounded = false;
+				if (lactor->staticFlagsBF.isBackgrounded) {
+					lactor->staticFlagsBF.isBackgrounded = false;
 					if (lactor->dynamicFlagsBF.wasDrawn) {
 						requestBackgroundRedraw = 1;
 					}
@@ -270,7 +270,7 @@ void DoTrack(int actorNumber) {
 
 				lactor->angle = beta;
 
-				if (lactor->staticFlagsBF.bIsSpriteActor) {
+				if (lactor->staticFlagsBF.isSpriteActor) {
 					clearRealAngle(lactor);
 				}
 
@@ -281,7 +281,7 @@ void DoTrack(int actorNumber) {
 		case 23:
 		case 24:
 			lactor->positionInMoveScript += 2;
-			if (lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping) {
+			if (lactor->staticFlagsBF.isSpriteActor && lactor->staticFlagsBF.isUsingClipping) {
 				switch (currentOpcode - 21) {
 				case 0:
 					lactor->angle = 0x300;
@@ -301,14 +301,14 @@ void DoTrack(int actorNumber) {
 				}
 
 				lactor->doorStatus = READ_LE_S16(scriptPtr);
-				lactor->dynamicFlagsBF.bIsMoving = 1;
+				lactor->dynamicFlagsBF.isMoving = 1;
 				lactor->speed = 1000;
 				setActorAngle(0, 1000, 50, timePtr);
 			}
 			break;
 		case 25: { // TM_CLOSE
-				if (lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping) {
-					lactor->dynamicFlagsBF.bIsMoving = 1;
+				if (lactor->staticFlagsBF.isSpriteActor && lactor->staticFlagsBF.isUsingClipping) {
+					lactor->dynamicFlagsBF.isMoving = 1;
 					lactor->doorStatus = 0;
 					lactor->speed = -1000;
 					setActorAngle(0, -1000, 50, timePtr);
@@ -316,7 +316,7 @@ void DoTrack(int actorNumber) {
 				break;
 			}
 		case 26: { // TM_WAIT_DOOR
-				if (lactor->staticFlagsBF.bIsSpriteActor && lactor->staticFlagsBF.bIsUsingClipping) {
+				if (lactor->staticFlagsBF.isSpriteActor && lactor->staticFlagsBF.isUsingClipping) {
 					if (lactor->speed) {
 						continueMove = 0;
 						lactor->positionInMoveScript--;
@@ -350,7 +350,7 @@ void DoTrack(int actorNumber) {
 			}
 		case 33: { // look at twinsen
 				lactor->positionInMoveScript += 2;
-				if (!(lactor->staticFlagsBF.bIsSpriteActor)) {
+				if (!(lactor->staticFlagsBF.isSpriteActor)) {
 					manipActorResult = READ_LE_S16(scriptPtr);
 					if (manipActorResult == -1 && lactor->time.numOfStep == 0) {
 						manipActorResult = GetAngle(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
@@ -372,7 +372,7 @@ void DoTrack(int actorNumber) {
 				int var_10;
 
 				lactor->positionInMoveScript += 4 ;
-				if (!(lactor->staticFlagsBF.bIsSpriteActor)) {
+				if (!(lactor->staticFlagsBF.isSpriteActor)) {
 					manipActorResult = READ_LE_S16(scriptPtr + 2);
 
 					if (manipActorResult == -1  && lactor->time.numOfStep == 0) {

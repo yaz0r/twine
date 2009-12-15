@@ -33,7 +33,7 @@ void initActor(short int id)
 
 	lactor = &actors[id];
 
-	if (lactor->staticFlagsBF.bIsSpriteActor) // if sprite actor
+	if (lactor->staticFlagsBF.isSpriteActor) // if sprite actor
 	{
 		if (lactor->field_66 != 0)
 			lactor->dynamicFlagsBF.bUnk0002 = 1;
@@ -44,7 +44,7 @@ void initActor(short int id)
 
 		setActorAngleSafe(0, 0, 0, &lactor->time);
 
-		if (lactor->staticFlagsBF.bIsUsingClipping)
+		if (lactor->staticFlagsBF.isUsingClipping)
 		{
 			lactor->lastX = lactor->X;
 			lactor->lastZ = lactor->Y;
@@ -127,7 +127,7 @@ void initSprite(int imageId, short int actorId)
 {
 	actor *lactor = &actors[actorId];
 
-	if (lactor->staticFlagsBF.bIsSpriteActor && imageId != -1 && lactor->costumeIndex != imageId)
+	if (lactor->staticFlagsBF.isSpriteActor && imageId != -1 && lactor->costumeIndex != imageId)
 	{
 		short int *ptr;
 
@@ -148,7 +148,7 @@ void checkCarrier(short int id)
 {
 	short int i;
 
-	if (actors[id].staticFlagsBF.bIsCarrier)
+	if (actors[id].staticFlagsBF.isCarrier)
 		for (i = 0; i < numActorInRoom; i++)
 			if (actors[i].standOn == id)
 				actors[i].standOn = -1;

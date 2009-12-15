@@ -449,7 +449,7 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
 	if (lactor->costumeIndex == -1)
 		return (0);
 
-	if (lactor->staticFlagsBF.bIsSpriteActor) // si c'est un sprite
+	if (lactor->staticFlagsBF.isSpriteActor) // si c'est un sprite
 		return (0);
 
 	if (newAnim == lactor->anim && lactor->previousAnimIndex != -1) // le costume est deja loade
