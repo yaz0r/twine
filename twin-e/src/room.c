@@ -375,6 +375,7 @@ void LoadScene(int sceneNumber) {
 			actors[currentActor].entityDataPtr = HQR_GetCopy(HQR_Fic, modelNumber);
 #else
 			HQRM_Load("file3d.hqr", modelNumber, &actors[currentActor].entityDataPtr);
+			printf("Loaded character entity pointer of %d, in room: %p\n", currentActor, actors[currentActor].entityDataPtr);
 #endif
 		}
 
@@ -383,6 +384,7 @@ void LoadScene(int sceneNumber) {
 		actors[currentActor].anim = READ_LE_BYTE(temp);
 		temp++;
 
+		/* TODO: cleanup field_* */
 		actors[currentActor].field_8 = READ_LE_U16(temp);
 		temp += 2;
 		actors[currentActor].field_20 = actors[currentActor].X = READ_LE_U16(temp);
@@ -395,9 +397,11 @@ void LoadScene(int sceneNumber) {
 		actors[currentActor].field_66 = READ_LE_BYTE(temp);
 		temp++;
 
-		actors[currentActor].field_10 = READ_LE_U16(temp);
+		actors[currentActor].canGiveBonus = (READ_LE_U16(temp) & 0x1F0);
+		actors[currentActor].gaveBonus = 0;
+		actors[currentActor].bonusInfo = READ_LE_U16(temp);
+		actors[currentActor].bonusInfo &= 0xFE;
 		temp += 2;
-		actors[currentActor].field_10 &= 0xFE;
 		actors[currentActor].angle = READ_LE_U16(temp);
 		temp += 2;
 		actors[currentActor].speed = READ_LE_U16(temp);

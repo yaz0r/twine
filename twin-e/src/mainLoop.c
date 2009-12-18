@@ -409,8 +409,8 @@ int mainLoopInteration(void) {
 						}
 					}
 
-					/* TODO: find what exactly is field_10 */
-					if (actors[i].field_10 & 0x1F0 && !(actors[i].field_10 & 1))
+					/* Give an extra */
+					if (actors[i].canGiveBonus && !actors[i].gaveBonus)
 						GiveExtraBonus(&actors[i]);
 				}
 
@@ -435,41 +435,37 @@ int mainLoopInteration(void) {
 				/* Already dead */
 				if (actors[i].life <= 0)
 				{
-					/* If it's twinsen */
-					if (i == 0)
+					/* If it's twinsen and he has finished the die animation */
+					if (i == 0 && actors[i].dynamicFlagsBF.animEnded)
 					{
-						/* TODO: find what it is */
-						if (actors[i].dynamicFlagsBF.bUnk0004)
+						/* If twinsen has clovers, use one of them */
+						if (numClover > 0)
 						{
-							/* If twinsen has clovers, use one of them */
-							if (numClover > 0)
-							{
-								twinsen->X = newTwinsenX;
-								twinsen->Y = newTwinsenZ;
-								twinsen->Z = newTwinsenY;
+							twinsen->X = newTwinsenX;
+							twinsen->Y = newTwinsenZ;
+							twinsen->Z = newTwinsenY;
 
-								needChangeRoom = currentRoom;
-								magicPoint = magicLevel * 20;
+							needChangeRoom = currentRoom;
+							magicPoint = magicLevel * 20;
 
-								newCameraX = (twinsen->X >> 9);
-								newCameraZ = (twinsen->Y >> 8);
-								newCameraY = (twinsen->Z >> 9);
+							newCameraX = (twinsen->X >> 9);
+							newCameraZ = (twinsen->Y >> 8);
+							newCameraY = (twinsen->Z >> 9);
 
-								twinsenPositionModeInNewCube = 3;
+							twinsenPositionModeInNewCube = 3;
 
-								twinsen->life = 50;
-								requestBackgroundRedraw = 1;
-								lockPalette = 1;
+							twinsen->life = 50;
+							requestBackgroundRedraw = 1;
+							lockPalette = 1;
 
-								numClover--;
-							}
-							/* Else, GAME OVER */
-							else
-							{
-								/* TODO: play Game Over anim. Model 20 in Ress file */
-								breakMainLoop = 1;
-								printf("Game over...\n");
-							}
+							numClover--;
+						}
+						/* Else, GAME OVER */
+						else
+						{
+							/* TODO: play Game Over anim. Model 20 in Ress file */
+							breakMainLoop = 1;
+							printf("Game over...\n");
 						}
 					}
 					else
@@ -797,16 +793,10 @@ void DoDir(int actorNum) {
 	}
 	else
 	{
-		/* TODO: what is it ? */
-		if (!(lactor->staticFlagsBF.isSpriteActor))
-			if (lactor->comportement != 1)
+		/* If it's not a sprite */
+		if (!lactor->staticFlagsBF.isSpriteActor)
+			if (lactor->comportement != athletic)
 				lactor->angle = getRealAngle(&lactor->time);
-
-		/* TODO: ??? that's stupid, there's other behaviors !! */
-		if (lactor->comportement > 6) {
-			printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARGH\n");
-			return;
-		}
 
 		switch (lactor->comportement)
 		{
@@ -920,7 +910,9 @@ void DoDir(int actorNum) {
 				short int tempAngle;
 
 				/* If previous key is not pressed, forward is not pressed and twinsen moved, then stay static */
-				if (!os_isPressed(twinsenKey) && twinsenMoved && !os_isPressed(KEY_CHAR_FORWARD))
+				if ((!os_isPressed(twinsenKey) && twinsenMoved && !os_isPressed(KEY_CHAR_FORWARD) && !os_isPressed(KEY_CHAR_BACKWARD))
+						|| (!os_isPressed(KEY_CHAR_FORWARD) && !os_isPressed(KEY_CHAR_BACKWARD)
+							&& !os_isPressed(KEY_CHAR_LEFT) && !os_isPressed(KEY_CHAR_RIGHT)))
 					InitAnim(ANIM_static, 0, 255, actorNum);
 
 				twinsenMoved = 0;
@@ -951,8 +943,7 @@ void DoDir(int actorNum) {
 				{
 					if (!twinsenWalked)
 						InitAnim(ANIM_turnLeft, 0, 255, actorNum);
-					/* TODO: what is it ?? */
-					else if (!(lactor->dynamicFlagsBF.bUnk0080))
+					else if (!lactor->dynamicFlagsBF.isRotationByAnim)
 						lactor->angle =	getRealAngle(&lactor->time);
 					tempAngle = 0x100;
 					twinsenMoved = 1;
@@ -964,8 +955,7 @@ void DoDir(int actorNum) {
 				{
 					if (!twinsenWalked)
 						InitAnim(ANIM_turnRight, 0, 255, actorNum);
-					/* TODO: what is it ?? */
-					else if (!(lactor->dynamicFlagsBF.bUnk0080))
+					else if (!lactor->dynamicFlagsBF.isRotationByAnim)
 							lactor->angle = getRealAngle(&lactor->time);
 					tempAngle = -0x100;
 					twinsenMoved = 1;
@@ -1004,7 +994,8 @@ void DoDir(int actorNum) {
 			lactor->Z = actors[lactor->followedActor].Z;
 			break;
 		case 7: // MOVE_RANDOM
-			if (!(lactor->dynamicFlagsBF.bUnk0080))
+			printf("-- Moving randomly\n");
+			if (!lactor->dynamicFlagsBF.isRotationByAnim)
 			{
 				if (lactor->field_3 & 0x80)
 				{
@@ -1158,11 +1149,10 @@ void DoAnim(int actorNum) {
 
 			keyFramePassed = SetInterDepObjet(lactor->animPosition, animPtr, (char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
-			if (processActorVar5) {
-				lactor->dynamicFlagsBF.bUnk0080 = 1;
-			} else {
-				lactor->dynamicFlagsBF.bUnk0080 = 0;
-			}
+			if (processActorVar5)
+				lactor->dynamicFlagsBF.isRotationByAnim = 1;
+			else
+				lactor->dynamicFlagsBF.isRotationByAnim = 0;
 
 			lactor->angle = (lactor->angle + processActorVar6 - lactor->lastRotationSpeed) & 0x3FF;
 			lactor->lastRotationSpeed = processActorVar6;
@@ -1362,7 +1352,7 @@ void DoAnim(int actorNum) {
 
 					ReajustPos(var_8);
 				} else { // start falling
-					if (!(lactor->dynamicFlagsBF.bUnk0080 == 1)) {
+					if (!lactor->dynamicFlagsBF.isRotationByAnim == 1) {
 						lactor->dynamicFlagsBF.isFalling = 1;
 
 						if ((!actorNum) && twinsenZBeforeFall == 0) {

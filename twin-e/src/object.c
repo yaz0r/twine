@@ -24,20 +24,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "actors.h"
 
 void GiveExtraBonus(actor * lactor) {
+
 	int i;
 	char extraTable[8];
 	int numOfExtra = 0;
 	char currentBonus;
 	int angle;
 
-	for (i = 0;i < 5;i++) {
-		if (lactor->field_10&(1 << (i + 4))) {
+	for (i = 0; i < 5; i++)
+		if (lactor->bonusInfo & (1 << (i + 4)))
 			extraTable[numOfExtra++] = i;
-		}
-	}
 
 	if (numOfExtra) {
-		currentBonus = extraTable[rand()%numOfExtra];
+		currentBonus = extraTable[rand() % numOfExtra];
 
 		currentBonus += 3;
 

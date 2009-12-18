@@ -506,15 +506,13 @@ void runActorScript(short int actorNumber)
 		case 51: {
 				char temp;
 
-				if (lactor->field_10 & 0x1F0) {
+				if (lactor->canGiveBonus)
 					GiveExtraBonus(lactor);
-				}
 
 				temp = *(actorScriptPtr++);
 
-				if (temp != 0) {
-					lactor->field_10 |= 1;
-				}
+				if (temp != 0)
+					lactor->gaveBonus = 1;
 
 				break;
 			}
@@ -957,7 +955,7 @@ void runActorScript(short int actorNumber)
 			}
 		case 97: { // LM_GAME_OVER
 				OPbreak = -1;
-				twinsen->dynamicFlagsBF.bUnk0004 = 1;
+				twinsen->dynamicFlagsBF.animEnded = 1;
 				twinsen->life = 0;
 				numClover = 0;
 				break;

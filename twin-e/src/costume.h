@@ -46,7 +46,9 @@ typedef struct
 	int field_8;
 	int currentLabelPtr;
 	byte *entityDataPtr;
-	int field_10;
+	int canGiveBonus;
+	int gaveBonus;
+	int bonusInfo;
 	int field_12;
 	int field_14;
 	int talkColor;
@@ -102,12 +104,12 @@ typedef struct
 	struct {
 		U16 bUnk0001 : 1; // 0x0001
 		U16 bUnk0002 : 1; // 0x0002
-		U16 bUnk0004 : 1; // 0x0004
+		U16 animEnded : 1; // 0x0004
 		U16 bUnk0008 : 1; // 0x0008
 		U16 wasDrawn : 1; // 0x0010
 		U16 isDead : 1; // 0x0020
 		U16 isMoving : 1; // 0x0040
-		U16 bUnk0080 : 1; // 0x0080
+		U16 isRotationByAnim : 1; // 0x0080
 		U16 isFalling : 1; // 0x0100
 		U16 bUnk0200 : 1; // 0x0200
 		U16 bUnk0400 : 1; // 0x0400

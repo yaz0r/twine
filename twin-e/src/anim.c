@@ -496,7 +496,7 @@ int InitAnim(char newAnim, short int arg_4, unsigned char arg_8, short int actor
 	lactor->field_78 = arg_4;
 	lactor->animPosition = 0;
 	lactor->dynamicFlagsBF.bUnk0002 = 0;
-	lactor->dynamicFlagsBF.bUnk0004 = 0;
+	lactor->dynamicFlagsBF.animEnded = 0;
 	lactor->dynamicFlagsBF.bUnk0008 = 1;
 
 	if (lactor->animExtraData) {
