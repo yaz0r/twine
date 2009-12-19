@@ -176,13 +176,19 @@ typedef enum
 	clover
 } inventory;
 
-typedef enum
-{
-	normal,
-	athletic,
-	agressive,
-	discrete
-} behaviors;
+#define NORMAL 0
+#define ATHLETIC 1
+#define AGRESSIVE 2
+#define DISCRETE 3
+
+#define NO_MOVE 0
+#define MOVE_MANUAL 1
+#define MOVE_FOLLOW 2
+#define MOVE_TRACK 3
+#define MOVE_FOLLOW_2 4
+#define MOVE_TRACK_ATTACK 5
+#define MOVE_SAME_XZ 6
+#define MOVE_RANDOM 7
 
 #include "osystem.h"
 #include "angle.h"

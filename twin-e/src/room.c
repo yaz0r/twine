@@ -375,7 +375,6 @@ void LoadScene(int sceneNumber) {
 			actors[currentActor].entityDataPtr = HQR_GetCopy(HQR_Fic, modelNumber);
 #else
 			HQRM_Load("file3d.hqr", modelNumber, &actors[currentActor].entityDataPtr);
-			printf("Loaded character entity pointer of %d, in room: %p\n", currentActor, actors[currentActor].entityDataPtr);
 #endif
 		}
 

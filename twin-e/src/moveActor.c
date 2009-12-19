@@ -95,7 +95,7 @@ void DoTrack(int actorNumber) {
 				break;
 			}
 		case 5:
-			if (!(lactor->dynamicFlagsBF.bUnk0004)) {
+			if (!lactor->dynamicFlagsBF.animEnded) {
 				continueMove = 0;
 				lactor->positionInMoveScript--;
 			} else {
@@ -176,7 +176,7 @@ void DoTrack(int actorNumber) {
 			break;
 		case 13:
 			lactor->positionInMoveScript += 2;
-			if (lactor->dynamicFlagsBF.bUnk0004) {
+			if (lactor->dynamicFlagsBF.animEnded) {
 				(*(scriptPtr + 1))++;
 
 				if (*(scriptPtr + 1) == *scriptPtr) {

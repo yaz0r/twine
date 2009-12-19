@@ -79,8 +79,6 @@ short int processActorZ;
 
 short int currentlyProcessedActorNum;
 
-int mainLoopVar17;
-
 int getPosVar1;
 int getPosVar2;
 int getPosVar3;
@@ -110,6 +108,8 @@ int action;
 int time1;
 int time3;
 
+char behavior;
+
 int mainLoop(void) {
 	requestBackgroundRedraw = 1;
 	lockPalette = 1;
@@ -123,8 +123,8 @@ int mainLoop(void) {
 int mainLoopInteration(void) {
 	int i;
 	int currentTime;
-	/*int textBank;
-	int temp;*/
+	int textBank;
+	int temp;
 
 	currentTime = lba_time;
 	for (;;)
@@ -155,8 +155,10 @@ int mainLoopInteration(void) {
 					return 0;
 				}
 			}
-			/* TODO: fix
-			if (os_isPressed(KEY_F6)) { // F6
+
+			/* Open the options menu */
+			if (os_isPressed(KEY_OPTIONSMENU))
+			{
 				temp = languageCD1;
 				freezeTime();
 				TestRestoreModeSVGA(1);
@@ -174,7 +176,8 @@ int mainLoopInteration(void) {
 
 				unfreezeTime();
 				fullRedraw(1);
-			}*/
+			}
+
 			selectedInventoryObj = -1;
 			/* Open the inventory menu */
 			if (os_isPressed(KEY_INVENTORY) && twinsen->costumeIndex != -1 && twinsen->comportement == 1)
@@ -254,9 +257,17 @@ int mainLoopInteration(void) {
 			}
 
 			/* Change behavior */
-			/* TODO: fix */
-			/*
-			if (fkeys >= 1  && fkeys <= 4 && twinsen->costumeIndex != -1 && twinsen->comportement == 1 && !(fkeys == comportementHero + 1))
+			behavior = -1;
+			if (os_isPressed(KEY_BEHAVIOR_0))
+				behavior = 0;
+			else if (os_isPressed(KEY_BEHAVIOR_1))
+				behavior = 1;
+			else if (os_isPressed(KEY_BEHAVIOR_2))
+				behavior = 2;
+			else if (os_isPressed(KEY_BEHAVIOR_3))
+				behavior = 3;
+
+			if (behavior != -1 && twinsen->costumeIndex != -1 && twinsen->comportement == MOVE_MANUAL && behavior != comportementHero)
 			{
 				TestRestoreModeSVGA(1);
 
@@ -264,21 +275,19 @@ int mainLoopInteration(void) {
 					blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
 					os_copyBlockPhys(5, 446, 350, 479);
 				}
-				// Added: Implemented with translations like LBA2 -----
+
 				CoulFont(15);
 				textBank = currentTextBank;
 				currentTextBank = -1;
 				InitDial(0);
-				GetMultiText(fkeys - 1, dataString);
+				GetMultiText(behavior, dataString);
 				Font(5, 446, dataString);
 				os_copyBlockPhys(5, 446, 350, 479);
 				currentTextBank = textBank;
 				InitDial(currentTextBank + 3);
 				cptime = currentTime;
-				SetComportement(fkeys - 1);
-
-				fkeys = 0;
-			}*/
+				SetComportement(behavior);
+			}
 
 			/* Enable protopack */
 			if (os_isPressed(KEY_ACTION_PROTOPACK) && vars[protopack])
@@ -307,20 +316,17 @@ int mainLoopInteration(void) {
 				}
 			}
 
-			// Time to display the behaviour text showed in the previous condition.
+			/* Show the behavior text for 100 ms long */
 			if ((lba_time - cptime) > 100 && cptime)
 			{
-				printf("WTF ?? !!!\n");
 				blitRectangle(5, 446, 350, 479, (char*)workVideoBuffer, 5, 446, (char*)frontVideoBuffer);
 				os_copyBlockPhys(5, 446, 350, 479);
 				cptime = 0;
 			}
 
-			/* TODO: fullscreen
-			if (fkeys == 12) { // F12 for FullScreen
-				osystem_fullScreen();
-			} */
-
+			/* Change fullscreen mode */
+			if (os_isPressed(KEY_FULLSCREEN))
+				os_fullScreen();
 
 			/* Recenter the screen */
 			if (os_isPressed(KEY_RECENTER) && disableScreenRecenter == 0)
@@ -370,12 +376,6 @@ int mainLoopInteration(void) {
 			/* Finished input handling */
 		}
 
-		/* TODO: better name for this */
-		mainLoopVar17 = getRealValue(&mainLoopVar1);
-		if (!mainLoopVar17)
-			mainLoopVar17 = 1;
-
-		setActorAngle(0, -256, 5, &mainLoopVar1);
 		disableScreenRecenter = 0;
 
 		for (i = 0; i < numActorInRoom; i++)
@@ -795,14 +795,16 @@ void DoDir(int actorNum) {
 	{
 		/* If it's not a sprite */
 		if (!lactor->staticFlagsBF.isSpriteActor)
-			if (lactor->comportement != athletic)
+			if (lactor->comportement != ATHLETIC)
 				lactor->angle = getRealAngle(&lactor->time);
 
 		switch (lactor->comportement)
 		{
-		case 0: // NO_MOVE
+		/* Doesn't move */
+		case NO_MOVE:
 			break;
-		case 1: // MOVE_MANUAL
+		/* Move manually (controlled) */
+		case 1:
 			/* If it's twinsen */
 			if (actorNum == 0)
 			{
@@ -819,15 +821,15 @@ void DoDir(int actorNum) {
 				{
 					switch (comportementHero)
 					{
-					case normal:
+					case NORMAL:
 						/* Just do the action */
 						action = 1;
 						break;
-					case athletic:
+					case ATHLETIC:
 						/* Change the animation to jump */
 						InitAnim(ANIM_jump, 1, 0, actorNum);
 						break;
-					case agressive:
+					case AGRESSIVE:
 						/* If agressivity is set automatical */
 						if (autoAgressivity)
 						{
@@ -868,7 +870,7 @@ void DoDir(int actorNum) {
 								InitAnim(ANIM_kick, 1, 0, actorNum);
 						}
 						break;
-					case discrete:
+					case DISCRETE:
 						/* Change the animation to hide */
 						InitAnim(ANIM_hide, 0, 255, 0);
 						break;
@@ -966,35 +968,45 @@ void DoDir(int actorNum) {
 								lactor->speed, &lactor->time);
 			}
 			break;
-		/* TODO: understand the other movements */
-		case 2: { //MOVE_FOLLOW
+		/* Follows an other actor */
+		case MOVE_FOLLOW: {
 				int tempAngle;
 
+				/* If the followed actor doesn't exist */
 				assert(lactor->followedActor != -1);
 
+				/* Get the angle between the current actor's position and the followed actor's one */
 				tempAngle = GetAngle(lactor->X, lactor->Z, actors[lactor->followedActor].X, actors[lactor->followedActor].Z);
 
+				/* If it's a sprite, just change the angle variable */
 				if (lactor->staticFlagsBF.isSpriteActor)
 					lactor->angle = tempAngle;
+				/* Else, use ManualRealAngle */
 				else
 					ManualRealAngle(lactor->angle, tempAngle, lactor->speed, &lactor->time);
 				break;
 			}
 
-		case 3: //MOVE_TRACK
+		/* ?? */
+		case MOVE_TRACK:
+			printf("!!!! MOVE_TRACK\n");
 			if (lactor->positionInMoveScript == -1)
 				lactor->positionInMoveScript = 0;
 			break;
-		case 4: // MOVE_FOLLOW_2
+		case MOVE_FOLLOW_2:
+			printf("!!!! MOVE_FOLLOW_2\n");
 			break;
-		case 5: // MOVE_TRACK_ATTACK
+		case MOVE_TRACK_ATTACK:
+			printf("!!!! MOVE_TRACK_ATTACK\n");
 			break;
-		case 6: // MOVE_SAME_XZ
+		/* Exactly at the same position than the followed actor */
+		case MOVE_SAME_XZ:
 			lactor->X = actors[lactor->followedActor].X;
 			lactor->Z = actors[lactor->followedActor].Z;
 			break;
-		case 7: // MOVE_RANDOM
-			printf("-- Moving randomly\n");
+		/* Moves randomly (TODO: decode) */
+		case MOVE_RANDOM:
+			printf("!!!! MOVE_RANDOM\n");
 			if (!lactor->dynamicFlagsBF.isRotationByAnim)
 			{
 				if (lactor->field_3 & 0x80)
@@ -1170,7 +1182,7 @@ void DoAnim(int actorNum) {
 			lactor->lastZ = currentZ;
 			lactor->lastY = currentY;
 
-			lactor->dynamicFlagsBF.bUnk0004 = 0;
+			lactor->dynamicFlagsBF.animEnded = 0;
 			lactor->dynamicFlagsBF.bUnk0008 = 0;
 
 			if (keyFramePassed) { // if keyFrame
@@ -1206,7 +1218,7 @@ void DoAnim(int actorNum) {
 						GereAnimAction(lactor, actorNum);
 					}
 
-					lactor->dynamicFlagsBF.bUnk0004 = 1;
+					lactor->dynamicFlagsBF.animEnded = 1;
 				}
 
 				lactor->lastRotationSpeed = 0;
@@ -1233,7 +1245,7 @@ void DoAnim(int actorNum) {
 
 	if (lactor->dynamicFlagsBF.isFalling) { // if falling, then no modification...
 		processActorX = processActorVar2;
-		processActorZ = processActorVar3 + mainLoopVar17; // apply fall speed
+		processActorZ = processActorVar3 - (256.0/5.0); // apply fall speed
 		processActorY = processActorVar4;
 	}
 

@@ -31,6 +31,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osystem.h"
 
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+Uint32 rmask = 0xff000000;
+Uint32 gmask = 0x00ff0000;
+Uint32 bmask = 0x0000ff00;
+Uint32 amask = 0x000000ff;
+#else
+Uint32 rmask = 0x000000ff;
+Uint32 gmask = 0x0000ff00;
+Uint32 bmask = 0x00ff0000;
+Uint32 amask = 0xff000000;
+#endif
+
 char fullscreen;
 
 char *tempBuffer;
@@ -89,25 +101,7 @@ void os_delay(int time) {
 
 int os_init()
 {
-	unsigned char *keyboard;
-	int size;
 	int i;
-
-	Uint32 rmask, gmask, bmask, amask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-
-	fullscreen = 0;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_CDROM | (USE_SDL_MIXER ? SDL_INIT_AUDIO:0)) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -129,13 +123,7 @@ int os_init()
 
 	SDL_WM_SetCaption("Little Big Adventure: TwinEngine", "LBA");
 
-	SDL_PumpEvents();
-
-	keyboard = SDL_GetKeyState(&size);
-
-	keyboard[SDLK_RETURN] = 0;
-
-	sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE/*|SDL_FULLSCREEN*/);
+	sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE);
 
 	if (sdl_screen == NULL) {
 		fprintf(stderr, "Couldn't set 640x480x8 video mode: %s\n", SDL_GetError());
@@ -197,22 +185,6 @@ void os_copyBlockPhys(int left, int top, int right, int bottom) {
 }
 
 void os_initVideoBuffer(char *buffer, int width, int height) {
-	Uint32 rmask, gmask, bmask, amask;
-
-	/* SDL interprets each pixel as a 32-bit number, so our masks must depend
-	   on the endianness (byte order) of the machine */
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
-
 	sdl_bufferRGBA = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32, rmask, gmask, bmask, amask);
 	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
@@ -226,19 +198,6 @@ void os_crossFade(char *buffer, char *palette) {
 	SDL_Surface *backupSurface;
 	SDL_Surface *newSurface;
 	SDL_Surface *tempSurface;
-	Uint32 rmask, gmask, bmask, amask;
-
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0xff000000;
-	gmask = 0x00ff0000;
-	bmask = 0x0000ff00;
-	amask = 0x000000ff;
-#else
-	rmask = 0x000000ff;
-	gmask = 0x0000ff00;
-	bmask = 0x00ff0000;
-	amask = 0xff000000;
-#endif
 
 	backupSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
 	newSurface =
@@ -273,7 +232,7 @@ void os_fullScreen()
 	SDL_FreeSurface(sdl_screen);
 	sdl_screen = NULL;
 
-	fullscreen = 1 - fullscreen;
+	fullscreen ^= 1;
 
 	sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE | (fullscreen ? SDL_FULLSCREEN:0));
 	SDL_SetColors(sdl_screen, (SDL_Color*)palette, 0, 256);

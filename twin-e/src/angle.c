@@ -24,11 +24,11 @@ void clearRealAngle(actor * ptr) {
 	setActorAngleSafe(ptr->angle, ptr->angle, 0, &ptr->time);
 }
 
-void setActorAngle(short int arg0, short int arg4, short int arg8, time *ptr)
+void setActorAngle(short int from, short int to, short int numOfStep, time *ptr)
 {
-	ptr->from = arg0;
-	ptr->to = arg4;
-	ptr->numOfStep = arg8;
+	ptr->from = from;
+	ptr->to = to;
+	ptr->numOfStep = numOfStep;
 	ptr->timeOfChange = lba_time;
 }
 

@@ -72,12 +72,13 @@ void drawCharacter(int X, int Y, unsigned char caractere) {
 
 	toNextLine = WINDOW_X - sizeX;
 
-	do {
+	for (;;) {
 		index = *(data++);
-		do {
+		for (;;) {
 			jump = *(data++);
 			screen += jump;
 			tempX += jump;
+			/* New line */
 			if (--index == 0) {
 				screen += toNextLine;
 				tempY++;
@@ -107,8 +108,8 @@ void drawCharacter(int X, int Y, unsigned char caractere) {
 					break;
 				}
 			}
-		} while (1);
-	} while (1);
+		}
+	}
 }
 
 void Font(int X, int Y, char *string) {
@@ -117,20 +118,15 @@ void Font(int X, int Y, char *string) {
 	if (fntFont == 0)   // if the font is defined
 		return;
 
-	do {
-		character = (unsigned char) * (string++); // read the next char from the string
-
-		if (character == 0) // if the char is 0x0, -> end of string
-			break;
-
-		if (character == 0x20)  // if it's a space char
+	for (character = -1; character != 0; character = (unsigned char)*(string++)) {
+		if (character == 0x20) {
 			X += spaceLenght;
-		else {
+		} else {
 			stringLenght = *(fntFont + convertWFromLE(*((short int *)(fntFont + character * 4))));  // get the length of the character
 			drawCharacter(X, Y, character); // draw the character on screen
 			X += interCharSpace;  // add the length of the space between 2 characters
 			X += stringLenght;  // add the length of the current character
 		}
-	} while (1);
+	}
 }
 
