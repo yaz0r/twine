@@ -164,9 +164,11 @@ void printTextFullScreen(int textIndex) {
 	initText(textIndex);  // prépare le text
 	InitDialWindow();
 
-	do {      // debut de la boucle d'affichage du text+sons
+	temp3 = 0;
+	while (!temp3) {      // debut de la boucle d'affichage du text+sons
 		waitRetrace();
 		isVoxSet = temp2 = printText10(); // on doit player le son ?
+		
 		printText4(voxFileHandle);
 
 		if (isVoxSet == 2) {
@@ -182,12 +184,10 @@ void printTextFullScreen(int textIndex) {
 			break;
 		}
 
-		if (!temp2) {
-			if (!printText11()) {
+		if (!temp2)
+			if (!printText11())
 				break;
-			}
-		}
-	} while (!temp3);
+	}
 
 	printTextVar5 = 0;
 
@@ -450,11 +450,11 @@ void drawDoubleLetter(int a, int b, int c, int d) {
 
 	CoulFont(0);    // on met la couleur grise
 
-	drawLetter2(a + 2, b + 4, c); // le caractere derriere en gris
+	drawCharacter(a + 2, b + 4, c); // le caractere derriere en gris
 
 	CoulFont(d);    // on met la bonne couleur
 
-	drawLetter2(a, b, c);
+	drawCharacter(a, b, c);
 
 	left = a;
 	top = b;
@@ -466,15 +466,6 @@ void drawDoubleLetter(int a, int b, int c, int d) {
 	os_copyBlockPhys(left, top, right, bottom);
 }
 
-void drawLetter2(int x, int y, int c) {
-	char temp[2];   // todo: faire une vrais implementation de la chose...
-
-	temp[1] = 0;
-	temp[0] = (char) c;
-
-	Font(x, y, temp);
-}
-
 void TEXT_GetLetterSize(byte character, int *pLetterWidth, int *pLetterHeight, byte * pFont) {
 	byte *temp;
 
@@ -484,21 +475,18 @@ void TEXT_GetLetterSize(byte character, int *pLetterWidth, int *pLetterHeight, b
 }
 
 void printText8Sub4(short int a, short int b, short int c) {
-	int counter;
 	int temp;
 	int counter2 = 0;
 	int var1;
 	int var2;
 
-	counter = printText8Var3;
-
-	if (counter < 32) {
-		temp = counter * 3;
+	if (printText8Var3 < 32) {
+		temp = printText8Var3 * 3;
 		pt8s4[temp] = c;
 		pt8s4[temp+1] = a;
 		pt8s4[temp+2] = b;
 
-		counter++;
+		printText8Var3++;
 	} else {
 		while (counter2 < 31) {
 			var1 = (counter2 + 1) * 3;
@@ -512,8 +500,6 @@ void printText8Sub4(short int a, short int b, short int c) {
 		pt8s4[94] = a;
 		pt8s4[95] = b;
 	}
-
-	printText8Var3 = counter;
 }
 
 void printText10Sub(void) {

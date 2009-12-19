@@ -1010,10 +1010,10 @@ void runActorScript(short int actorNumber)
 
 				if (drawVar1 < 440) {
 					temp = READ_LE_S16(actorScriptPtr);
-					if (setup_lst != 0) {
-						if (!temp)
-							temp = 16;
-					}
+#ifndef US_IMG
+					if (!temp)
+						temp = 16;
+#endif
 
 					GetMultiText(temp, string);
 

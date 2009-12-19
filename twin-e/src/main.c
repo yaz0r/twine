@@ -55,8 +55,6 @@ byte *bufCube;
 
 int screenLockupTable[2000]; /* TODO: temporary ? */
 
-int setup_lst;
-
 void initVideoStuff(void) {
 	int i, j, k;
 
@@ -119,10 +117,11 @@ static void init(void)
 	FadeToBlack((char *) paletteRGBA);
 
 #ifndef FASTDEBUG
-	if (setup_lst == 0)   // switch pour les 2 version de l'ecran titre de LBA
+# ifdef US_IMG
 		RessPict(49);
-	else
+# else
 		RessPict(12);
+# endif
 
 	os_delay(3000);
 

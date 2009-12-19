@@ -86,7 +86,7 @@ void playFla(char *flaName)
 
 		    os_draw320x200BufferToScreen((unsigned char*)flaBuffer);
 
-            oldSyncTime = syncTime + (syncTime - oldSyncTime - 1000.0f/(flaHeaderData.speed+1));
+            oldSyncTime = syncTime;
     	    currentFrame++;
     		if (currentFrame == flaHeaderData.numOfFrames)
 	    		break;

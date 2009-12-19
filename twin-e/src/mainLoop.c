@@ -132,7 +132,8 @@ int mainLoopInteration(void) {
 		if (needChangeRoom != -1)
 			ChangeCube();
 
-		if (lockPalette == 0) {
+		if (lockPalette == 0)
+		{
 			/* Starting inputs */
 
 			/* Open the menu */
@@ -186,7 +187,6 @@ int mainLoopInteration(void) {
 				TestRestoreModeSVGA(1);
 				Inventory();
 
-				/* TODO: fix missing objects */
 				/* Process selected objects */
 				switch (selectedInventoryObj)
 				{
@@ -837,8 +837,8 @@ void DoDir(int actorNum) {
 
 							lactor->angle = getRealAngle(&lactor->time);
 
-							/* TODO: figure what it is */
-							if (lactor->anim == 0)
+							/* If twinsen is not already doing something */
+							if (lactor->anim == ANIM_static)
 							{
 								/* Choose a random knock */
 								switch (rand() % 3)
@@ -877,13 +877,13 @@ void DoDir(int actorNum) {
 					}
 				}
 
-				/* TODO: understand ALL this paragraph */
 				/* If the weapon key is pressed and inventory is not open */
 				if (os_isPressed(KEY_CHAR_USEWEAPON) && !vars[70])
 				{
 					/* If twinsen is using the saber and he has it */
 					if (usingSword && vars[saber])
 					{
+						/* Make Twinsen wear tunique + saber */
 						if (lactor->body != 2)
 							InitBody(2, 0);
 
@@ -895,6 +895,7 @@ void DoDir(int actorNum) {
 					/* Else, if he has the magic ball */
 					else if (vars[ball])
 					{
+						/* If the magic ball is not thrown */
 						if (magicBallIdx == -1)
 							InitAnim(ANIM_throwBall, 1, 0, actorNum);
 
@@ -923,8 +924,7 @@ void DoDir(int actorNum) {
 				/* Walk forward */
 				if (os_isPressed(KEY_CHAR_FORWARD))
 				{
-					/* TODO: figure out what it is */
-					if (currentActorInZoneProcess == 0)
+					if (!climbing)
 						InitAnim(ANIM_walk, 0, 255, actorNum);
 					twinsenMoved = 1;
 					twinsenWalked = 1;

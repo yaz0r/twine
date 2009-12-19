@@ -25,6 +25,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "renderer.h"
 
+#define vertexDebug(id) {}
+/*#define vertexDebug(id) if (id[0] == 'U') printf(id "Got polyTab[%d + %d] => %ld\n", temp2, videoHeight, ptr3 - polyTab); \
+								   else printf(id "Got polyTab[%d] => %ld\n", temp2, ptr3 - polyTab);*/
+
 pointTab _projectedPointTable[800];
 pointTab _flattenPointTable[800];
 
@@ -1044,7 +1048,6 @@ int finishRender(unsigned char *esi) {
 		} while (--temp);
 	}
 
-
 	renderTabEntryPtr2 = renderTab;
 
 	assert(frontVideoBufferbis == frontVideoBuffer);
@@ -1068,7 +1071,6 @@ int finishRender(unsigned char *esi) {
 	}
 	renderTabEntryPtr2 = renderTabSorted;
 
-
 	assert(frontVideoBufferbis == frontVideoBuffer);
 
 	if (_numOfPrimitives) {
@@ -1082,6 +1084,7 @@ int finishRender(unsigned char *esi) {
 
 			switch (type) {
 			case 0: { // draw a line
+
 					unsigned int x1;
 					unsigned int y1;
 					unsigned int x2;
@@ -1663,6 +1666,13 @@ int ComputePoly_A(void) {
 	vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
 	oldVertexX = *(ptr1++);
 	oldVertexY = *(ptr1++);
+	/* TODO: fix oldVertexX, oldVertexY, currentVertexX and currentVertexY,
+	 * because it shouldn't be less than 0 or more than width/height */
+
+	if (oldVertexY < 0/* || oldVertexY >= 480*/)
+		return 1;
+	if (oldVertexX < 0/* || oldVertexX >= 640*/)
+		return 1;
 
 	do {
 		oldVertexParam = vertexParam1;
@@ -1670,6 +1680,11 @@ int ComputePoly_A(void) {
 		vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
 		currentVertexX = *(ptr1++);
 		currentVertexY = *(ptr1++);
+		/* TODO: don't forget to fix that too */
+		if (currentVertexY < 0/* || currentVertexY >= 480*/)
+			return 1;
+		if (currentVertexX < 0/* || currentVertexX >= 640*/)
+			return 1;
 
 		// drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
 
@@ -1725,12 +1740,13 @@ int ComputePoly_A(void) {
 
 				oldVertexY += 2;
 
+				/* TODO: investigate all the parts of code like this one */
 				for (i = 0; i < oldVertexY; i++) {
-					// *(ptr3)=((temp7&0xFFFF0000)>>16);
-					if ((ptr3 - polyTab) < 960)
-						*(ptr3) = (short int) vfloat2;
+					if ((ptr3 - polyTab) < 960 && (ptr3 - polyTab) > 0)
+						*ptr3 = (short int) vfloat2;
+					else
+						vertexDebug("U0");
 					ptr3 += direction;
-					// temp7+=step;
 					vfloat2 -= vfloat;
 				}
 
@@ -1775,8 +1791,10 @@ int ComputePoly_A(void) {
 						oldVertexX += 2;
 
 						for (i = 0; i < oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960)
+							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
 								*(ptr3) = reste.temp;
+							else
+								vertexDebug("U1");
 							ptr3 += direction;
 							reste.temp += test.temp;
 						}
@@ -1816,8 +1834,10 @@ int ComputePoly_A(void) {
 						reste.bit.ah = oldVertexParam;
 
 						for (i = 0; i <= oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960)
+							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
 								*(ptr3) = reste.temp;
+							else
+								vertexDebug("U2");
 							ptr3 += direction;
 							reste.temp -= test.temp;
 						}
@@ -1873,14 +1893,13 @@ int ComputePoly_A(void) {
 				oldVertexY += 2;
 
 				for (i = 0; i < oldVertexY; i++) {
-					// *(ptr3)=((temp7&0xFFFF0000)>>16);
-					if ((ptr3 - polyTab) < 960)
+					if ((ptr3 - polyTab) < 960 && (ptr3 - polyTab) >= 0)
 						*(ptr3) = (short int) vfloat2;
+					else
+						vertexDebug("D0");
 					ptr3 += direction;
-					// temp7+=step;
 					vfloat2 += vfloat;
 				}
-
 				if (FillVertic_AType >= 7) {
 					short int* ptr3 = &polyTab2[temp2];
 
@@ -1922,8 +1941,10 @@ int ComputePoly_A(void) {
 						oldVertexX += 2;
 
 						for (i = 0; i < oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960)
+							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
 								*(ptr3) = reste.temp;
+							else
+								vertexDebug("D1");
 							ptr3 += direction;
 							reste.temp += test.temp;
 						}
@@ -1963,8 +1984,10 @@ int ComputePoly_A(void) {
 						reste.bit.ah = oldVertexParam;
 
 						for (i = 0; i <= oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960)
+							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
 								*(ptr3) = reste.temp;
+							else
+								vertexDebug("D2");
 							ptr3 += direction;
 							reste.temp -= test.temp;
 						}

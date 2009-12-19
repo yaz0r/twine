@@ -265,7 +265,6 @@ void fullRedraw(int param) {
 						SetInterAnimObjet2(lactor->animPosition, (char*)HQR_Get(HQR_Anims, lactor->previousAnimIndex), (char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
 					if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY, 0, lactor->angle, 0, bodyPtrTab[lactor->costumeIndex])) {
-
 						if (renderLeft < 0)
 							renderLeft = 0;
 

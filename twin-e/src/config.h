@@ -7,12 +7,16 @@
 #define LANG_ITALIANO 4
 #define LANG_PORTUGUESE 5
 
-#define LANGUAGE LANG_FRENCH
+#define LANGUAGE LANG_ENGLISH
+
+#if LANGUAGE == LANG_ENGLISH
+# define US_IMG
+#endif
 
 #define WINDOW_X 640
 #define WINDOW_Y 480
 
-#define FASTDEBUG
+//#define FASTDEBUG
 
 #define USE_SDL
 

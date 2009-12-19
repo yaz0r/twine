@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "script.h"
 #include "comportementMenu.h"
 
-int currentActorInZoneProcess;
+int climbing;
 
 short int useAnotherGrm = -1;
 
@@ -47,9 +47,8 @@ void CheckZoneSce(actor * lactor, int actorNumber) {
 
 	lactor->zone = -1;
 
-	if (!actorNumber) {
-		currentActorInZoneProcess = actorNumber;
-	}
+	if (actorNumber == 0)
+		climbing = 0;
 
 	for (i = 0; i < numOfZones; i++) {
 		if ((currentX >= pZone->bottomLeft.X && currentX <= pZone->topRight.X) &&
@@ -131,7 +130,7 @@ void CheckZoneSce(actor * lactor, int actorNumber) {
 
 						if (destX >= 0 && destZ >= 0 && destX <= 0x7E00 && destZ <= 0x7E00) {
 							if (WorldColBrick(destX, lactor->Y + 0x100, destZ)) {
-								currentActorInZoneProcess = 1;
+								climbing = 1;
 								if (lactor->Y >= abs(pZone->bottomLeft.Y + pZone->topRight.Y) / 2) {
 									InitAnim(ANIM_reachTopOfLadder, 2, 0, actorNumber);  //get out of ladder
 								} else {

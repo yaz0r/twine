@@ -29,5 +29,3 @@ extern byte *bufCube;
 
 extern int screenLockupTable[2000];
 
-extern int setup_lst;
-

@@ -23,13 +23,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <SDL_mixer.h>
 #endif
 
-#include <SDL_ttf.h>
-
 #include "mainLoop.h"
 #include "hqr.h"
 #include "images.h"
 
 #include "osystem.h"
+
+#define SPEED 15              /* Ticks per Frame */
+#define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
+#define SLEEP_GRAN 1         /* Granularity of sleep */
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 Uint32 rmask = 0xff000000;
@@ -45,54 +47,34 @@ Uint32 amask = 0xff000000;
 
 char fullscreen;
 
-char *tempBuffer;
 SDL_Surface *sdl_buffer;
 SDL_Surface *sdl_buffer320x200;
-SDL_Surface *sdl_bufferStretch;
-SDL_Surface *sdl_bufferRGBA;
-SDL_Surface *sdl_screen;  // that's the SDL global object for the screen
-SDL_Color sdl_colors[256];
-SDL_Surface *surfaceTable[16];
-
-SDL_Event event;
-
-TTF_Font *font;
+SDL_Surface *sdl_screen;
 
 char breakMainLoop = 0;
 
 void os_mainLoop(void) {
-#define SPEED 15              /* Ticks per Frame */
-#define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
-#define SLEEP_GRAN 1         /* Granularity of sleep */
-
-long int t_start, t_left;
-long unsigned int t_end;
-long int q = 0;                   /* Dummy */
+	long int t_start;
+	SDL_Event event;
 
 	while (!breakMainLoop)
 	{
 		while (SDL_PollEvent(&event))
-		{
-			if (event.type == SDL_QUIT) {
+			if (event.type == SDL_QUIT)
 				breakMainLoop = 1;
-				break;
-			}
-		}
-
-		t_start = SDL_GetTicks();
 
 		mainLoopInteration();
-		t_end = t_start + SPEED;
-		t_left = t_start - SDL_GetTicks() + SPEED;
 
-		if (t_left > SLEEP_MIN) {
-			SDL_Delay(t_left - SLEEP_GRAN);
-		}
-		while (SDL_GetTicks() < t_end) {
-			q++;
-	    };
+		t_start = SDL_GetTicks();
+		while (SDL_GetTicks() < t_start + SPEED)
+			;
+
 		lba_time++;
 	}
+}
+
+void os_quit(void) {
+	breakMainLoop = 1;
 }
 
 void os_delay(int time) {
@@ -101,8 +83,6 @@ void os_delay(int time) {
 
 int os_init()
 {
-	int i;
-
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_CDROM | (USE_SDL_MIXER ? SDL_INIT_AUDIO:0)) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
@@ -130,31 +110,22 @@ int os_init()
 		exit(1);
 	}
 
-	for (i = 0; i < 16; i++) {
-		surfaceTable[i] =
-			SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
-	}
-
 	return 0;
 }
 
 void os_setPalette(byte * palette)
 {
-	SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
-
-	SDL_SetColors(sdl_buffer, sdl_colorsTemp, 0, 256);
+	SDL_SetColors(sdl_buffer, (SDL_Color *)palette, 0, 256);
 
 	SDL_BlitSurface(sdl_buffer, NULL, sdl_screen, NULL);
-
 	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
 void os_setPalette320x200(byte * palette)
 {
-	SDL_Color *sdl_colorsTemp = (SDL_Color *) palette;
-
-	SDL_SetColors(sdl_buffer320x200, sdl_colorsTemp, 0, 256);
+	SDL_SetColors(sdl_buffer320x200, (SDL_Color *)palette, 0, 256);
 }
+
 
 void os_flip()
 {
@@ -164,10 +135,7 @@ void os_flip()
 
 void os_draw320x200BufferToScreen()
 {
-	SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_bufferRGBA, NULL);
-
 	SDL_BlitSurface(sdl_buffer320x200, NULL, sdl_screen, NULL);
-
 	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
 }
 
@@ -185,7 +153,6 @@ void os_copyBlockPhys(int left, int top, int right, int bottom) {
 }
 
 void os_initVideoBuffer(char *buffer, int width, int height) {
-	sdl_bufferRGBA = SDL_CreateRGBSurface(SDL_SWSURFACE, 320, 200, 32, rmask, gmask, bmask, amask);
 	sdl_buffer320x200 = SDL_CreateRGBSurfaceFrom(buffer, width, height, 8, 320, 0, 0, 0, 0);
 }
 
@@ -195,48 +162,27 @@ void os_initBuffer(char *buffer, int width, int height) {
 
 void os_crossFade(char *buffer, char *palette) {
 	int i;
-	SDL_Surface *backupSurface;
-	SDL_Surface *newSurface;
-	SDL_Surface *tempSurface;
+	SDL_Surface *fadeSurface
+		= SDL_CreateRGBSurfaceFrom(buffer, 640, 480, 8, 640, 0, 0, 0, 0);
+	SDL_SetColors(fadeSurface, (SDL_Color *) palette, 0, 256);
 
-	backupSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, 640, 480, 32, rmask, gmask, bmask, 0);
-	newSurface =
-		SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_SRCALPHA, 640, 480, 32, rmask, gmask, bmask, 0);
-
-	tempSurface = SDL_CreateRGBSurfaceFrom(buffer, 640, 480, 8, 640, 0, 0, 0, 0);
-	SDL_SetColors(tempSurface, (SDL_Color *) palette, 0, 256);
-
-	SDL_BlitSurface(sdl_screen, NULL, backupSurface, NULL);
-	SDL_BlitSurface(tempSurface, NULL, newSurface, NULL);
-
-	for (i = 0; i < 8; i++) {
-		SDL_BlitSurface(backupSurface, NULL, surfaceTable[i], NULL);
-		SDL_SetAlpha(newSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 32);
-		SDL_BlitSurface(newSurface, NULL, surfaceTable[i], NULL);
-		SDL_BlitSurface(surfaceTable[i], NULL, sdl_screen, NULL);
+	for (i = 0; i < 7; i++) {
+		SDL_SetAlpha(fadeSurface, SDL_SRCALPHA | SDL_RLEACCEL, i * 32);
+		SDL_BlitSurface(fadeSurface, NULL, sdl_screen, NULL);
 		SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
-		SDL_Delay(20);
-
+		SDL_Delay(50);
 	}
 
-	SDL_BlitSurface(newSurface, NULL, sdl_screen, NULL);
-	SDL_UpdateRect(sdl_screen, 0, 0, 0, 0);
-
-	SDL_FreeSurface(backupSurface);
-	SDL_FreeSurface(newSurface);
-	SDL_FreeSurface(tempSurface);
+	SDL_FreeSurface(fadeSurface);
 }
 
 void os_fullScreen()
 {
-	SDL_FreeSurface(sdl_screen);
-	sdl_screen = NULL;
-
 	fullscreen ^= 1;
 
 	sdl_screen = SDL_SetVideoMode(640, 480, 32, SDL_SWSURFACE | (fullscreen ? SDL_FULLSCREEN:0));
 	SDL_SetColors(sdl_screen, (SDL_Color*)palette, 0, 256);
-	SDL_ShowCursor(!SDL_FULLSCREEN);
+	SDL_ShowCursor(!fullscreen);
 
 	requestBackgroundRedraw = 1;
 }

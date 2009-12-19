@@ -65,7 +65,7 @@ void GiveExtraBonus(actor * lactor);
 void ZoneGiveExtraBonus(ZONE_Box* pZone);
 void CheckZoneSce(actor * lactor, int actorNumber);
 
-extern int currentActorInZoneProcess;
+extern int climbing;
 
 extern short int useAnotherGrm;
 
