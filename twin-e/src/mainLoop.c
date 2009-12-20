@@ -42,6 +42,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "music.h"
 #include "cube.h"
 #include "body.h"
+#include "samples.h"
 
 #include "mainLoop.h"
 
@@ -350,25 +351,27 @@ int mainLoopInteration(void) {
 
 			if (os_isPressed(KEY_PAUSE))
 			{
-				//pauseSound();
+				pauseSound();
 				freezeTime();
 				if (!drawInGameTransBox)
 				{
-					printf("Game in Pause...");
+					printf("Game in Pause...\n");
 					CoulFont(15);
 					Font(5, 446, "Pause"); // Don't have an entry in the Text Bank
-					os_copyBlockPhys(5, 446, 100, 479);
+					os_copyBlockPhys(5, 446, 120, 479);
 				}
 
+				while (os_isPressed(KEY_PAUSE)) ;
 				while (!os_isPressed(KEY_PAUSE)) ;
+				while (os_isPressed(KEY_PAUSE)) ;
 
 				if (!drawInGameTransBox) {
-					blitRectangle(5, 446, 100, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
-					os_copyBlockPhys(5, 446, 100, 479);
+					blitRectangle(5, 446, 120, 479, (char *) workVideoBuffer, 5, 446, (char *) frontVideoBuffer);
+					os_copyBlockPhys(5, 446, 120, 479);
 				}
-				printf("Game Resumed!");
+				printf("Game Resumed!\n");
 				unfreezeTime();
-				//resumeSound();
+				resumeSound();
 			}
 
 			/* TODO: F5 input process ? */
@@ -382,8 +385,6 @@ int mainLoopInteration(void) {
 			actors[i].hitBy = -1;
 
 		GereExtras();
-
-		assert(frontVideoBufferbis == frontVideoBuffer);
 
 		/* Actors process wheel */
 
@@ -478,8 +479,6 @@ int mainLoopInteration(void) {
 				}
 			}
 		}
-
-		assert(frontVideoBufferbis == frontVideoBuffer);
 
 		/* Recenter the screen */
 		if (!disableScreenRecenter)

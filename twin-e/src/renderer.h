@@ -63,7 +63,7 @@ int renderAnimatedModel(unsigned char *costumePtr);
 void RotMatIndex2(int *eax, int *ebp);
 int finishRender(unsigned char *esi);
 void FillVertic_A(int ecx, int edi);
-int ComputePoly_A(void);
+void ComputePoly_A(void);
 void configureOrthoProjection(int x, int y);
 void setSomething3sub(int eax, int ebx, int ecx);
 void setCameraAngleSub(int eax, int ebx, int ecx);

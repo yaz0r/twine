@@ -95,9 +95,7 @@ short int primitiveCounter;
 int numOfVertex;
 short int numOfVertexRemaining;
 
-short int vleft;
 short int vtop;
-short int vright;
 short int vbottom;
 
 unsigned char oldVertexParam;
@@ -186,13 +184,13 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
 	ptr = costumePtr + 16 + READ_LE_U16(costumePtr + 14); // we jump after the header
 
 	if (costumeHeader & 2) { // if animated
-		return (renderAnimatedModel(ptr));  // That's the mostly used renderer code
+		return renderAnimatedModel(ptr);  // That's the mostly used renderer code
 	} else {
 		printf("Unsupported unanimated model render!\n");
 		exit(1);
 	}
 
-	return (0);
+	return 0;
 }
 
 void configureOrthoProjection(int x, int y) {
@@ -200,7 +198,6 @@ void configureOrthoProjection(int x, int y) {
 	setSomethingVar2 = y;
 	isUsingOrhoProjection = 1;
 }
-
 
 void SetLightVector(int angleX, int angleY, int angleZ) {
 	tab1 = &angleTable[0];
@@ -273,8 +270,6 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 	int *ptr4;
 	unsigned char *ptr6;
 	int temp;
-
-	assert(frontVideoBufferbis == frontVideoBuffer);
 
 	_numOfPoints = READ_LE_U16(costumePtr);
 	costumePtr += 2;
@@ -419,8 +414,6 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 
 		ptr3 = pri2Ptr2 = _partsPtr2 + 18;
 
-		assert(frontVideoBufferbis == frontVideoBuffer);
-
 		do {
 			temp = READ_LE_U16(ptr3);
 			if (temp) {
@@ -474,8 +467,6 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 			ptr4 = renderV21 = renderV21 + 9;
 		} while (--_numOfPrimitives);
 	}
-	assert(frontVideoBufferbis == frontVideoBuffer);
-
 	return (finishRender((unsigned char *) _shadePtr));
 }
 
@@ -552,8 +543,8 @@ void RotList(unsigned char *esi, int ecx, pointTab * dest, int *eax) {
 
 void RotMatIndex2(int *eax, int *ebp) {
 	int angle;
-	int angleVar1;    // esi
-	int angleVar2;    // ecx
+	int angleVar1;	// esi
+	int angleVar2;	// ecx
 
 	int matrix1[9];
 	int matrix2[9];
@@ -817,12 +808,10 @@ int finishRender(unsigned char *esi) {
 	temp = READ_LE_S16(esi);  // we read the number of polygones
 	esi += 2;
 
-	assert(frontVideoBufferbis == frontVideoBuffer);
-
 	if (temp) {   // if there is polygones
 		primitiveCounter = temp;  // the number of primitives = the number of polygones
 
-		do {    // loop that load all the polygones
+		do {	// loop that load all the polygones
 			render23 = edi;
 			currentPolyHeader = (polyHeader *) esi;
 			ecx = READ_LE_S32(esi);
@@ -1050,8 +1039,6 @@ int finishRender(unsigned char *esi) {
 
 	renderTabEntryPtr2 = renderTab;
 
-	assert(frontVideoBufferbis == frontVideoBuffer);
-
 	renderTabSortedPtr = renderTabSorted;
 	for (i = 0; i < _numOfPrimitives; i++) { // then we sort the polygones (FIXME: very slow !)
 		renderTabEntryPtr2 = renderTab;
@@ -1070,8 +1057,6 @@ int finishRender(unsigned char *esi) {
 		renderTab[bestPoly].depth = -0x7FFF;
 	}
 	renderTabEntryPtr2 = renderTabSorted;
-
-	assert(frontVideoBufferbis == frontVideoBuffer);
 
 	if (_numOfPrimitives) {
 		primitiveCounter = _numOfPrimitives;
@@ -1101,11 +1086,8 @@ int finishRender(unsigned char *esi) {
 					x2 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->x2);
 					y2 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->y2);
 
-					assert(frontVideoBufferbis == frontVideoBuffer);
-
 					drawLine(x1, y1, x2, y2, color);
 
-					assert(frontVideoBufferbis == frontVideoBuffer);
 					break;
 				}
 #ifndef MACOSX
@@ -1127,14 +1109,8 @@ int finishRender(unsigned char *esi) {
 						esi += 2;
 					}
 
-					assert(frontVideoBufferbis == frontVideoBuffer);
-
-					if (ComputePoly_A() != 2) {
-						assert(frontVideoBufferbis == frontVideoBuffer);
-						FillVertic_A(FillVertic_AType, color);
-					}
-
-					assert(frontVideoBufferbis == frontVideoBuffer);
+					ComputePoly_A();
+					FillVertic_A(FillVertic_AType, color);
 
 					break;
 				}
@@ -1177,10 +1153,7 @@ int finishRender(unsigned char *esi) {
 
 					circleParam3 -= 3;
 
-					assert(frontVideoBufferbis == frontVideoBuffer);
 					circle_fill(circleParam4, circleParam5, circleParam3, circleParam1);
-					assert(frontVideoBufferbis == frontVideoBuffer);
-
 				}
 			default: {
 					break;
@@ -1223,8 +1196,6 @@ void FillVertic_A(int ecx, int edi) {
 	if (vbottom >= videoHeight - 1) {
 		return;
 	}
-
-	assert(frontVideoBufferbis == frontVideoBuffer);
 
 	out = frontVideoBuffer + videoWidth * vtop;
 
@@ -1335,7 +1306,7 @@ void FillVertic_A(int ecx, int edi) {
 			break;
 		}
 	case 6: { // trame (buggé)
-//      unsigned char bl=color;
+//	  unsigned char bl=color;
 			unsigned char bh = 0;
 
 			currentLine = vtop;
@@ -1490,7 +1461,6 @@ void FillVertic_A(int ecx, int edi) {
 							if (currentXPos >= 0 && currentXPos < videoWidth)
 								*(out2) = (unsigned char)(((startColor + stopColor) / 2) >> 8);
 
-							assert(frontVideoBufferbis == frontVideoBuffer);
 						} else {
 							short int colorSize = stopColor - startColor;
 							if (hsize == 1) {
@@ -1504,7 +1474,6 @@ void FillVertic_A(int ecx, int edi) {
 								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = currentColor >> 8;
 
-								assert(frontVideoBufferbis == frontVideoBuffer);
 								currentColor &= 0xFF;
 								startColor += colorSize;
 								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
@@ -1514,7 +1483,6 @@ void FillVertic_A(int ecx, int edi) {
 								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2 + 1) = currentColor >> 8;
 
-								assert(frontVideoBufferbis == frontVideoBuffer);
 							} else if (hsize == 2) {
 								unsigned short int currentColor = startColor;
 								hsize++;
@@ -1528,7 +1496,6 @@ void FillVertic_A(int ecx, int edi) {
 								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = currentColor >> 8;
 
-								assert(frontVideoBufferbis == frontVideoBuffer);
 
 								out2++;
 								currentXPos++;
@@ -1541,7 +1508,6 @@ void FillVertic_A(int ecx, int edi) {
 								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2) = currentColor >> 8;
 
-								assert(frontVideoBufferbis == frontVideoBuffer);
 
 								currentColor &= 0xFF;
 								startColor += colorSize;
@@ -1553,7 +1519,6 @@ void FillVertic_A(int ecx, int edi) {
 								if (currentXPos >= 0 && currentXPos < videoWidth)
 									*(out2 + 1) = currentColor >> 8;
 
-								assert(frontVideoBufferbis == frontVideoBuffer);
 							} else {
 								unsigned short int currentColor = startColor;
 								colorSize /= hsize;
@@ -1569,7 +1534,6 @@ void FillVertic_A(int ecx, int edi) {
 									if (currentXPos >= 0 && currentXPos < videoWidth)
 										*(out2) = currentColor >> 8;
 
-									assert(frontVideoBufferbis == frontVideoBuffer);
 									out2++;
 									currentXPos++;
 								} else {
@@ -1583,7 +1547,6 @@ void FillVertic_A(int ecx, int edi) {
 									if (currentXPos >= 0 && currentXPos < videoWidth)
 										*(out2) = currentColor >> 8;
 
-									assert(frontVideoBufferbis == frontVideoBuffer);
 									currentXPos++;
 									currentColor &= 0xFF;
 									startColor += colorSize;
@@ -1593,7 +1556,6 @@ void FillVertic_A(int ecx, int edi) {
 									if (currentXPos >= 0 && currentXPos < videoWidth)
 										*(out2 + 1) = currentColor >> 8;
 
-									assert(frontVideoBufferbis == frontVideoBuffer);
 									currentXPos++;
 									out2 += 2;
 									startColor += colorSize;
@@ -1605,7 +1567,6 @@ void FillVertic_A(int ecx, int edi) {
 				out += videoWidth;
 				currentLine++;
 			} while (--renderLoop);
-			assert(frontVideoBufferbis == frontVideoBuffer);
 			break;
 		}
 	default: {
@@ -1614,41 +1575,33 @@ void FillVertic_A(int ecx, int edi) {
 		}
 	};
 
-	assert(frontVideoBufferbis == frontVideoBuffer);
 }
 
-int ComputePoly_A(void) {
-	short int vertexX, vertexY;
+void ComputePoly_A(void) {
+	short int vertexY;
 	short int *ptr1, *ptr3;
 	int i;
 	short int push1, push2;
-	char direction = 1;
+	char xdir = 1, ydir = 1;
 	int echange;
 	short int oldVertexX, oldVertexY;
 	short int currentVertexX, currentVertexY;
 	short int size;
-	int temp2, temp4, temp5, temp6;
-	int step;
+	int temp2;
 	float vfloat, vfloat2;
+	short int reste, test;
 
 	pRenderV1 = vertexCoordinates;
 	pRenderV2 = pRenderV3;
 	numOfVertexRemaining = numOfVertex;
 
-	vleft = vtop = 32767;
-	vright = vbottom = -32768;
+	vtop = 32767;
+	vbottom = -32768;
 
 	ptr1 = vertexCoordinates;
 
 	for (i = 0; i < numOfVertex; i++) {
-		ptr1++;   // discarding the 1st parameter
-
-		vertexX = *(ptr1++);
-
-		if (vertexX < vleft)
-			vleft = vertexX;
-		if (vertexX > vright)
-			vright = vertexX;
+		ptr1 += 2; // don't use the 2 first parameters
 
 		vertexY = *(ptr1++);
 
@@ -1666,341 +1619,114 @@ int ComputePoly_A(void) {
 	vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
 	oldVertexX = *(ptr1++);
 	oldVertexY = *(ptr1++);
-	/* TODO: fix oldVertexX, oldVertexY, currentVertexX and currentVertexY,
-	 * because it shouldn't be less than 0 or more than width/height */
 
-	if (oldVertexY < 0/* || oldVertexY >= 480*/)
-		return 1;
-	if (oldVertexX < 0/* || oldVertexX >= 640*/)
-		return 1;
-
-	do {
+	while (numOfVertexRemaining--) {
 		oldVertexParam = vertexParam1;
 
 		vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
 		currentVertexX = *(ptr1++);
 		currentVertexY = *(ptr1++);
-		/* TODO: don't forget to fix that too */
-		if (currentVertexY < 0/* || currentVertexY >= 480*/)
-			return 1;
-		if (currentVertexX < 0/* || currentVertexX >= 640*/)
-			return 1;
 
-		// drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
-
-		if (currentVertexY == oldVertexY) { // since it's scanline based, we don't care when we are only moving along X
+		/* Since it's scanline based, we don't care when we are only moving along X */
+		if (currentVertexY == oldVertexY) {
 			oldVertexX = size = currentVertexX;
 		} else {
-			push1 = currentVertexX; // let's save the current coordinates since we are going to modify the values
+			/* Let's save the current coordinates since we are going to modify the values */
+			push1 = currentVertexX;
 			push2 = currentVertexY;
 
-			if (currentVertexY < oldVertexY) { // if we are going up
+			/* Move up */
+			if (currentVertexY < oldVertexY) {
 				size = oldVertexY - currentVertexY;
-				direction = -1;
-
-				if (oldVertexX < currentVertexX) { // if we are going up right
-					echange = oldVertexX; // we invert the vertex to draw from new to old
-					oldVertexX = currentVertexX;
-					currentVertexX = echange;
-
-					echange = currentVertexY;
-					currentVertexY = oldVertexY;
-
-					oldVertexY = echange;
-
-					echange = oldVertexParam;
-					oldVertexParam = vertexParam2;
-					vertexParam2 = echange;
-
-					direction = 1;  // we will draw by going down the tab
-				}
-
-				temp2 = oldVertexY; // temp2 is the starting Y position
-				oldVertexY = size;  // oldVertexY now become the number of pixel
-				size = temp2 * 2;
-
-				ptr3 = &polyTab[temp2 + videoHeight]; // ptr3 is the output ptr in the renderTab
-
-				temp4 = ((oldVertexX - currentVertexX) << 16);  // temp4 = size in X << 16
-
-				temp5 = temp4 / oldVertexY; // temp5 is the size of a step << 16
-				temp6 = temp4 % oldVertexY; // temp6 is the remaining << 16
-
-				vfloat = ((float)(oldVertexX - currentVertexX)) / ((float) oldVertexY);
-
-				temp6 >>= 1;
-				temp6 += 0x7FFF;
-
-				step = (unsigned short) temp5;  // retrieve the size of a step
-
-				// temp7 = (((unsigned short)temp6) | ((oldVertexX & 0xFFFF)<<16));
-				vfloat2 = oldVertexX;
-
-				oldVertexX = oldVertexY;  // oldVertexX is now the number of vertical pixels
-
-				oldVertexY += 2;
-
-				/* TODO: investigate all the parts of code like this one */
-				for (i = 0; i < oldVertexY; i++) {
-					if ((ptr3 - polyTab) < 960 && (ptr3 - polyTab) > 0)
-						*ptr3 = (short int) vfloat2;
-					else
-						vertexDebug("U0");
-					ptr3 += direction;
-					vfloat2 -= vfloat;
-				}
-
-				if (FillVertic_AType >= 7) { // we must compute the color progression
-					short int* ptr3 = &polyTab2[temp2 + videoHeight];
-
-					temp4 = (vertexParam2 - oldVertexParam); // compute the color difference
-
-					if (temp4 >= 0) {
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}test;
-
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}reste;
-
-						test.bit.al = oldVertexParam;
-						test.bit.ah = vertexParam2;
-
-						test.bit.ah -= test.bit.al;
-
-						test.bit.al = 0;
-
-						reste.temp = test.temp % oldVertexX;
-
-						test.temp /= oldVertexX;
-
-						reste.bit.al >>= 1;
-						reste.bit.al += 0x7F;
-
-						reste.bit.ah = oldVertexParam;
-
-						oldVertexX += 2;
-
-						for (i = 0; i < oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
-								*(ptr3) = reste.temp;
-							else
-								vertexDebug("U1");
-							ptr3 += direction;
-							reste.temp += test.temp;
-						}
-					} else {
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}test;
-
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}reste;
-
-						test.bit.al = oldVertexParam;
-						test.bit.ah = vertexParam2;
-
-						test.bit.ah -= test.bit.al;
-						test.bit.ah = -test.bit.ah;
-
-						test.bit.al = 0;
-
-						reste.temp = test.temp % (oldVertexX);
-
-						test.temp /= oldVertexX;
-
-						reste.bit.al >>= 1;
-						reste.bit.al = -reste.bit.al;
-						reste.bit.al += 0x7F;
-
-						reste.bit.ah = oldVertexParam;
-
-						for (i = 0; i <= oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
-								*(ptr3) = reste.temp;
-							else
-								vertexDebug("U2");
-							ptr3 += direction;
-							reste.temp -= test.temp;
-						}
-					}
-				}
-				direction = 1;
-				oldVertexY = push2;
-				oldVertexX = push1;
-			} else { // if we are going down
-				size = currentVertexY - oldVertexY; // size is the number of pixel we must go
-				// verticaly
-
-				if (oldVertexX > currentVertexX) { // if we are going down and to the left
-					echange = oldVertexX; // in that case, we will draw the line the other
-					// side (from new point to old point)
-					oldVertexX = currentVertexX;
-					currentVertexX = echange;
-
-					echange = currentVertexY;
-					currentVertexY = oldVertexY;
-					oldVertexY = echange;
-
-					echange = oldVertexParam;
-					oldVertexParam = vertexParam2;
-					vertexParam2 = echange;
-
-					direction = -1; // since we are going backward in the screen
-				}
-
-				temp2 = oldVertexY; // temp2 is the starting Y position
-				oldVertexY = size;  // oldVertexY now become the number of pixel
-				size = temp2 * 2;
-
-				ptr3 = &polyTab[temp2]; // ptr3 is the output ptr in the renderTab
-
-				temp4 = ((currentVertexX - oldVertexX) << 16);  // temp4 = size in X << 16
-
-				temp5 = temp4 / oldVertexY; // temp5 is the size of a step << 16
-				temp6 = temp4 % oldVertexY; // temp6 is the remaining << 16
-
-				vfloat = ((float)(currentVertexX - oldVertexX)) / ((float) oldVertexY);
-
-				temp6 >>= 1;
-				temp6 += 0x7FFF;
-
-				step = (unsigned short) temp5;  // retrieve the size of a step
-
-				// temp7 = (((unsigned short)temp6) | ((oldVertexX & 0xFFFF)<<16));
-				vfloat2 = oldVertexX;
-
-				oldVertexX = oldVertexY;  // oldVertexX is now the number of vertical pixels
-
-				oldVertexY += 2;
-
-				for (i = 0; i < oldVertexY; i++) {
-					if ((ptr3 - polyTab) < 960 && (ptr3 - polyTab) >= 0)
-						*(ptr3) = (short int) vfloat2;
-					else
-						vertexDebug("D0");
-					ptr3 += direction;
-					vfloat2 += vfloat;
-				}
-				if (FillVertic_AType >= 7) {
-					short int* ptr3 = &polyTab2[temp2];
-
-					temp4 = ((vertexParam2 - oldVertexParam)); // compute the color difference
-
-					if (temp4 >= 0) {
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}test;
-
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}reste;
-
-						test.bit.al = oldVertexParam;
-						test.bit.ah = vertexParam2;
-
-						test.bit.ah -= test.bit.al;
-
-						test.bit.al = 0;
-
-						reste.temp = test.temp % oldVertexX;
-
-						test.temp /= oldVertexX;
-
-						reste.bit.al >>= 1;
-						reste.bit.al += 0x7F;
-
-						reste.bit.ah = oldVertexParam;
-
-						oldVertexX += 2;
-
-						for (i = 0; i < oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
-								*(ptr3) = reste.temp;
-							else
-								vertexDebug("D1");
-							ptr3 += direction;
-							reste.temp += test.temp;
-						}
-					} else {
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}test;
-
-						union {
-							struct {
-								unsigned char al;
-								unsigned char ah;
-							} bit;
-							unsigned short int temp;
-						}reste;
-
-						test.bit.al = oldVertexParam;
-						test.bit.ah = vertexParam2;
-
-						test.bit.ah -= test.bit.al;
-						test.bit.ah = -test.bit.ah;
-
-						test.bit.al = 0;
-
-						reste.temp = test.temp % (oldVertexX);
-
-						test.temp /= oldVertexX;
-
-						reste.bit.al >>= 1;
-						reste.bit.al = -reste.bit.al;
-						reste.bit.al += 0x7F;
-
-						reste.bit.ah = oldVertexParam;
-
-						for (i = 0; i <= oldVertexX; i++) {
-							if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) > 0)
-								*(ptr3) = reste.temp;
-							else
-								vertexDebug("D2");
-							ptr3 += direction;
-							reste.temp -= test.temp;
-						}
-					}
-				}
-				direction = 1;
-				oldVertexY = push2;
-				oldVertexX = push1;
+				ydir = -1;
+			/* Move down */
+			} else {
+				size = currentVertexY - oldVertexY;
+				ydir = 1;
 			}
-		}
-	} while (--numOfVertexRemaining);
 
-	return (1);
+			/* If the vertex X direction is not the same as its Y direction, then swap colors + positions */
+			if (oldVertexX * ydir > currentVertexX * ydir) {
+				echange = oldVertexX;
+				oldVertexX = currentVertexX;
+				currentVertexX = echange;
+
+				echange = currentVertexY;
+				currentVertexY = oldVertexY;
+				oldVertexY = echange;
+
+				echange = oldVertexParam;
+				oldVertexParam = vertexParam2;
+				vertexParam2 = echange;
+
+				xdir = -ydir;
+			} else {
+				xdir = ydir;
+			}
+
+			/* Starting Y position */
+			temp2 = oldVertexY;
+			/* oldVertexY becomes the number of pixel */
+			oldVertexY = size;
+			size = temp2 * 2;
+
+			/* ptr3 is the pointer to the actual polygons cell */
+			/* vfloat is the step for every point to the current vertex */
+			if (ydir == -1) {
+				ptr3 = &polyTab[temp2 + videoHeight];
+				vfloat = ((float)(oldVertexX - currentVertexX)) / ((float) oldVertexY);
+			} else {
+				ptr3 = &polyTab[temp2];
+				vfloat = ((float)(currentVertexX - oldVertexX)) / ((float) oldVertexY);
+			}
+
+			/* Starting X position */
+			vfloat2 = oldVertexX;
+
+			/* oldVertexX is now the number of vertical pixels */
+			oldVertexX = oldVertexY;
+
+			oldVertexY += 2;
+
+			/* Add all the points */
+			for (i = 0; i < oldVertexY; i++) {
+				if ((ptr3 - polyTab) < 960 && (ptr3 - polyTab) >= 0)
+					*ptr3 = (short int) vfloat2;
+				ptr3 += xdir;
+				vfloat2 += vfloat * ydir;
+			}
+
+			/* Compute the color progression */
+			if (FillVertic_AType >= 7) {
+				if (ydir == -1)
+					ptr3 = &polyTab2[temp2 + videoHeight];
+				else
+					ptr3 = &polyTab2[temp2];
+
+				/* Color progression per step */
+				test = (abs(vertexParam2 - oldVertexParam) << 8) / oldVertexX;
+				/* Starting color */
+				reste = (oldVertexParam << 8) | 0x7F; /* starts with the old vertex */
+						
+				if (vertexParam2 >= oldVertexParam)
+					oldVertexX += 2;
+				
+				/* Add all the colors */
+				for (i = 0; i < oldVertexX; i++) {
+					if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) >= 0)
+						*ptr3 = reste;
+					ptr3 += xdir;
+					if (vertexParam2 < oldVertexParam)
+						reste -= test;
+					else
+						reste += test;
+				}
+			}
+			/* Restore the old vertex position */
+			oldVertexY = push2;
+			oldVertexX = push1;
+		}
+	}
 }
 
 void drawLine(int a, int b, int c, int d, int e) {
@@ -2013,7 +1739,7 @@ void drawLine(int a, int b, int c, int d, int e) {
 	short int xchg;
 	int currentLineColor = e;
 
-	if (a > c) {    // pour toujours dessiner de gauche à droite
+	if (a > c) {	// pour toujours dessiner de gauche à droite
 		temp = c;
 		c = a;
 		a = temp;
@@ -2059,7 +1785,7 @@ void drawLine(int a, int b, int c, int d, int e) {
 
 // implementer la suite
 
-	flag2 = videoWidth;    // esi
+	flag2 = videoWidth;	// esi
 	c -= a;
 	d -= b;
 	if (d < 0) {
@@ -2067,11 +1793,10 @@ void drawLine(int a, int b, int c, int d, int e) {
 		d = -d;
 	}
 
-	assert(frontVideoBufferbis == frontVideoBuffer);
 	out = frontVideoBuffer + screenLockupTable[b] + a;
 
 	color = currentLineColor;
-	if (c < d) {    // pente importante
+	if (c < d) {	// pente importante
 		xchg = c;
 		c = d;
 		d = xchg;

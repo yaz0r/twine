@@ -97,8 +97,6 @@ void fullRedraw(int param) {
 	int spriteWidth;
 	int spriteHeight;
 
-	assert(frontVideoBufferbis == frontVideoBuffer);
-
 	temp1 = fullRedrawVar1;
 	temp2 = fullRedrawVar2;
 

@@ -19,11 +19,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef _SAMPLES_H_
 #define _SAMPLES_H_
 
-void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/);
-void playSampleFla(int sampleNum, /*int freq, */int repeat/*, int x, int y*/);
+void playSample(int sampleNum, int repeat);
+void playSampleFla(int sampleNum, int repeat);
 
 void soundInit();
 void playMidi(int musicNum);
+
+void pauseSound();
+void resumeSound();
 
 #endif
 

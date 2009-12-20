@@ -516,9 +516,8 @@ void printText10Sub(void) {
 	FillVertic_AType = 0;
 	numOfVertex = 3;
 
-	if (ComputePoly()) {
-		FillVertic(FillVertic_AType, progressiveTextStopColor);
-	}
+	ComputePoly();
+	FillVertic(FillVertic_AType, progressiveTextStopColor);
 
 	os_copyBlockPhys(dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
@@ -528,9 +527,9 @@ void FillVertic(int arg_0, int arg_4) {
 	FillVertic_A(arg_0, arg_4);
 }
 
-int ComputePoly(void) {
+void ComputePoly(void) {
 	pRenderV1 = vertexCoordinates;
-	return (ComputePoly_A());
+	ComputePoly_A();
 }
 
 int findString(int index) {

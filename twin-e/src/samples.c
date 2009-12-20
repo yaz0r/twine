@@ -24,8 +24,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "hqr.h"
 
 #ifdef USE_SDL_MIXER
-void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
-{
+void playSample(int sampleNum, int repeat) {
 	char filename[MAX_PATH];
 	Mix_Chunk * sample;
 
@@ -37,7 +36,7 @@ void playSample(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
 	Mix_PlayChannel(0, sample, repeat - 1);
 }
 
-void playSampleFla(int sampleNum, /*int freq, */int repeat/*, int x, int y*/)
+void playSampleFla(int sampleNum, int repeat)
 {
 	char filename[MAX_PATH];
 	Mix_Chunk * sample;
@@ -58,7 +57,6 @@ void soundInit()
 
 static Mix_Music * sample = NULL;
 
-// TODO: Use RWops
 void playMidi(int musicNum) {
 	char filename[MAX_PATH];
 	FILE* fhandle;
@@ -85,10 +83,21 @@ void playMidi(int musicNum) {
 
 	Mix_PlayMusic(sample, 0);
 }
+
+void pauseSound() {
+	Mix_PauseMusic();
+}
+
+void resumeSound() {
+	Mix_ResumeMusic();
+}
+
 #else
 void playSample(int sampleNum, int repeat) { }
 void playSampleFla(int sampleNum, int repeat) { }
 void soundInit(void) { }
 void playMidi() { }
+void pauseSound() { }
+void resumeSound() { }
 #endif
 
