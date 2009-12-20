@@ -339,7 +339,7 @@ int mainLoopInteration(void) {
 			}
 
 			/* Draw the holomap */
-			if (os_isPressed(KEY_ACTION_HOLOMAP) && vars[holomap] == 1 && vars[70] == 0) // draw holomap
+			if (os_isPressed(KEY_ACTION_HOLOMAP) && vars[holomap] == 1 && vars[70] == 0)
 			{
 				freezeTime();
 				TestRestoreModeSVGA(1);

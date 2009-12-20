@@ -169,7 +169,7 @@ void MainGameMenu(void) {
 			if (chooseSave(21))
             {
 				reinitAll(-1);
-				newGame();
+				//newGame();
 
 				if (mainLoop())
                     rungame();

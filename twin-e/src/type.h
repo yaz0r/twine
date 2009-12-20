@@ -23,28 +23,12 @@ typedef unsigned char byte;
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned long uint32;
-#ifndef __linux__
-#ifndef _TAMTYPES_H_
-//typedef unsigned int uint;
-#endif
-#endif
+
 typedef signed char int8;
 typedef signed short int16;
 typedef signed long int32;
 
-#ifndef _TAMTYPES_H_
 typedef unsigned char u8;
-#endif
-typedef unsigned short U16;
-typedef unsigned long U32;
-typedef signed char S8;
-typedef signed short S16;
-typedef signed long S32;
-
-typedef unsigned char boolean;
-#define false 0
-#define true 1
-
 
 #if defined(_MSC_VER)
 # define FORCEINLINE __forceinline
@@ -55,7 +39,7 @@ typedef unsigned char boolean;
 #define READ_LE_BYTE(ptr) (*(ptr))
 
 FORCEINLINE uint16 READ_LE_U16(void *ptr) {
-#ifdef MACOSX2
+#ifdef __BIG_ENDIAN
 	return (((byte*)ptr)[0] << 8) | ((byte*)ptr)[1];
 #else
 	return (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
@@ -63,7 +47,7 @@ FORCEINLINE uint16 READ_LE_U16(void *ptr) {
 }
 
 FORCEINLINE int16 READ_LE_S16(void *ptr) {
-#ifdef MACOSX2
+#ifdef __BIG_ENDIAN
 	return (((byte*)ptr)[0] << 8) | ((byte*)ptr)[1];
 #else
 	return (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
@@ -71,7 +55,7 @@ FORCEINLINE int16 READ_LE_S16(void *ptr) {
 }
 
 FORCEINLINE uint32 READ_LE_U32(void *ptr) {
-#ifdef MACOSX2
+#ifdef __BIG_ENDIAN
 	return (((byte*)ptr)[0] << 24) | (((byte*)ptr)[1] << 16) | (((byte*)ptr)[2] << 8) | ((byte*)ptr)[3];
 #else
 	return (((byte*)ptr)[3] << 24) | (((byte*)ptr)[2] << 16) | (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
@@ -79,7 +63,7 @@ FORCEINLINE uint32 READ_LE_U32(void *ptr) {
 }
 
 FORCEINLINE int32 READ_LE_S32(void *ptr) {
-#ifdef MACOSX2
+#ifdef __BIG_ENDIAN
 	return (((byte*)ptr)[0] << 24) | (((byte*)ptr)[1] << 16) | (((byte*)ptr)[2] << 8) | ((byte*)ptr)[3];
 #else
 	return (((byte*)ptr)[3] << 24) | (((byte*)ptr)[2] << 16) | (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];

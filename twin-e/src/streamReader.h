@@ -47,13 +47,9 @@ struct streamReader {
 
 typedef struct streamReader streamReader;
 
-boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal);
+char streamReader_open(streamReader* pThis, const char* fileName, int fatal);
 void streamReader_close(streamReader* pThis);
 void streamReader_feedBuffer(streamReader* pThis);
-
-u8 streamReader_getU8(streamReader* pThis);
-uint16 streamReader_getU16(streamReader* pThis);
-uint32 streamReader_getU32(streamReader* pThis);
 
 void streamReader_get(streamReader* pThis, void* destPtr, uint32 size);
 void streamReader_seek(streamReader* pThis, uint32 seekPosition);

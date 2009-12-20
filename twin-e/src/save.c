@@ -39,13 +39,13 @@ void LoadGame(void) {
 
 	fread(&data, sizeof(unsigned char), 1, fileHandle);
 
-	do {
+	while (data) {
 	    fread(&data, sizeof(unsigned char), 1, fileHandle);
 		*(namePtr++) = data;
-	} while (data);
+	}
 
 	fread(&data,             sizeof(unsigned char), 1,    fileHandle);
-	fread(&vars,             sizeof(char),          1,    fileHandle);
+	fread(&vars,             sizeof(char),          data, fileHandle);
 	fread(&needChangeRoom,   sizeof(char),          1,    fileHandle);
 	fread(&chapter,          sizeof(char),          1,    fileHandle);
 	fread(&comportementHero, sizeof(char),          1,    fileHandle);
@@ -65,6 +65,7 @@ void LoadGame(void) {
 	fread(&data,             sizeof(char),          1,    fileHandle);
 	fread(itemUsed,          sizeof(char),          data, fileHandle);
 	fread(&numClover,        sizeof(char),          1,    fileHandle);
+	fread(&usingSword,       sizeof(char),          1,    fileHandle);
 
 	fclose(fileHandle);
 

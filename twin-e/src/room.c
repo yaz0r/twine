@@ -109,11 +109,11 @@ static void RestartPerso(void) {
 	memset(&twinsen->dynamicFlagsBF, 0, 2);
 	memset(&twinsen->staticFlagsBF, 0, 2);
 
-	twinsen->staticFlagsBF.computeCollisionWithObj = true;
-	twinsen->staticFlagsBF.computeCollisionWithBricks = true;
-	twinsen->staticFlagsBF.isZonable = true;
-	twinsen->staticFlagsBF.canDrown = true;
-	twinsen->staticFlagsBF.isFallable = true;
+	twinsen->staticFlagsBF.computeCollisionWithObj = 1;
+	twinsen->staticFlagsBF.computeCollisionWithBricks = 1;
+	twinsen->staticFlagsBF.isZonable = 1;
+	twinsen->staticFlagsBF.canDrown = 1;
+	twinsen->staticFlagsBF.isFallable = 1;
 
 	twinsen->field_14 = 1;
 	twinsen->positionInMoveScript = -1;

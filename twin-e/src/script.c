@@ -534,14 +534,14 @@ void runActorScript(short int actorNumber)
 
 				temp = *(actorScriptPtr++);
 
-				lactor->staticFlagsBF.computeCollisionWithBricks = false;
-				lactor->staticFlagsBF.isDead = false;
+				lactor->staticFlagsBF.computeCollisionWithBricks = 0;
+				lactor->staticFlagsBF.isDead = 0;
 
 				if (temp == 1) {
-					lactor->staticFlagsBF.computeCollisionWithBricks = true;
+					lactor->staticFlagsBF.computeCollisionWithBricks = 1;
 				} else if (temp == 2) {
-					lactor->staticFlagsBF.computeCollisionWithBricks = true;
-					lactor->staticFlagsBF.isDead = true;
+					lactor->staticFlagsBF.computeCollisionWithBricks = 1;
+					lactor->staticFlagsBF.isDead = 1;
 				}
 				break;
 			}

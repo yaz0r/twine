@@ -40,12 +40,11 @@ hqr_entry* HQR_Init_Ressource(char* fileName, int sizeOfBuffer, int numOfEntries
 	hqr_entry *hqr_ptr;
 	unsigned char *dataPtr;
 
-    FILE* f = NULL;
-	if (!(f = fopen(fileName, "rb"))) {
+	if (!streamReader_open(&fileReader, fileName, 1)) {
         printf("HQR: ERROR: file '%s' does not exist !\n", fileName);
 		return NULL;
     }
-    fclose(f);
+    streamReader_close(&fileReader);
 
 	hqr_ptr = malloc(numOfEntriesInBuffer * sizeof(subHqr) + sizeof(hqr_entry));
 	dataPtr = malloc(sizeOfBuffer + 500); /* TODO: why 500 ? */
@@ -54,7 +53,7 @@ hqr_entry* HQR_Init_Ressource(char* fileName, int sizeOfBuffer, int numOfEntries
 		return NULL;
 
 	strcpy(hqr_ptr->fileName, fileName);
-	hqr_ptr->preloadedResource = false;
+	hqr_ptr->preloadedResource = 0;
 
 	hqr_ptr->size1 = sizeOfBuffer;
 	hqr_ptr->remainingSize = sizeOfBuffer;

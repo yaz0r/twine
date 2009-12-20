@@ -194,10 +194,10 @@ void foundObject(int objectNumber) {
 	int boxBottomRightX;
 	int boxBottomRightY;
 
-	boolean voxNotFound;
+	char voxNotFound;
 
 	int textDisplayState;
-	boolean closeWindow;
+	char closeWindow;
 
 	unsigned char* twinsenAnim;
 
@@ -209,9 +209,9 @@ void foundObject(int objectNumber) {
 	newCameraZ = (twinsen->Y + 0x100) >> 8;
 	newCameraY = (twinsen->Z + 0x100) >> 9;
 
-	twinsen->staticFlagsBF.noDisplay = true;
+	twinsen->staticFlagsBF.noDisplay = 1;
 	fullRedraw(1);
-	twinsen->staticFlagsBF.noDisplay = false;
+	twinsen->staticFlagsBF.noDisplay = 0;
 
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
 
@@ -249,7 +249,7 @@ void foundObject(int objectNumber) {
 
 	/*    if(getFoundVox(2))
 	{
-	voxNotFound = false;
+	voxNotFound = 0;
 	InitDial(2);
 	}
 	else*/
@@ -257,7 +257,7 @@ void foundObject(int objectNumber) {
 		int temp;
 
 		stopMusic();
-		voxNotFound = true;
+		voxNotFound = 1;
 
 		temp = languageCD1;
 		languageCD1 = 0;
@@ -269,7 +269,7 @@ void foundObject(int objectNumber) {
 	OpenDial(objectNumber);
 
 	textDisplayState = 1;
-	closeWindow = false;
+	closeWindow = 0;
 
 	TestCoulDial(4);
 
@@ -336,7 +336,7 @@ void foundObject(int objectNumber) {
 
 		if (os_isPressed(KEY_CONTTEXT)) {
 			if (!textDisplayState) {
-				closeWindow = true;
+				closeWindow = 1;
 			}
 
 			if (textDisplayState == 2)

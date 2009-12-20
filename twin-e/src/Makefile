@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-I /usr/include/SDL/ -g -Wall -Wextra -Wdeclaration-after-statement -DUNIX
-LDFLAGS=-lSDL -lSDL_mixer -g
+CFLAGS=-g -Wall -Wextra -Wdeclaration-after-statement -DUNIX -I/usr/include/SDL
+LDFLAGS=-lSDL_mixer -g `sdl-config --libs`
 OBJ=actors.o \
 	actorScript.o \
 	angle.o \

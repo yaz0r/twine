@@ -83,41 +83,41 @@ typedef struct
 	int pausedTrackPtr;
 
 	struct {
-		U16 computeCollisionWithObj : 1; // 0x0001
-		U16 computeCollisionWithBricks : 1; // 0x0002
-		U16 isZonable : 1; // 0x0004
-		U16 isUsingClipping : 1; // 0x0008
-		U16 isPushable : 1; // 0x0010
-		U16 isDead : 1; // 0x0020
-		U16 canDrown : 1; // 0x0040
-		U16 bUnk80 : 1; // 0x0080
-		U16 bUnk0100 : 1; // 0x0100
-		U16 noDisplay : 1; // 0x0200
-		U16 isSpriteActor : 1; // 0x0400
-		U16 isFallable : 1; // 0x0800
-		U16 doesntCastShadow : 1; // 0x1000
-		U16 isBackgrounded : 1; // 0x2000
-		U16 isCarrier : 1; // 0x4000
-		U16 isUsingMiniZv : 1; // 0x8000
+		uint16 computeCollisionWithObj : 1; // 0x0001
+		uint16 computeCollisionWithBricks : 1; // 0x0002
+		uint16 isZonable : 1; // 0x0004
+		uint16 isUsingClipping : 1; // 0x0008
+		uint16 isPushable : 1; // 0x0010
+		uint16 isDead : 1; // 0x0020
+		uint16 canDrown : 1; // 0x0040
+		uint16 bUnk80 : 1; // 0x0080
+		uint16 bUnk0100 : 1; // 0x0100
+		uint16 noDisplay : 1; // 0x0200
+		uint16 isSpriteActor : 1; // 0x0400
+		uint16 isFallable : 1; // 0x0800
+		uint16 doesntCastShadow : 1; // 0x1000
+		uint16 isBackgrounded : 1; // 0x2000
+		uint16 isCarrier : 1; // 0x4000
+		uint16 isUsingMiniZv : 1; // 0x8000
 	} staticFlagsBF;
 
 	struct {
-		U16 bUnk0001 : 1; // 0x0001
-		U16 bUnk0002 : 1; // 0x0002
-		U16 animEnded : 1; // 0x0004
-		U16 bUnk0008 : 1; // 0x0008
-		U16 wasDrawn : 1; // 0x0010
-		U16 isDead : 1; // 0x0020
-		U16 isMoving : 1; // 0x0040
-		U16 isRotationByAnim : 1; // 0x0080
-		U16 isFalling : 1; // 0x0100
-		U16 bUnk0200 : 1; // 0x0200
-		U16 bUnk0400 : 1; // 0x0400
-		U16 bUnk0800 : 1; // 0x0800
-		U16 bUnk1000 : 1; // 0x1000
-		U16 bUnk2000 : 1; // 0x2000
-		U16 bUnk4000 : 1; // 0x4000
-		U16 bUnk8000 : 1; // 0x8000
+		uint16 bUnk0001 : 1; // 0x0001
+		uint16 bUnk0002 : 1; // 0x0002
+		uint16 animEnded : 1; // 0x0004
+		uint16 bUnk0008 : 1; // 0x0008
+		uint16 wasDrawn : 1; // 0x0010
+		uint16 isDead : 1; // 0x0020
+		uint16 isMoving : 1; // 0x0040
+		uint16 isRotationByAnim : 1; // 0x0080
+		uint16 isFalling : 1; // 0x0100
+		uint16 bUnk0200 : 1; // 0x0200
+		uint16 bUnk0400 : 1; // 0x0400
+		uint16 bUnk0800 : 1; // 0x0800
+		uint16 bUnk1000 : 1; // 0x1000
+		uint16 bUnk2000 : 1; // 0x2000
+		uint16 bUnk4000 : 1; // 0x4000
+		uint16 bUnk8000 : 1; // 0x8000
 	} dynamicFlagsBF;
 
 	int hitBy;

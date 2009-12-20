@@ -97,7 +97,7 @@ FILE * ifopen(const char * path, const char * mode) {
 }
 #endif
 
-boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal)
+char streamReader_open(streamReader* pThis, const char* fileName, int fatal)
 {
 #ifndef DREAMCAST
 #ifdef USE_IFOPEN
@@ -113,7 +113,7 @@ boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal)
     {
 		pThis->currentSector = 0;
 		streamReader_feedBuffer(pThis);
-		return true;
+		return 1;
 	}
     else
     {
@@ -121,7 +121,7 @@ boolean streamReader_open(streamReader* pThis, const char* fileName, int fatal)
 			printf("FATAL: Can't find %s\n", fileName);
 			exit(-1);
 		}
-		return false;
+		return 0;
 	}
 }
 

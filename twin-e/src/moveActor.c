@@ -229,14 +229,14 @@ void DoTrack(int actorNumber) {
 			lactor->positionInMoveScript += 1;
 			if (*scriptPtr != 0) {
 				if (!(lactor->staticFlagsBF.isBackgrounded)) { //if actor wasn't already in background
-					//  lactor->staticFlagsBF.isBackgrounded = true; // set him to background
+					//  lactor->staticFlagsBF.isBackgrounded = 1; // set him to background
 					if (lactor->dynamicFlagsBF.wasDrawn) {
 						requestBackgroundRedraw = 1;
 					}
 				}
 			} else {
 				if (lactor->staticFlagsBF.isBackgrounded) {
-					lactor->staticFlagsBF.isBackgrounded = false;
+					lactor->staticFlagsBF.isBackgrounded = 0;
 					if (lactor->dynamicFlagsBF.wasDrawn) {
 						requestBackgroundRedraw = 1;
 					}
