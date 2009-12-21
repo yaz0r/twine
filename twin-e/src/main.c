@@ -36,7 +36,6 @@ int newGameVar5 = 0;
 
 unsigned char *frontVideoBuffer;
 byte *workVideoBuffer;
-byte *frontVideoBufferbis;
 
 byte *bufSpeak;
 byte *bufMemoSeek;
@@ -58,7 +57,7 @@ int screenLockupTable[2000]; /* TODO: temporary ? */
 void initVideoStuff(void) {
 	int i, j, k;
 
-	frontVideoBuffer = frontVideoBufferbis = malloc(sizeof(byte) * 307200);
+	frontVideoBuffer = malloc(sizeof(byte) * 307200);
 
 	os_initBuffer((char *) frontVideoBuffer, 640, 480);
 	os_initVideoBuffer(flaBuffer, 320, 200);

@@ -230,7 +230,7 @@ void DrawOneInventory(int objectNumber) {
 
 		if (objectNumber == 15) { // fuel object
 			CoulFont(15);
-			Font(left + 3, top + 32, itoa(fuel));
+			Font(left + 3, top + 32, my_itoa(fuel));
 		}
 	}
 

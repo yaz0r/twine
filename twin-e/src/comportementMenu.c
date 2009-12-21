@@ -146,11 +146,11 @@ void DrawInfoMenu(short int arg_0, short int arg_4) {
 
 	AffGraph(0, var_4, arg_4 + 15, HQR_Get(HQR_Sprites, 3));  // draw coins
 	CoulFont(155);
-	Font(arg_0 + 370, arg_4 + 5, itoa(numCoin));  // amount of coins
+	Font(arg_0 + 370, arg_4 + 5, my_itoa(numCoin));  // amount of coins
 
 	AffGraph(0, var_4, arg_4 + 55, HQR_Get(HQR_Sprites, 6));  // draw key
 	CoulFont(155);
-	Font(arg_0 + 370, arg_4 + 40, itoa(numKey));
+	Font(arg_0 + 370, arg_4 + 40, my_itoa(numKey));
 
 	for (i = 0; i < numCloverBox; i++) { // boites à trefles
 		AffGraph(0, RegleTrois32(arg_0 + 25, arg_0 + 325, 10, i), arg_4 + 58, HQR_Get(HQR_Sprites, 41));

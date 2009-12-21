@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <SDL.h>
 #include "lba.h"
 
-#ifdef USE_SDL_MIXER
+#if USE_SDL_MIXER == 1
 #include <SDL_mixer.h>
 #endif
 
@@ -54,7 +54,7 @@ SDL_Surface *sdl_screen;
 char breakMainLoop = 0;
 
 void os_mainLoop(void) {
-	long int t_start;
+	unsigned long int t_start;
 	SDL_Event event;
 
 	while (!breakMainLoop)
@@ -90,7 +90,7 @@ int os_init()
 
 	atexit(SDL_Quit);
 
-#ifdef USE_SDL_MIXER
+#if USE_SDL_MIXER == 1
 	/* open 44.1KHz, signed 16bit, system byte order,
 	 *      stereo audio, using 1024 byte chunks */
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {

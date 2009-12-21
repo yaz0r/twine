@@ -442,6 +442,8 @@ int mainLoopInteration(void) {
 						/* If twinsen has clovers, use one of them */
 						if (numClover > 0)
 						{
+							printf("USING CLOVER\n");
+
 							twinsen->X = newTwinsenX;
 							twinsen->Y = newTwinsenZ;
 							twinsen->Z = newTwinsenY;

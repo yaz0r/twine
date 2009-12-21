@@ -10,7 +10,6 @@ extern int newGameVar5;
 
 extern unsigned char *frontVideoBuffer;
 extern byte *workVideoBuffer;
-extern byte *frontVideoBufferbis;
 
 extern byte *bufSpeak;
 extern byte *bufMemoSeek;

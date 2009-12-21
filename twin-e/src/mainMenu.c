@@ -439,7 +439,7 @@ int enterPlayerName(short int param)
 	return 1;
 }
 
-char* itoa(int nb) {
+char* my_itoa(int nb) {
     int i, j;
 	char* text;
 

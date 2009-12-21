@@ -1,6 +1,6 @@
-CC=gcc
-CFLAGS=-g -Wall -Wextra -Wdeclaration-after-statement -DUNIX -I/usr/include/SDL -I/usr/include
-LDFLAGS=-g -lSDL -lSDL_mixer
+CC=i686-mingw32-gcc
+CFLAGS=-g -Wall -Wextra -Wdeclaration-after-statement -DWIN32 -I/usr/i686-mingw32/usr/include -I/usr/i686-mingw32/usr/include/SDL
+LDFLAGS=-g -lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows
 OBJ=actors.o \
 	actorScript.o \
 	angle.o \
@@ -39,7 +39,7 @@ OBJ=actors.o \
 	vox.o \
 	zones.o
 
-TARGET=twin-e
+TARGET=twin-e.exe
 INSTALLDIR=../bin
 
 all: $(TARGET)

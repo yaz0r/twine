@@ -16,14 +16,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#include <SDL_mixer.h>
 #include <sys/stat.h>
 
 #include "lba.h"
 
 #include "hqr.h"
 
-#ifdef USE_SDL_MIXER
+#if USE_SDL_MIXER == 1
+
+#include <SDL_mixer.h>
+
 void playSample(int sampleNum, int repeat) {
 	char filename[MAX_PATH];
 	Mix_Chunk * sample;

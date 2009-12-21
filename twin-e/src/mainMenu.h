@@ -12,7 +12,7 @@ void copyStringToString(char *a, char *b, int c);
 void drawButtonGFX(int largeur, int posY, int c, int d, int mode);
 int processMenu(short int *menuData);
 int enterPlayerName(short int param);
-char *itoa(int valeur);
+char *my_itoa(int valeur);
 void drawButton(short int *data, int a);
 int SizeFont(char *string);
 int optionMenu(void);

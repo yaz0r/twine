@@ -23,11 +23,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "samples.h"
 
 #ifdef PCLIKE
-# include <SDL/SDL_mixer.h>
 # include <SDL/SDL.h>
 #endif
 
-#ifdef USE_SDL_MIXER
+#if USE_SDL_MIXER == 1
+
+#include <SDL/SDL_mixer.h>
 SDL_CD *cdrom;
 
 void openCD(void)
