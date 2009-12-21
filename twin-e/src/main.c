@@ -78,7 +78,7 @@ static void init(void)
 
 	initVideoStuff();
 
-#ifdef USE_SDL_MIXER
+#if USE_SDL_MIXER == 1
     printf("Sound activated\n");
 	HQR_Midi = HQR_Init_Ressource("midi_mi_win.hqr",32000,2);
 #endif

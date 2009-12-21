@@ -337,14 +337,13 @@ int HQRM_Load(char *fileName, short int arg_4, unsigned char ** ptr) { // rechec
 
 	if (mode == 0) {
 		streamReader_get(&fileReader, (*ptr), dataSize);
-	} else
-		if (mode == 1) {
-			temp = malloc(compressedSize);
+	} else if (mode == 1) {
+		temp = malloc(compressedSize);
 
-			streamReader_get(&fileReader, temp, compressedSize);
-			HQR_Expand(dataSize, *ptr, temp);
-            free(temp);
-		}
+		streamReader_get(&fileReader, temp, compressedSize);
+		HQR_Expand(dataSize, *ptr, temp);
+        free(temp);
+	}
 
 	streamReader_close(&fileReader);
 

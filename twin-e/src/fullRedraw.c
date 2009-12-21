@@ -568,11 +568,7 @@ void fullRedraw(int param) {
 
 	UnSetClip();
 
-	// if(waitVSync!=0)
-	// waitRetrace();
-
 	if (drawInGameTransBox != 0) {
-		// fullRedrawSub10(arg_16,arg_12,arg_E,arg_A);
 		fullRedrawSub5();
 		if (param != 0)
 			unfreezeTime();
@@ -693,7 +689,6 @@ void redrawCube(void) {
 
 	int i;
 	int x, y, z;
-	// unsigned char *localBufCube = bufCube;
 	unsigned char val;
 	cubeType* cube = (cubeType*)bufCube;
 
@@ -706,33 +701,32 @@ void redrawCube(void) {
 	fullRedrawVar1 = projectedPositionX;
 	fullRedrawVar2 = projectedPositionY;
 
-	for (i = 0; i < 28; i++) {
+	for (i = 0; i < 28; i++)
 		zbufferTab[i] = 0;
-	}
 
 	if (changeRoomVar10 == 0)
 		return;
 
-	{
-		for (z = 0; z < 64; z++) {
-			for (x = 0; x < 64; x++) {
-				for (y = 0; y < 25; y++) {
-					val = (*cube)[z][x][y].brickType1;
-					if (val) {
-						zbuffer(val - 1, (*cube)[z][x][y].brickType2, x, y, z);
-					}
+	for (z = 0; z < 64; z++) {
+		for (x = 0; x < 64; x++) {
+			for (y = 0; y < 25; y++) {
+				val = (*cube)[z][x][y].brickType1;
+				if (val) {
+					zbuffer(val - 1, (*cube)[z][x][y].brickType2, x, y, z);
 				}
 			}
 		}
 	}
 }
 
+/** Draw cubes using zbuffer */
 void zbuffer(int var1, int var2, int x, int z, int y) {
 	unsigned char *ptr;
 	unsigned short int bx;
 	int zbufferIndex;
 	zbufferDataStruct *currentZbufferData;
 
+	/* Inits zbuffer */
 	ptr = zbufferSub1(var1) + 3 + var2 * 4 + 2;
 
 	bx = READ_LE_U16(ptr);
@@ -740,6 +734,7 @@ void zbuffer(int var1, int var2, int x, int z, int y) {
 	if (!bx)
 		return;
 
+	/* Sets dest of the cubes to camera's position */
 	zbufferSub2(x - newCameraX, z - newCameraZ, y - newCameraY);
 
 	if (zbufferVar1 < -24)
@@ -751,6 +746,7 @@ void zbuffer(int var1, int var2, int x, int z, int y) {
 	if (zbufferVar2 >= 480)
 		return;
 
+	/* Draws the cubes */
 	AffGraph(bx - 1, zbufferVar1, zbufferVar2, (unsigned char*)brickTable);
 
 	zbufferIndex = (zbufferVar1 + 24) / 24;
@@ -781,6 +777,7 @@ void zbufferSub2(int x, int y, int z) {
 	zbufferVar2 = ((x + z) * 12) - (y * 15) + 215;  // y pos
 }
 
+/* Draw a sprite */
 void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick) {
 	unsigned char *ptr;
 	int top;
@@ -821,50 +818,52 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick) {
 	x = left;
 	y = top;
 
-// if (left >= textWindowLeft && top >= textWindowTop && right <= textWindowRight && bottom <= textWindowBottom)
-	{     // no crop
-		right++;
-		bottom++;
+	right++;
+	bottom++;
 
-		outPtr = frontVideoBuffer + screenLockupTable[top] + left;
+	outPtr = frontVideoBuffer + screenLockupTable[top] + left;
 
-		offset = -((right - left) - WINDOW_X);
+	offset = -((right - left) - WINDOW_X);
 
-		for (c1 = 0; c1 < bottom - top; c1++) {
-			vc3 = *(ptr++);
-			for (c2 = 0; c2 < vc3; c2++) {
-				temp = *(ptr++);
-				iteration = temp & 0x3F;
-				if (temp & 0xC0) {
-					iteration++;
-					if (!(temp & 0x40)) {
-						temp = *(ptr++);
-						for (i = 0; i < iteration; i++) {
-							if (x >= textWindowLeft && x<textWindowRight && y >= textWindowTop && y < textWindowBottom)
-								frontVideoBuffer[y*640+x] = temp;
+	/* All the Y cubes */
+	for (c1 = 0; c1 < bottom - top; c1++) {
+		vc3 = *(ptr++);
+		/* All the X cubes */
+		for (c2 = 0; c2 < vc3; c2++) {
+			/* Get cube data */
+			temp = *(ptr++);
+			iteration = temp & 0x3F;
+			if (temp & 0xC0) {
+				iteration++;
+				/* Same color */
+				if (!(temp & 0x40)) {
+					temp = *(ptr++);
+					for (i = 0; i < iteration; i++) {
+						if (x >= textWindowLeft && x<textWindowRight && y >= textWindowTop && y < textWindowBottom)
+							frontVideoBuffer[y*640+x] = temp;
 
-							x++;
-							outPtr++;
-						}
-					} else {
-						for (i = 0; i < iteration; i++) {
-							if (x >= textWindowLeft && x<textWindowRight && y >= textWindowTop && y < textWindowBottom)
-								frontVideoBuffer[y*640+x] = *ptr;
-
-							x++;
-							ptr++;
-							outPtr++;
-						}
+						x++;
+						outPtr++;
 					}
+				/* Not the same color */
 				} else {
-					outPtr += iteration + 1;
-					x += iteration + 1;
+					for (i = 0; i < iteration; i++) {
+						if (x >= textWindowLeft && x<textWindowRight && y >= textWindowTop && y < textWindowBottom)
+							frontVideoBuffer[y*640+x] = *ptr;
+
+						x++;
+						ptr++;
+						outPtr++;
+					}
 				}
+			} else {
+				outPtr += iteration + 1;
+				x += iteration + 1;
 			}
-			outPtr += offset;
-			x = left;
-			y++;
 		}
+		outPtr += offset;
+		x = left;
+		y++;
 	}
 }
 

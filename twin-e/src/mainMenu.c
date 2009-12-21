@@ -152,14 +152,12 @@ void MainGameMenu(void) {
         case 20: /* new game */
 			if (enterPlayerName(42))
             {
-#endif
 				reinitAll(1);
 				newGame();
 
 				if (mainLoop())
                     rungame();
 
-#ifndef FASTDEBUG
 
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
 			}
@@ -168,11 +166,12 @@ void MainGameMenu(void) {
         case 21: /* continue game */
 			if (chooseSave(21))
             {
+#endif
 				reinitAll(-1);
-				//newGame();
 
 				if (mainLoop())
                     rungame();
+#ifndef FASTDEBUG
 
 				CopyScreen(frontVideoBuffer, workVideoBuffer);
 			}
