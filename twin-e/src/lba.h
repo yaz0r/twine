@@ -176,6 +176,13 @@ typedef enum
 	clover
 } inventory;
 
+#define SPRITE_coin 3
+#define SPRITE_heart 4
+#define SPRITE_manabox 5
+#define SPRITE_key 6
+#define SPRITE_clover 7
+#define SPRITE_cloverbox 41
+
 #define NORMAL 0
 #define ATHLETIC 1
 #define AGRESSIVE 2

@@ -374,7 +374,7 @@ void Aff2DShape(short int* extraData, int X, int Y, int param0, int time, int pa
 	drawLine(currentX, currentY, computedX, computedY, param0);
 }
 
-void GereExtras(void) {
+void specialLoop(void) {
 	int i;
 
 	int currentExtraX = 0;

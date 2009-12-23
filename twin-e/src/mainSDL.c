@@ -29,9 +29,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "osystem.h"
 
-#define SPEED 15              /* Ticks per Frame */
-#define SLEEP_MIN 2          /* Minimum time a sleep takes, usually 2*GRAN */
-#define SLEEP_GRAN 1         /* Granularity of sleep */
+#define SPEED 15
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
 Uint32 rmask = 0xff000000;
@@ -54,7 +52,7 @@ SDL_Surface *sdl_screen;
 char breakMainLoop = 0;
 
 void os_mainLoop(void) {
-	unsigned long int t_start;
+	unsigned long int t_start, t_actual;
 	SDL_Event event;
 
 	while (!breakMainLoop)
@@ -65,9 +63,9 @@ void os_mainLoop(void) {
 
 		mainLoopInteration();
 
-		t_start = SDL_GetTicks();
-		while (SDL_GetTicks() < t_start + SPEED)
-			;
+		t_start = t_actual = SDL_GetTicks();
+		if (t_actual < t_start + SPEED)
+			SDL_Delay(t_start + SPEED - t_actual);
 
 		lba_time++;
 	}

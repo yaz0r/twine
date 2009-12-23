@@ -42,7 +42,7 @@ typedef struct
 
 void reinitExtraObjectList(void);
 int FullWorldColBrick(int currentX, int currentZ, int currentY, int oldX, int oldZ, int oldY);
-void GereExtras(void);
+void specialLoop(void);
 int ThrowExtra(int actorNum, int X, int Y, int Z, int sprite, int var2, int var3, int var4, int var5, int strength);
 void InitSpecial(int var0, int var1, int var2, int var3);
 void InitFly(extraListStruct* extraEntry, int var1, int var2, int var3, int var4);
@@ -53,8 +53,6 @@ int ExtraCheckObjCol(extraListStruct* extra, int param);
 void ThrowMagicBall(int X, int Z, int Y, int param1, int angle, int param2, int param4);
 int ExtraSearch(int actorNum, int X, int Z, int Y, int spriteIdx, int targetActor, int maxSpeed, int param4);
 
-extern short int extraDataTable1[21];
-extern short int extraDataTable2[37];
 extern extraListStruct extraList[50];
 extern short int magicBallIdx;
 

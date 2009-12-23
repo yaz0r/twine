@@ -31,18 +31,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 short int pt8s4[96];
 
-int printText8PrepareBufferVar3;
-
 int progressiveTextStartColor;
 int progressiveTextStopColor;
 int progressiveTextStepSize;
 int progressiveTextBufferSize;
 
-int textVar1 = -1;
+int actualDial = -1;
 int languageCD1 = 0;
 
 int printTextVar5;
-short int printTextVar12;
 int printTextVar13;
 
 int dialogueBoxLeft = 16;
@@ -54,18 +51,17 @@ int dialogueBoxParam2 = 591;
 
 int flagDisplayText = 1;
 
-char *printText8Ptr1;
 char *printText8Ptr2;
 
 int printText8Var1;
-int printText8Var2;
 int printText8Var3;
 
-int TEXT_CurrentLetterX;
 int printText8Var5;
 int printText8Var6;
-int TEXT_CurrentLetterY;
 char *printText8Var8;
+
+int TEXT_CurrentLetterX;
+int TEXT_CurrentLetterY;
 
 int printText10Var1;
 
@@ -77,7 +73,6 @@ char buf2[256]; /* TODO: check size */
 int addLineBreakX;
 
 int printText8PrepareBufferVar2;
-int printText8PrepareBufferVar3;
 
 int wordSizeChar;
 int wordSizePixel;
@@ -99,15 +94,14 @@ char *currentTextPtr;
 short int numTextEntry;
 
 void InitDial(int index) {
-
 	int bundleEntryPoint;
 	int size;
 	int textSize;
 
-	if (index == textVar1)
+	if (index == actualDial)
 		return;
 
-	textVar1 = index;
+	actualDial = index;
 
 	bundleEntryPoint = (LANGUAGE * 14) * 2  + index * 2;
 
@@ -134,9 +128,8 @@ void printTextFullScreen(int textIndex) {
 	UnSetClip();
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
 
-	if (languageCD1 != 0) { // si on doit player le vox, on met le pointeur à la bonne position
+	if (languageCD1 != 0)
 		isVoxSet = setVoxFileAtDigit(textIndex);
-	}
 
 	if (!flagDisplayText && isVoxSet) { // si on doit player le Vox sans afficher le text
 		while (temp2 && os_isPressed(KEY_SKIP))
@@ -172,7 +165,6 @@ void printTextFullScreen(int textIndex) {
 		printText4(voxFileHandle);
 
 		if (isVoxSet == 2) {
-			printf("HMMMMMMMMMMMMMMMMMMMMMMM\n");
 			while (!os_isPressed(KEY_CONTTEXT))
 				printText4(voxFileHandle);
 			while (!os_isPressed(KEY_CONTTEXT))
@@ -285,7 +277,6 @@ int initText(int var) {
 	if (!findString(var))
 		return (0);
 
-	printText8Ptr1 = buf1;
 	printText8Ptr2 = buf2;
 
 	printTextVar13 = 1;
@@ -293,7 +284,6 @@ int initText(int var) {
 	printText8Var1 = 0;
 	buf1[0] = 0;
 	buf2[0] = 0;
-	printText8Var2 = var;
 	printText8Var3 = 0;
 	TEXT_CurrentLetterX = dialogueBoxLeft + 8;
 	printText8Var5 = 0;
@@ -409,7 +399,6 @@ void initProgressiveTextBuffer(void) {
 	printText8Ptr2 = buf2;
 	addLineBreakX = 16;
 	printText8Var1 = 0;
-	printText8PrepareBufferVar3 = progressiveTextBufferSize;
 }
 
 void printText10Sub2(void) {
@@ -448,20 +437,18 @@ void drawDoubleLetter(int a, int b, int c, int d) {
 	if (c == 0x20)
 		return;
 
-	CoulFont(0);    // on met la couleur grise
-
+	/* Grey color */
+	CoulFont(0);
 	drawCharacter(a + 2, b + 4, c); // le caractere derriere en gris
 
-	CoulFont(d);    // on met la bonne couleur
-
+	/* Real color */
+	CoulFont(d);
 	drawCharacter(a, b, c);
 
 	left = a;
 	top = b;
 	right = a + 32;
 	bottom = b + 38;
-
-	// manque les check pour la taille de la boite de dialogue...
 
 	os_copyBlockPhys(left, top, right, bottom);
 }
@@ -604,47 +591,50 @@ void processTextLine(void) {
 	printText8PrepareBufferVar2 = 0;
 	buf2[0] = 0;
 
-pt8start:
-	if (*buffer == 0x20) {
-		buffer++;
-		goto pt8start;
-	}
+	for (;;)
+	{
+		if (*buffer == 0x20) {
+			buffer++;
+			continue;
+		}
 
-	if (*buffer != 0) {
-		printText8Var8 = buffer;
-		getWordSize(buffer, buf1);
-		if (addLineBreakX + spaceLength + wordSizePixel < dialogueBoxParam2) {
-			temp = buffer + 1;
-			if (*buffer == 1) {
-				var4 = 0;
-				buffer = temp;
-			} else {
-				if (*buf1 == 0x40) {
+		if (*buffer != 0) {
+			printText8Var8 = buffer;
+			getWordSize(buffer, buf1);
+			if (addLineBreakX + spaceLength + wordSizePixel < dialogueBoxParam2) {
+				temp = buffer + 1;
+				if (*buffer == 1) {
 					var4 = 0;
 					buffer = temp;
-					if (addLineBreakX == 0) {
-						addLineBreakX = 7;
-						*buf2 = spaceChar;
-					}
-					if (buf1[1] == 0x50) {
-						printText8Var1 = dialogueBoxParam1;
-						buffer++;
-					}
 				} else {
-					buffer += wordSizeChar;
-					printText8Var8 = buffer;
-					strcat(buf2, buf1);
-					strcat(buf2, " ");  // not 100% accurate
-					printText8PrepareBufferVar2++;
+					if (*buf1 == 0x40) {
+						var4 = 0;
+						buffer = temp;
+						if (addLineBreakX == 0) {
+							addLineBreakX = 7;
+							*buf2 = spaceChar;
+						}
+						if (buf1[1] == 0x50) {
+							printText8Var1 = dialogueBoxParam1;
+							buffer++;
+						}
+					} else {
+						buffer += wordSizeChar;
+						printText8Var8 = buffer;
+						strcat(buf2, buf1);
+						strcat(buf2, " ");  // not 100% accurate
+						printText8PrepareBufferVar2++;
 
-					addLineBreakX += wordSizePixel + spaceLength;
-					if (*printText8Var8 != 0) {
-						printText8Var8++;
-						goto pt8start;
+						addLineBreakX += wordSizePixel + spaceLength;
+						if (*printText8Var8 != 0) {
+							printText8Var8++;
+							continue;
+						}
 					}
 				}
 			}
 		}
+		break;
 	}
 
 	if (printText8PrepareBufferVar2 != 0)

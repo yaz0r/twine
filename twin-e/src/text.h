@@ -33,7 +33,6 @@ extern int languageCD1;
 
 extern int printText8Var3;
 extern int printTextVar5;
-extern short int printTextVar12;
 extern int printTextVar13;
 
 extern int dialogueBoxLeft;

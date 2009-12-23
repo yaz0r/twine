@@ -1,7 +1,6 @@
 int InitAnim(char costume, short int arg_4, unsigned char arg_8, short int actorNum);
 void loadGfxSub(unsigned char *ptr);
 int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerData *animTimerDataPtr);
-int SetInterAnimObjet2(int animState, char *animData, char *body, animTimerData *animTimerDataPtr);
 int SetInterAnimObjet(int animState, char *animData, char *body, animTimerData *animTimerDataPtr);
 int GetNbFramesAnim(char *ptr);
 int GetBouclageAnim(char *ptr);

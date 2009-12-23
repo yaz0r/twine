@@ -384,7 +384,7 @@ int mainLoopInteration(void) {
 		for (i = 0; i < numActorInRoom; i++)
 			actors[i].hitBy = -1;
 
-		GereExtras();
+		specialLoop();
 
 		/* Actors process wheel */
 

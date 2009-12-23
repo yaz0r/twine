@@ -260,7 +260,7 @@ void fullRedraw(int param) {
 			if (flags < 0xC00) { // actor
 				if (!flags) {
 					if (lactor->previousAnimIndex != -1) // TODO: this shouldn't be required but crash when drawing the soldier getting out of the yellow moto. To investigate...
-						SetInterAnimObjet2(lactor->animPosition, (char*)HQR_Get(HQR_Anims, lactor->previousAnimIndex), (char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
+						SetInterAnimObjet(lactor->animPosition, (char*)HQR_Get(HQR_Anims, lactor->previousAnimIndex), (char*)bodyPtrTab[lactor->costumeIndex], &lactor->animTimerData);
 
 					if (!AffObjetIso(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY, 0, lactor->angle, 0, bodyPtrTab[lactor->costumeIndex])) {
 						if (renderLeft < 0)

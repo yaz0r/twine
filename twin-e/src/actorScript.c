@@ -342,6 +342,10 @@ void foundObject(int objectNumber) {
 			if (textDisplayState == 2)
 				textDisplayState = 1;
 		}
+
+		/* TODO: cleanup */
+		os_delay(15);
+		lba_time++;
 	}
 
 	/*

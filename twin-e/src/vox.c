@@ -76,7 +76,7 @@ ex:
 	if (temp3 == 0)
 		return (0);
 
-	fseek(voxFileHandle, temp3, 0);
+	fseek(voxFileHandle, temp3, SEEK_SET);
 	readBufferSpeak(voxFileHandle);
 
 	return (1);
