@@ -92,6 +92,7 @@ void playFla(char *flaName)
 	    		break;
 		}
 
+		stopSampleFla();
 		FadeToBlack(flaPalette);
 		HQ_StopSample();
 		SetBackPal();
@@ -179,6 +180,7 @@ void drawNextFrameFla()
 				break;
 			}
 		case 4: { // stop sample
+				stopSampleFla();
 				break;
 			}
 		case 5: { // draw delat frame

@@ -55,6 +55,8 @@ void os_mainLoop(void) {
 	unsigned long int t_start, t_actual;
 	SDL_Event event;
 
+	breakMainLoop = 0;
+
 	while (!breakMainLoop)
 	{
 		while (SDL_PollEvent(&event))

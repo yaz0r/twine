@@ -152,7 +152,7 @@ int mainLoopInteration(void) {
 					fullRedraw(1);
 					freezeTime();
 					SaveGame();
-					breakMainLoop = 1;
+					os_quit();
 					unfreezeTime();
 					return 0;
 				}
@@ -212,7 +212,7 @@ int mainLoopInteration(void) {
 							SetComportement(0);
 
 						InitBody(2, 0);
-						InitAnim(24, 1, 0, 0);
+						InitAnim(ANIM_drawSword, 1, 0, 0);
 
 						usingSword = 1;
 					}
@@ -390,94 +390,92 @@ int mainLoopInteration(void) {
 
 		for (i = 0; i < numActorInRoom; i++)
 		{
-			if (!actors[i].dynamicFlagsBF.isDead)
+			if (actors[i].dynamicFlagsBF.isDead && i != 0)
+				continue;
+
+			/* Just killed */
+			if (actors[i].life == 0)
 			{
-				/* Just killed */
-				if (actors[i].life == 0)
+				/* If it's twinsen */
+				if (i == 0) {
+					InitAnim(ANIM_landDeath, 4, 0, 0); /* Play twinsen death anim */
+					actors[i].comportement = 0;
+					actors[i].life = -1;
+				}
+				else
 				{
-					/* If it's twinsen */
-					if (i == 0) {
-						InitAnim(ANIM_landDeath, 4, 0, 0); /* Play twinsen death anim */
-						actors[i].comportement = 0;
-					}
-					else
-					{
-						HQ_3D_MixSample(37, rand() % 2000 + 3096, 1, actors[i].X, actors[i].Y, actors[i].Z);
+					HQ_3D_MixSample(37, rand() % 2000 + 3096, 1, actors[i].X, actors[i].Y, actors[i].Z);
 
-						if (i == currentPingouin) {
-							printf("Pinguoin exploded ! Implement\n");
-							exit(1);
-						}
+					if (i == currentPingouin) {
+						printf("Pinguoin exploded ! Implement\n");
+						exit(1);
 					}
-
-					/* Give an extra */
-					if (actors[i].canGiveBonus && !actors[i].gaveBonus)
-						GiveExtraBonus(&actors[i]);
 				}
 
-				/* Manage actors' move */
-				DoDir(i);
+				/* Give an extra */
+				if (actors[i].canGiveBonus && !actors[i].gaveBonus)
+					GiveExtraBonus(&actors[i]);
+			}
 
-				actors[i].field_20 = actors[i].X;
-				actors[i].field_22 = actors[i].Y;
-				actors[i].field_24 = actors[i].Z;
+			/* Manage actors' move */
+			DoDir(i);
 
-				if (actors[i].positionInMoveScript != -1)
-					DoTrack(i);
+			actors[i].field_20 = actors[i].X;
+			actors[i].field_22 = actors[i].Y;
+			actors[i].field_24 = actors[i].Z;
 
-				DoAnim(i);
+			if (actors[i].positionInMoveScript != -1)
+				DoTrack(i);
 
-				if (actors[i].staticFlagsBF.isZonable)
-					CheckZoneSce(&actors[i], i);
+			DoAnim(i);
 
-				if (actors[i].positionInActorScript != -1)
-					runActorScript(i);
+			if (actors[i].staticFlagsBF.isZonable)
+				CheckZoneSce(&actors[i], i);
 
-				/* Already dead */
-				if (actors[i].life <= 0)
+			if (actors[i].positionInActorScript != -1)
+				runActorScript(i);
+
+			/* Already dead */
+			if (actors[i].life <= 0)
+			{
+				/* If it's twinsen and he has finished the die animation */
+				if (i == 0 && actors[i].dynamicFlagsBF.animEnded)
 				{
-					/* If it's twinsen and he has finished the die animation */
-					if (i == 0 && actors[i].dynamicFlagsBF.animEnded)
+					/* If twinsen has clovers, use one of them */
+					if (numClover > 0)
 					{
-						/* If twinsen has clovers, use one of them */
-						if (numClover > 0)
-						{
-							printf("USING CLOVER\n");
+						twinsen->X = newTwinsenX;
+						twinsen->Y = newTwinsenZ;
+						twinsen->Z = newTwinsenY;
 
-							twinsen->X = newTwinsenX;
-							twinsen->Y = newTwinsenZ;
-							twinsen->Z = newTwinsenY;
+						needChangeRoom = currentRoom;
+						magicPoint = magicLevel * 20;
 
-							needChangeRoom = currentRoom;
-							magicPoint = magicLevel * 20;
+						newCameraX = (twinsen->X >> 9);
+						newCameraZ = (twinsen->Y >> 8);
+						newCameraY = (twinsen->Z >> 9);
 
-							newCameraX = (twinsen->X >> 9);
-							newCameraZ = (twinsen->Y >> 8);
-							newCameraY = (twinsen->Z >> 9);
+						twinsenPositionModeInNewCube = 3;
 
-							twinsenPositionModeInNewCube = 3;
+						twinsen->life = 50;
+						requestBackgroundRedraw = 1;
+						lockPalette = 1;
 
-							twinsen->life = 50;
-							requestBackgroundRedraw = 1;
-							lockPalette = 1;
-
-							numClover--;
-						}
-						/* Else, GAME OVER */
-						else
-						{
-							/* TODO: play Game Over anim. Model 20 in Ress file */
-							breakMainLoop = 1;
-							printf("Game over...\n");
-						}
+						numClover--;
 					}
+					/* Else, GAME OVER */
 					else
 					{
-						checkCarrier(i);
-						actors[i].dynamicFlagsBF.isDead = 1;
-						actors[i].costumeIndex = -1;
-						actors[i].zone = -1;
+						/* TODO: play Game Over anim. Model 20 in Ress file */
+						os_quit();
 					}
+				}
+				else
+				{
+					checkCarrier(i);
+					actors[i].costumeIndex = -1;
+					actors[i].zone = -1;
+					actors[i].dynamicFlagsBF.isDead = 1;
 				}
 			}
 		}
@@ -773,7 +771,7 @@ void DoDir(int actorNum) {
 
 	lactor = &actors[actorNum];
 
-	if (lactor->costumeIndex == -1)
+	if (lactor->costumeIndex == -1 || lactor->dynamicFlagsBF.isDead)
 		return;
 
 	/* If actor is falling, it can just rotate */
@@ -944,7 +942,7 @@ void DoDir(int actorNum) {
 				/* Turn left (counterclockwise) */
 				if (os_isPressed(KEY_CHAR_LEFT) && !os_isPressed(KEY_CHAR_RIGHT))
 				{
-					if (!twinsenWalked)
+					if (!twinsenWalked) 
 						InitAnim(ANIM_turnLeft, 0, 255, actorNum);
 					else if (!lactor->dynamicFlagsBF.isRotationByAnim)
 						lactor->angle =	getRealAngle(&lactor->time);

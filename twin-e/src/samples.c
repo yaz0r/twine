@@ -26,27 +26,62 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include <SDL_mixer.h>
 
-void playSample(int sampleNum, int repeat) {
-	char filename[MAX_PATH];
-	Mix_Chunk * sample;
+Mix_Chunk *sample = NULL;
 
-	sample = Mix_LoadWAV_RW(SDL_RWFromMem(HQR_Get(HQR_Samples,sampleNum), Size_HQR("SAMPLES.HQR", sampleNum)), 0);
+void playSample(int sampleNum, int repeat)
+{
+	int sz;
+	unsigned char *ptr;
+	SDL_RWops *rw;
 
-	if (sample == NULL)
-		printf("Mix_LoadWAV(\"%s\"): %s\n", filename, Mix_GetError());
+	printf("Playing sample %d\n", sampleNum);
 
-	Mix_PlayChannel(0, sample, repeat - 1);
+	sz = Size_HQR("samples.hqr", sampleNum);
+	ptr = malloc(sizeof(unsigned char) * sz);
+
+	Load_HQR("samples.hqr", ptr, sampleNum);
+
+	if (ptr[0] != 'C')                                                                                                                                      
+		ptr[0] = 'C';
+
+	rw = SDL_RWFromMem(ptr, sz);
+	sample = Mix_LoadWAV_RW(rw, 1);
+
+	Mix_PlayChannel(-1, sample, repeat - 1);
+
+	free(ptr);
 }
 
 void playSampleFla(int sampleNum, int repeat)
 {
-	char filename[MAX_PATH];
-	Mix_Chunk * sample;
+	int sz;
+	unsigned char *ptr;
+	SDL_RWops *rw;
 
-	sprintf(filename,"fla/flasamp/flasamp%02d.voc", sampleNum + 1);
+	printf("Playing sample %d\n", sampleNum);
 
-	sample = Mix_LoadWAV(filename);
-	Mix_PlayChannel(0, sample, repeat - 1);
+	sz = Size_HQR("fla/flasamp.hqr", sampleNum);
+	ptr = malloc(sizeof(unsigned char) * sz);
+
+	Load_HQR("fla/flasamp.hqr", ptr, sampleNum);
+
+	if (ptr[0] != 'C')                                                                                                                                      
+		ptr[0] = 'C';
+
+	rw = SDL_RWFromMem(ptr, sz);
+	sample = Mix_LoadWAV_RW(rw, 1);
+
+	Mix_PlayChannel(-1, sample, repeat - 1);
+
+	free(ptr);
+}
+
+void stopSampleFla(void)
+{
+	printf("Stopping samples\n");
+	Mix_HaltChannel(-1);
+	Mix_FreeChunk(sample);
+	sample = NULL;
 }
 
 void soundInit()
@@ -57,7 +92,7 @@ void soundInit()
 	Mix_AllocateChannels(8);
 }
 
-static Mix_Music * sample = NULL;
+Mix_Music *music = NULL;
 
 void playMidi(int musicNum) {
 	char filename[MAX_PATH];
@@ -78,12 +113,12 @@ void playMidi(int musicNum) {
 	}
     fclose(fhandle);
 
-	sample = Mix_LoadMUS(filename);
+	music = Mix_LoadMUS(filename);
 
-	if (sample == NULL)
+	if (music == NULL)
 		printf("Mix_LoadMUS(\"%s\"): %s\n", filename, Mix_GetError());
 
-	Mix_PlayMusic(sample, 0);
+	Mix_PlayMusic(music, 0);
 }
 
 void pauseSound() {

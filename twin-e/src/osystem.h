@@ -25,10 +25,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 int os_init();
 
-extern char fullscreen;
-extern char breakMainLoop;
-
 void os_mainLoop(void);
+void os_quit(void);
 void os_delay(int time);
 void os_crossFade(char *buffer, char *palette);
 void os_initBuffer(char *buffer, int width, int height);

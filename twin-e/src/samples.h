@@ -21,6 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 void playSample(int sampleNum, int repeat);
 void playSampleFla(int sampleNum, int repeat);
+void stopSampleFla(void);
 
 void soundInit();
 void playMidi(int musicNum);

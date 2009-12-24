@@ -169,11 +169,8 @@ void MainGameMenu(void) {
 #endif
 				reinitAll(-1);
 
-				if (mainLoop())
-                    rungame();
+				mainLoop();
 #ifndef FASTDEBUG
-
-				CopyScreen(frontVideoBuffer, workVideoBuffer);
 			}
             break;
 
@@ -199,7 +196,7 @@ void MainGameMenu(void) {
             break;
         }
     }
-#endif
+//#endif
 }
 
 void HQ_StopSample(void) {

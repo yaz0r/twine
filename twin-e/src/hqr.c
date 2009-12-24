@@ -95,16 +95,15 @@ int Load_HQR(char *resourceName, unsigned char* ptr, int imageNumber) {
 	streamReader_get(&fileReader, &mode , 2);
 	mode = convertWFromLE(mode);
 
-	if (mode <= 0)
+	if (mode <= 0) {
 		streamReader_get(&fileReader, ptr, dataSize);
-	else if (mode == 1)
-    {
+	} else if (mode == 1) {
 		unsigned char* compressedDataPtr;
 
 		compressedDataPtr = malloc(compressedSize + 500);
 
 		streamReader_get(&fileReader, compressedDataPtr, compressedSize);
-		HQR_Expand(dataSize, (unsigned char*)ptr, compressedDataPtr);
+		HQR_Expand(dataSize, ptr, compressedDataPtr);
 
 		free(compressedDataPtr);
 	}
@@ -413,5 +412,6 @@ void HQR_Expand(int decompressedSize, unsigned char *destination, unsigned char 
 			indic >>= 1;
 		} while (loop);
 	} while (decompressedSize);
+
 	return;
 }
