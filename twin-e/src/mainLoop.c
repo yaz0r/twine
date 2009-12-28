@@ -470,6 +470,10 @@ int mainLoopInteration(void) {
 						os_quit();
 					}
 				}
+				else if (i == 0) {
+					checkCarrier(i);
+					actors[i].dynamicFlagsBF.isDead = 1;
+				}
 				else
 				{
 					checkCarrier(i);

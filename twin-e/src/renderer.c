@@ -132,8 +132,6 @@ int renderLeft;
 int renderRight;
 int renderTop;
 
-int renderLoop;
-
 short int vertexCoordinates[193] = { 0x1234, 0 };
 
 short int FillVertic_AType;
@@ -1185,10 +1183,6 @@ void FillVertic_A(int ecx, int edi) {
 
 	short int start, stop;
 
-	float varf2;
-	float varf3;
-	float varf4;
-
 	if (vtop < 0) {
 		return;
 	}
@@ -1202,15 +1196,16 @@ void FillVertic_A(int ecx, int edi) {
 	ptr1 = &polyTab[vtop];
 	ptr2 = &polyTab2[vtop];
 
-	vsize = vbottom - vtop;
-	vsize++;
+	vsize = vbottom - vtop + 1;
 
 	color = edi;
+
+	/* TODO: Fix missing or buggy filling techniques */
 
 	switch (ecx) {
 	case 0: { // flat polygon
 			currentLine = vtop;
-			do {
+			while (vsize--) {
 				if (currentLine >= 0 && currentLine < videoHeight) {
 					stop = ptr1[videoHeight];
 					start = ptr1[0];
@@ -1231,7 +1226,7 @@ void FillVertic_A(int ecx, int edi) {
 				}
 				out += videoWidth;
 				currentLine++;
-			} while (--vsize);
+			}
 			break;
 
 		}
@@ -1276,7 +1271,7 @@ void FillVertic_A(int ecx, int edi) {
 			} while (--vsize);
 			break;
 		}
-	case 2: { // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine // BUGGYYYY !
+	case 2: { // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine TODO: buggy
 			currentLine = vtop;
 			do {
 				if (currentLine >= 0 && currentLine < videoHeight) {
@@ -1305,8 +1300,8 @@ void FillVertic_A(int ecx, int edi) {
 			} while (--vsize);
 			break;
 		}
-	case 6: { // trame (buggé)
-//	  unsigned char bl=color;
+	// TODO: missing 3 ("marble"), 4 ("tele") & 5 ("tras")
+	case 6: { // trame TODO: buggy
 			unsigned char bh = 0;
 
 			currentLine = vtop;
@@ -1346,10 +1341,9 @@ void FillVertic_A(int ecx, int edi) {
 			} while (--vsize);
 			break;
 		}
-	case 7: { // gouraud
-			renderLoop = vsize;
+	case 7: { // gouraud: TODO: BUGGY: ugly :(
 			currentLine = vtop;
-			do {
+			while (vsize--) {
 				if (currentLine >= 0 && currentLine < videoHeight) {
 					unsigned short int startColor = ptr2[0];
 					unsigned short int stopColor = ptr2[videoHeight];
@@ -1360,88 +1354,68 @@ void FillVertic_A(int ecx, int edi) {
 					start = ptr1[0]; // start
 
 					ptr1++;
+					ptr2++;
+
 					out2 = start + out;
 					hsize = stop - start;
 
-					varf2 = ptr2[videoHeight];
-					varf3 = ptr2[0];
 
-					ptr2++;
+					switch (hsize) {
+						case 0:
+							if (start >= 0 && start < videoWidth)
+								*out2 = ((startColor + stopColor) / 2) >> 8;
 
-					varf4 = (float)((int)varf2 - (int)varf3);
+							break;
 
-					if (hsize == 0) {
-						assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-						if (start >= 0 && start < videoWidth)
-							*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
-					} else if (hsize > 0) {
-						if (hsize == 1) {
-							assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+						case 1:
 							if (start >= -1 && start < videoWidth - 1)
 								*(out2 + 1) = stopColor >> 8;
 
-							assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
 							if (start >= 0 && start < videoWidth)
 								*(out2) = startColor >> 8;
-						} else if (hsize == 2) {
-							assert(out2 + 2 < frontVideoBuffer + videoWidth * videoHeight);
+
+							break;
+
+						case 2:
 							if (start >= -2 && start < videoWidth - 2)
 								*(out2 + 2) = stopColor >> 8;
 
-							assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
 							if (start >= -1 && start < videoWidth - 1)
 								*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
 
-							assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
 							if (start >= 0 && start < videoWidth)
 								*(out2) = startColor >> 8;
-						} else {
-							int currentXPos = start;
+
+							break;
+
+						default:
+							if (hsize < 0)
+								break;
+
 							colorSize /= hsize;
 							hsize++;
 
-							if (hsize % 2) {
-								hsize /= 2;
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2) = startColor >> 8;
-								out2++;
-								currentXPos++;
+							while (hsize--) {
+								if (start >= 0 && start < videoWidth)
+									*out2 = startColor >> 8;
+
+								start++;
 								startColor += colorSize;
-							} else {
-								hsize /= 2;
+								out2++;
 							}
 
-							do {
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2) = startColor >> 8;
-
-								currentXPos++;
-								startColor += colorSize;
-
-								assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2 + 1) = startColor >> 8;
-
-								currentXPos++;
-								out2 += 2;
-								startColor += colorSize;
-							} while (--hsize);
-						}
+							break;
 					}
 				}
 				out += videoWidth;
 				currentLine++;
-			} while (--renderLoop);
+			}
 
 			break;
 		}
 	case 8: { // dithering
-			renderLoop = vsize;
-
 			currentLine = vtop;
-			do {
+			while (vsize--) {
 				if (currentLine >= 0 && currentLine < videoHeight) {
 					stop = ptr1[videoHeight]; // stop
 					start = ptr1[0];  // start
@@ -1566,11 +1540,11 @@ void FillVertic_A(int ecx, int edi) {
 				}
 				out += videoWidth;
 				currentLine++;
-			} while (--renderLoop);
+			}
 			break;
 		}
 	default: {
-			printf("Unsuported render type %d\n", FillVertic_AType);
+			/*printf("Unsuported render type %d\n", FillVertic_AType); TODO: find a solution to write that only if debug is enabled*/
 			break;
 		}
 	};

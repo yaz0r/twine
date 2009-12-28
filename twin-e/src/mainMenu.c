@@ -196,7 +196,7 @@ void MainGameMenu(void) {
             break;
         }
     }
-//#endif
+#endif
 }
 
 void HQ_StopSample(void) {

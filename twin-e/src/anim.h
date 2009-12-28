@@ -1,3 +1,19 @@
+#ifndef ANIM_H
+#define ANIM_H
+
+typedef struct
+{
+	short int from;
+	short int to;
+	short int numOfStep;
+	int timeOfChange;
+} time;
+
+typedef struct {
+	char* ptr;
+	int time;
+} animTimerData;
+
 int InitAnim(char costume, short int arg_4, unsigned char arg_8, short int actorNum);
 void loadGfxSub(unsigned char *ptr);
 int setAnimAtKeyFrame(int keyframeIdx, unsigned char *anim, unsigned char *body, animTimerData *animTimerDataPtr);
@@ -9,3 +25,5 @@ int SetInterDepObjet(int position, char *anim, char *body, animTimerData *animTi
 void PatchInterAngle(char **ptr, int bp, int bx);
 void PatchInterStep(char **ptr, int bp, int bx);
 int PatchType(char **ptr);
+
+#endif

@@ -19,15 +19,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #ifndef ANGLE_H
 #define ANGLE_H
 
-typedef struct
-{
-	short int from;
-	short int to;
-	short int numOfStep;
-	int timeOfChange;
-} time;
-
-#include "costume.h" /* TODO: UGLY: hack to do not enable recursive include... */
+#include "actors.h"
 
 void clearRealAngle(actor *ptr);
 void setActorAngle(short int arg0, short int arg4, short int arg8, time *ptr);
