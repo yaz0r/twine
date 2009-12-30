@@ -129,12 +129,10 @@ void fullRedraw(int param) {
 				// calculate the actor position on screen
 				projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
 
-				// is the actor in the viewable screen ?
-				if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580) {
-					lactor->dynamicFlagsBF.wasDrawn = 1; // flag ?
-				}
-			} else
-			{
+				// is the actor in the screen ?
+				if (projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)
+					lactor->dynamicFlagsBF.wasDrawn = 1;
+			} else {
 				if (lactor->costumeIndex != -1  && !(lactor->staticFlagsBF.noDisplay)) { // 0x200 -> visible
 					// calculate the actor position on screen
 					projectPositionOnScreen(lactor->X - cameraX, lactor->Y - cameraZ, lactor->Z - cameraY);
@@ -143,9 +141,8 @@ void fullRedraw(int param) {
 							|| ((!(lactor->staticFlagsBF.isUsingClipping)) && projectedPositionX > -50 && projectedPositionX < 680 && projectedPositionY > -30 && projectedPositionY < 580)) {
 						temp3 = lactor->Z + lactor->X - cameraX - cameraY;
 
-						if (lactor->standOn != -1) { // if actor is on another actor
+						if (lactor->standOn != -1) // if actor is on another actor
 							temp3 = actors[lactor->standOn].X - cameraX + actors[lactor->standOn].Z - cameraY + 2;
-						}
 
 						if (lactor->staticFlagsBF.isSpriteActor) {
 							drawList[a12].field_2 = arg_46; // 0x1000
@@ -178,14 +175,6 @@ void fullRedraw(int param) {
 							drawList[a12].Y = shadowY;
 							drawList[a12].field_A = 2;
 							a12++;
-						}
-
-						if (drawInGameTransBox) {
-							if (currentlyFollowedActor != arg_1A) {
-								/*
-								 * arg_16=projectedPositionX; arg_12=projectedPositionY;
-								 */
-							}
 						}
 					}
 				}
@@ -879,8 +868,8 @@ int projectPositionOnScreen(int coX, int coZ, int coY) {
 			if (bp < 0)
 				bp = 0x7FFF;
 
-			projectedPositionX = (coX * cameraVar2) / bp + setSomethingVar1;
-			projectedPositionY = (-coZ * cameraVar3) / bp + setSomethingVar2;
+			projectedPositionX = (coX * cameraVar2) / bp + cameraPosX;
+			projectedPositionY = (-coZ * cameraVar3) / bp + cameraPosZ;
 			projectedPositionZ = bp;
 
 			return(-1);
@@ -892,12 +881,12 @@ int projectPositionOnScreen(int coX, int coZ, int coY) {
 		}
 	} else {
 #ifdef USE_FLOAT
-		projectedPositionX = (coX - coY) * 24 / 512.f + setSomethingVar1;
-		projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512.f + setSomethingVar2;
+		projectedPositionX = (coX - coY) * 24 / 512.f + cameraPosX;
+		projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512.f + cameraPosZ;
 		projectedPositionZ = coZ - coX - coY;
 #else
-		projectedPositionX = (coX - coY) * 24 / 512 + setSomethingVar1;
-		projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512 + setSomethingVar2;
+		projectedPositionX = (coX - coY) * 24 / 512 + cameraPosX;
+		projectedPositionY = (((coX + coY) * 12) - coZ * 30) / 512 + cameraPosZ;
 		projectedPositionZ = coZ - coX - coY;
 #endif
 		return (-1);

@@ -500,23 +500,11 @@ void printText10Sub(void) {
 	vertexCoordinates[7] = vertexCoordinates[1];
 	vertexCoordinates[8] = vertexCoordinates[5];
 
-	FillVertic_AType = 0;
-	numOfVertex = 3;
-
-	ComputePoly();
-	FillVertic(FillVertic_AType, progressiveTextStopColor);
+	drawVertices(3, 0);
+	fillVertices(progressiveTextStopColor, 0);
 
 	os_copyBlockPhys(dialogueBoxRight - 24, dialogueBoxBottom - 24, dialogueBoxRight - 3, dialogueBoxBottom - 3);
 
-}
-
-void FillVertic(int arg_0, int arg_4) {
-	FillVertic_A(arg_0, arg_4);
-}
-
-void ComputePoly(void) {
-	pRenderV1 = vertexCoordinates;
-	ComputePoly_A();
 }
 
 int findString(int index) {

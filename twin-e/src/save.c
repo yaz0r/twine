@@ -28,12 +28,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 char playerName[30];
 
-void LoadGame(void) {
+char LoadGame(void) {
 	FILE* fileHandle;
 	unsigned char data;
 	char* namePtr;
 
 	fileHandle = fopen("SAVE.LBA", "r");
+
+	if (!fileHandle)
+		return 0;
 
 	namePtr = playerName;
 
@@ -74,6 +77,8 @@ void LoadGame(void) {
 
 	currentRoom = -1;
 	twinsenPositionModeInNewCube = 3;
+
+	return 1;
 }
 
 void SaveGame(void) {

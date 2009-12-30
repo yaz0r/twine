@@ -52,6 +52,23 @@ typedef struct
 	short int p2;
 } lineData;
 
+typedef struct {
+	unsigned char FillVertic_AType;
+	unsigned char numOfVertex;
+	short int colorIndex;
+} polyHeader;
+
+typedef struct {
+	short int shadeEntry;
+	short int dataOffset;
+} polyVertexHeader;
+
+typedef struct {
+	short int shadeValue;
+	short int x;
+	short int y;
+} computedVertex;
+
 void RotList(unsigned char *esi, int ecx, pointTab * dest, int *eax);
 void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax);
 void TranslateGroupe(int edx, int ecx, int ebx, pointEntry * esi);
@@ -62,8 +79,8 @@ void SetLightVector(int a, int b, int c);
 int renderAnimatedModel(unsigned char *costumePtr);
 void RotMatIndex2(int *eax, int *ebp);
 int finishRender(unsigned char *esi);
-void FillVertic_A(int ecx, int edi);
-void ComputePoly_A(void);
+void fillVertices(int color, short int drawType);
+void drawVertices(int numOfVertex, short int drawType);
 void configureOrthoProjection(int x, int y);
 void setSomething3sub(int eax, int ebx, int ecx);
 void setCameraAngleSub(int eax, int ebx, int ecx);
@@ -79,8 +96,6 @@ extern short int *tab3;
 
 extern int isUsingOrhoProjection;
 
-extern short int *pRenderV1;
-
 extern int setSomething3Var12;
 extern int setSomething3Var14;
 extern int setSomething3Var16;
@@ -95,8 +110,8 @@ extern int destX;
 extern int destY;
 extern int destZ;
 
-extern int setSomethingVar1;
-extern int setSomethingVar2;
+extern int cameraPosX;
+extern int cameraPosZ;
 
 extern int renderBottom;
 extern int renderLeft;

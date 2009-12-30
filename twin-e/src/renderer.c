@@ -92,19 +92,8 @@ short int shadeTable[500];
 
 short int primitiveCounter;
 
-int numOfVertex;
-short int numOfVertexRemaining;
-
 short int vtop;
 short int vbottom;
-
-unsigned char oldVertexParam;
-unsigned char vertexParam1;
-unsigned char vertexParam2;
-
-short int *pRenderV1;
-short int *pRenderV2;
-short int pRenderV3[96];
 
 unsigned char *_partsPtr2;
 
@@ -124,8 +113,8 @@ int destX;
 int destY;
 int destZ;
 
-int setSomethingVar1 = 320;
-int setSomethingVar2 = 200;
+int cameraPosX = 320;
+int cameraPosZ = 200;
 
 int renderBottom;
 int renderLeft;
@@ -133,8 +122,6 @@ int renderRight;
 int renderTop;
 
 short int vertexCoordinates[193] = { 0x1234, 0 };
-
-short int FillVertic_AType;
 
 int _angleX, _angleY, _angleZ, _X, _Y, _Z, _numOfPrimitives;
 
@@ -191,9 +178,9 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
 	return 0;
 }
 
-void configureOrthoProjection(int x, int y) {
-	setSomethingVar1 = x;
-	setSomethingVar2 = y;
+void configureOrthoProjection(int x, int z) {
+	cameraPosX = x;
+	cameraPosZ = z;
 	isUsingOrhoProjection = 1;
 }
 
@@ -267,7 +254,7 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 	unsigned char *ptr3;
 	int *ptr4;
 	unsigned char *ptr6;
-	int temp;
+	int processNormal, numNormal;
 
 	_numOfPoints = READ_LE_U16(costumePtr);
 	costumePtr += 2;
@@ -287,7 +274,7 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 
 	ptEntryPtr = (pointEntry *) _partsPtr;
 
-	if (_numOfParts - 1 != 0) {
+	if (_numOfParts != 1) {
 		_numOfPrimitives = _numOfParts - 1;
 		_currentMatrixTableEntry = (unsigned char *) & _matrixTable[9];
 
@@ -309,6 +296,7 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 
 	_numOfPrimitives = _numOfPoints;
 
+	/* Loading position */
 	pointPtr = (pointTab *) _projectedPointTable;
 	pointPtrDest = (pointTab *) _flattenPointTable;
 
@@ -319,12 +307,12 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 			coZ = -(pointPtr->z + _Z);
 
 #ifdef USE_FLOAT
-			pointPtrDest->x = (coX + coZ) * 24 / 512.f + setSomethingVar1;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512.f + setSomethingVar2;
+			pointPtrDest->x = (coX + coZ) * 24 / 512.f + cameraPosX;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512.f + cameraPosZ;
 			pointPtrDest->z = coZ - coX - coY;
 #else
-			pointPtrDest->x = (coX + coZ) * 24 / 512 + setSomethingVar1;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + setSomethingVar2;
+			pointPtrDest->x = (coX + coZ) * 24 / 512 + cameraPosX;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + cameraPosZ;
 			pointPtrDest->z = coZ - coX - coY;
 #endif
 
@@ -352,41 +340,40 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 			if (coZ <= 0)
 				coZ = 0x7FFFFFFF;
 
-			{
-				coX = (coX * cameraVar2) / coZ + setSomethingVar1;
+			/* X */
+			coX = (coX * cameraVar2) / coZ + cameraPosX;
 
-				if (coX > 0xFFFF)
-					coX = 0x7FFF;
+			if (coX > 0xFFFF)
+				coX = 0x7FFF;
 
-				pointPtrDest->x = coX;
+			pointPtrDest->x = coX;
 
-				if (pointPtrDest->x < renderLeft)
-					renderLeft = pointPtrDest->x;
+			if (pointPtrDest->x < renderLeft)
+				renderLeft = pointPtrDest->x;
 
-				if (pointPtrDest->x > renderRight)
-					renderRight = pointPtrDest->x;
-			}
+			if (pointPtrDest->x > renderRight)
+				renderRight = pointPtrDest->x;
+			
 
-			{
-				coY = (-coY * cameraVar3) / coZ + setSomethingVar2;
+			/* Y */
+			coY = (-coY * cameraVar3) / coZ + cameraPosZ;
 
-				if (coY > 0xFFFF)
-					coY = 0x7FFF;
+			if (coY > 0xFFFF)
+				coY = 0x7FFF;
 
-				pointPtrDest->y = coY;
+			pointPtrDest->y = coY;
 
-				if (pointPtrDest->y < renderTop)
-					renderTop = pointPtrDest->y;
-				if (pointPtrDest->y > renderBottom)
-					renderBottom = pointPtrDest->y;
-			}
+			if (pointPtrDest->y < renderTop)
+				renderTop = pointPtrDest->y;
+			if (pointPtrDest->y > renderBottom)
+				renderBottom = pointPtrDest->y;
 
-			{
-				if (coZ > 0xFFFF)
-					coZ = 0x7FFF;
+			/* Z */
+			if (coZ > 0xFFFF)
+				coZ = 0x7FFF;
 
-				pointPtrDest->z = coZ;
-			}
+			pointPtrDest->z = coZ;
+
 
 			pointPtr++;
 			pointPtrDest++;
@@ -396,11 +383,11 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 
 	_shadePtr = (int *) _partsPtr;
 
-	temp = READ_LE_U16(_shadePtr);
+	processNormal = READ_LE_U16(_shadePtr);
 
 	_shadePtr = (int *)(((unsigned char *) _shadePtr) + 2);
 
-	if (temp) {   // process normal data
+	if (processNormal) {   // process normal data
 		int eax;
 		int edi;
 
@@ -412,67 +399,62 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 
 		ptr3 = pri2Ptr2 = _partsPtr2 + 18;
 
-		do {
-			temp = READ_LE_U16(ptr3);
-			if (temp) {
-				int rs1s2v1 = temp;
+		while (_numOfPrimitives--) {
+			numNormal = READ_LE_U16(ptr3);
 
-				_shadeMatrix[0] = (*renderV21) * _lightX;
-				_shadeMatrix[1] = (*(renderV21 + 1)) * _lightX;
-				_shadeMatrix[2] = (*(renderV21 + 2)) * _lightX;
+			_shadeMatrix[0] = renderV21[0] * _lightX;
+			_shadeMatrix[1] = renderV21[1] * _lightX;
+			_shadeMatrix[2] = renderV21[2] * _lightX;
 
-				_shadeMatrix[3] = (*(renderV21 + 3)) * _lightY;
-				_shadeMatrix[4] = (*(renderV21 + 4)) * _lightY;
-				_shadeMatrix[5] = (*(renderV21 + 5)) * _lightY;
+			_shadeMatrix[3] = renderV21[3] * _lightY;
+			_shadeMatrix[4] = renderV21[4] * _lightY;
+			_shadeMatrix[5] = renderV21[5] * _lightY;
 
-				_shadeMatrix[6] = (*(renderV21 + 6)) * _lightZ;
-				_shadeMatrix[7] = (*(renderV21 + 7)) * _lightZ;
-				_shadeMatrix[8] = (*(renderV21 + 8)) * _lightZ;
+			_shadeMatrix[6] = renderV21[6] * _lightZ;
+			_shadeMatrix[7] = renderV21[7] * _lightZ;
+			_shadeMatrix[8] = renderV21[8] * _lightZ;
 
-				do { // for each normal
-					short int col1;
-					short int col2;
-					short int col3;
+			while (numNormal--) { // for each normal
+				short int col1;
+				short int col2;
+				short int col3;
 
-					short int *colPtr;
+				short int *colPtr;
 
-					colPtr = (short int *) _shadePtr;
+				colPtr = (short int *) _shadePtr;
 
-					col1 = READ_LE_S16(colPtr++);
-					col2 = READ_LE_S16(colPtr++);
-					col3 = READ_LE_S16(colPtr++);
+				col1 = READ_LE_S16(colPtr++);
+				col2 = READ_LE_S16(colPtr++);
+				col3 = READ_LE_S16(colPtr++);
 
-					eax = _shadeMatrix[0] * col1 + _shadeMatrix[1] * col2 + _shadeMatrix[2] * col3;
-					eax += _shadeMatrix[3] * col1 + _shadeMatrix[4] * col2 + _shadeMatrix[5] * col3;
-					eax += _shadeMatrix[6] * col1 + _shadeMatrix[7] * col2 + _shadeMatrix[8] * col3;
+				eax = _shadeMatrix[0] * col1 + _shadeMatrix[1] * col2 + _shadeMatrix[2] * col3;
+				eax += _shadeMatrix[3] * col1 + _shadeMatrix[4] * col2 + _shadeMatrix[5] * col3;
+				eax += _shadeMatrix[6] * col1 + _shadeMatrix[7] * col2 + _shadeMatrix[8] * col3;
 
-					edi = 0;
+				edi = 0;
 
-					if (eax > 0) {
-						eax >>= 14;
-						ptr6 = (unsigned char *) _shadePtr;
-						eax /= READ_LE_U16(ptr6 + 6);
-						edi = (unsigned short int) eax;
-					}
+				if (eax > 0) {
+					eax >>= 14;
+					ptr6 = (unsigned char *) _shadePtr;
+					eax /= READ_LE_U16(ptr6 + 6);
+					edi = (unsigned short int) eax;
+				}
 
-					WRITE_LE_U16(_currentShadeDestination, edi);
-					_currentShadeDestination += 2;
-					_shadePtr += 2;
-
-				} while (--rs1s2v1);
+				WRITE_LE_U16(_currentShadeDestination, edi);
+				_currentShadeDestination += 2;
+				_shadePtr += 2;
 			}
 			ptr3 = pri2Ptr2 = pri2Ptr2 + 38;
 			ptr4 = renderV21 = renderV21 + 9;
-		} while (--_numOfPrimitives);
+		}
 	}
+
 	return (finishRender((unsigned char *) _shadePtr));
 }
 
 void loadPart(int edx, int ecx, int ebx, unsigned char * ptr) {
 	int *ebp;
 	short int var;
-
-// int* ptr1;
 
 	int rs1v1 = READ_LE_S16(ptr);
 	int rs1v2 = READ_LE_S16(ptr + 2);
@@ -708,30 +690,6 @@ void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax) {
 	} while (--rs1s2v1);
 }
 
-struct polyHeader {
-	unsigned char FillVertic_AType;
-	unsigned char numOfVertex;
-	short int colorIndex;
-};
-
-typedef struct polyHeader polyHeader;
-
-struct polyVertexHeader {
-	short int shadeEntry;
-	short int dataOffset;
-};
-
-typedef struct polyVertexHeader polyVertexHeader;
-
-
-struct computedVertex {
-	short int shadeValue;
-	short int x;
-	short int y;
-};
-
-typedef struct computedVertex computedVertex;
-
 void circle_fill(int x, int y, int radius, byte color) {
 	int currentLine;
 
@@ -760,14 +718,10 @@ int finishRender(unsigned char *esi) {
 	short int temp;
 	int eax, ecx;
 
-	// unsigned char temp2;
 	short int counter;
 	short int type;
 	short int color;
 
-	// float tempFloat;
-	// short int ebx;
-	// short int edx;
 	lineData *lineDataPtr;
 	lineCoordinates *lineCoordinatesPtr;
 
@@ -786,14 +740,14 @@ int finishRender(unsigned char *esi) {
 
 	short int ax, bx, cx;
 
-	// short int borrom;
-
 	unsigned char *destPtr;
 	int i;
 
 	unsigned char *render23;
 	unsigned char *render24;
 	int render25;
+
+	short int drawType;
 
 	polyVertexHeader *currentPolyVertex;
 	polyHeader *currentPolyHeader;
@@ -814,11 +768,11 @@ int finishRender(unsigned char *esi) {
 			currentPolyHeader = (polyHeader *) esi;
 			ecx = READ_LE_S32(esi);
 			esi += 2;
-			FillVertic_AType = currentPolyHeader->FillVertic_AType;
+			drawType = currentPolyHeader->FillVertic_AType;
 
-			assert(FillVertic_AType <= 10);
+			assert(drawType <= 10);
 
-			if (FillVertic_AType >= 9) {
+			if (drawType >= 9) {
 				destinationHeader = (polyHeader *) edi;
 
 				destinationHeader->FillVertic_AType = currentPolyHeader->FillVertic_AType - 2;
@@ -857,7 +811,7 @@ int finishRender(unsigned char *esi) {
 						bestDepth = currentDepth;
 				} while (--counter);
 
-			} else if (FillVertic_AType >= 7) { // only 1 shade value is used
+			} else if (drawType >= 7) { // only 1 shade value is used
 				destinationHeader = (polyHeader *) edi;
 
 				destinationHeader->FillVertic_AType = currentPolyHeader->FillVertic_AType - 7;
@@ -956,7 +910,7 @@ int finishRender(unsigned char *esi) {
 			ax *= cx;
 
 			ax -= bestDepth;
-			currentDepth -= (bx) - 1; // peut-etre une erreur la
+			currentDepth -= bx - 1; // peut-etre une erreur la
 
 			if (currentDepth < 0) {
 				edi = render23;
@@ -1035,18 +989,15 @@ int finishRender(unsigned char *esi) {
 		} while (--temp);
 	}
 
-	renderTabEntryPtr2 = renderTab;
-
 	renderTabSortedPtr = renderTabSorted;
+
 	for (i = 0; i < _numOfPrimitives; i++) { // then we sort the polygones (FIXME: very slow !)
-		renderTabEntryPtr2 = renderTab;
 		bestZ = -0x7FFF;
 		for (j = 0; j < _numOfPrimitives; j++) {
-			if (renderTabEntryPtr2->depth > bestZ) {
-				bestZ = renderTabEntryPtr2->depth;
+			if (renderTab[j].depth > bestZ) {
+				bestZ = renderTab[j].depth;
 				bestPoly = j;
 			}
-			renderTabEntryPtr2++;
 		}
 		renderTabSortedPtr->depth = renderTab[bestPoly].depth;
 		renderTabSortedPtr->renderType = renderTab[bestPoly].renderType;
@@ -1066,96 +1017,92 @@ int finishRender(unsigned char *esi) {
 			renderV19 += 8;
 
 			switch (type) {
-			case 0: { // draw a line
+				case 0: { // draw a line
 
-					unsigned int x1;
-					unsigned int y1;
-					unsigned int x2;
-					unsigned int y2;
+							unsigned int x1;
+							unsigned int y1;
+							unsigned int x2;
+							unsigned int y2;
 
 #ifndef PCLIKE
-					break;
+							break;
 #endif
-					lineCoordinatesPtr = (lineCoordinates *) esi;
-					color = (READ_LE_S32(&lineCoordinatesPtr->data) & 0xFF00) >> 8;
+							lineCoordinatesPtr = (lineCoordinates *) esi;
+							color = (READ_LE_S32(&lineCoordinatesPtr->data) & 0xFF00) >> 8;
 
-					x1 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->x1);
-					y1 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->y1);
-					x2 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->x2);
-					y2 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->y2);
+							x1 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->x1);
+							y1 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->y1);
+							x2 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->x2);
+							y2 = READ_LE_S16((unsigned short int*) & lineCoordinatesPtr->y2);
 
-					drawLine(x1, y1, x2, y2, color);
+							drawLine(x1, y1, x2, y2, color);
 
-					break;
-				}
+							break;
+						}
 #ifndef MACOSX
-			case 1: { // draw a polygon
-					eax = READ_LE_S32(esi);
-					esi += 4;
+				case 1: { // draw a polygon
+							short int drawType = *(esi++);
+							int numOfVertex = *(esi++);
+							color = READ_LE_S16(esi);
+							esi += 2;
 
-					FillVertic_AType = eax & 0xFF;
-					numOfVertex = (eax & 0xFF00) >> 8;
-					color = (eax & 0xFF0000) >> 16;
+							assert(drawType <= 10);
 
-					assert(FillVertic_AType <= 10);
+							destPtr = (unsigned char *) vertexCoordinates;
 
-					destPtr = (unsigned char *) vertexCoordinates;
+							for (i = 0; i < (numOfVertex * 3); i++) {
+								WRITE_LE_S16(destPtr, READ_LE_S16(esi));
+								destPtr += 2;
+								esi += 2;
+							}
 
-					for (i = 0; i < (numOfVertex * 3); i++) {
-						WRITE_LE_S16(destPtr, READ_LE_S16(esi));
-						destPtr += 2;
-						esi += 2;
-					}
+							drawVertices(numOfVertex, drawType);
+							fillVertices(color, drawType); /* TODO: find out why color is limited */
 
-					ComputePoly_A();
-					FillVertic_A(FillVertic_AType, color);
-
-					break;
-				}
+							break;
+						}
 #endif
-			case 2: { // draw a circle
-					//  int circleSize;
-					//  char circleColor;
+				case 2: { // draw a circle
+							int circleParam1;
+							int circleParam3;
+							int circleParam4;
+							int circleParam5;
 
-					int circleParam1;
-					int circleParam3;
-					int circleParam4;
-					int circleParam5;
+							eax = *(int*) esi;
 
-					eax = *(int*) esi;
+							circleParam1 = *(unsigned char*)esi;
+							circleParam4 = READ_LE_S16(esi + 1);
+							circleParam5 = READ_LE_S16(esi + 3);
+							circleParam3 = READ_LE_S16(esi + 5);
 
-					circleParam1 = *(unsigned char*)esi;
-					circleParam4 = READ_LE_S16(esi + 1);
-					circleParam5 = READ_LE_S16(esi + 3);
-					circleParam3 = READ_LE_S16(esi + 5);
+							if (!isUsingOrhoProjection) {
+								circleParam3 = (circleParam3 * cameraVar2) / (cameraVar1 + *(short int*)esi);
+							} else {
+								circleParam3 = (circleParam3 * 34) >> 9;
+							}
 
-					if (!isUsingOrhoProjection) {
-						circleParam3 = (circleParam3 * cameraVar2) / (cameraVar1 + *(short int*)esi);
-					} else {
-						circleParam3 = (circleParam3 * 34) >> 9;
-					}
+							circleParam3 += 3;
 
-					circleParam3 += 3;
+							if (circleParam4 + circleParam3 > renderRight)
+								renderRight = circleParam4 + circleParam3;
 
-					if (circleParam4 + circleParam3 > renderRight)
-						renderRight = circleParam4 + circleParam3;
+							if (circleParam4 - circleParam3 < renderLeft)
+								renderLeft = circleParam4 - circleParam3;
 
-					if (circleParam4 - circleParam3 < renderLeft)
-						renderLeft = circleParam4 - circleParam3;
+							if (circleParam5 + circleParam3 > renderBottom)
+								renderBottom = circleParam5 + circleParam3;
 
-					if (circleParam5 + circleParam3 > renderBottom)
-						renderBottom = circleParam5 + circleParam3;
+							if (circleParam5 - circleParam3 < renderTop)
+								renderTop = circleParam5 - circleParam3;
 
-					if (circleParam5 - circleParam3 < renderTop)
-						renderTop = circleParam5 - circleParam3;
+							circleParam3 -= 3;
 
-					circleParam3 -= 3;
+							circle_fill(circleParam4, circleParam5, circleParam3, circleParam1);
+						}
+						break;
 
-					circle_fill(circleParam4, circleParam5, circleParam3, circleParam1);
-				}
-			default: {
-					break;
-				}
+				default:
+						break;
 			}
 
 			esi = renderV19;
@@ -1172,12 +1119,11 @@ int finishRender(unsigned char *esi) {
 	return (0);
 }
 
-void FillVertic_A(int ecx, int edi) {
+void fillVertices(int color, short int drawType) {
 	unsigned char *out, *out2;
 	short int *ptr1;
 	short int *ptr2;
 	int vsize, hsize;
-	int color;
 	int j;
 	int currentLine;
 
@@ -1198,12 +1144,10 @@ void FillVertic_A(int ecx, int edi) {
 
 	vsize = vbottom - vtop + 1;
 
-	color = edi;
-
 	/* TODO: Fix missing or buggy filling techniques */
 
-	switch (ecx) {
-	case 0: { // flat polygon
+	switch (drawType) {
+		case 0: // flat polygon
 			currentLine = vtop;
 			while (vsize--) {
 				if (currentLine >= 0 && currentLine < videoHeight) {
@@ -1229,10 +1173,9 @@ void FillVertic_A(int ecx, int edi) {
 			}
 			break;
 
-		}
-	case 1: {   // copper
+		case 1: // copper
 			currentLine = vtop;
-			do {
+			while (vsize--) {
 				if (currentLine >= 0 && currentLine < videoHeight) {
 					start = ptr1[0];
 					stop = ptr1[videoHeight];
@@ -1268,12 +1211,12 @@ void FillVertic_A(int ecx, int edi) {
 				}
 				out += videoWidth;
 				currentLine++;
-			} while (--vsize);
+			}
 			break;
-		}
-	case 2: { // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine TODO: buggy
+
+		case 2: // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine TODO: buggy
 			currentLine = vtop;
-			do {
+			while (vsize--) {
 				if (currentLine >= 0 && currentLine < videoHeight) {
 					start = ptr1[0];
 					stop = ptr1[videoHeight];
@@ -1297,287 +1240,300 @@ void FillVertic_A(int ecx, int edi) {
 				}
 				out += videoWidth;
 				currentLine++;
-			} while (--vsize);
-			break;
-		}
-	// TODO: missing 3 ("marble"), 4 ("tele") & 5 ("tras")
-	case 6: { // trame TODO: buggy
-			unsigned char bh = 0;
-
-			currentLine = vtop;
-			do {
-				if (currentLine >= 0 && currentLine < videoHeight) {
-					start = ptr1[0];
-					stop = ptr1[videoHeight];
-					ptr1++;
-					hsize = stop - start;
-
-					if (hsize >= 0) {
-						hsize++;
-						out2 = start + out;
-
-						hsize /= 2;
-						if (hsize > 1) {
-							unsigned short int ax;
-							bh ^= 1;
-							ax = (unsigned short int)*(int*) out2;
-							ax &= 1;
-							if (ax ^ bh) {
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								out2++;
-							}
-
-							for (j = 0; j < hsize; j++) {
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								*(out2) = (unsigned char)color;
-								out2 += 2;
-							}
-						}
-					}
-
-				}
-				out += videoWidth;
-				currentLine++;
-			} while (--vsize);
-			break;
-		}
-	case 7: { // gouraud: TODO: BUGGY: ugly :(
-			currentLine = vtop;
-			while (vsize--) {
-				if (currentLine >= 0 && currentLine < videoHeight) {
-					unsigned short int startColor = ptr2[0];
-					unsigned short int stopColor = ptr2[videoHeight];
-
-					short int colorSize = stopColor - startColor;
-
-					stop = ptr1[videoHeight];  // stop
-					start = ptr1[0]; // start
-
-					ptr1++;
-					ptr2++;
-
-					out2 = start + out;
-					hsize = stop - start;
-
-
-					switch (hsize) {
-						case 0:
-							if (start >= 0 && start < videoWidth)
-								*out2 = ((startColor + stopColor) / 2) >> 8;
-
-							break;
-
-						case 1:
-							if (start >= -1 && start < videoWidth - 1)
-								*(out2 + 1) = stopColor >> 8;
-
-							if (start >= 0 && start < videoWidth)
-								*(out2) = startColor >> 8;
-
-							break;
-
-						case 2:
-							if (start >= -2 && start < videoWidth - 2)
-								*(out2 + 2) = stopColor >> 8;
-
-							if (start >= -1 && start < videoWidth - 1)
-								*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
-
-							if (start >= 0 && start < videoWidth)
-								*(out2) = startColor >> 8;
-
-							break;
-
-						default:
-							if (hsize < 0)
-								break;
-
-							colorSize /= hsize;
-							hsize++;
-
-							while (hsize--) {
-								if (start >= 0 && start < videoWidth)
-									*out2 = startColor >> 8;
-
-								start++;
-								startColor += colorSize;
-								out2++;
-							}
-
-							break;
-					}
-				}
-				out += videoWidth;
-				currentLine++;
 			}
-
 			break;
-		}
-	case 8: { // dithering
-			currentLine = vtop;
-			while (vsize--) {
-				if (currentLine >= 0 && currentLine < videoHeight) {
-					stop = ptr1[videoHeight]; // stop
-					start = ptr1[0];  // start
-					ptr1++;
-					hsize = stop - start;
 
-					if (hsize >= 0) {
-						unsigned short int startColor = ptr2[0];
-						unsigned short int stopColor = ptr2[videoHeight];
-						int currentXPos = start;
+		case 3: // TODO: "marble"
+				break;
 
-						out2 = start + out;
-						ptr2++;
+		case 4: // TODO: "tele"
+				break;
 
-						if (hsize == 0) {
-							assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-							if (currentXPos >= 0 && currentXPos < videoWidth)
-								*(out2) = (unsigned char)(((startColor + stopColor) / 2) >> 8);
+		case 5: // TODO: "tras"
+				break;
 
-						} else {
-							short int colorSize = stopColor - startColor;
-							if (hsize == 1) {
-								unsigned short int currentColor = startColor;
+		case 6: { // trame TODO: buggy
+					unsigned char bh = 0;
+
+					currentLine = vtop;
+					do {
+						if (currentLine >= 0 && currentLine < videoHeight) {
+							start = ptr1[0];
+							stop = ptr1[videoHeight];
+							ptr1++;
+							hsize = stop - start;
+
+							if (hsize >= 0) {
 								hsize++;
+								out2 = start + out;
+
 								hsize /= 2;
+								if (hsize > 1) {
+									unsigned short int ax;
+									bh ^= 1;
+									ax = (unsigned short int)*(int*) out2;
+									ax &= 1;
+									if (ax ^ bh) {
+										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+										out2++;
+									}
 
-								currentColor &= 0xFF;
-								currentColor += startColor;
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2) = currentColor >> 8;
-
-								currentColor &= 0xFF;
-								startColor += colorSize;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-								currentXPos++;
-								assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2 + 1) = currentColor >> 8;
-
-							} else if (hsize == 2) {
-								unsigned short int currentColor = startColor;
-								hsize++;
-								hsize /= 2;
-
-								currentColor &= 0xFF;
-								colorSize /= 2;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2) = currentColor >> 8;
-
-
-								out2++;
-								currentXPos++;
-								startColor += colorSize;
-
-								currentColor &= 0xFF;
-								currentColor += startColor;
-
-								assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2) = currentColor >> 8;
-
-
-								currentColor &= 0xFF;
-								startColor += colorSize;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-
-								currentXPos++;
-								assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-								if (currentXPos >= 0 && currentXPos < videoWidth)
-									*(out2 + 1) = currentColor >> 8;
-
-							} else {
-								unsigned short int currentColor = startColor;
-								colorSize /= hsize;
-								hsize++;
-
-
-								if (hsize % 2) {
-									hsize /= 2;
-									currentColor &= 0xFF;
-									currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-									currentColor += startColor;
-									assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-									if (currentXPos >= 0 && currentXPos < videoWidth)
-										*(out2) = currentColor >> 8;
-
-									out2++;
-									currentXPos++;
-								} else {
-									hsize /= 2;
+									for (j = 0; j < hsize; j++) {
+										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+										*(out2) = (unsigned char)color;
+										out2 += 2;
+									}
 								}
+							}
 
-								do {
-									currentColor &= 0xFF;
-									currentColor += startColor;
-									assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-									if (currentXPos >= 0 && currentXPos < videoWidth)
-										*(out2) = currentColor >> 8;
+						}
+						out += videoWidth;
+						currentLine++;
+					} while (--vsize);
+					break;
+				}
+		case 7: { // gouraud: TODO: BUGGY: ugly :(
+					currentLine = vtop;
+					while (vsize--) {
+						if (currentLine >= 0 && currentLine < videoHeight) {
+							unsigned short int startColor = ptr2[0];
+							unsigned short int stopColor = ptr2[videoHeight];
 
-									currentXPos++;
-									currentColor &= 0xFF;
-									startColor += colorSize;
-									currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-									currentColor += startColor;
-									assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-									if (currentXPos >= 0 && currentXPos < videoWidth)
-										*(out2 + 1) = currentColor >> 8;
+							short int colorSize = stopColor - startColor;
 
-									currentXPos++;
-									out2 += 2;
-									startColor += colorSize;
-								} while (--hsize);
+							stop = ptr1[videoHeight];  // stop
+							start = ptr1[0]; // start
+
+							ptr1++;
+							ptr2++;
+
+							out2 = start + out;
+							hsize = stop - start;
+
+
+							switch (hsize) {
+								case 0:
+									if (start >= 0 && start < videoWidth)
+										*out2 = ((startColor + stopColor) / 2) >> 8;
+
+									break;
+
+								case 1:
+									if (start >= -1 && start < videoWidth - 1)
+										*(out2 + 1) = stopColor >> 8;
+
+									if (start >= 0 && start < videoWidth)
+										*(out2) = startColor >> 8;
+
+									break;
+
+								case 2:
+									if (start >= -2 && start < videoWidth - 2)
+										*(out2 + 2) = stopColor >> 8;
+
+									if (start >= -1 && start < videoWidth - 1)
+										*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+
+									if (start >= 0 && start < videoWidth)
+										*(out2) = startColor >> 8;
+
+									break;
+
+								default:
+									if (hsize < 0)
+										break;
+
+									colorSize /= hsize;
+									hsize++;
+
+									while (hsize--) {
+										if (start >= 0 && start < videoWidth)
+											*out2 = startColor >> 8;
+
+										start++;
+										startColor += colorSize;
+										out2++;
+									}
+
+									break;
 							}
 						}
+						out += videoWidth;
+						currentLine++;
 					}
+
+					break;
 				}
-				out += videoWidth;
-				currentLine++;
-			}
-			break;
-		}
-	default: {
-			/*printf("Unsuported render type %d\n", FillVertic_AType); TODO: find a solution to write that only if debug is enabled*/
-			break;
-		}
+		case 8: { // dithering
+					currentLine = vtop;
+					while (vsize--) {
+						if (currentLine >= 0 && currentLine < videoHeight) {
+							stop = ptr1[videoHeight]; // stop
+							start = ptr1[0];  // start
+							ptr1++;
+							hsize = stop - start;
+
+							if (hsize >= 0) {
+								unsigned short int startColor = ptr2[0];
+								unsigned short int stopColor = ptr2[videoHeight];
+								int currentXPos = start;
+
+								out2 = start + out;
+								ptr2++;
+
+								if (hsize == 0) {
+									assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+									if (currentXPos >= 0 && currentXPos < videoWidth)
+										*(out2) = (unsigned char)(((startColor + stopColor) / 2) >> 8);
+
+								} else {
+									short int colorSize = stopColor - startColor;
+									if (hsize == 1) {
+										unsigned short int currentColor = startColor;
+										hsize++;
+										hsize /= 2;
+
+										currentColor &= 0xFF;
+										currentColor += startColor;
+										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+										if (currentXPos >= 0 && currentXPos < videoWidth)
+											*(out2) = currentColor >> 8;
+
+										currentColor &= 0xFF;
+										startColor += colorSize;
+										currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+										currentColor += startColor;
+										currentXPos++;
+										assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+										if (currentXPos >= 0 && currentXPos < videoWidth)
+											*(out2 + 1) = currentColor >> 8;
+
+									} else if (hsize == 2) {
+										unsigned short int currentColor = startColor;
+										hsize++;
+										hsize /= 2;
+
+										currentColor &= 0xFF;
+										colorSize /= 2;
+										currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+										currentColor += startColor;
+										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+										if (currentXPos >= 0 && currentXPos < videoWidth)
+											*(out2) = currentColor >> 8;
+
+
+										out2++;
+										currentXPos++;
+										startColor += colorSize;
+
+										currentColor &= 0xFF;
+										currentColor += startColor;
+
+										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+										if (currentXPos >= 0 && currentXPos < videoWidth)
+											*(out2) = currentColor >> 8;
+
+
+										currentColor &= 0xFF;
+										startColor += colorSize;
+										currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+										currentColor += startColor;
+
+										currentXPos++;
+										assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+										if (currentXPos >= 0 && currentXPos < videoWidth)
+											*(out2 + 1) = currentColor >> 8;
+
+									} else {
+										unsigned short int currentColor = startColor;
+										colorSize /= hsize;
+										hsize++;
+
+
+										if (hsize % 2) {
+											hsize /= 2;
+											currentColor &= 0xFF;
+											currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+											currentColor += startColor;
+											assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+											if (currentXPos >= 0 && currentXPos < videoWidth)
+												*(out2) = currentColor >> 8;
+
+											out2++;
+											currentXPos++;
+										} else {
+											hsize /= 2;
+										}
+
+										do {
+											currentColor &= 0xFF;
+											currentColor += startColor;
+											assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+											if (currentXPos >= 0 && currentXPos < videoWidth)
+												*(out2) = currentColor >> 8;
+
+											currentXPos++;
+											currentColor &= 0xFF;
+											startColor += colorSize;
+											currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+											currentColor += startColor;
+											assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
+											if (currentXPos >= 0 && currentXPos < videoWidth)
+												*(out2 + 1) = currentColor >> 8;
+
+											currentXPos++;
+											out2 += 2;
+											startColor += colorSize;
+										} while (--hsize);
+									}
+								}
+							}
+						}
+						out += videoWidth;
+						currentLine++;
+					}
+					break;
+				}
+		default: {
+					 printf("Unsupported render type %d\n", drawType);
+					 break;
+				 }
 	};
 
 }
 
-void ComputePoly_A(void) {
+void drawVertices(int numOfVertex, short int drawType) {
 	short int vertexY;
-	short int *ptr1, *ptr3;
+	short int *vertexPosPtr, *polyPtr;
 	int i;
-	short int push1, push2;
 	char xdir = 1, ydir = 1;
 	int echange;
+
+	short int actualVertexX, actualVertexY;
 	short int oldVertexX, oldVertexY;
 	short int currentVertexX, currentVertexY;
+
+	unsigned char actualColor;
+	unsigned char oldColor;
+	unsigned char currentColor;
+
 	short int size;
-	int temp2;
-	float vfloat, vfloat2;
-	short int reste, test;
+	float startX;
+	int startY;
+	float step;
 
-	pRenderV1 = vertexCoordinates;
-	pRenderV2 = pRenderV3;
-	numOfVertexRemaining = numOfVertex;
+	short int startColor, stepColor;
 
+	/* Set vtop & vbottom to their maximal/minimal size */
 	vtop = 32767;
 	vbottom = -32768;
 
-	ptr1 = vertexCoordinates;
+	vertexPosPtr = vertexCoordinates;
 
 	for (i = 0; i < numOfVertex; i++) {
-		ptr1 += 2; // don't use the 2 first parameters
+		vertexPosPtr += 2;
 
-		vertexY = *(ptr1++);
+		vertexY = *(vertexPosPtr++);
 
 		if (vertexY < vtop)
 			vtop = vertexY;
@@ -1585,29 +1541,29 @@ void ComputePoly_A(void) {
 			vbottom = vertexY;
 	}
 
-	ptr1[0] = pRenderV1[0];
-	ptr1[1] = pRenderV1[1];
-	ptr1[2] = pRenderV1[2];
-	ptr1 = pRenderV1;   // on retourne au debut de la liste
+	vertexPosPtr[0] = vertexCoordinates[0];
+	vertexPosPtr[1] = vertexCoordinates[1];
+	vertexPosPtr[2] = vertexCoordinates[2];
+	vertexPosPtr = vertexCoordinates;
 
-	vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
-	oldVertexX = *(ptr1++);
-	oldVertexY = *(ptr1++);
+	actualColor = currentColor = *(vertexPosPtr++);
+	oldVertexX = *(vertexPosPtr++);
+	oldVertexY = *(vertexPosPtr++);
 
-	while (numOfVertexRemaining--) {
-		oldVertexParam = vertexParam1;
+	while (numOfVertex--) {
+		oldColor = actualColor;
 
-		vertexParam1 = vertexParam2 = (*(ptr1++)) & 0xFF;
-		currentVertexX = *(ptr1++);
-		currentVertexY = *(ptr1++);
+		actualColor = currentColor = *(vertexPosPtr++);
+		currentVertexX = *(vertexPosPtr++);
+		currentVertexY = *(vertexPosPtr++);
 
 		/* Since it's scanline based, we don't care when we are only moving along X */
 		if (currentVertexY == oldVertexY) {
 			oldVertexX = size = currentVertexX;
 		} else {
 			/* Let's save the current coordinates since we are going to modify the values */
-			push1 = currentVertexX;
-			push2 = currentVertexY;
+			actualVertexX = currentVertexX;
+			actualVertexY = currentVertexY;
 
 			/* Move up */
 			if (currentVertexY < oldVertexY) {
@@ -1629,9 +1585,9 @@ void ComputePoly_A(void) {
 				currentVertexY = oldVertexY;
 				oldVertexY = echange;
 
-				echange = oldVertexParam;
-				oldVertexParam = vertexParam2;
-				vertexParam2 = echange;
+				echange = oldColor;
+				oldColor = currentColor;
+				currentColor = echange;
 
 				xdir = -ydir;
 			} else {
@@ -1639,66 +1595,58 @@ void ComputePoly_A(void) {
 			}
 
 			/* Starting Y position */
-			temp2 = oldVertexY;
+			startY = oldVertexY;
 			/* oldVertexY becomes the number of pixel */
 			oldVertexY = size;
-			size = temp2 * 2;
+			size = startY * 2;
 
-			/* ptr3 is the pointer to the actual polygons cell */
-			/* vfloat is the step for every point to the current vertex */
+			/* polyPtr is the pointer to the actual polygons cell */
+			/* 'step' is the step for every point to the current vertex */
 			if (ydir == -1) {
-				ptr3 = &polyTab[temp2 + videoHeight];
-				vfloat = ((float)(oldVertexX - currentVertexX)) / ((float) oldVertexY);
+				polyPtr = &polyTab[startY + videoHeight];
+				step = ((float)(oldVertexX - currentVertexX)) / ((float) oldVertexY);
 			} else {
-				ptr3 = &polyTab[temp2];
-				vfloat = ((float)(currentVertexX - oldVertexX)) / ((float) oldVertexY);
+				polyPtr = &polyTab[startY];
+				step = ((float)(currentVertexX - oldVertexX)) / ((float) oldVertexY);
 			}
 
 			/* Starting X position */
-			vfloat2 = oldVertexX;
+			startX = oldVertexX;
 
 			/* oldVertexX is now the number of vertical pixels */
 			oldVertexX = oldVertexY;
 
-			oldVertexY += 2;
-
 			/* Add all the points */
-			for (i = 0; i < oldVertexY; i++) {
-				if ((ptr3 - polyTab) < 960 && (ptr3 - polyTab) >= 0)
-					*ptr3 = (short int) vfloat2;
-				ptr3 += xdir;
-				vfloat2 += vfloat * ydir;
+			for (i = 0; i < oldVertexY+1; i++) { /* TODO: why +1 ? */
+				if ((polyPtr - polyTab) < 960 && (polyPtr - polyTab) >= 0)
+					*polyPtr = (short int) startX;
+				polyPtr += xdir;
+				startX += step * ydir;
 			}
 
 			/* Compute the color progression */
-			if (FillVertic_AType >= 7) {
+			if (drawType >= 7) {
 				if (ydir == -1)
-					ptr3 = &polyTab2[temp2 + videoHeight];
+					polyPtr = &polyTab2[startY + videoHeight];
 				else
-					ptr3 = &polyTab2[temp2];
+					polyPtr = &polyTab2[startY];
 
 				/* Color progression per step */
-				test = (abs(vertexParam2 - oldVertexParam) << 8) / oldVertexX;
+				stepColor = ((currentColor - oldColor) << 8) / oldVertexX;
 				/* Starting color */
-				reste = (oldVertexParam << 8) | 0x7F; /* starts with the old vertex */
-						
-				if (vertexParam2 >= oldVertexParam)
-					oldVertexX += 2;
-				
+				startColor = (oldColor << 8) | 0xFF; /* starts with the old vertex */
+
 				/* Add all the colors */
-				for (i = 0; i < oldVertexX; i++) {
-					if ((ptr3 - polyTab2) < 960 && (ptr3 - polyTab2) >= 0)
-						*ptr3 = reste;
-					ptr3 += xdir;
-					if (vertexParam2 < oldVertexParam)
-						reste -= test;
-					else
-						reste += test;
+				for (i = 0; i < oldVertexX+1; i++) {
+					if ((polyPtr - polyTab2) < 960 && (polyPtr - polyTab2) >= 0)
+						*polyPtr = startColor;
+					polyPtr += xdir;
+					startColor += stepColor;
 				}
 			}
 			/* Restore the old vertex position */
-			oldVertexY = push2;
-			oldVertexX = push1;
+			oldVertexX = actualVertexX;
+			oldVertexY = actualVertexY;
 		}
 	}
 }
@@ -1807,9 +1755,9 @@ void drawLine(int a, int b, int c, int d, int e) {
 	}
 }
 
-void setCameraPosition(int X, int Y, int param2, int param3, int param4) {
-	setSomethingVar1 = X;
-	setSomethingVar2 = Y;
+void setCameraPosition(int X, int Z, int param2, int param3, int param4) {
+	cameraPosX = X;
+	cameraPosZ = Z;
 
 	cameraVar1 = param2;
 	cameraVar2 = param3;

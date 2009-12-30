@@ -21,8 +21,6 @@ void getWordSize(char *arg1, char *arg2);
 void printText10Sub(void);
 void readBufferSpeak(FILE * fileHandle);
 void initProgressiveTextBuffer(void);
-void FillVertic(int arg0, int arg_4);
-void ComputePoly(void);
 
 extern int progressiveTextStartColor;
 extern int progressiveTextStopColor;

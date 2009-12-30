@@ -16,7 +16,7 @@
 #define WINDOW_X 640
 #define WINDOW_Y 480
 
-#define FASTDEBUG
+//#define FASTDEBUG
 
 #define USE_SDL
 

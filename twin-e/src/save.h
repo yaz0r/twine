@@ -1,2 +1,2 @@
 void SaveGame(void);
-void LoadGame(void);
+char LoadGame(void);

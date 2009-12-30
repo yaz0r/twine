@@ -28,6 +28,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "samples.h"
 #include "room.h"
 #include "script.h"
+#include "save.h"
+#include "mainLoop.h"
 
 #include "main.h"
 
@@ -131,7 +133,6 @@ static void init(void)
 	FadeToBlack((char *) paletteRGBA);
 
 	playFla("DRAGON3");
-#endif
 
 	Load_HQR("ress.hqr", workVideoBuffer, 14);
 
@@ -142,6 +143,16 @@ static void init(void)
 	FadeToPal((char *) menuPalRGBA);
 
 	MainGameMenu();
+#else
+	if (LoadGame()) {
+		reinitAll(-1);
+	} else {
+		reinitAll(1);
+		newGame();
+	}
+
+	mainLoop();
+#endif
 }
 
 

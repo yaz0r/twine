@@ -36,10 +36,24 @@ typedef unsigned char u8;
 # define FORCEINLINE static __inline__
 #endif
 
+/* Detect endianness */
+#ifdef BIG_ENDIAN
+# undef BIG_ENDIAN
+#endif
+
+#if defined(__hppa__) || \
+    defined(__m68k__) || defined(mc68000) || defined(_M_M68K) || \
+    (defined(__MIPS__) && defined(__MISPEB__)) || \
+    defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC) || \
+    defined(__sparc__)
+# define BIG_ENDIAN
+#endif
+
 #define READ_LE_BYTE(ptr) (*(ptr))
 
 FORCEINLINE uint16 READ_LE_U16(void *ptr) {
-#if __BYTE_ORDER == __BIG_ENDIAN
+#ifdef BIG_ENDIAN
+	printf("ARGH\n");
 	return (((byte*)ptr)[0] << 8) | ((byte*)ptr)[1];
 #else
 	return (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
@@ -47,7 +61,7 @@ FORCEINLINE uint16 READ_LE_U16(void *ptr) {
 }
 
 FORCEINLINE int16 READ_LE_S16(void *ptr) {
-#if __BYTE_ORDER == __BIG_ENDIAN
+#ifdef BIG_ENDIAN
 	return (((byte*)ptr)[0] << 8) | ((byte*)ptr)[1];
 #else
 	return (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
@@ -55,7 +69,7 @@ FORCEINLINE int16 READ_LE_S16(void *ptr) {
 }
 
 FORCEINLINE uint32 READ_LE_U32(void *ptr) {
-#if __BYTE_ORDER == __BIG_ENDIAN
+#ifdef BIG_ENDIAN
 	return (((byte*)ptr)[0] << 24) | (((byte*)ptr)[1] << 16) | (((byte*)ptr)[2] << 8) | ((byte*)ptr)[3];
 #else
 	return (((byte*)ptr)[3] << 24) | (((byte*)ptr)[2] << 16) | (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
@@ -63,7 +77,7 @@ FORCEINLINE uint32 READ_LE_U32(void *ptr) {
 }
 
 FORCEINLINE int32 READ_LE_S32(void *ptr) {
-#if __BYTE_ORDER == __BIG_ENDIAN
+#ifdef BIG_ENDIAN
 	return (((byte*)ptr)[0] << 24) | (((byte*)ptr)[1] << 16) | (((byte*)ptr)[2] << 8) | ((byte*)ptr)[3];
 #else
 	return (((byte*)ptr)[3] << 24) | (((byte*)ptr)[2] << 16) | (((byte*)ptr)[1] << 8) | ((byte*)ptr)[0];
