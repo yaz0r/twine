@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2002-2004 The TwinE team
+Copyright (C) 2002-2010 The TwinE team
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -1364,7 +1364,7 @@ void fillVertices(int color, short int drawType) {
 
 					break;
 				}
-		case 8: { // dithering
+		case 8: { // dithering: TODO: bug for high colors
 					currentLine = vtop;
 					while (vsize--) {
 						if (currentLine >= 0 && currentLine < videoHeight) {
@@ -1506,18 +1506,14 @@ void drawVertices(int numOfVertex, short int drawType) {
 	short int vertexY;
 	short int *vertexPosPtr, *polyPtr;
 	int i;
-	char xdir = 1, ydir = 1;
-	int echange;
+	char dir = 1;
 
-	short int actualVertexX, actualVertexY;
 	short int oldVertexX, oldVertexY;
 	short int currentVertexX, currentVertexY;
 
-	unsigned char actualColor;
 	unsigned char oldColor;
 	unsigned char currentColor;
 
-	short int size;
 	float startX;
 	int startY;
 	float step;
@@ -1541,74 +1537,44 @@ void drawVertices(int numOfVertex, short int drawType) {
 			vbottom = vertexY;
 	}
 
+	/* To end the loop */
 	vertexPosPtr[0] = vertexCoordinates[0];
 	vertexPosPtr[1] = vertexCoordinates[1];
 	vertexPosPtr[2] = vertexCoordinates[2];
 	vertexPosPtr = vertexCoordinates;
 
-	actualColor = currentColor = *(vertexPosPtr++);
+	oldColor = *(vertexPosPtr++);
 	oldVertexX = *(vertexPosPtr++);
 	oldVertexY = *(vertexPosPtr++);
 
 	while (numOfVertex--) {
-		oldColor = actualColor;
-
-		actualColor = currentColor = *(vertexPosPtr++);
+		currentColor = *(vertexPosPtr++);
 		currentVertexX = *(vertexPosPtr++);
 		currentVertexY = *(vertexPosPtr++);
 
 		/* Since it's scanline based, we don't care when we are only moving along X */
 		if (currentVertexY == oldVertexY) {
-			oldVertexX = size = currentVertexX;
+			oldVertexX = currentVertexX;
 		} else {
-			/* Let's save the current coordinates since we are going to modify the values */
-			actualVertexX = currentVertexX;
-			actualVertexY = currentVertexY;
-
 			/* Move up */
-			if (currentVertexY < oldVertexY) {
-				size = oldVertexY - currentVertexY;
-				ydir = -1;
+			if (currentVertexY < oldVertexY)
+				dir = -1;
 			/* Move down */
-			} else {
-				size = currentVertexY - oldVertexY;
-				ydir = 1;
-			}
-
-			/* If the vertex X direction is not the same as its Y direction, then swap colors + positions */
-			if (oldVertexX * ydir > currentVertexX * ydir) {
-				echange = oldVertexX;
-				oldVertexX = currentVertexX;
-				currentVertexX = echange;
-
-				echange = currentVertexY;
-				currentVertexY = oldVertexY;
-				oldVertexY = echange;
-
-				echange = oldColor;
-				oldColor = currentColor;
-				currentColor = echange;
-
-				xdir = -ydir;
-			} else {
-				xdir = ydir;
-			}
+			else
+				dir = 1;
 
 			/* Starting Y position */
 			startY = oldVertexY;
 			/* oldVertexY becomes the number of pixel */
-			oldVertexY = size;
-			size = startY * 2;
+			oldVertexY = abs(currentVertexY - oldVertexY);
 
 			/* polyPtr is the pointer to the actual polygons cell */
-			/* 'step' is the step for every point to the current vertex */
-			if (ydir == -1) {
+			if (dir == -1)
 				polyPtr = &polyTab[startY + videoHeight];
-				step = ((float)(oldVertexX - currentVertexX)) / ((float) oldVertexY);
-			} else {
+			else
 				polyPtr = &polyTab[startY];
-				step = ((float)(currentVertexX - oldVertexX)) / ((float) oldVertexY);
-			}
+			/* 'step' is the step for every point to the current vertex */
+			step = (float)(currentVertexX - oldVertexX) / oldVertexY;
 
 			/* Starting X position */
 			startX = oldVertexX;
@@ -1620,13 +1586,13 @@ void drawVertices(int numOfVertex, short int drawType) {
 			for (i = 0; i < oldVertexY+1; i++) { /* TODO: why +1 ? */
 				if ((polyPtr - polyTab) < 960 && (polyPtr - polyTab) >= 0)
 					*polyPtr = (short int) startX;
-				polyPtr += xdir;
-				startX += step * ydir;
+				polyPtr += dir;
+				startX += step;
 			}
 
 			/* Compute the color progression */
 			if (drawType >= 7) {
-				if (ydir == -1)
+				if (dir == -1)
 					polyPtr = &polyTab2[startY + videoHeight];
 				else
 					polyPtr = &polyTab2[startY];
@@ -1640,14 +1606,15 @@ void drawVertices(int numOfVertex, short int drawType) {
 				for (i = 0; i < oldVertexX+1; i++) {
 					if ((polyPtr - polyTab2) < 960 && (polyPtr - polyTab2) >= 0)
 						*polyPtr = startColor;
-					polyPtr += xdir;
+					polyPtr += dir;
 					startColor += stepColor;
 				}
 			}
-			/* Restore the old vertex position */
-			oldVertexX = actualVertexX;
-			oldVertexY = actualVertexY;
+			/* Set the old vertex position to the current one */
+			oldVertexX = currentVertexX;
+			oldVertexY = currentVertexY;
 		}
+		oldColor = currentColor;
 	}
 }
 
