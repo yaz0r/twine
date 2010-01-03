@@ -49,6 +49,8 @@ void Inventory(void)
 	int oldLanguageCD1;
 	int bx;
 
+	int canPress = 1;
+
 	CopyScreen(frontVideoBuffer, workVideoBuffer);
 
 	SetLightVector(896, 950, 0);
@@ -77,7 +79,13 @@ void Inventory(void)
 		if (os_isPressed(KEY_INVENT_QUIT))
 			break;
 
-		if (os_isPressed(KEY_INVENT_RIGHT)) {
+		if (!os_isPressed(KEY_INVENT_RIGHT)
+				&& !os_isPressed(KEY_INVENT_LEFT)
+				&& !os_isPressed(KEY_INVENT_UP)
+				&& !os_isPressed(KEY_INVENT_DOWN))
+			canPress = 1;
+
+		if (os_isPressed(KEY_INVENT_DOWN) && canPress) {
 			currentSelectedObjectInInventory++;
 
 			if (currentSelectedObjectInInventory >= 28)
@@ -86,9 +94,10 @@ void Inventory(void)
 			DrawOneInventory(previouslySelectedObject);
 
 			bx = 3;
+			canPress = 0;
 		}
 
-		if (os_isPressed(KEY_INVENT_LEFT)) {
+		if (os_isPressed(KEY_INVENT_UP) && canPress) {
 			currentSelectedObjectInInventory--;
 
 			if (currentSelectedObjectInInventory < 0)
@@ -97,9 +106,10 @@ void Inventory(void)
 			DrawOneInventory(previouslySelectedObject);
 
 			bx = 3;
+			canPress = 0;
 		}
 
-		if (os_isPressed(KEY_INVENT_UP)) {
+		if (os_isPressed(KEY_INVENT_LEFT) && canPress) {
 			currentSelectedObjectInInventory -= 4;
 
 			if (currentSelectedObjectInInventory < 0)
@@ -108,9 +118,10 @@ void Inventory(void)
 			DrawOneInventory(previouslySelectedObject);
 
 			bx = 3;
+			canPress = 0;
 		}
 
-		if (os_isPressed(KEY_INVENT_DOWN)) {
+		if (os_isPressed(KEY_INVENT_RIGHT) && canPress) {
 			currentSelectedObjectInInventory += 4;
 
 			if (currentSelectedObjectInInventory >= 28)
@@ -119,6 +130,7 @@ void Inventory(void)
 			DrawOneInventory(previouslySelectedObject);
 
 			bx = 3;
+			canPress = 0;
 		}
 
 		if (bx == 3) {
@@ -160,6 +172,8 @@ void Inventory(void)
 			DrawOneInventory(currentSelectedObjectInInventory);
 			break;
 		}
+
+		os_delay(15); /* TODO: cleanup */
 	}
 
 	CloseDial();

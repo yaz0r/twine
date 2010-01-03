@@ -52,34 +52,14 @@ void fadeIn(byte * palette) {
 
 void adjustPalette(byte R, byte G, byte B, byte * palette, int intensity) {
 	byte localPalette[1024];
-	byte *newR;
-	byte *newG;
-	byte *newB;
-	byte *newA;
 
-	int local;
-	int counter = 0;
 	int i;
 
-	local = intensity;
-
-	newR = &localPalette[0];
-	newG = &localPalette[1];
-	newB = &localPalette[2];
-	newA = &localPalette[3];
-
-	for (i = 0; i < 256; i++) {
-		*newR = RegleTrois32(R, palette[counter], 100, local);
-		*newG = RegleTrois32(G, palette[counter + 1], 100, local);
-		*newB = RegleTrois32(B, palette[counter + 2], 100, local);
-		*newA = 0;
-
-		newR += 4;
-		newG += 4;
-		newB += 4;
-		newA += 4;
-
-		counter += 4;
+	for (i = 0; i < 256*4; i += 4) {
+		localPalette[i] = RegleTrois32(R, palette[i], 100, intensity);
+		localPalette[i + 1] = RegleTrois32(G, palette[i + 1], 100, intensity);
+		localPalette[i + 2] = RegleTrois32(B, palette[i + 2], 100, intensity);
+		localPalette[i + 3] = 0;
 	}
 
 	os_setPalette(localPalette);

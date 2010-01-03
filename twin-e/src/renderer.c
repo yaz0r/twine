@@ -743,8 +743,6 @@ int finishRender(unsigned char *esi) {
 			esi += 2;
 			drawType = currentPolyHeader->FillVertic_AType;
 
-			assert(drawType <= 10);
-
 			if (drawType >= 9) {
 				destinationHeader = (polyHeader *) edi;
 
@@ -1019,8 +1017,6 @@ int finishRender(unsigned char *esi) {
 							color = READ_LE_S16(esi);
 							esi += 2;
 
-							assert(drawType <= 10);
-
 							destPtr = (unsigned char *) vertexCoordinates;
 
 							for (i = 0; i < (numOfVertex * 3); i++) {
@@ -1111,10 +1107,8 @@ void fillCopper(unsigned char *out, short int *posPtr, short int *colorPtr, int 
 		start += mask;
 		start = (start & 0xFF00) | ((start & 0xFF) & (unsigned char)(dx >> 8)) ;
 		start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-		if (i >= 0 && i < videoWidth) {
-			assert(out + i < frontVideoBuffer + videoWidth * videoHeight);
+		if (i >= 0 && i < videoWidth)
 			out[i] = start & 0xFF;
-		}
 		mask = (mask << 2) | (mask >> 14);
 		mask++;
 	}
@@ -1123,12 +1117,9 @@ void fillCopper(unsigned char *out, short int *posPtr, short int *colorPtr, int 
 /* TODO: buggy ? */
 void fillBopper(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
 	int i;
-	for (i = posPtr[0]; i < posPtr[videoHeight]+1; i++) {
-		if (i >= 0 && i < videoWidth && i % 2) {
-			assert(out + i < frontVideoBuffer + videoWidth * videoHeight);
+	for (i = posPtr[0]; i < posPtr[videoHeight]+1; i++)
+		if (i >= 0 && i < videoWidth && i % 2)
 			out[i] = color;
-		}
-	}
 }
 
 /* TODO */
@@ -1158,14 +1149,11 @@ void fillTrame(unsigned char *out, short int *posPtr, short int *colorPtr, int c
 		bh ^= 1;
 		ax = (unsigned short int)*(int*) out2;
 		ax &= 1;
-		if (ax ^ bh) {
-			assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+		if (ax ^ bh)
 			out2++;
-		}
 
 		for (i = 0; i < hsize; i++) {
-			assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-			*(out2) = (unsigned char)color;
+			*out2 = (unsigned char)color;
 			out2 += 2;
 		}
 	}
