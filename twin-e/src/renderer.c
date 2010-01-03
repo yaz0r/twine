@@ -33,46 +33,22 @@ pointTab _projectedPointTable[800];
 pointTab _flattenPointTable[800];
 
 renderTabEntry *renderTabEntryPtr;
-renderTabEntry *renderTabEntryPtr2;
-renderTabEntry *renderTabSortedPtr;
 
 renderTabEntry renderTab[1000];
 renderTabEntry renderTabSorted[1000];
 unsigned char renderTab7[10000];
 
-int rs1v1;
-int rs1v2;
-
-short int rs1s2v1;
-unsigned char *rs1s2v2;
-
 static const int videoWidth = 640;
 static const int videoHeight = 480;
 
-unsigned char *pri2Ptr;
-unsigned char *pri2Ptr2;
-
-short int numOfPrimitives;
-short int numOfPri1;
-short int numOfPri2;
-
-static int baseMatrixRotationX;
-static int baseMatrixRotationY;
-static int baseMatrixRotationZ;
-
-unsigned char *renderV19;
-
-int _numOfPoints;
-int _numOfParts;
 unsigned char *_pointsPtr;
 unsigned char *_partsPtr;
+
+unsigned char *_currentMatrixTableEntry;
 
 int _baseMatrix[3 * 3];
 
 int _matrixTable[271];  // should be matrixes
-unsigned char *_currentMatrixTableEntry;
-
-int *_shadePtr;
 
 int _shadeMatrix[9];
 int _lightX;
@@ -95,15 +71,13 @@ short int primitiveCounter;
 short int vtop;
 short int vbottom;
 
-unsigned char *_partsPtr2;
-
 int setSomething3Var12;
 int setSomething3Var14;
 int setSomething3Var16;
 
-int setSomething2Var1;
-int setSomething2Var2;
-int setSomething2Var3;
+int cameraAngleX;
+int cameraAngleZ;
+int cameraAngleY;
 
 int cameraVar1;
 int cameraVar2;
@@ -149,7 +123,7 @@ int AffObjetIso(int X, int Y, int Z, int angleX, int angleY, int angleZ, unsigne
 	renderBottom = -32767;
 
 	if (isUsingOrhoProjection == 0) {
-		setSomething3sub(X, Y, Z);
+		setOrthoCameraAngle(X, Y, Z);
 
 		_X = destX - setSomething3Var12;
 		_Y = destZ - setSomething3Var14;
@@ -255,8 +229,12 @@ int renderAnimatedModel(unsigned char *costumePtr) {
 	int *ptr4;
 	unsigned char *ptr6;
 	int processNormal, numNormal;
+	unsigned char *_partsPtr2;
 
-	_numOfPoints = READ_LE_U16(costumePtr);
+	int *_shadePtr;
+
+	int _numOfParts;
+	int _numOfPoints = READ_LE_U16(costumePtr);
 	costumePtr += 2;
 	_pointsPtr = costumePtr;
 
@@ -501,11 +479,7 @@ void RotList(unsigned char *esi, int ecx, pointTab * dest, int *eax) {
 
 	short int *tempPtr;
 
-	int rs1s2v1 = ecx;
-	unsigned char *rs1s2v2;
-
-	do {
-		rs1s2v2 = esi;
+	while (ecx--) {
 		tempPtr = (short int *)(esi);
 
 		param1 = tempPtr[0];
@@ -517,8 +491,8 @@ void RotList(unsigned char *esi, int ecx, pointTab * dest, int *eax) {
 		dest->z = ((eax[6] * param1 + eax[7] * param2 + eax[8] * param3) >> 14) + destZ;
 
 		dest++;
-		esi = rs1s2v2 + 6;
-	} while (--rs1s2v1);
+		esi += 6;
+	}
 }
 
 void RotMatIndex2(int *eax, int *ebp) {
@@ -663,18 +637,12 @@ void TranslateGroupe(int edx, int ecx, int ebx, pointEntry * esi) {
 }
 
 void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax) {
-//  int i;
 	short int param1;
 	short int param2;
 	short int param3;
 	short int *tempPtr;
 
-	int rs1s2v1 = ecx;
-	unsigned char *rs1s2v2;
-
-	do {
-		rs1s2v2 = esi;
-
+	while (ecx--) {
 		tempPtr = (short int *)(esi);
 
 		param1 = tempPtr[0] + _angleZ;
@@ -686,8 +654,8 @@ void TransRotList(unsigned char *esi, int ecx, pointTab * dest, int *eax) {
 		dest->z = ((eax[6] * param1 + eax[7] * param2 + eax[8] * param3) >> 14) + destZ;
 
 		dest++;
-		esi = rs1s2v2 + 6;
-	} while (--rs1s2v1);
+		esi += 6;
+	}
 }
 
 void circle_fill(int x, int y, int radius, byte color) {
@@ -749,12 +717,17 @@ int finishRender(unsigned char *esi) {
 
 	short int drawType;
 
+	unsigned char *renderV19;
+
 	polyVertexHeader *currentPolyVertex;
 	polyHeader *currentPolyHeader;
 	polyHeader *destinationHeader;
 	computedVertex *currentComputedVertex;
 	pointTab *currentVertex;
 	pointTab *destinationVertex;
+
+	renderTabEntry *renderTabEntryPtr2;
+	renderTabEntry *renderTabSortedPtr;
 
 	edi = renderTab7;   // renderTab7 c'est le buffer de coordonnées
 	temp = READ_LE_S16(esi);  // we read the number of polygones
@@ -1119,23 +1092,166 @@ int finishRender(unsigned char *esi) {
 	return (0);
 }
 
+void fillFlat(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+	int i;
+	for (i = posPtr[0]; i < posPtr[videoHeight]+1; i++)
+		if (i >= 0 && i < videoWidth)
+			out[i] = color;
+}
+
+void fillCopper(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+	int i;
+	unsigned short int mask = 0x43DB;
+	unsigned short int dx;
+	short int start = posPtr[0];
+	dx = (unsigned char)color;
+	dx |= 0x300;
+
+	for (i = posPtr[0]; i < posPtr[videoHeight]+1; i++) {
+		start += mask;
+		start = (start & 0xFF00) | ((start & 0xFF) & (unsigned char)(dx >> 8)) ;
+		start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
+		if (i >= 0 && i < videoWidth) {
+			assert(out + i < frontVideoBuffer + videoWidth * videoHeight);
+			out[i] = start & 0xFF;
+		}
+		mask = (mask << 2) | (mask >> 14);
+		mask++;
+	}
+}
+
+/* TODO: buggy ? */
+void fillBopper(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+	int i;
+	for (i = posPtr[0]; i < posPtr[videoHeight]+1; i++) {
+		if (i >= 0 && i < videoWidth && i % 2) {
+			assert(out + i < frontVideoBuffer + videoWidth * videoHeight);
+			out[i] = color;
+		}
+	}
+}
+
+/* TODO */
+void fillMarble(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+
+}
+
+/* TODO */
+void fillTele(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+
+}
+
+/* TODO */
+void fillTras(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+
+}
+
+/* TODO: buggy */
+void fillTrame(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+	int i;
+	unsigned char bh = 0;
+	unsigned char *out2 = out + posPtr[0];
+	short int hsize = posPtr[videoHeight] - posPtr[0] + 1;
+	hsize /= 2;
+	if (hsize > 1) {
+		unsigned short int ax;
+		bh ^= 1;
+		ax = (unsigned short int)*(int*) out2;
+		ax &= 1;
+		if (ax ^ bh) {
+			assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+			out2++;
+		}
+
+		for (i = 0; i < hsize; i++) {
+			assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
+			*(out2) = (unsigned char)color;
+			out2 += 2;
+		}
+	}
+}
+
+/* TODO: color bug ? */
+void fillGouraud(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+	short int start = posPtr[0];
+	short int hsize = posPtr[videoHeight] - start;
+	unsigned char *out2 = out + start;
+	unsigned short int startColor = colorPtr[0];
+	unsigned short int stopColor = colorPtr[videoHeight];
+	short int colorSize = stopColor - startColor;
+
+	if (hsize == 0) {
+		if (start >= 0 && start < videoWidth)
+			*out2 = ((startColor + stopColor) / 2) >> 8;
+	} else {
+		colorSize /= hsize;
+		hsize++;
+
+		while (hsize--) {
+			if (start >= 0 && start < videoWidth)
+				*out2 = startColor >> 8;
+
+			start++;
+			startColor += colorSize;
+			out2++;
+		}
+	}
+}
+
+/* TODO: color bug ? */
+void fillDithering(unsigned char *out, short int *posPtr, short int *colorPtr, int color) {
+	short int startColor = colorPtr[0];
+	short int stopColor = colorPtr[videoHeight];
+	short int colorSize = stopColor - startColor;
+	short int start = posPtr[0];
+	short int hsize = posPtr[videoHeight] - start;
+	unsigned short int currentColor = startColor;
+	unsigned char *out2 = out + start;
+
+	if (hsize == 0) {
+		if (start >= 0 && start < videoWidth)
+			*out2 = (unsigned char)(((startColor + stopColor) / 2) >> 8);
+	} else {
+		colorSize /= hsize;
+
+		while (hsize--) {
+			currentColor &= 0xFF;
+			if (!(hsize % 2)) {
+				startColor += colorSize;
+				currentColor = ((currentColor & 0xFF00) | (((currentColor & 0xFF) << (hsize & 0xFF)) & 0xFF));
+			}
+			currentColor += startColor;
+			if (start >= 0 && start < videoWidth)
+				*out2 = currentColor >> 8;
+
+			start++;
+			out2++;
+			startColor += colorSize;
+		}
+	}
+}
+
+void (*fillFuncArray[])(unsigned char *out, short int *ptr1, short int *ptr2, int color) = {
+	&fillFlat,
+	&fillCopper,
+	&fillBopper,
+	&fillMarble,
+	&fillTele,
+	&fillTras,
+	&fillTrame,
+	&fillGouraud,
+	&fillDithering
+};
+
 void fillVertices(int color, short int drawType) {
-	unsigned char *out, *out2;
+	unsigned char *out;
 	short int *ptr1;
 	short int *ptr2;
-	int vsize, hsize;
-	int j;
+	int vsize;
 	int currentLine;
 
-	short int start, stop;
-
-	if (vtop < 0) {
+	if (vtop < 0 || vbottom >= videoHeight - 1)
 		return;
-	}
-
-	if (vbottom >= videoHeight - 1) {
-		return;
-	}
 
 	out = frontVideoBuffer + videoWidth * vtop;
 
@@ -1144,362 +1260,19 @@ void fillVertices(int color, short int drawType) {
 
 	vsize = vbottom - vtop + 1;
 
-	/* TODO: Fix missing or buggy filling techniques */
-
-	switch (drawType) {
-		case 0: // flat polygon
-			currentLine = vtop;
-			while (vsize--) {
-				if (currentLine >= 0 && currentLine < videoHeight) {
-					stop = ptr1[videoHeight];
-					start = ptr1[0];
-
-					ptr1++;
-					hsize = stop - start;
-
-					if (hsize >= 0) {
-						hsize++;
-						out2 = start + out;
-
-						for (j = start; j < hsize + start; j++) {
-							assert(out + j < frontVideoBuffer + videoWidth * videoHeight);
-							if (j >= 0 && j < videoWidth)
-								out[j] = color;
-						}
-					}
-				}
-				out += videoWidth;
-				currentLine++;
-			}
-			break;
-
-		case 1: // copper
-			currentLine = vtop;
-			while (vsize--) {
-				if (currentLine >= 0 && currentLine < videoHeight) {
-					start = ptr1[0];
-					stop = ptr1[videoHeight];
-
-					ptr1++;
-					hsize = stop - start;
-
-					if (hsize >= 0) {
-						unsigned short int mask = 0x43DB;
-						unsigned short int dx;
-						int startCopy;
-
-						dx = (unsigned char)color;
-						dx |= 0x300;
-
-						hsize++;
-						out2 = start + out;
-						startCopy = start;
-
-						for (j = startCopy; j < hsize + startCopy; j++) {
-							start += mask;
-							start = (start & 0xFF00) | ((start & 0xFF) & (unsigned char)(dx >> 8)) ;
-							start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-							if (j >= 0 && j < videoWidth) {
-								assert(out + j < frontVideoBuffer + videoWidth * videoHeight);
-								out[j] = start & 0xFF;
-							}
-							mask = (mask << 2) | (mask >> 14);
-							mask++;
-						}
-					}
-
-				}
-				out += videoWidth;
-				currentLine++;
-			}
-			break;
-
-		case 2: // bopper ? (1 pixel sur 2) // pas implementé comme à l'origine TODO: buggy
-			currentLine = vtop;
-			while (vsize--) {
-				if (currentLine >= 0 && currentLine < videoHeight) {
-					start = ptr1[0];
-					stop = ptr1[videoHeight];
-					ptr1++;
-					hsize = stop - start;
-
-					if (hsize >= 0) {
-						hsize++;
-						out2 = start + out;
-						for (j = start; j < hsize + start; j++) {
-							if ((start + (vtop % 1))&1) {
-								if (j >= 0 && j < videoWidth) {
-									assert(out + j < frontVideoBuffer + videoWidth * videoHeight);
-									out[j] = color;
-								}
-							}
-							out2++;
-						}
-					}
-
-				}
-				out += videoWidth;
-				currentLine++;
-			}
-			break;
-
-		case 3: // TODO: "marble"
-				break;
-
-		case 4: // TODO: "tele"
-				break;
-
-		case 5: // TODO: "tras"
-				break;
-
-		case 6: { // trame TODO: buggy
-					unsigned char bh = 0;
-
-					currentLine = vtop;
-					do {
-						if (currentLine >= 0 && currentLine < videoHeight) {
-							start = ptr1[0];
-							stop = ptr1[videoHeight];
-							ptr1++;
-							hsize = stop - start;
-
-							if (hsize >= 0) {
-								hsize++;
-								out2 = start + out;
-
-								hsize /= 2;
-								if (hsize > 1) {
-									unsigned short int ax;
-									bh ^= 1;
-									ax = (unsigned short int)*(int*) out2;
-									ax &= 1;
-									if (ax ^ bh) {
-										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-										out2++;
-									}
-
-									for (j = 0; j < hsize; j++) {
-										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-										*(out2) = (unsigned char)color;
-										out2 += 2;
-									}
-								}
-							}
-
-						}
-						out += videoWidth;
-						currentLine++;
-					} while (--vsize);
-					break;
-				}
-		case 7: { // gouraud: TODO: BUGGY: ugly :(
-					currentLine = vtop;
-					while (vsize--) {
-						if (currentLine >= 0 && currentLine < videoHeight) {
-							unsigned short int startColor = ptr2[0];
-							unsigned short int stopColor = ptr2[videoHeight];
-
-							short int colorSize = stopColor - startColor;
-
-							stop = ptr1[videoHeight];  // stop
-							start = ptr1[0]; // start
-
-							ptr1++;
-							ptr2++;
-
-							out2 = start + out;
-							hsize = stop - start;
-
-
-							switch (hsize) {
-								case 0:
-									if (start >= 0 && start < videoWidth)
-										*out2 = ((startColor + stopColor) / 2) >> 8;
-
-									break;
-
-								case 1:
-									if (start >= -1 && start < videoWidth - 1)
-										*(out2 + 1) = stopColor >> 8;
-
-									if (start >= 0 && start < videoWidth)
-										*(out2) = startColor >> 8;
-
-									break;
-
-								case 2:
-									if (start >= -2 && start < videoWidth - 2)
-										*(out2 + 2) = stopColor >> 8;
-
-									if (start >= -1 && start < videoWidth - 1)
-										*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
-
-									if (start >= 0 && start < videoWidth)
-										*(out2) = startColor >> 8;
-
-									break;
-
-								default:
-									if (hsize < 0)
-										break;
-
-									colorSize /= hsize;
-									hsize++;
-
-									while (hsize--) {
-										if (start >= 0 && start < videoWidth)
-											*out2 = startColor >> 8;
-
-										start++;
-										startColor += colorSize;
-										out2++;
-									}
-
-									break;
-							}
-						}
-						out += videoWidth;
-						currentLine++;
-					}
-
-					break;
-				}
-		case 8: { // dithering: TODO: bug for high colors
-					currentLine = vtop;
-					while (vsize--) {
-						if (currentLine >= 0 && currentLine < videoHeight) {
-							stop = ptr1[videoHeight]; // stop
-							start = ptr1[0];  // start
-							ptr1++;
-							hsize = stop - start;
-
-							if (hsize >= 0) {
-								unsigned short int startColor = ptr2[0];
-								unsigned short int stopColor = ptr2[videoHeight];
-								int currentXPos = start;
-
-								out2 = start + out;
-								ptr2++;
-
-								if (hsize == 0) {
-									assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-									if (currentXPos >= 0 && currentXPos < videoWidth)
-										*(out2) = (unsigned char)(((startColor + stopColor) / 2) >> 8);
-
-								} else {
-									short int colorSize = stopColor - startColor;
-									if (hsize == 1) {
-										unsigned short int currentColor = startColor;
-										hsize++;
-										hsize /= 2;
-
-										currentColor &= 0xFF;
-										currentColor += startColor;
-										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-										if (currentXPos >= 0 && currentXPos < videoWidth)
-											*(out2) = currentColor >> 8;
-
-										currentColor &= 0xFF;
-										startColor += colorSize;
-										currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-										currentColor += startColor;
-										currentXPos++;
-										assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-										if (currentXPos >= 0 && currentXPos < videoWidth)
-											*(out2 + 1) = currentColor >> 8;
-
-									} else if (hsize == 2) {
-										unsigned short int currentColor = startColor;
-										hsize++;
-										hsize /= 2;
-
-										currentColor &= 0xFF;
-										colorSize /= 2;
-										currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-										currentColor += startColor;
-										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-										if (currentXPos >= 0 && currentXPos < videoWidth)
-											*(out2) = currentColor >> 8;
-
-
-										out2++;
-										currentXPos++;
-										startColor += colorSize;
-
-										currentColor &= 0xFF;
-										currentColor += startColor;
-
-										assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-										if (currentXPos >= 0 && currentXPos < videoWidth)
-											*(out2) = currentColor >> 8;
-
-
-										currentColor &= 0xFF;
-										startColor += colorSize;
-										currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-										currentColor += startColor;
-
-										currentXPos++;
-										assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-										if (currentXPos >= 0 && currentXPos < videoWidth)
-											*(out2 + 1) = currentColor >> 8;
-
-									} else {
-										unsigned short int currentColor = startColor;
-										colorSize /= hsize;
-										hsize++;
-
-
-										if (hsize % 2) {
-											hsize /= 2;
-											currentColor &= 0xFF;
-											currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-											currentColor += startColor;
-											assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-											if (currentXPos >= 0 && currentXPos < videoWidth)
-												*(out2) = currentColor >> 8;
-
-											out2++;
-											currentXPos++;
-										} else {
-											hsize /= 2;
-										}
-
-										do {
-											currentColor &= 0xFF;
-											currentColor += startColor;
-											assert(out2 < frontVideoBuffer + videoWidth * videoHeight);
-											if (currentXPos >= 0 && currentXPos < videoWidth)
-												*(out2) = currentColor >> 8;
-
-											currentXPos++;
-											currentColor &= 0xFF;
-											startColor += colorSize;
-											currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-											currentColor += startColor;
-											assert(out2 + 1 < frontVideoBuffer + videoWidth * videoHeight);
-											if (currentXPos >= 0 && currentXPos < videoWidth)
-												*(out2 + 1) = currentColor >> 8;
-
-											currentXPos++;
-											out2 += 2;
-											startColor += colorSize;
-										} while (--hsize);
-									}
-								}
-							}
-						}
-						out += videoWidth;
-						currentLine++;
-					}
-					break;
-				}
-		default: {
-					 printf("Unsupported render type %d\n", drawType);
-					 break;
-				 }
-	};
-
+	currentLine = vtop;
+
+	while (vsize--) {
+		if (currentLine >= 0 && currentLine < videoHeight) {
+			if ((ptr1[videoHeight] - ptr1[0]) >= 0)
+				fillFuncArray[drawType](out, ptr1, ptr2, color);
+
+			ptr1++;
+			ptr2++;
+		}
+		out += videoWidth;
+		currentLine++;
+	}
 }
 
 void drawVertices(int numOfVertex, short int drawType) {
@@ -1682,7 +1455,7 @@ void drawLine(int a, int b, int c, int d, int e) {
 		d = -d;
 	}
 
-	out = frontVideoBuffer + screenLockupTable[b] + a;
+	out = frontVideoBuffer + WINDOW_X*b + a;
 
 	color = currentLineColor;
 	if (c < d) {	// pente importante
@@ -1733,10 +1506,10 @@ void setCameraPosition(int X, int Z, int param2, int param3, int param4) {
 	isUsingOrhoProjection = 0;
 }
 
-void setCameraAngle(int param0, int param1, int param2, int param3, int param4, int param5, int param6) {
-	setSomething2Var1 = param0;
-	setSomething2Var2 = param1;
-	setSomething2Var3 = param2;
+void setCameraAngle(int x, int z, int y, int param3, int param4, int param5, int param6) {
+	cameraAngleX = x;
+	cameraAngleZ = z;
+	cameraAngleY = y;
 
 	setSomething3(param3, param4, param5);
 
@@ -1744,9 +1517,9 @@ void setCameraAngle(int param0, int param1, int param2, int param3, int param4, 
 
 	setCameraAngleSub(setSomething3Var12, setSomething3Var14, setSomething3Var16);
 
-	setSomething2Var1 = destX;
-	setSomething2Var2 = destZ;
-	setSomething2Var3 = destY;
+	cameraAngleX = destX;
+	cameraAngleZ = destZ;
+	cameraAngleY = destY;
 }
 
 void setCameraAngleSub(int eax, int ebx, int ecx) {
@@ -1755,16 +1528,16 @@ void setCameraAngleSub(int eax, int ebx, int ecx) {
 	destY = (_baseMatrix[2] * eax + _baseMatrix[5] * ebx + _baseMatrix[8] * ecx) >> 14;
 }
 
-void setSomething3sub(int eax, int ebx, int ecx) {
+void setOrthoCameraAngle(int eax, int ebx, int ecx) {
 	destX = (_baseMatrix[0] * eax + _baseMatrix[1] * ebx + _baseMatrix[2] * ecx) >> 14;
 	destZ = (_baseMatrix[3] * eax + _baseMatrix[4] * ebx + _baseMatrix[5] * ecx) >> 14;
 	destY = (_baseMatrix[6] * eax + _baseMatrix[7] * ebx + _baseMatrix[8] * ecx) >> 14;
 }
 
-void setSomething2(int a, int b, int c) {
-	setSomething2Var1 = a;
-	setSomething2Var2 = b;
-	setSomething2Var3 = c;
+void setOnlyCameraAngle(int x, int z, int y) {
+	cameraAngleX = x;
+	cameraAngleZ = z;
+	cameraAngleY = y;
 }
 
 void setSomething3(int a, int b, int c) { // setupBaseMatrix
@@ -1778,6 +1551,10 @@ void setSomething3(int a, int b, int c) { // setupBaseMatrix
 	int angleZSin;
 
 	int temp;
+
+	int baseMatrixRotationX;
+	int baseMatrixRotationY;
+	int baseMatrixRotationZ;
 
 	tab1 = &angleTable[0];
 	tab2 = &angleTable[256];
@@ -1816,7 +1593,7 @@ void setSomething3(int a, int b, int c) { // setupBaseMatrix
 	_baseMatrix[6] = ((angleYSin * temp) - (angleXSin * angleYCos)) >> 14;
 	_baseMatrix[8] = ((angleYCos * temp) + (angleXSin * angleYSin)) >> 14;
 
-	setSomething3sub(setSomething2Var1, setSomething2Var2, setSomething2Var3);
+	setOrthoCameraAngle(cameraAngleX, cameraAngleZ, cameraAngleY);
 
 	setSomething3Var12 = destX;
 	setSomething3Var14 = destZ;

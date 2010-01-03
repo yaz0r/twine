@@ -52,6 +52,7 @@ int ExtraBonus(int X, int Y, int Z, int param, int angle, int type, int param2);
 int ExtraCheckObjCol(extraListStruct* extra, int param);
 void ThrowMagicBall(int X, int Z, int Y, int param1, int angle, int param2, int param4);
 int ExtraSearch(int actorNum, int X, int Z, int Y, int spriteIdx, int targetActor, int maxSpeed, int param4);
+void giveBonus(actor * lactor);
 
 extern extraListStruct extraList[50];
 extern short int magicBallIdx;

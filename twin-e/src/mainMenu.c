@@ -583,8 +583,8 @@ void blitRectangle(int left, int top, int right, int bottom, char *source, int l
 	assert(top >= 0);
 	assert(bottom < 480);
 
-	s = screenLockupTable[top] + source + left;
-	d = screenLockupTable[topDest] + dest + leftDest;
+	s = WINDOW_X*top + source + left;
+	d = WINDOW_X*topDest + dest + leftDest;
 
 	largeur = right - left + 1;
 
@@ -630,14 +630,13 @@ void drawBoxInsideTrans(int left, int top, int right, int bottom, int mode) {
 	if (left < textWindowLeft)
 		left = textWindowLeft;
 	if (right > textWindowRight)
-
 		right = textWindowRight;
 	if (top < textWindowTop)
 		top = textWindowTop;
 	if (bottom > textWindowBottom)
 		bottom = textWindowBottom;
 
-	pos = screenLockupTable[top] + frontVideoBuffer + left;
+	pos = WINDOW_X*top + frontVideoBuffer + left;
 	hauteur2 = hauteur = bottom - top;
 	hauteur2++;
 

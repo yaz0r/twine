@@ -25,7 +25,7 @@ overlayObjectListStruct overlayObjectList[10];
 void addOverlayObject(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int lifeTime) {
 	int i;
 
-	for (i = 0;i < 10;i++) {
+	for (i = 0; i < 10; i++) {
 		if (overlayObjectList[i].field_0 == -1) {
 			overlayObjectList[i].field_0 = arg2;
 			overlayObjectList[i].X = arg3;

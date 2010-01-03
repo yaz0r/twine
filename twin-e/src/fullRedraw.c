@@ -810,7 +810,7 @@ void AffGraph(int num, int var1, int var2, unsigned char *localBufferBrick) {
 	right++;
 	bottom++;
 
-	outPtr = frontVideoBuffer + screenLockupTable[top] + left;
+	outPtr = frontVideoBuffer + WINDOW_X*top + left;
 
 	offset = -((right - left) - WINDOW_X);
 
@@ -1037,8 +1037,8 @@ void CopyMask(int spriteNum, int x, int y, /*byte * localBufferBrick, */byte * b
 			return;
 	}
 
-	outPtr = frontVideoBuffer + screenLockupTable[absY] + left;
-	inPtr = buffer + screenLockupTable[absY] + left;
+	outPtr = frontVideoBuffer + WINDOW_X*absY + left;
+	inPtr = buffer + WINDOW_X*absY + left;
 
 	do {
 		vc3 = *(ptr++);

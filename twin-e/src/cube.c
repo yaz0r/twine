@@ -200,8 +200,6 @@ int CalcGraphMsk(unsigned char *buffer, unsigned char *ptr) {
 	byte iteration, ch, numOfBlock, ah, bl, al, bh;
 	int ebx;
 
-	//buffer = (unsigned int *) (READ_LE_U32(buffer + var) + (unsigned char *) buffer);
-
 	ebx = READ_LE_U32(buffer);   // on ecrit le flag de la brique
 	buffer += 4;
 	WRITE_LE_U32(ptr, ebx);

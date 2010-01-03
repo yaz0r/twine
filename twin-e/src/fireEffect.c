@@ -43,7 +43,7 @@ void makeFireEffect(int top, int param) {
 
 	temp = fireEffectVar1 + 1600;
 
-	out = frontVideoBuffer + screenLockupTable[top];
+	out = frontVideoBuffer + WINDOW_X*top;
 
 	bl = param;
 	bh = bl + 15;

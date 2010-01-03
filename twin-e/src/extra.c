@@ -837,3 +837,34 @@ void ThrowMagicBall(int X, int Z, int Y, int param1, int angle, int param2, int 
 	if (magicPoint > 0)
 		magicPoint--;
 }
+
+void giveBonus(actor * lactor) {
+	int i;
+	char extraTable[8];
+	int numOfExtra = 0;
+	char currentBonus;
+	int angle;
+
+	for (i = 0; i < 5; i++)
+		if (lactor->bonusInfo & (1 << (i + 4)))
+			extraTable[numOfExtra++] = i;
+
+	if (numOfExtra) {
+		currentBonus = extraTable[rand() % numOfExtra];
+
+		currentBonus += 3;
+
+		if (!magicLevel && currentBonus == 2) // if bonus is magic and magicLevel 1 not reached
+			currentBonus = 1; //bonus is life
+
+		if (lactor->dynamicFlagsBF.isDead) {
+			ExtraBonus(lactor->X, lactor->Y, lactor->Z, 0x100, 0, currentBonus, lactor->field_12);
+			HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y, lactor->Z);
+		} else {
+			angle = GetAngle(lactor->X, lactor->Z, twinsen->X, twinsen->Z);
+			ExtraBonus(lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z, 200, angle, currentBonus, lactor->field_12);
+			HQ_3D_MixSample(11, 0x1000, 1, lactor->X, lactor->Y + lactor->boudingBox.Y.topRight, lactor->Z);
+		}
+	}
+}
+

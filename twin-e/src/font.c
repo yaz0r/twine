@@ -65,7 +65,7 @@ void drawCharacter(int X, int Y, unsigned char caractere) {
 
 	usedColor = textColor;
 
-	screen = frontVideoBuffer + screenLockupTable[Y] + X;
+	screen = frontVideoBuffer + WINDOW_X*Y + X;
 
 	tempX = X;
 	tempY = Y;

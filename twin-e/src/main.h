@@ -44,5 +44,3 @@ extern byte *lbaFont;
 
 extern byte *bufCube;
 
-extern int screenLockupTable[2000];
-

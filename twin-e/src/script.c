@@ -507,7 +507,7 @@ void runActorScript(short int actorNumber)
 				char temp;
 
 				if (lactor->canGiveBonus)
-					GiveExtraBonus(lactor);
+					giveBonus(lactor);
 
 				temp = *(actorScriptPtr++);
 
@@ -985,7 +985,7 @@ void runActorScript(short int actorNumber)
 			}
 		case 101: { //LM_PROJ_ISO
 				configureOrthoProjection(311, 240);
-				setSomething2(0, 0, 0);
+				setOnlyCameraAngle(0, 0, 0);
 				setSomething3(0, 0, 0);
 				SetLightVector(reinitVar1, reinitVar2, 0);
 				break;

@@ -54,38 +54,21 @@ byte *lbaFont;
 
 byte *bufCube;
 
-int screenLockupTable[2000]; /* TODO: temporary ? */
-
-void initVideoStuff(void) {
-	int i, j, k;
-
-	frontVideoBuffer = malloc(sizeof(byte) * 307200);
-
-	os_initBuffer((char *) frontVideoBuffer, 640, 480);
-	os_initVideoBuffer(flaBuffer, 320, 200);
-
-	j = 0;
-	k = 0;
-	for (i = WINDOW_Y; i > 0; i--) {
-		screenLockupTable[j] = k;
-		j++;
-		k += WINDOW_X;
-	}
-}
-
 static void init(void)
 {
 	openCD();
 	soundInit();
 
-	initVideoStuff();
+	frontVideoBuffer = malloc(sizeof(byte) * /*307200*/311040); /* TODO: check */
+	workVideoBuffer = malloc(sizeof(byte) * /*307700*/311040);
+
+	os_initBuffer((char *) frontVideoBuffer, 640, 480);
+	os_initVideoBuffer(flaBuffer, 320, 200);
 
 #if USE_SDL_MIXER == 1
     printf("Sound activated\n");
 	HQR_Midi = HQR_Init_Ressource("midi_mi_win.hqr",32000,2);
 #endif
-
-	workVideoBuffer = malloc(307700 * sizeof(byte));
 
 #ifndef FASTDEBUG
 	AdelineLogo();
@@ -119,9 +102,9 @@ static void init(void)
 
 #ifndef FASTDEBUG
 # ifdef US_IMG
-		RessPict(49);
+	RessPict(49);
 # else
-		RessPict(12);
+	RessPict(12);
 # endif
 
 	os_delay(3000);

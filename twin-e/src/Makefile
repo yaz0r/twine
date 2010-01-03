@@ -27,7 +27,6 @@ OBJ=actors.o \
 	mainSDL.o \
 	moveActor.o \
 	music.o \
-	object.o \
 	overlay.o \
 	renderer.o \
 	room.o \

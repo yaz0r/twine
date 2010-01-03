@@ -414,7 +414,7 @@ int mainLoopInteration(void) {
 
 				/* Give an extra */
 				if (actors[i].canGiveBonus && !actors[i].gaveBonus)
-					GiveExtraBonus(&actors[i]);
+					giveBonus(&actors[i]);
 			}
 
 			/* Manage actors' move */
@@ -563,7 +563,7 @@ void reinitAll(int save)
 void reinitAll1(void)
 {
 	configureOrthoProjection(311, 240);
-	setSomething2(0, 0, 0);
+	setOnlyCameraAngle(0, 0, 0);
 	setSomething3(0, 0, 0);
 	SetLightVector(reinitVar1, reinitVar2, 0);
 }
@@ -736,36 +736,24 @@ void SetClip(int left, int top, int right, int bottom) {
 }
 
 void Box(int left, int top, int right, int bottom, unsigned char e) {
-
 	unsigned char *ptr;
 
-	int offset;
+	int x, y;
 
-	int x;
-	int y;
-
-	if (left > textWindowRight)
+	if (left > textWindowRight
+			|| right < textWindowLeft
+			|| top > textWindowBottom
+			|| bottom < textWindowTop) {
+		printf("WTF ? Box outside text window !\n");
 		return;
-	if (right < textWindowLeft)
+	}
 
-		return;
-	if (top > textWindowBottom)
-		return;
-	if (bottom < textWindowTop)
-		return;
+	ptr = frontVideoBuffer + WINDOW_X*top;
 
-	// cropping
-
-	offset = -((right - left) - WINDOW_X);
-
-	ptr = frontVideoBuffer + screenLockupTable[top] + left;
-
-	for (x = top; x < bottom; x++) {
-		for (y = left; y < right; y++) {
-
-			*(ptr++) = e;
-		}
-		ptr += offset;
+	for (y = top; y < bottom; y++) {
+		for (x = left; x < right; x++)
+			ptr[x] = e;
+		ptr += WINDOW_X;
 	}
 
 }
